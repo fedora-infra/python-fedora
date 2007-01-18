@@ -1,0 +1,117 @@
+===================================
+Fedora Accounts Integration Toolkit
+===================================
+:Author: Toshio Kuratomi
+:Date: 17 Jan 2007
+:Version: 0.1
+
+.. contents::
+
+This module allows code internal to the Fedora Project to integrate with the
+Fedora Accounts System.  It provides two modules, a general purpose python API
+and a TurboGears Identity Provider.
+
+Installing
+==========
+Installation is currently manual (There is a setup.py.  It is not yet
+functional.)  As root from the same directory as this README is in issue this
+command::
+
+  # cp -r fedora `python -c 'from distutils.sysconfig import get_python_lib; print get_python_lib()'`
+
+If you are installing this module to be able to access the account system from
+TurboGears, add the plugin to the TurboGears entry points file::
+
+  # vim `rpm -ql TurboGears | grep entry_points.txt`
+
+Under the [turbogears.identity.provider] section add::
+
+  safas = fedora.tg.identity.safasprovider:SaFasIdentityProvider
+
+Under the [turbogears.visit.manager] section add::
+
+  safas = fedora.tg.visit.safasvisit:SaFasVisitManager
+
+See the configuration notes under `TurboGears Interface` for additional
+information on configuring your turbogears application.
+
+General API
+===========
+
+Note: This API is not yet complete
+
+Using the general API requires instantiating an AccountSystem object.  You
+then use methods on the AccountSystem to get and set information on the
+people in the account system.
+
+The AccountSystem object implements basic authorization for the account system.
+You tell the account system which user you are connecting as via the
+`change_user()` method.  Then you request information from the AccountSystem
+object.  The AccountSystem object will only retrieve information or set data
+that the authenticated user is allowed to.
+
+At the moment, there are only a few methods implemented.  Full documentation on these methods is available from the AccountSystem's docstrings from the
+interpreter or, for instance, by running::
+
+  $ pydoc fas.AccountSystem
+
+from the directory that has fas.py in it.
+
+* verify_user_pass()
+* change_user()
+* get_user_id()
+* get_user_info()
+
+
+Here's an example of using the AccountSystem::
+
+  from fedora.accounts.fas import AccountSystem
+  
+  # Get an AccountSystem object.  When no user information is given you are
+  # connected as an anonymous user.
+  fas = AccountSystem()
+
+  # Set the user connecting to "me"
+  fas.change_user('me', 'mypassword')
+
+  # Get the user information for the authorized user.
+  MyInfo = fas.get_user_info()
+
+  # Get user information for another user.
+  YourInfo = fas.get_user_info('you')
+
+  # Verify that a user-password combination is valid
+  try:
+      valid = fas.verify_user_pass('me', 'mypassword')
+  except AuthError, e:
+      # The user was not in the database.  Typically you don't want to tell the
+      # application's user whether it was the username or password is bad.
+      valid = False
+
+  if not valid:
+      print 'The username and password were not valid'
+
+TurboGears Interface
+====================
+
+The TurboGears interface uses the general API to connect the TurboGears visit
+and identity framework to your Fedora TurboGears application.  It does this
+through an identity plugin.  A visit plugin is also provided at this time but
+should go away once a few bugs are worked out of the TurboGears code.
+
+Using the TurboGears interface will authenticate your users against the Fedora
+Account System database and give your application a login session that can be
+shared with other TurboGears applications using the safas identity plugin.
+
+Configuring
+-----------
+To configure your TurboGears application, you need to set the following
+variables in your pkgname/config/app.cfg file::
+
+  visit.on=True
+  visit.manager="safas"
+  visit.saprovider.model="fedora.accounts.tgfas.Visit"
+  identity.on="True"
+  identity.failure_url="/login"
+  identity.provider="safas"
+  identity.saprovider.model.visit="fedora.accounts.tgfas.VisitIdentity"
