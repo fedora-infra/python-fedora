@@ -13,25 +13,10 @@ and a TurboGears Identity Provider.
 
 Installing
 ==========
-Installation is currently manual (There is a setup.py.  It is not yet
-functional.)  As root from the same directory as this README is in issue this
-command::
 
-  # cp -r fedora `python -c 'from distutils.sysconfig import get_python_lib; print get_python_lib()'`
-
-If you are installing this module to be able to access the account system from
-TurboGears, add the plugin to the TurboGears entry points file::
-
-  # vim `rpm -ql TurboGears | grep entry_points.txt`
-
-Under the [turbogears.identity.provider] section add::
-
-  safas = fedora.tg.identity.safasprovider:SaFasIdentityProvider
-
-Under the [turbogears.visit.manager] section add::
-
-  safas = fedora.tg.visit.safasvisit:SaFasVisitManager
-
+This should get the fedora module installed::
+  # python setup.py install
+  
 See the configuration notes under `TurboGears Interface` for additional
 information on configuring your turbogears application.
 
