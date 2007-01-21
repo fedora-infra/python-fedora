@@ -115,7 +115,7 @@ class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
             link = visit_class(visit_key=visit_key, user_id = userId)
             visit_class.mapper.get_session().save(link)
         else:
-            link.user_id = user.userId
+            link.user_id = userId
         visit_class.mapper.get_session().flush()
         return SaFasIdentity(visit_key)
 
