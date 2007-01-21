@@ -17,6 +17,8 @@ to address here:
 '''
 __version__='0.1'
 
+adminUserId = 100001
+
 import os
 import psycopg2
 import psycopg2.extras
@@ -66,6 +68,7 @@ class AccountSystem(object):
             raise IOError, 'fedora-db-access file does not exist.'
 
         # Read the file until we get the information for the requested db
+        dbInfo = None
         for line in fh.readlines():
             if not line:
                 break
@@ -75,7 +78,7 @@ class AccountSystem(object):
             pieces = line.split(None, 1)
             if len(pieces) < 2:
                 continue
-            if pieces[0] == dbName:
+            if pieces[0] == dbKey:
                 dbInfo = eval(pieces[1])
                 break
 
@@ -104,7 +107,7 @@ class AccountSystem(object):
             raise AuthError, 'Authentication config fedora-db-access is' \
                     ' not available'
         # Some db connections have no password
-        dbPass = dbInfo.get['password']
+        dbPass = dbInfo.get('password')
 
         # Open a connection to the db
         self.db = psycopg2.connect(database=dbName, host=dbInfo['host'],
@@ -185,6 +188,10 @@ class AccountSystem(object):
             raise AuthError, 'No such user: %s' % username
 
     def get_user_info(self, user=None):
+        ### FIXME: Check the information we return against the FAS2 schema.
+        # Make sure the data we're returning has a field there that's easy to
+        # map.  Consider translating to the FAS2 names instead of returning a
+        # raw dictCursor.
         '''Retrieve information for user.
         
         Returns the subset of information about user that the currently
@@ -250,33 +257,32 @@ class AccountSystem(object):
             user = self.userId
 
         if not isinstance(user, int):
-            condition = ' id ='
             user = self.get_user_id(user)
+
+        userDict = {'user' : user}
 
         if not self.userId:
             # Retrieve publically viewable information
-            userDict = {'user' : user}
             self.cursor.execute('select id, username, human_name, gpg_keyid,'
                 ' comments, affiliation, creation, ircnick'
-                ' from person where' + condition + ' %(user)s',
+                ' from person where id = %(user)s',
                 userDict)
             person = self.cursor.fetchone()
             self.cursor.execute("select g.id, g.name, r.role_type, r.creation"
                 " from project_group as g, person as p, role as r"
                 " where g.id = r.project_group_id and p.id = r.person_id"
-                " and r.role_status = 'approved' and" + condition + " %(user)s",
+                " and r.role_status = 'approved' and p.id = %(user)s",
                 userDict)
 
         else:
-            userDict = {'user' : self.userId}
-            if not user or user == self.userId:
+            if user == self.userId:
                 # The request is from the user for information about himself,
                 # retrieve everything except internal_comments
                 self.cursor.execute("select id, username, email, human_name,"
                     " gpg_keyid, ssh_key, password, comments, postal_address,"
                     " telephone, facsimile, affiliation, creation,"
                     " approval_status, wiki_prefs, ircnick"
-                    " where" + condition + " %(user)s",
+                    " where id = %(user)s",
                     userDict)
                 person = self.cursor.fetchone()
                 self.cursor.execute("select g.id, g.name, r.role_type,"
@@ -284,12 +290,12 @@ class AccountSystem(object):
                     " g.user_can_remove, r.role_status"
                     " from project_group as g, person as p, role as r"
                     " where g.id = r.project_group_id and p.id = r.person_id"
-                    " and" + condition + " %(user)s",
+                    " and p.id = %(user)s",
                     userDict)
-            elif self.username == 'admin':
+            elif self.userId == adminUserId:
                 # Admin can view everything
-                self.cursor.execute("select * from person where " + condition +
-                        " %(user)s", userDict)
+                self.cursor.execute("select * from person where id = %(user)s",
+                        userDict)
                 person = self.cursor.fetchone()
                 self.cursor.execute("select g.id, g.name, r.role_type,"
                         " r.creation, g.owner_id, g.needs_sponsor,"
@@ -297,7 +303,7 @@ class AccountSystem(object):
                         " from project_group as g, person as p, role as r"
                         " where g.id = r.project_group_id"
                         " and p.id = r.person_id"
-                        " and" + condition + " %(user)s",
+                        " and p.id = %(user)s",
                         userDict)
             else:
                 # Retrieve everything but password and internal_comments for
@@ -306,7 +312,7 @@ class AccountSystem(object):
                     " gpg_keyid, ssh_key, comments, postal_address,"
                     " telephone, facsimile, affiliation, creation,"
                     " approval_status, wiki_prefs, ircnick"
-                    " from person where" + condition + " %(user)s",
+                    " from person where id = %(user)s",
                     userDict)
                 person = self.cursor.fetchone()
                 self.cursor.execute("select g.id, g.name, r.role_type,"
@@ -314,11 +320,11 @@ class AccountSystem(object):
                     " g.user_can_remove, r.role_status"
                     " from project_group as g, person as p, role as r"
                     " where g.id = r.project_group_id and p.id = r.person_id"
-                    " and" + condition + " %(user)s",
+                    " and p.id = %(user)s",
                     userDict)
-            groups = self.cursor.fetchall()
+        groups = self.cursor.fetchall()
 
-            return (person, groups)
+        return (person, groups)
 
     def get_group_info(self, group):
         '''Retrieve information about the group.

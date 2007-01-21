@@ -42,10 +42,15 @@ class FASGroup(object):
 
 class SaFasIdentity(SqlAlchemyIdentity):
     def __init__(self, visit_key, user=None):
-        super(SaFasIdentity, self).__init__(self, visit_key, user)
+        super(SaFasIdentity, self).__init__(visit_key, user)
         self.fas = AccountSystem()
 
     def _get_user(self):
+        try:
+            return self._user
+        except AttributeError:
+            # User hasn't been set yet
+            pass
         visit = visit_class.get_by(visit_key = self.visit_key)
         if not visit:
             self._user = None

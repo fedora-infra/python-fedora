@@ -11,6 +11,7 @@ setup(name='python-fedora',
         keywords='Fedora Account System',
         url='http://www.fedoraproject.org/wiki/Infrastructure/AccountSystem2/API',
         packages=find_packages(),
+        include_package_data=True,
         #install_requires=['psycopg2'],
         extras_require = {'tg' : ['TurboGears >= 1.0b']},
         entry_points = {

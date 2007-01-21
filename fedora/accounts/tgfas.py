@@ -28,6 +28,8 @@ visit_identity_table = Table('visit_identity', metadata,
     Column('visit_key', String(40), primary_key=True),
     Column('user_id', Integer, index=True)
 )
+
+metadata.create_all(checkfirst=True)
 '''
 visit_identity_table = Table('visit_identity', metadata,
     Column('visit_key', String(40), primary_key=True),
