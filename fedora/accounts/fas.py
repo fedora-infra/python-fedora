@@ -33,6 +33,51 @@ dbName = 'fedorausers'
 # use 'live' rather than 'auth' as the key.
 dbAlias = 'live'
 
+def retrieve_db_info(dbKey):
+    '''Retrieve information to connect to the db from the filesystem.
+    
+    Arguments:
+    :dbKey: The string identifying the database entry in the config file.
+
+    Returns: A dictionary containing the values to use in connecting to the
+      database.
+
+    Exceptions:
+    :IOError: Returned if the config file is not on the system.
+    :AuthError: Returned if there is no record found for dbKey in the
+      config file.
+    '''
+    # Open a filehandle to the config file
+    if os.environ.has_key('HOME') and os.path.isfile(
+            os.path.join(os.environ.get('HOME'), '.fedora-db-access')):
+        fh = file(os.path.join(
+            os.environ.get('HOME'), '.fedora-db-access'), 'r')
+    elif os.path.isfile('/etc/sysconfig/fedora-db-access'):
+        fh = file('/etc/sysconfig/fedora-db-access', 'r')
+    else:
+        raise IOError, 'fedora-db-access file does not exist.'
+
+    # Read the file until we get the information for the requested db
+    dbInfo = None
+    for line in fh.readlines():
+        if not line:
+            break
+        line = line.strip()
+        if not line or line[0] == '#':
+            continue
+        pieces = line.split(None, 1)
+        if len(pieces) < 2:
+            continue
+        if pieces[0] == dbKey:
+            dbInfo = eval(pieces[1])
+            break
+
+    if fh:
+        fh.close()
+    if not dbInfo:
+        raise AuthError, 'Authentication source "%s" not configured' % (dbName,)
+    return dbInfo
+
 class AuthError(Exception):
     pass
 
@@ -42,51 +87,6 @@ class AccountSystem(object):
     This object provides an interface to the account system.  It allows you
     to connect to it for authentication, information retrieval, and etc.
     '''
-
-    def __retrieve_auth_db(self, dbKey):
-        '''Retrieve the auth db information from the filesystem.
-        
-        Arguments:
-        :dbKey: The string identifying the database entry in the config file.
-
-        Returns: A dictionary containing the values to use in connecting to the
-          database.
-
-        Exceptions:
-        :IOError: Returned if the config file is not on the system.
-        :AuthError: Returned if there is no record found for dbKey in the
-          config file.
-        '''
-        # Open a filehandle to the config file
-        if os.environ.has_key('HOME') and os.path.isfile(
-                os.path.join(os.environ.get('HOME'), '.fedora-db-access')):
-            fh = file(os.path.join(
-                os.environ.get('HOME'), '.fedora-db-access'), 'r')
-        elif os.path.isfile('/etc/sysconfig/fedora-db-access'):
-            fh = file('/etc/sysconfig/fedora-db-access', 'r')
-        else:
-            raise IOError, 'fedora-db-access file does not exist.'
-
-        # Read the file until we get the information for the requested db
-        dbInfo = None
-        for line in fh.readlines():
-            if not line:
-                break
-            line = line.strip()
-            if not line or line[0] == '#':
-                continue
-            pieces = line.split(None, 1)
-            if len(pieces) < 2:
-                continue
-            if pieces[0] == dbKey:
-                dbInfo = eval(pieces[1])
-                break
-
-        if fh:
-            fh.close()
-        if not dbInfo:
-            raise AuthError, 'Authentication source "%s" not configured' % (dbName,)
-        return dbInfo
 
     def __init__(self, user=None, password=None):
         '''Initialize the Account System.
@@ -102,7 +102,7 @@ class AccountSystem(object):
         '''
 
         try:
-            dbInfo = self.__retrieve_auth_db(dbAlias)
+            dbInfo = retrieve_db_info(dbAlias)
         except IOError:
             raise AuthError, 'Authentication config fedora-db-access is' \
                     ' not available'

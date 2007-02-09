@@ -1,14 +1,14 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.2
+Version:        0.2.1
 Release:        1%{?dist}
 Summary:        Python modules for integrating into Fedora Infrastructure
 
 Group:          Development/Languages
 License:        GPL
 URL:            http://www.fedoraproject.org/wiki/Infrastructure/AccountSystem2/API
-Source0:        http://www.tiki-lounge.com/~toshio/fedora/python-fedora-0.1.tar.gz
+Source0:        http://www.tiki-lounge.com/~toshio/fedora/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
@@ -42,7 +42,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Fri 9 Feb 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2-1
+* Fri Feb 9 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.1-1
+- Fix a brown paper bag issue.
+
+* Fri Feb 9 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2-1
 - Bug fix for tg sessions.
 
 * Thu Jan 18 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.1-1
