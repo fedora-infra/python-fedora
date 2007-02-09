@@ -25,6 +25,9 @@ from fedora.accounts.tgfas import VisitIdentity
 
 log = logging.getLogger(__name__)
 
+visit_identity_class = None
+fas = AccountSystem()
+
 class FASUser(object):
     def __init__(self, user, groupList):
         self.user_id = user['id']
@@ -43,7 +46,6 @@ class FASGroup(object):
 class SaFasIdentity(SqlAlchemyIdentity):
     def __init__(self, visit_key, user=None):
         super(SaFasIdentity, self).__init__(visit_key, user)
-        self.fas = AccountSystem()
 
     def _get_user(self):
         try:
@@ -51,15 +53,15 @@ class SaFasIdentity(SqlAlchemyIdentity):
         except AttributeError:
             # User hasn't been set yet
             pass
-        visit = visit_class.get_by(visit_key = self.visit_key)
+        visit = visit_identity_class.get_by(visit_key = self.visit_key)
         if not visit:
             self._user = None
             return None
-        user, groups = self.fas.get_user_info(visit.user_id)
+        user, groups = fas.get_user_info(visit.user_id)
         groupList = []
         for group in groups:
             groupList.append(FASGroup(group))
-        # Construct a user from fas.
+        # Construct a user from fas information
         self._user = FASUser(user, groupList)
         return self._user
     user = property(_get_user)
@@ -75,30 +77,31 @@ class SaFasIdentity(SqlAlchemyIdentity):
         if not self.visit_key:
             return
         try:
-            visit = visit_class.get_by(visit_key=self.visit_key)
-            visit_class.mapper.get_session().delete(visit)
+            visit = visit_identity_class.get_by(visit_key=self.visit_key)
+            visit.delete()
             # Clear the current identity
-            anon = SqlAlchemyIdentity(None,None)
+            anon = SaFasIdentity(None,None)
             identity.set_current_identity(anon)
         except:
             pass
         else:
-            visit_class.mapper.get_session().flush()
+            visit_identity_class.mapper.get_session().flush()
 
 class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
     '''
     IdentityProvider that authenticates users against the fedora account system
     '''
     def __init__(self):
-        self.fas = AccountSystem()
-        global visit_class
-        visit_class_path = config.get("identity.saprovider.model.visit", None)
-        log.info("Loading: %s", visit_class_path)
-        visit_class = load_class(visit_class_path)
+        global visit_identity_class
+        visit_identity_class_path = config.get("identity.saprovider.model.visit", None)
+        log.info("Loading: %s", visit_identity_class_path)
+        visit_identity_class = load_class(visit_identity_class_path)
 
     def validate_identity(self, user_name, password, visit_key):
+        visit_identity_class.mapper.get_session().flush()
+        visit_identity_class.mapper.get_session().clear()
         try:
-            verified = self.fas.verify_user_pass(user_name, password)
+            verified = fas.verify_user_pass(user_name, password)
         except fedora.accounts.AuthError, e:
             log.warning(e)
             return None
@@ -108,15 +111,15 @@ class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
 
         log.info("Login successful for %s" % user_name)
 
-        userId = self.fas.get_user_id(user_name)
+        userId = fas.get_user_id(user_name)
 
-        link = visit_class.get_by(visit_key=visit_key)
+        link = visit_identity_class.get_by(visit_key=visit_key)
         if not link:
-            link = visit_class(visit_key=visit_key, user_id = userId)
-            visit_class.mapper.get_session().save(link)
+            link = visit_identity_class(visit_key=visit_key, user_id = userId)
+            visit_identity_class.mapper.get_session().save(link)
         else:
             link.user_id = userId
-        visit_class.mapper.get_session().flush()
+        visit_identity_class.mapper.get_session().flush()
         return SaFasIdentity(visit_key)
 
     def validate_password(self, user, user_name, password):
@@ -131,7 +134,7 @@ class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
           Can return False for problems within the Account System as well.
         '''
         try:
-            result = self.fas.verify_user_pass(user_name, password)
+            result = fas.verify_user_pass(user_name, password)
         except None, e:
             log.warning('AccountSystem threw an exception: %s', e)
             return False
@@ -151,3 +154,9 @@ class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
             :permissions: a set of permission IDs
         '''
         return SaFasIdentity(visit_key)
+
+    def anonymous_identity(self):
+        return SaFasIdentity(None)
+
+    def authenticated_identity(self, user):
+        return SaFasIdentity(None, user)

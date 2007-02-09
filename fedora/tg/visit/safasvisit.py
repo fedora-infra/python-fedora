@@ -8,6 +8,8 @@ from turbogears.database import bind_meta_data
 import logging
 log = logging.getLogger("turbogears.identity.savisit")
 
+visit_class = None
+
 ### FIXME: This class is unnecessary once TG Bug #1238 is resolved
 # Basically, the current VisitManager talks to the app's session.  We don't
 # want to assume the app session as we might be talking to a site-wide
@@ -24,7 +26,7 @@ class SaFasVisitManager(SqlAlchemyVisitManager):
     def new_visit_with_key(self, visit_key):
         visit = visit_class(visit_key=visit_key,
                         expiry=datetime.now()+self.timeout)
-        visit_class.mapper.get_session().save(visit)
+        visit.save()
         visit_class.mapper.get_session().flush()
         return Visit(visit_key, True)
 

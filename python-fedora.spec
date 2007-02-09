@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.1
+Version:        0.2
 Release:        1%{?dist}
 Summary:        Python modules for integrating into Fedora Infrastructure
 
@@ -42,5 +42,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri 9 Feb 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2-1
+- Bug fix for tg sessions.
+
 * Thu Jan 18 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.1-1
-- Initil RPM Package.
+- Initial RPM Package.
