@@ -137,12 +137,18 @@ class AccountSystem(object):
             condition = ' id ='
         else:
             condition = ' username ='
-        self.cursor.execute('select password from person where'
+        self.cursor.execute('select id, password from person where'
             + condition + ' %(user)s', {'user' : user})
         person = self.cursor.fetchone()
 
         if not person:
             raise AuthError, 'No such user: %s' % user
+
+        if person['id'] < 10000 or person['password'] == '':
+            # This is a system user account or the password is blank (disabled)
+            # Don't allow this user to login.
+            return False
+
         if person['password'] == encrypt_password(password):
             return True
         else:

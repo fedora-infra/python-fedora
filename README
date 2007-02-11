@@ -2,8 +2,8 @@
 Fedora Accounts Integration Toolkit
 ===================================
 :Author: Toshio Kuratomi
-:Date: 17 Jan 2007
-:Version: 0.1
+:Date: 9 Feb 2007
+:Version: 0.2.1
 
 .. contents::
 
@@ -100,3 +100,10 @@ variables in your pkgname/config/app.cfg file::
   identity.failure_url="/login"
   identity.provider="safas"
   identity.saprovider.model.visit="fedora.accounts.tgfas.VisitIdentity"
+
+If you are using sqlobject for your applications db access you may also have to
+set this:
+  sqlalchemy.dburi='sqlite://'
+
+This is due to a bug in the way TurboGears handles the identity.  The dburi
+listed there won't be used within the web application.

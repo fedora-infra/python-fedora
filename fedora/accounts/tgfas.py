@@ -8,9 +8,7 @@ import fas
 
 # Retrieve the database visit information is stored in from the filesystem
 try:
-    ### FIXME: This won't work yet.  Have to set it up on db1 and the sysconfig
-    # file.
-    dbName = 'tgvisitdb'
+    dbName = 'fassession'
     dbInfo = fas.retrieve_db_info(dbName)
     dbInfo['dbname'] = dbName
     if dbInfo.has_key('password'):
@@ -20,11 +18,12 @@ try:
 
     dbUri = 'postgres://%(user)s%(password)s@%(host)s/%(dbname)s' % dbInfo
 except:
+    # Fallback to a local session db so we can operate locally
     dbUri = 'sqlite:////var/tmp/fasdb.sqlite'
 
-engine = create_engine(dburi)
+engine = create_engine(dbUri)
 metadata = DynamicMetaData()
-metadata.connect(dburi)
+metadata.connect(dbUri)
 
 context = SessionContext(lambda:create_session(bind_to=engine))
 
