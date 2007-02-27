@@ -107,3 +107,19 @@ set this:
 
 This is due to a bug in the way TurboGears handles the identity.  The dburi
 listed there won't be used within the web application.
+
+
+FAS v2
+======
+
+Mike McGrath is working on a FAS v2 interface that works with the new LDAP
+backend.
+
+FAS v2 -- TurboGears
+--------------------
+
+Configuring the TurboGears interface for fas v2 is almost the same as
+configuring it for fas v1.  Here are the differences::
+
+  identity.provider="safas2"
+  identity.saprovider.model.visit="fedora.accounts.tgfas2.VisitIdentity"

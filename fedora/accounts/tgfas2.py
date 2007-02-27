@@ -8,7 +8,7 @@ import fasLDAP
 
 # Retrieve the database visit information is stored in from the filesystem
 try:
-    dbName = 'fassession'
+    dbName = 'fassession2'
     dbInfo = fas.retrieve_db_info(dbName)
     dbInfo['dbname'] = dbName
     if dbInfo.has_key('password'):
