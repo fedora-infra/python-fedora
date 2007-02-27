@@ -135,7 +135,7 @@ class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
         '''
         try:
             result = fas.verify_user_pass(user_name, password)
-        except None, e:
+        except fedora.accounts.AuthError, e:
             log.warning('AccountSystem threw an exception: %s', e)
             return False
         return result

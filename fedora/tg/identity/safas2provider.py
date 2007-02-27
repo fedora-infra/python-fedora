@@ -38,9 +38,9 @@ class FASUser(object):
 
 class FASGroup(object):
     def __init__(self, group):
-        self.group_id = group.cn
-        self.group_name = group.cn
-        self.display_name = group.cn
+        self.group_id = group
+        self.group_name = group
+        self.display_name = group
         self.group = group
 
 class SaFasIdentity(SqlAlchemyIdentity):
@@ -57,7 +57,7 @@ class SaFasIdentity(SqlAlchemyIdentity):
         if not visit:
             self._user = None
             return None
-        user = Person.byUserName(visit.user_name)
+        user = Person.byUserName(visit.user_id)
         groups = Groups.byUserName(user.userName)
         groupList = []
         for group in groups:
@@ -137,7 +137,7 @@ class SaFas2IdentityProvider(SqlAlchemyIdentityProvider):
         '''
         try:
             result = Person.auth(user_name, password)
-        except None, e:
+        except Exception, e:
             log.warning('AccountSystem threw an exception: %s', e)
             return False
         return True
