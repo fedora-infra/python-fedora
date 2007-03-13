@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.2.90.2
+Version:        0.2.90.3
 Release:        1%{?dist}
 Summary:        Python modules for integrating into Fedora Infrastructure
 
