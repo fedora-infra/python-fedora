@@ -38,9 +38,9 @@ class FASUser(object):
 
 class FASGroup(object):
     def __init__(self, group):
-        self.group_id = group
-        self.group_name = group
-        self.display_name = group
+        self.group_id = group.cn
+        self.group_name = group.cn
+        self.display_name = group.cn
         self.group = group
 
 class SaFasIdentity(SqlAlchemyIdentity):
@@ -60,7 +60,7 @@ class SaFasIdentity(SqlAlchemyIdentity):
         user = Person.byUserName(visit.user_id)
         groups = Groups.byUserName(user.userName)
         groupList = []
-        for group in groups:
+        for group in groups.items():
             groupList.append(FASGroup(group))
         # Construct a user from fas information
         self._user = FASUser(user, groupList)
