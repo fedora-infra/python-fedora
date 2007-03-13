@@ -334,11 +334,14 @@ class AccountSystem(object):
 
     def get_group_info(self, group):
         '''Retrieve information about the group.
-        
-        (Not Yet Implemented)
         '''
-        raise NotImplementedError
-        pass
+        self.cursor.execute("select * from project-group where id = %(group)s",
+                dict('group' : group))
+        result = self.cursor.fetchone()
+        if result:
+            return result[0]
+        else:
+            raise AuthError, 'No such group: %s' % group
 
     def modify_user(self, user):
         '''Change information for user. (Admin or owner)
