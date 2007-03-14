@@ -339,7 +339,7 @@ class AccountSystem(object):
         '''
         cursor = self.db.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cursor.execute("select * from project-group where id = %(group)s",
-                dict('group' : group))
+                dict('group', group))
         result = cursor.fetchone()
         if result:
             return result[0]
