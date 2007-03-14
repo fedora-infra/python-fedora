@@ -14,6 +14,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  python-devel
 Requires: python-psycopg2
+Requires: python-sqlalchemy
 
 %description
 Python modules that allow your program to integrate with Fedora Infrastructure.
@@ -45,6 +46,8 @@ rm -rf $RPM_BUILD_ROOT
 * Wed Mar 14 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.3-1
 - Fix a bug in exception handling.
 - Fix a bug where we were not seeing updates to the FAS.
+  + In order to do this efficiently we also introduce a dependency on
+    sqlalchemy (for database connection pooling).
 
 * Fri Feb 9 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.2-1
 - Experimental fas2 support.

@@ -14,6 +14,8 @@ to address here:
   will be required when we move to LDAP.
 * Separate out the website template code.
 * Use psycopg2 instead of pgdb for performance and features.
+* Create a pool of connections so we can efficiently call the fas from multiple
+  threads.
 '''
 __version__='0.1'
 
@@ -22,6 +24,8 @@ adminUserId = 100001
 import os
 import psycopg2
 import psycopg2.extras
+import sqlalchemy.pool as pool
+psycopg2 = pool.manage(psycopg2)
 
 # When we encrypt the passwords in the database change to this:
 # encrypt_password = lambda pw: sha.new(pw).hexdigest()
@@ -106,18 +110,39 @@ class AccountSystem(object):
         except IOError:
             raise AuthError, 'Authentication config fedora-db-access is' \
                     ' not available'
-        # Some db connections have no password
-        dbPass = dbInfo.get('password')
 
-        # Open a connection to the db
-        self.db = psycopg2.connect(database=dbName, host=dbInfo['host'],
-                user=dbInfo['user'], password=dbPass)
+        # Load the database information into internal values
+        self.dbName = dbName
+        self.dbHost = dbInfo['host']
+        self.dbUser = dbInfo['user']
+        # Some db connections have no password
+        self.dbPass = dbInfo.get('password')
 
         # Set the user that is accessing the account system.
         if user and password:
             self.change_user(user, password)
         else:
             self.userId = None
+
+    @property
+    def dbCmd(self):
+        '''Return an isolated db cursor to use for the query.
+
+        Some notes:
+        Since we are using sqlalchemy.pool to manage psycopg2,
+        it's pretty efficient to create a new connection for every query.
+
+        We return a new query eveytime so that different methods won't
+        interfere with each other.  (For instance, if one has to rollback while
+        a separate thread has data it hasn't committed yet.)
+
+        Defining this as a property so referencing self.dbCmd will retrieve a
+        new database cursor as if it was an attribute.
+        '''
+        # Open a connection to the database
+        db = psycopg2.connect(database=self.dbName, host=self.dbHost,
+                user=self.dbUser, password=self.dbPass)
+        return db.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     def verify_user_pass(self, user, password):
         '''Verify that the username-password combination are valid.
@@ -132,7 +157,7 @@ class AccountSystem(object):
         Exceptions:
         :AuthError: Returned if the user does not exist.
         '''
-        cursor = self.db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cursor = self.dbCmd
         if isinstance(user, int):
             condition = ' id ='
         else:
@@ -185,7 +210,7 @@ class AccountSystem(object):
         Exceptions:
         :AuthError: The user does not exist.
         '''
-        cursor = self.db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cursor = self.dbCmd
         cursor.execute('select id from person'
             ' where username = %(username)s', {'username' : username})
         result = cursor.fetchone()
@@ -268,7 +293,7 @@ class AccountSystem(object):
 
         userDict = {'user' : user}
 
-        cursor = self.db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cursor = self.dbCmd
         if not self.userId:
             # Retrieve publically viewable information
             cursor.execute('select id, username, human_name, gpg_keyid,'
@@ -337,8 +362,8 @@ class AccountSystem(object):
     def get_group_info(self, group):
         '''Retrieve information about the group.
         '''
-        cursor = self.db.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cursor.execute("select * from project-group where id = %(group)s",
+        cursor = self.dbCmd
+        cursor.execute("select * from project_group where id = %(group)s",
                 dict('group', group))
         result = cursor.fetchone()
         if result:
