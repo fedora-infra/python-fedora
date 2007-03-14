@@ -267,7 +267,7 @@ class AccountSystem(object):
             user = self.get_user_id(user)
 
         userDict = {'user' : user}
-.
+
         cursor = self.db.cursor(cursor_factory=psycopg2.extras.DictCursor)
         if not self.userId:
             # Retrieve publically viewable information

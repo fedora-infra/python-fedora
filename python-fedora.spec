@@ -42,6 +42,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Mar 14 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.3-1
+- Fix a bug in exception handling.
+- Fix a bug where we were not seeing updates to the FAS.
+
 * Fri Feb 9 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.2-1
 - Experimental fas2 support.
 
