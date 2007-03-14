@@ -112,7 +112,6 @@ class AccountSystem(object):
         # Open a connection to the db
         self.db = psycopg2.connect(database=dbName, host=dbInfo['host'],
                 user=dbInfo['user'], password=dbPass)
-        self.cursor = self.db.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
         # Set the user that is accessing the account system.
         if user and password:
@@ -133,13 +132,14 @@ class AccountSystem(object):
         Exceptions:
         :AuthError: Returned if the user does not exist.
         '''
+        cursor = self.db.cursor(cursor_factory=psycopg2.extras.DictCursor)
         if isinstance(user, int):
             condition = ' id ='
         else:
             condition = ' username ='
-        self.cursor.execute('select id, password from person where'
+        cursor.execute('select id, password from person where'
             + condition + ' %(user)s', {'user' : user})
-        person = self.cursor.fetchone()
+        person = cursor.fetchone()
 
         if not person:
             raise AuthError, 'No such user: %s' % user
@@ -185,9 +185,10 @@ class AccountSystem(object):
         Exceptions:
         :AuthError: The user does not exist.
         '''
-        self.cursor.execute('select id from person'
+        cursor = self.db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cursor.execute('select id from person'
             ' where username = %(username)s', {'username' : username})
-        result = self.cursor.fetchone()
+        result = cursor.fetchone()
         if result:
             return result[0]
         else:
@@ -266,15 +267,16 @@ class AccountSystem(object):
             user = self.get_user_id(user)
 
         userDict = {'user' : user}
-
+.
+        cursor = self.db.cursor(cursor_factory=psycopg2.extras.DictCursor)
         if not self.userId:
             # Retrieve publically viewable information
-            self.cursor.execute('select id, username, human_name, gpg_keyid,'
+            cursor.execute('select id, username, human_name, gpg_keyid,'
                 ' comments, affiliation, creation, ircnick'
                 ' from person where id = %(user)s',
                 userDict)
-            person = self.cursor.fetchone()
-            self.cursor.execute("select g.id, g.name, r.role_type, r.creation"
+            person = cursor.fetchone()
+            cursor.execute("select g.id, g.name, r.role_type, r.creation"
                 " from project_group as g, person as p, role as r"
                 " where g.id = r.project_group_id and p.id = r.person_id"
                 " and r.role_status = 'approved' and p.id = %(user)s",
@@ -284,14 +286,14 @@ class AccountSystem(object):
             if user == self.userId:
                 # The request is from the user for information about himself,
                 # retrieve everything except internal_comments
-                self.cursor.execute("select id, username, email, human_name,"
+                cursor.execute("select id, username, email, human_name,"
                     " gpg_keyid, ssh_key, password, comments, postal_address,"
                     " telephone, facsimile, affiliation, creation,"
                     " approval_status, wiki_prefs, ircnick"
                     " where id = %(user)s",
                     userDict)
-                person = self.cursor.fetchone()
-                self.cursor.execute("select g.id, g.name, r.role_type,"
+                person = cursor.fetchone()
+                cursor.execute("select g.id, g.name, r.role_type,"
                     " r.creation, g.owner_id, g.needs_sponsor,"
                     " g.user_can_remove, r.role_status"
                     " from project_group as g, person as p, role as r"
@@ -300,10 +302,10 @@ class AccountSystem(object):
                     userDict)
             elif self.userId == adminUserId:
                 # Admin can view everything
-                self.cursor.execute("select * from person where id = %(user)s",
+                cursor.execute("select * from person where id = %(user)s",
                         userDict)
-                person = self.cursor.fetchone()
-                self.cursor.execute("select g.id, g.name, r.role_type,"
+                person = cursor.fetchone()
+                cursor.execute("select g.id, g.name, r.role_type,"
                         " r.creation, g.owner_id, g.needs_sponsor,"
                         " g.user_can_remove, r.role_status, r.internal_comments"
                         " from project_group as g, person as p, role as r"
@@ -314,30 +316,31 @@ class AccountSystem(object):
             else:
                 # Retrieve everything but password and internal_comments for
                 # another user in the account system
-                self.cursor.execute("select id, username, email, human_name,"
+                cursor.execute("select id, username, email, human_name,"
                     " gpg_keyid, ssh_key, comments, postal_address,"
                     " telephone, facsimile, affiliation, creation,"
                     " approval_status, wiki_prefs, ircnick"
                     " from person where id = %(user)s",
                     userDict)
-                person = self.cursor.fetchone()
-                self.cursor.execute("select g.id, g.name, r.role_type,"
+                person = cursor.fetchone()
+                cursor.execute("select g.id, g.name, r.role_type,"
                     " r.creation, g.owner_id, g.needs_sponsor,"
                     " g.user_can_remove, r.role_status"
                     " from project_group as g, person as p, role as r"
                     " where g.id = r.project_group_id and p.id = r.person_id"
                     " and p.id = %(user)s",
                     userDict)
-        groups = self.cursor.fetchall()
+        groups = cursor.fetchall()
 
         return (person, groups)
 
     def get_group_info(self, group):
         '''Retrieve information about the group.
         '''
-        self.cursor.execute("select * from project-group where id = %(group)s",
+        cursor = self.db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cursor.execute("select * from project-group where id = %(group)s",
                 dict('group' : group))
-        result = self.cursor.fetchone()
+        result = cursor.fetchone()
         if result:
             return result[0]
         else:
