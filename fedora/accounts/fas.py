@@ -364,10 +364,10 @@ class AccountSystem(object):
         '''
         cursor = self.dbCmd
         cursor.execute("select * from project_group where id = %(group)s",
-                dict('group', group))
+                dict(group=group))
         result = cursor.fetchone()
         if result:
-            return result[0]
+            return result
         else:
             raise AuthError, 'No such group: %s' % group
 
