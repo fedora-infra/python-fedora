@@ -22,6 +22,7 @@ from fedora.accounts.fasLDAP import UserAccount, Person, Groups
 from turbogears.identity.saprovider import *
 from turbogears import config
 from fedora.accounts.tgfas2 import VisitIdentity
+from fedora.accounts.fas2 import AuthError
 
 log = logging.getLogger(__name__)
 
@@ -106,7 +107,7 @@ class SaFas2IdentityProvider(SqlAlchemyIdentityProvider):
 
         try:
             verified = self.validate_password(user, user_name, password)
-        except fedora.accounts.AuthError, e:
+        except AuthError, e:
             log.warning(e)
             return None
         if not verified:

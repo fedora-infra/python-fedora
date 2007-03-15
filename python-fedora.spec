@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.2.90.3
+Version:        0.2.90.4
 Release:        1%{?dist}
 Summary:        Python modules for integrating into Fedora Infrastructure
 
@@ -43,6 +43,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Mar 14 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.4-1
+- Fix a bug with get_group_info().
+- Fix a bug in exception handling in the turbogears identity handler.
+
 * Wed Mar 14 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.3-1
 - Fix a bug in exception handling.
 - Fix a bug where we were not seeing updates to the FAS.

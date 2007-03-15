@@ -22,6 +22,7 @@ from fedora.accounts.fas import AccountSystem
 from turbogears.identity.saprovider import *
 from turbogears import config
 from fedora.accounts.tgfas import VisitIdentity
+from fedora.accounts.fas import AuthError
 
 log = logging.getLogger(__name__)
 
@@ -102,7 +103,7 @@ class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
         visit_identity_class.mapper.get_session().clear()
         try:
             verified = fas.verify_user_pass(user_name, password)
-        except fedora.accounts.AuthError, e:
+        except AuthError, e:
             log.warning(e)
             return None
         if not verified:
@@ -135,7 +136,7 @@ class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
         '''
         try:
             result = fas.verify_user_pass(user_name, password)
-        except fedora.accounts.AuthError, e:
+        except AuthError, e:
             log.warning('AccountSystem threw an exception: %s', e)
             return False
         return result
