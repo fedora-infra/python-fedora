@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.2.90.4
+Version:        0.2.90.5
 Release:        1%{?dist}
 Summary:        Python modules for integrating into Fedora Infrastructure
 
@@ -43,6 +43,12 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Apr 3 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.5-1
+- Update to latest fasLDAP.py.
+- Return bugzilla email address.
+- Add a method to lookup by email address.  This includes bugzilla email
+  addresses given in owners.list.
+
 * Wed Mar 14 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.4-1
 - Fix a bug with get_group_info().
 - Fix a bug in exception handling in the turbogears identity handler.

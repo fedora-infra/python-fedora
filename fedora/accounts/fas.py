@@ -124,6 +124,51 @@ class AccountSystem(object):
         else:
             self.userId = None
 
+        # Preseed a list of FAS accounts with bugzilla addresses
+        # This allows us to specify a different email for bugzilla than is
+        # in the FAS db.  It is a hack, however, until FAS has a field for the
+        # bugzilla address.
+        self.__bugzilla_email = {
+                # Dan Berrange: dan@berrange.com
+                100447: 'berrange@redhat.com',
+                # Konstantin Ryabitsev: mricon@gmail.com
+                100029: 'icon@fedoraproject.org',
+                # Sean Reifschneider: jafo@tummy.com
+                100488: 'jafo-redhat@tummy.com',
+                # Karen Pease: karen-pease@uiowa.edu
+                100281: 'meme@daughtersoftiresias.org',
+                # Robert Scheck: redhat@linuxnetz.de
+                100093: 'redhat-bugzilla@linuxnetz.de',
+                # Scott Bakers: bakers@web-ster.com
+                100881: 'scott@perturb.org',
+                # Colin Charles: byte@aeon.com.my
+                100014: 'byte@fedoraproject.org',
+                # W. Michael Petullo: mike@flyn.org
+                100136: 'redhat@flyn.org',
+                # Elliot Lee: sopwith+fedora@gmail.com
+                100060: 'sopwith@redhat.com',
+                }
+        # A few people have an email account that is used in owners.list but
+        # have setup a bugzilla account for their primary account system email
+        # address now.  Map these here.
+        self.__alternate_email = {
+                # Damien Durand: splinux25@gmail.com
+                'splinux@fedoraproject.org': 100406,
+                # Kevin Fenzi: kevin@tummy.com
+                'kevin-redhat-bugzilla@tummy.com': 100037,
+                }
+        for bugzillaMap in self.__bugzilla_preseed.items():
+            self.__alternate_email[bugzillaMap[1]] = bugzillaMap[0]
+
+        # We use the two mappings as follows::
+        # When looking up a user by email, use __alternate_email.
+        # When looking up a bugzilla email address use __bugzilla_email.
+        #
+        # This allows us to parse in owners.list and have a value for all the
+        # emails in there while not using the alternate email unless it is
+        # the only option.
+
+
     @property
     def dbCmd(self):
         '''Return an isolated db cursor to use for the query.
@@ -219,6 +264,29 @@ class AccountSystem(object):
         else:
             raise AuthError, 'No such user: %s' % username
 
+    def get_user_id_from_email(self, email):
+        '''Retrieve a userid from an email address.
+
+        Arguments:
+        :email: The email address to lookup.
+        
+        Exceptions:
+        :AuthError: The user does not exist.
+
+        Returns: The userid to which hte email belongs.
+        '''
+        cursor = self.dbCmd
+        cursor.execute('select id from person'
+            ' where email = %(email)s', {'email' : email})
+        result = cursor.fetchone()
+        if result:
+            return result[0]
+        else:
+            # Try running it through our list of oddball emails:
+            if email in self.__alternate_email:
+                return self.__alternate_email[email]
+            raise AuthError, 'No such user: %s' % username
+
     def get_user_info(self, user=None):
         ### FIXME: Check the information we return against the FAS2 schema.
         # Make sure the data we're returning has a field there that's easy to
@@ -250,6 +318,7 @@ class AccountSystem(object):
         If an authenticated user is requesting the information, you get this
         additional information:
           :email: Email address
+          :bugzilla_email: Email address used in bugzilla
           :ssh_key: Ssh public key
           :postal_address: Mailing address
           :telephone: Telephone number
@@ -356,6 +425,10 @@ class AccountSystem(object):
                     " and p.id = %(user)s",
                     userDict)
         groups = cursor.fetchall()
+
+        # Fill the bugzilla_email field.
+        person['buzilla_email'] = self.__bugzilla_email.get(user,
+                person['email'])
 
         return (person, groups)
 
