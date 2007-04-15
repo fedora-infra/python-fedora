@@ -157,7 +157,7 @@ class AccountSystem(object):
                 # Kevin Fenzi: kevin@tummy.com
                 'kevin-redhat-bugzilla@tummy.com': 100037,
                 }
-        for bugzillaMap in self.__bugzilla_preseed.items():
+        for bugzillaMap in self.__bugzilla_email.items():
             self.__alternate_email[bugzillaMap[1]] = bugzillaMap[0]
 
         # We use the two mappings as follows::
@@ -301,6 +301,7 @@ class AccountSystem(object):
         for the general public:
           :id: User id in the account system
           :username: The public username
+          :bugzilla_email: Email address used in bugzilla
           :human_name: The user's common name
           :gpg_keyid: The gpg id of the user
           :comments: Public comments from the user
@@ -318,7 +319,6 @@ class AccountSystem(object):
         If an authenticated user is requesting the information, you get this
         additional information:
           :email: Email address
-          :bugzilla_email: Email address used in bugzilla
           :ssh_key: Ssh public key
           :postal_address: Mailing address
           :telephone: Telephone number
