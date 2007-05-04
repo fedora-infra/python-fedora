@@ -301,6 +301,7 @@ class AccountSystem(object):
         for the general public:
           :id: User id in the account system
           :username: The public username
+          :email: Email address
           :bugzilla_email: Email address used in bugzilla
           :human_name: The user's common name
           :gpg_keyid: The gpg id of the user
@@ -318,7 +319,6 @@ class AccountSystem(object):
 
         If an authenticated user is requesting the information, you get this
         additional information:
-          :email: Email address
           :ssh_key: Ssh public key
           :postal_address: Mailing address
           :telephone: Telephone number
@@ -365,7 +365,7 @@ class AccountSystem(object):
         cursor = self.dbCmd
         if not self.userId:
             # Retrieve publically viewable information
-            cursor.execute('select id, username, human_name, gpg_keyid,'
+            cursor.execute('select id, username, email, human_name, gpg_keyid,'
                 ' comments, affiliation, creation, ircnick'
                 ' from person where id = %(user)s',
                 userDict)
