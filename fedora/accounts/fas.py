@@ -365,9 +365,10 @@ class AccountSystem(object):
         cursor = self.dbCmd
         if not self.userId:
             # Retrieve publically viewable information
-            cursor.execute('select id, username, email, human_name, gpg_keyid,'
-                ' comments, affiliation, creation, ircnick'
-                ' from person where id = %(user)s',
+            cursor.execute("select '' as bugzilla_email, id, username, email,"
+                " human_name, gpg_keyid, comments, affiliation, creation,"
+                " ircnick"
+                " from person where id = %(user)s",
                 userDict)
             person = cursor.fetchone()
             cursor.execute("select g.id, g.name, r.role_type, r.creation"
@@ -380,10 +381,10 @@ class AccountSystem(object):
             if user == self.userId:
                 # The request is from the user for information about himself,
                 # retrieve everything except internal_comments
-                cursor.execute("select id, username, email, human_name,"
-                    " gpg_keyid, ssh_key, password, comments, postal_address,"
-                    " telephone, facsimile, affiliation, creation,"
-                    " approval_status, wiki_prefs, ircnick"
+                cursor.execute("select '' as bugzilla_email, id, username,"
+                    " email, human_name, gpg_keyid, ssh_key, password,"
+                    " comments, postal_address, telephone, facsimile, ircnick"
+                    " affiliation, creation, approval_status, wiki_prefs"
                     " where id = %(user)s",
                     userDict)
                 person = cursor.fetchone()
@@ -396,7 +397,7 @@ class AccountSystem(object):
                     userDict)
             elif self.userId == adminUserId:
                 # Admin can view everything
-                cursor.execute("select * from person where id = %(user)s",
+                cursor.execute("select '' as bugzilla_email, * from person where id = %(user)s",
                         userDict)
                 person = cursor.fetchone()
                 cursor.execute("select g.id, g.name, r.role_type,"
@@ -410,10 +411,10 @@ class AccountSystem(object):
             else:
                 # Retrieve everything but password and internal_comments for
                 # another user in the account system
-                cursor.execute("select id, username, email, human_name,"
-                    " gpg_keyid, ssh_key, comments, postal_address,"
-                    " telephone, facsimile, affiliation, creation,"
-                    " approval_status, wiki_prefs, ircnick"
+                cursor.execute("select '' as bugzilla_email, id, username,"
+                    " email, human_name, gpg_keyid, ssh_key, comments,"
+                    " postal_address, telephone, facsimile, affiliation,"
+                    " creation, approval_status, wiki_prefs, ircnick"
                     " from person where id = %(user)s",
                     userDict)
                 person = cursor.fetchone()
@@ -427,7 +428,10 @@ class AccountSystem(object):
         groups = cursor.fetchall()
 
         # Fill the bugzilla_email field.
-        person['buzilla_email'] = self.__bugzilla_email.get(user,
+        # NOTE:  Because of a bug in the psycopg2 DictCursor, you have to use
+        # list notation to set values even though you can use dict keys to
+        # retrieve them.
+        person[0] = self.__bugzilla_email.get(user,
                 person['email'])
 
         return (person, groups)
