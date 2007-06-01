@@ -25,7 +25,7 @@ import os
 import psycopg2
 import psycopg2.extras
 import sqlalchemy.pool as pool
-psycopg2 = pool.manage(psycopg2)
+psycopg2 = pool.manage(psycopg2, pool_size=5, max_overflow=15)
 
 # When we encrypt the passwords in the database change to this:
 # encrypt_password = lambda pw: sha.new(pw).hexdigest()
@@ -82,7 +82,13 @@ def retrieve_db_info(dbKey):
         raise AuthError, 'Authentication source "%s" not configured' % (dbName,)
     return dbInfo
 
-class AuthError(Exception):
+class FASError(Exception):
+    pass
+
+class AuthError(FASError):
+    pass
+
+class DBError(FASError):
     pass
 
 class AccountSystem(object):
@@ -168,6 +174,22 @@ class AccountSystem(object):
         # emails in there while not using the alternate email unless it is
         # the only option.
 
+    def _raise_dberror(self):
+        '''Clear the connection pool and raise an error.
+
+        When a db error occurs, we want to clear the connection pool so there's
+        no stale connections to fail at a later date.  Also rethrow the
+        exception as a DBError so calling code doesn't need to worry about
+        what database is being used to store the fas info.
+        '''
+        # Clear the connections since they are probably targetting a closed
+        # connection.
+        psycopg2.dispose(database=self.dbName, host=self.dbHost,
+                user=self.dbUser, password=self.dbPass)
+
+        # Raise the exception as an AuthError as calling code doesn't need to
+        # deal with which db was used.
+        raise DBError(traceback.format_exc())
 
     @property
     def dbCmd(self):
@@ -207,9 +229,12 @@ class AccountSystem(object):
             condition = ' id ='
         else:
             condition = ' username ='
-        cursor.execute('select id, password from person where'
-            + condition + ' %(user)s', {'user' : user})
-        person = cursor.fetchone()
+        try:
+            cursor.execute('select id, password from person where'
+                + condition + ' %(user)s', {'user' : user})
+            person = cursor.fetchone()
+        except psycopg2.DatabaseError, e:
+            self._raise_dberror()
 
         if not person:
             raise AuthError, 'No such user: %s' % user
@@ -256,9 +281,12 @@ class AccountSystem(object):
         :AuthError: The user does not exist.
         '''
         cursor = self.dbCmd
-        cursor.execute('select id from person'
-            ' where username = %(username)s', {'username' : username})
-        result = cursor.fetchone()
+        try:
+            cursor.execute('select id from person'
+                ' where username = %(username)s', {'username' : username})
+            result = cursor.fetchone()
+        except psycopg2.DatabaseError, e:
+            self._raise_dberror()
         if result:
             return result[0]
         else:
@@ -276,9 +304,12 @@ class AccountSystem(object):
         Returns: The userid to which hte email belongs.
         '''
         cursor = self.dbCmd
-        cursor.execute('select id from person'
-            ' where email = %(email)s', {'email' : email})
-        result = cursor.fetchone()
+        try:
+            cursor.execute('select id from person'
+                ' where email = %(email)s', {'email' : email})
+            result = cursor.fetchone()
+        except psycopg2.DatabaseError, e:
+            self._raise_dberror()
         if result:
             return result[0]
         else:
@@ -365,67 +396,90 @@ class AccountSystem(object):
         cursor = self.dbCmd
         if not self.userId:
             # Retrieve publically viewable information
-            cursor.execute("select '' as bugzilla_email, id, username, email,"
-                " human_name, gpg_keyid, comments, affiliation, creation,"
-                " ircnick"
-                " from person where id = %(user)s",
-                userDict)
-            person = cursor.fetchone()
-            cursor.execute("select g.id, g.name, r.role_type, r.creation"
-                " from project_group as g, person as p, role as r"
-                " where g.id = r.project_group_id and p.id = r.person_id"
-                " and r.role_status = 'approved' and p.id = %(user)s",
-                userDict)
+            try:
+                cursor.execute("select '' as bugzilla_email, id, username,"
+                    " email, human_name, gpg_keyid, comments, affiliation,"
+                    " creation, ircnick"
+                    " from person where id = %(user)s",
+                    userDict)
+                person = cursor.fetchone()
+                cursor.execute("select g.id, g.name, r.role_type, r.creation"
+                    " from project_group as g, person as p, role as r"
+                    " where g.id = r.project_group_id and p.id = r.person_id"
+                    " and r.role_status = 'approved' and p.id = %(user)s",
+                    userDict)
+            except psycopg2.DatabaseError, e:
+                self._raise_dberror()
 
         else:
             if user == self.userId:
                 # The request is from the user for information about himself,
                 # retrieve everything except internal_comments
-                cursor.execute("select '' as bugzilla_email, id, username,"
-                    " email, human_name, gpg_keyid, ssh_key, password,"
-                    " comments, postal_address, telephone, facsimile, ircnick"
-                    " affiliation, creation, approval_status, wiki_prefs"
-                    " where id = %(user)s",
-                    userDict)
-                person = cursor.fetchone()
-                cursor.execute("select g.id, g.name, r.role_type,"
-                    " r.creation, g.owner_id, g.needs_sponsor,"
-                    " g.user_can_remove, r.role_status"
-                    " from project_group as g, person as p, role as r"
-                    " where g.id = r.project_group_id and p.id = r.person_id"
-                    " and p.id = %(user)s",
-                    userDict)
-            elif self.userId == adminUserId:
-                # Admin can view everything
-                cursor.execute("select '' as bugzilla_email, * from person where id = %(user)s",
+                try:
+                    cursor.execute("select '' as bugzilla_email, id, username,"
+                        " email, human_name, gpg_keyid, ssh_key, password,"
+                        " comments, postal_address, telephone, facsimile,"
+                        " ircnick, affiliation, creation, approval_status,"
+                        " wiki_prefs"
+                        " where id = %(user)s",
                         userDict)
-                person = cursor.fetchone()
-                cursor.execute("select g.id, g.name, r.role_type,"
+                    person = cursor.fetchone()
+                    cursor.execute("select g.id, g.name, r.role_type,"
                         " r.creation, g.owner_id, g.needs_sponsor,"
-                        " g.user_can_remove, r.role_status, r.internal_comments"
+                        " g.user_can_remove, r.role_status"
                         " from project_group as g, person as p, role as r"
                         " where g.id = r.project_group_id"
-                        " and p.id = r.person_id"
-                        " and p.id = %(user)s",
+                        " and p.id = r.person_id and p.id = %(user)s",
                         userDict)
+                except psycopg2.DatabaseError, e:
+                    self._raise_dberror()
+
+            elif self.userId == adminUserId:
+                # Admin can view everything
+                try:
+                    cursor.execute("select '' as bugzilla_email, * from person"
+                            " where id = %(user)s",
+                            userDict)
+                    person = cursor.fetchone()
+                    cursor.execute("select g.id, g.name, r.role_type,"
+                            " r.creation, g.owner_id, g.needs_sponsor,"
+                            " g.user_can_remove, r.role_status,"
+                            " r.internal_comments"
+                            " from project_group as g, person as p, role as r"
+                            " where g.id = r.project_group_id"
+                            " and p.id = r.person_id"
+                            " and p.id = %(user)s",
+                            userDict)
+                except psycopg2.DatabaseError, e:
+                    self._raise_dberror()
             else:
                 # Retrieve everything but password and internal_comments for
                 # another user in the account system
-                cursor.execute("select '' as bugzilla_email, id, username,"
-                    " email, human_name, gpg_keyid, ssh_key, comments,"
-                    " postal_address, telephone, facsimile, affiliation,"
-                    " creation, approval_status, wiki_prefs, ircnick"
-                    " from person where id = %(user)s",
-                    userDict)
-                person = cursor.fetchone()
-                cursor.execute("select g.id, g.name, r.role_type,"
-                    " r.creation, g.owner_id, g.needs_sponsor,"
-                    " g.user_can_remove, r.role_status"
-                    " from project_group as g, person as p, role as r"
-                    " where g.id = r.project_group_id and p.id = r.person_id"
-                    " and p.id = %(user)s",
-                    userDict)
-        groups = cursor.fetchall()
+                try:
+                    cursor.execute("select '' as bugzilla_email, id, username,"
+                        " email, human_name, gpg_keyid, ssh_key, comments,"
+                        " postal_address, telephone, facsimile, affiliation,"
+                        " creation, approval_status, wiki_prefs, ircnick"
+                        " from person where id = %(user)s",
+                        userDict)
+                    person = cursor.fetchone()
+                    cursor.execute("select g.id, g.name, r.role_type,"
+                        " r.creation, g.owner_id, g.needs_sponsor,"
+                        " g.user_can_remove, r.role_status"
+                        " from project_group as g, person as p, role as r"
+                        " where g.id = r.project_group_id"
+                        " and p.id = r.person_id and p.id = %(user)s",
+                        userDict)
+                except psycopg2.DatabaseError, e:
+                    self._raise_dberror()
+        try:
+            groups = cursor.fetchall()
+        except psycopg2.DatabaseError, e:
+            self._raise_dberror()
+
+        # We couldn't find any records for this person
+        if not person:
+            raise AuthError, 'No such user %(user)s' % userDict
 
         # Fill the bugzilla_email field.
         # NOTE:  Because of a bug in the psycopg2 DictCursor, you have to use
@@ -440,9 +494,12 @@ class AccountSystem(object):
         '''Retrieve information about the group.
         '''
         cursor = self.dbCmd
-        cursor.execute("select * from project_group where id = %(group)s",
-                dict(group=group))
-        result = cursor.fetchone()
+        try:
+            cursor.execute("select * from project_group where id = %(group)s",
+                    dict(group=group))
+            result = cursor.fetchone()
+        except psycopg2.databaseerror, e:
+            self._raise_dberror()
         if result:
             return result
         else:

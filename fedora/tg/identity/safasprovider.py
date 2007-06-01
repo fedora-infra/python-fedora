@@ -23,6 +23,7 @@ from turbogears.identity.saprovider import *
 from turbogears import config
 from fedora.accounts.tgfas import VisitIdentity
 from fedora.accounts.fas import AuthError
+from fedora.accounts.fas import DBError
 
 log = logging.getLogger(__name__)
 
@@ -55,10 +56,18 @@ class SaFasIdentity(SqlAlchemyIdentity):
             # User hasn't been set yet
             pass
         visit = visit_identity_class.get_by(visit_key = self.visit_key)
+
+        # If the user isn't logged in or we are unable to get information from
+        # about them from the fas database, return empty None
         if not visit:
             self._user = None
             return None
-        user, groups = fas.get_user_info(visit.user_id)
+        try:
+            user, groups = fas.get_user_info(visit.user_id)
+        except DBError:
+            self._user = None
+            return None
+
         groupList = []
         for group in groups:
             groupList.append(FASGroup(group))
@@ -99,12 +108,23 @@ class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
         visit_identity_class = load_class(visit_identity_class_path)
 
     def validate_identity(self, user_name, password, visit_key):
+        '''
+        Look up the identity represented by user_name and determine whether the
+        password is correct.
+
+        Must return either None if the credentials weren't valid or an object
+        with the following properties:
+            user_name: original user name
+            user: a provider dependant object (TG_User or similar)
+            groups: a set of group IDs
+            permissions: a set of permission IDs
+        '''
         visit_identity_class.mapper.get_session().flush()
         visit_identity_class.mapper.get_session().clear()
         try:
             verified = fas.verify_user_pass(user_name, password)
-        except AuthError, e:
-            log.warning(e)
+        except (AuthError, DBError), e:
+            log.warning('Error %s for %s' % (e, user_name))
             return None
         if not verified:
             log.warning('Passwords do not match for user: %s', user_name)
@@ -112,7 +132,11 @@ class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
 
         log.info("Login successful for %s" % user_name)
 
-        userId = fas.get_user_id(user_name)
+        try:
+            userId = fas.get_user_id(user_name)
+        except DBError, e:
+            log.warning('Error %s for %s' % (e, user_name))
+            return None
 
         link = visit_identity_class.get_by(visit_key=visit_key)
         if not link:
@@ -136,8 +160,9 @@ class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
         '''
         try:
             result = fas.verify_user_pass(user_name, password)
-        except AuthError, e:
-            log.warning('AccountSystem threw an exception: %s', e)
+        except (AuthError, DBError), e:
+            log.warning('AccountSystem threw an exception: %s for %s', (e,
+                user_name))
             return False
         return result
 

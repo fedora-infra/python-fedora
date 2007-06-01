@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.2.90.7
+Version:        0.2.90.8
 Release:        1%{?dist}
 Summary:        Python modules for integrating into Fedora Infrastructure
 
@@ -43,6 +43,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Apr 14 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.8-1
+- Catch some exceptions when the database connection dies.
+
 * Sun Apr 14 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.7-1
 - Fix another bug with the new bugzilla email code.  Need to grab the user
   email from the database even if unathenticated so bugzilla_email has
