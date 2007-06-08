@@ -22,7 +22,7 @@ from fedora.accounts.fasLDAP import UserAccount, Person, Groups
 from turbogears.identity.saprovider import *
 from turbogears import config
 from fedora.accounts.tgfas2 import VisitIdentity
-from fedora.accounts.fas2 import AuthError
+#from fedora.accounts.fas2 import AuthError
 
 log = logging.getLogger(__name__)
 
@@ -39,9 +39,9 @@ class FASUser(object):
 
 class FASGroup(object):
     def __init__(self, group):
-        self.group_id = group.cn
-        self.group_name = group.cn
-        self.display_name = group.cn
+        self.group_id = group
+        self.group_name = group
+        self.display_name = group
         self.group = group
 
 class SaFasIdentity(SqlAlchemyIdentity):
