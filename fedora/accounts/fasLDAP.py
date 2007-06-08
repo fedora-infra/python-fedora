@@ -2,6 +2,9 @@
 
 import ldap
 
+class AuthError(Exception):
+    pass
+
 class Server:
     def __init__(self, server='localhost', who='', password=''):
         self.ldapConn = ldap.open(server)
@@ -280,7 +283,10 @@ class Person:
             ldapServer = s.ldapConn
 
         who = 'cn=%s,ou=People,dc=fedoraproject,dc=org' % who
-        ldapServer.simple_bind_s(who, password)
+        try:
+            ldapServer.simple_bind_s(who, password)
+        except ldap.LDAPError, e:
+            raise AuthError(e)
 
     def upgrade(self, group):
         base = 'cn=%s,ou=Roles,cn=%s,ou=People,dc=fedoraproject,dc=org' % (group, self.cn)

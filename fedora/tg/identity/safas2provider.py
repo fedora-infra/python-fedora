@@ -105,11 +105,7 @@ class SaFas2IdentityProvider(SqlAlchemyIdentityProvider):
 
         user = Person.byUserName(user_name)
 
-        try:
-            verified = self.validate_password(user, user_name, password)
-        except AuthError, e:
-            log.warning(e)
-            return None
+        verified = self.validate_password(user, user_name, password)
         if not verified:
             log.warning('Passwords do not match for user: %s', user_name)
             return None
@@ -138,7 +134,7 @@ class SaFas2IdentityProvider(SqlAlchemyIdentityProvider):
         '''
         try:
             result = Person.auth(user_name, password)
-        except Exception, e:
+        except AuthError, e:
             log.warning('AccountSystem threw an exception: %s', e)
             return False
         return True
