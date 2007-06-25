@@ -135,8 +135,6 @@ class AccountSystem(object):
         # in the FAS db.  It is a hack, however, until FAS has a field for the
         # bugzilla address.
         self.__bugzilla_email = {
-                # Dan Berrange: dan@berrange.com
-                100447: 'berrange@redhat.com',
                 # Konstantin Ryabitsev: mricon@gmail.com
                 100029: 'icon@fedoraproject.org',
                 # Sean Reifschneider: jafo@tummy.com

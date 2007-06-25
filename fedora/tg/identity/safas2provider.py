@@ -39,10 +39,10 @@ class FASUser(object):
 
 class FASGroup(object):
     def __init__(self, group):
-        self.group_id = group
-        self.group_name = group
-        self.display_name = group
-        self.group = group
+        self.group_id = group[0]
+        self.group_name = group[0]
+        self.display_name = group[0]
+        self.group = group[0]
 
 class SaFasIdentity(SqlAlchemyIdentity):
     def __init__(self, visit_key, user=None):
