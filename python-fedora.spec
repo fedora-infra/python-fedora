@@ -47,6 +47,7 @@ rm -rf $RPM_BUILD_ROOT
 - Update fas2 integration with changes from mmcgrath.
 - berrange has changed his email address in the account system, no longer need
   to special case his bugzilla address.
+- Fix a bug in the handling of db errors in accounts/fas.
 
 * Sun Apr 14 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.9-1
 - Update fas2 integration with changes from mmcgrath.

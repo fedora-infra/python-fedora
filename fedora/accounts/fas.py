@@ -25,6 +25,8 @@ import os
 import psycopg2
 import psycopg2.extras
 import sqlalchemy.pool as pool
+import traceback
+
 psycopg2 = pool.manage(psycopg2, pool_size=5, max_overflow=15)
 
 # When we encrypt the passwords in the database change to this:
