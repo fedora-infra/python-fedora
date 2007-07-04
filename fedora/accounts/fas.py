@@ -191,8 +191,7 @@ class AccountSystem(object):
         # deal with which db was used.
         raise DBError(traceback.format_exc())
 
-    @property
-    def dbCmd(self):
+    def get_dbCmd(self):
         '''Return an isolated db cursor to use for the query.
 
         Some notes:
@@ -210,6 +209,7 @@ class AccountSystem(object):
         db = psycopg2.connect(database=self.dbName, host=self.dbHost,
                 user=self.dbUser, password=self.dbPass)
         return db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    dbCmd = property(get_dbCmd)
 
     def verify_user_pass(self, user, password):
         '''Verify that the username-password combination are valid.

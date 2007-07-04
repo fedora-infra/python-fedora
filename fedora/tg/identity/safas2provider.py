@@ -37,12 +37,26 @@ class FASUser(object):
         self.permissions = None
         self.display_name = user.givenName
 
+    def __json__(self):
+        return {'user_id': self.user_id,
+                'user_name': self.user_name,
+                'groups': self.groups,
+                'permissions': self.permissions,
+                'display_name': self.display_name
+                }
+
 class FASGroup(object):
     def __init__(self, group):
         self.group_id = group[0]
         self.group_name = group[0]
         self.display_name = group[0]
         self.group = group[0]
+
+    def __json__(self):
+        return {'group_id': self.group_id,
+                'group_name': self.group_name,
+                'display_name': self.display_name
+                }
 
 class SaFasIdentity(SqlAlchemyIdentity):
     def __init__(self, visit_key, user=None):
