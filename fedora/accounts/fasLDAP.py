@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import ldap
 
 class AuthError(Exception):
