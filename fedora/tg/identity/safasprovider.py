@@ -69,10 +69,13 @@ class SaFasIdentity(SqlAlchemyIdentity):
         except AttributeError:
             # User hasn't been set yet
             pass
-        visit = visit_identity_class.get_by(visit_key = self.visit_key)
 
         # If the user isn't logged in or we are unable to get information from
         # about them from the fas database, return empty None
+        try:
+            visit = visit_identity_class.get_by(visit_key = self.visit_key)
+        except:
+            return None
         if not visit:
             self._user = None
             return None
