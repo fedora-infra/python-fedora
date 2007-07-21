@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.2.90.12
+Version:        0.2.90.13
 Release:        1%{?dist}
 Summary:        Python modules for integrating into Fedora Infrastructure
 
@@ -44,6 +44,12 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sat Jul 21 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.13-1
+- New class fedora.tg.client.BaseClient that can be used as the basis of a TG
+  standalone application.  With a little support on the server side (mostly
+  allowing tg_format=json) this class will provide you with the basis to read
+  and write data to the server.
+
 * Mon Jul 10 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.12-1
 - Fix some issues with Unicode.
 - Catch a traceback when the database is down.

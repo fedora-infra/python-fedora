@@ -1,29 +1,57 @@
-===================================
-Fedora Accounts Integration Toolkit
-===================================
+================================
+Fedora Infrastructure Python API
+================================
 :Author: Toshio Kuratomi
-:Date: 9 Feb 2007
-:Version: 0.2.1
+:Date: 21 July 2007
+:Version: 0.2.9.13
+
+The Fedora module provides a python API for services used in Fedora
+Infrastructure.  Its major usage is to talk to the Fedora Account System but
+it is taking on new packages for dealing with other aspects of Fedora.  For
+instance, a base class for interfacing a TurboGears server with a standalone
+(commandline or desktop) client and a common set of templates for Fedora
+TurboGears applications.
 
 .. contents::
 
-This module allows code internal to the Fedora Project to integrate with the
-Fedora Accounts System.  It provides two modules, a general purpose python API
-and a TurboGears Identity Provider.
-
+----------
 Installing
-==========
+----------
 
-This should get the fedora module installed::
+python-fedora is found in rpm form in the Fedora Infrastructure yum repository.
+From one of the machines in Fedora Infrastructure you can simply::
+
+  # yum install python-fedora
+
+to get the latest version.
+
+If you want to install from a source checkout, follow these procedures::
+
+  # bzr branch http://toshio.fedorapeople.org/bzr-repo/python-fedora/python-fedora-devel
+  # cd python-fedora-devel
   # python setup.py install
   
-See the configuration notes under `TurboGears Interface` for additional
-information on configuring your turbogears application.
+See the configuration notes in each section for information on configuring
+your application after install.
+
+---------------------------
+Fedora Accounts Integration
+---------------------------
+
+This module allows code internal to the Fedora Project to integrate with the
+Fedora Accounts System.  It provides two modules, a general purpose python API
+and a TurboGears Identity Provider.  Because this module has to talk to the
+account database it is currently not possible to use it outside of the
+Fedora Infrastructure boxes.
 
 General API
 ===========
 
-Note: This API is not yet complete
+Note: This API is not feature complete.  You can retrieve most information
+about a person or group but setting information is not possible.  Work is
+underway to create FAS2 based on an LDAP server so it is likely that this
+FAS API will continue to be a read-only API.  Use the older website.py file
+from the fedora-accounts cvs module if you need to write to the database.
 
 Using the general API requires instantiating an AccountSystem object.  You
 then use methods on the AccountSystem to get and set information on the
@@ -102,24 +130,63 @@ variables in your pkgname/config/app.cfg file::
   identity.saprovider.model.visit="fedora.accounts.tgfas.VisitIdentity"
 
 If you are using sqlobject for your applications db access you may also have to
-set this:
+set this::
+
   sqlalchemy.dburi='sqlite://'
 
 This is due to a bug in the way TurboGears handles the identity.  The dburi
 listed there won't be used within the web application.
 
-
+------
 FAS v2
-======
+------
 
 Mike McGrath is working on a FAS v2 interface that works with the new LDAP
 backend.
 
 FAS v2 -- TurboGears
---------------------
+====================
 
 Configuring the TurboGears interface for fas v2 is almost the same as
 configuring it for fas v1.  Here are the differences::
 
   identity.provider="safas2"
   identity.saprovider.model.visit="fedora.accounts.tgfas2.VisitIdentity"
+
+---------
+TG Client
+---------
+There is now a base class for creating a client application that can talk to
+a TurboGears server.  The TurboGears server may need a little bit of tweaking
+to make it work with the client.  Please see::
+
+  http://hosted.fedoraproject.org/projects/packagedb/wiki/CommandLineClient
+
+for details of how the server may need to be modified.
+
+As an example, let's say you have a TurboGears server that is setup to echo a
+message that you send to it.  Additionally, the server requires that you are
+logged in in order to access it.  Here's how you access the server from a web
+browser::
+
+  $ lynx http://localhost:8080/echo_server/echo/?message='This is a test'
+
+The server will first send you to a login screen where you need to lgin with a
+username and password.  Then you will see a web page with 'This is a test'
+appearing on the page as your message.
+
+Here's how you might do this using the tg client::
+
+  from fedora.tg.client import BaseClient
+  class MyClient(BaseClient):
+      def echo(self, message):
+      	  data = self.send_request('echo', auth=True, message=message)
+	  return data['echo_string']
+
+  if __name__ == '__main__':
+      username = 'toshio'
+      password = 'XXXX'
+      BASEURL = 'http://localhost:8080/echo_server/'
+      client = MyClient(BASEURL, username, password)
+
+      print client.echo('This is a test')
