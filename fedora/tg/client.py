@@ -46,7 +46,7 @@ class BaseClient(object):
         self.baseURL = baseURL
         self.username = username
         self.password = password
-	self._sessionCookie = None
+        self._sessionCookie = None
         self.load_session()
         if username and password:
             self._authenticate()
