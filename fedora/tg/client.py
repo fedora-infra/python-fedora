@@ -106,7 +106,7 @@ class BaseClient(object):
         if path.isfile(SESSION_FILE):
             sessionFile = file(SESSION_FILE, 'r')
             try:
-                self._sessionCookie = pickle.load(sessionFile):1
+                self._sessionCookie = pickle.load(sessionFile)
 
                 log.debug("Loaded session %s" % self._sessionCookie)
             except EOFError:
@@ -151,7 +151,7 @@ class BaseClient(object):
             try:
                 data = simplejson.read(response)
             except Exception, e:
-                log.error('Error while parsing JSON data from server:', e
+                log.error('Error while parsing JSON data from server:', e)
                 raise ServerError, str(e)
 
         return data

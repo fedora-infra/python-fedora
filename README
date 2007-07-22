@@ -180,8 +180,8 @@ Here's how you might do this using the tg client::
   from fedora.tg.client import BaseClient
   class MyClient(BaseClient):
       def echo(self, message):
-      	  data = self.send_request('echo', auth=True, message=message)
-	  return data['echo_string']
+          data = self.send_request('echo', auth=True, message=message)
+          return data['echo_string']
 
   if __name__ == '__main__':
       username = 'toshio'
