@@ -21,7 +21,7 @@ import urllib2
 import logging
 import cPickle as pickle
 import re
-from os.path import path
+from os import path
 
 try:
     import simplejson
@@ -47,7 +47,7 @@ class BaseClient(object):
         self.username = username
         self.password = password
         self._sessionCookie = None
-        self.load_session()
+        self._load_session()
         if username and password:
             self._authenticate()
 
@@ -72,7 +72,7 @@ class BaseClient(object):
                 raise AuthError, "Invalid username/password"
 
         try:
-            loginData = simplejson.read(loginPage)
+            loginData = simplejson.load(loginPage)
         except NameError:
             loginData = json.read(loginPage.read())
 
@@ -138,20 +138,20 @@ class BaseClient(object):
             raise ServerError, str(e)
 
         try:
-            data = json.read(response.read())
-        except json.ReadException, e:
-            regex = re.compile('<span class="fielderror">(.*)</span>')
-            match = regex.search(e.message)
-            if match and len(match.groups()):
-                log.error(match.groups()[0])
-            else:
-                log.error("Unexpected ReadException during request:" + e)
-            raise ServerError, e.message
+            data = simplejson.load(response)
         except NameError:
             try:
-                data = simplejson.read(response)
-            except Exception, e:
-                log.error('Error while parsing JSON data from server:', e)
-                raise ServerError, str(e)
+                data = json.read(response.read())
+            except json.ReadException, e:
+                regex = re.compile('<span class="fielderror">(.*)</span>')
+                match = regex.search(e.message)
+                if match and len(match.groups()):
+                    log.error(match.groups()[0])
+                else:
+                    log.error("Unexpected ReadException during request:" + e)
+                raise ServerError, e.message
+        except Exception, e:
+            log.error('Error while parsing JSON data from server:', e)
+            raise ServerError, str(e)
 
         return data
