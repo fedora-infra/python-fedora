@@ -25,7 +25,7 @@ from fedora.accounts.tgfas import VisitIdentity
 from fedora.accounts.fas import AuthError
 from fedora.accounts.fas import DBError
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('turbogears.identity.safasprovider')
 
 visit_identity_class = None
 fas = AccountSystem()
@@ -70,7 +70,7 @@ class SaFasIdentity(SqlAlchemyIdentity):
             # User hasn't been set yet
             pass
 
-        # If the user isn't logged in or we are unable to get information from
+        # If the user isn't logged in or we are unable to get information
         # about them from the fas database, return empty None
         try:
             visit = visit_identity_class.get_by(visit_key = self.visit_key)
@@ -123,6 +123,9 @@ class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
         visit_identity_class_path = config.get("identity.saprovider.model.visit", None)
         log.info("Loading: %s", visit_identity_class_path)
         visit_identity_class = load_class(visit_identity_class_path)
+
+    def create_provider_model(self):
+        visit_identity_class.mapper.local_table.create(checkfirst=True)
 
     def validate_identity(self, user_name, password, visit_key):
         '''

@@ -49,6 +49,8 @@ rm -rf $RPM_BUILD_ROOT
   standalone application.  With a little support on the server side (mostly
   allowing tg_format=json) this class will provide you with the basis to read
   and write data to the server.
+- Fix safasprovider to only create the visit_identity class since the other
+  information is stored directly in FAS.
 
 * Mon Jul 10 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.12-1
 - Fix some issues with Unicode.
