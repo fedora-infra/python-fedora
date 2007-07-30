@@ -39,10 +39,10 @@ class AuthError(ServerError):
     pass
 
 class BaseClient(object):
-    """
+    '''
         A command-line client to interact with Fedora TurboGears Apps.
-    """
-    def __init__(self, baseURL, username, password):
+    '''
+    def __init__(self, baseURL, username=None, password=None):
         self.baseURL = baseURL
         self.username = username
         self.password = password
@@ -52,11 +52,16 @@ class BaseClient(object):
             self._authenticate()
 
     def _authenticate(self):
-        """
+        '''
             Return an authenticated session cookie.
-        """
+        '''
         if self._sessionCookie:
             return self._sessionCookie
+
+        if not self.username:
+            raise AuthError, 'username must be set'
+        if not self.password:
+            raise AuthError, 'password must be set'
 
         req = urllib2.Request(self.baseURL + 'login?tg_format=json')
         req.add_data(urllib.urlencode({
@@ -68,8 +73,8 @@ class BaseClient(object):
         try:
             loginPage = urllib2.urlopen(req)
         except urllib2.HTTPError, e:
-            if e.msg == "Forbidden":
-                raise AuthError, "Invalid username/password"
+            if e.msg == 'Forbidden':
+                raise AuthError, 'Invalid username/password'
 
         try:
             loginData = simplejson.load(loginPage)
@@ -84,47 +89,47 @@ class BaseClient(object):
             self._sessionCookie.load(loginPage.headers['set-cookie'])
         except KeyError:
             self._sessionCookie = None
-            raise AuthError, "Unable to login to the server.  Server did not" \
-                             "send back a cookie."
+            raise AuthError, 'Unable to login to the server.  Server did not' \
+                             'send back a cookie.'
         self._save_session()
 
         return self._sessionCookie
     session = property(_authenticate)
 
     def _save_session(self):
-        """
+        '''
             Store a pickled session cookie.
-        """
+        '''
         sessionFile = file(SESSION_FILE, 'w')
         pickle.dump(self._sessionCookie, sessionFile)
         sessionFile.close()
 
     def _load_session(self):
-        """
+        '''
             Load a stored session cookie.
-        """
+        '''
         if path.isfile(SESSION_FILE):
             sessionFile = file(SESSION_FILE, 'r')
             try:
                 self._sessionCookie = pickle.load(sessionFile)
 
-                log.debug("Loaded session %s" % self._sessionCookie)
+                log.debug('Loaded session %s' % self._sessionCookie)
             except EOFError:
-                log.error("Unable to load session from %s" % SESSION_FILE)
+                log.error('Unable to load session from %s' % SESSION_FILE)
             sessionFile.close()
 
     def send_request(self, method, auth=False, **kw):
-        """
+        '''
             Send a request to the server.  The given method is called with any
             keyword parameters in **kw.  If auth is True, then the request is
             made with an authenticated session cookie.
-        """
-        url = self.baseURL + method + "/?tg_format=json"
+        '''
+        url = self.baseURL + method + '/?tg_format=json'
 
         response = None # the JSON that we get back from the server
         data = None     # decoded JSON via json.read()
 
-        log.debug("Creating request %s" % url)
+        log.debug('Creating request %s' % url)
         req = urllib2.Request(url)
         req.add_data(urllib.urlencode(kw))
 
@@ -148,7 +153,7 @@ class BaseClient(object):
                 if match and len(match.groups()):
                     log.error(match.groups()[0])
                 else:
-                    log.error("Unexpected ReadException during request:" + e)
+                    log.error('Unexpected ReadException during request:' + e)
                 raise ServerError, e.message
         except Exception, e:
             log.error('Error while parsing JSON data from server:', e)
