@@ -118,7 +118,7 @@ class BaseClient(object):
                 log.error('Unable to load session from %s' % SESSION_FILE)
             sessionFile.close()
 
-    def send_request(self, method, auth=False, **kw):
+    def send_request(self, method, auth=False, input=None):
         '''
             Send a request to the server.  The given method is called with any
             keyword parameters in **kw.  If auth is True, then the request is
@@ -131,7 +131,8 @@ class BaseClient(object):
 
         log.debug('Creating request %s' % url)
         req = urllib2.Request(url)
-        req.add_data(urllib.urlencode(kw))
+        if input:
+            req.add_data(urllib.urlencode(input))
 
         if auth:
             req.add_header('Cookie', self.session.output(attrs=[],
