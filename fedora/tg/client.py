@@ -21,6 +21,7 @@ import urllib2
 import logging
 import cPickle as pickle
 import re
+import inspect
 from os import path
 
 try:
@@ -51,11 +52,11 @@ class BaseClient(object):
         if username and password:
             self._authenticate()
 
-    def _authenticate(self):
+    def _authenticate(self, force=False):
         '''
             Return an authenticated session cookie.
         '''
-        if self._sessionCookie:
+        if not force and self._sessionCookie:
             return self._sessionCookie
 
         if not self.username:
@@ -63,7 +64,7 @@ class BaseClient(object):
         if not self.password:
             raise AuthError, 'password must be set'
 
-        req = urllib2.Request(self.baseURL + 'login?tg_format=json')
+        req = urllib2.Request(self.baseURL + '/login?tg_format=json')
         req.add_data(urllib.urlencode({
                 'user_name' : self.username,
                 'password'  : self.password,
@@ -75,6 +76,8 @@ class BaseClient(object):
         except urllib2.HTTPError, e:
             if e.msg == 'Forbidden':
                 raise AuthError, 'Invalid username/password'
+            else:
+                raise
 
         try:
             loginData = simplejson.load(loginPage)
@@ -160,4 +163,14 @@ class BaseClient(object):
             log.error('Error while parsing JSON data from server:', e)
             raise ServerError, str(e)
 
+        if 'logging_in' in data:
+            if (inspect.currentframe().f_back.f_code !=
+                    inspect.currentframe().f_code):
+                self._authenticate(force=True)
+                data = self.send_request(method, auth, input)
+            else:
+                # We actually shouldn't ever reach here.  Unless something goes
+                # drastically wrong _authenticate should raise an AuthError
+                raise AuthError, 'Unable to log into server: %s' % (
+                        data['message'],)
         return data
