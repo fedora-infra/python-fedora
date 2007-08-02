@@ -3,11 +3,11 @@
 from setuptools import setup, find_packages
 
 setup(name='python-fedora',
-        version='0.2.90.13',
+        version='0.2.90.14',
         description='Fedora Specific Python Modules',
         author='Toshio Kuratomi',
         author_email='toshio@fedoraproject.org',
-        license='GPL',
+        license='GPLv2+',
         keywords='Fedora Account System',
         url='http://www.fedoraproject.org/wiki/Infrastructure/AccountSystem2/API',
         packages=find_packages(),

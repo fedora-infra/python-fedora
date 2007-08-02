@@ -1,12 +1,12 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.2.90.13
+Version:        0.2.90.14
 Release:        1%{?dist}
 Summary:        Python modules for integrating into Fedora Infrastructure
 
 Group:          Development/Languages
-License:        GPL
+License:        GPLv2+
 URL:            http://www.fedoraproject.org/wiki/Infrastructure/AccountSystem2/API
 Source0:        http://www.tiki-lounge.com/~toshio/fedora/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -39,11 +39,15 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc README
+%doc README COPYING AUTHORS
 %{python_sitelib}/*
 
 
 %changelog
+* Thu Aug 2 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.14-1
+- Fix safas2provider to only create the visit_identity class.
+- Add COPYING and AUTHORS files.
+
 * Sat Jul 21 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.13-1
 - New class fedora.tg.client.BaseClient that can be used as the basis of a TG
   standalone application.  With a little support on the server side (mostly

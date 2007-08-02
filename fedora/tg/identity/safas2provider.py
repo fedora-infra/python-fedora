@@ -113,6 +113,9 @@ class SaFas2IdentityProvider(SqlAlchemyIdentityProvider):
         log.info("Loading: %s", visit_identity_class_path)
         visit_identity_class = load_class(visit_identity_class_path)
 
+    def create_provider_model(self):
+        visit_identity_class.mapper.local_table.create(checkfirst=True)
+
     def validate_identity(self, user_name, password, visit_key):
         visit_identity_class.mapper.get_session().flush()
         visit_identity_class.mapper.get_session().clear()

@@ -1,2 +1,3 @@
 include *.sql
 include *.spec
+include COPYING AUTHORS
