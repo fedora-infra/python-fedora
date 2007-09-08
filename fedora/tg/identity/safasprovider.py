@@ -78,6 +78,8 @@ class SaFasIdentity(SqlAlchemyIdentity):
 
         # If the user isn't logged in or we are unable to get information
         # about them from the fas database, return empty None
+        visit_identity_class.mapper.get_session().flush()
+        visit_identity_class.mapper.get_session().clear()
         try:
             visit = visit_identity_class.get_by(visit_key = self.visit_key)
         except:
@@ -112,13 +114,13 @@ class SaFasIdentity(SqlAlchemyIdentity):
         try:
             visit = visit_identity_class.get_by(visit_key=self.visit_key)
             visit.delete()
-            # Clear the current identity
-            anon = SaFasIdentity(None,None)
-            identity.set_current_identity(anon)
         except:
             pass
         else:
             visit_identity_class.mapper.get_session().flush()
+        # Clear the current identity
+        anon = SaFasIdentity(None,None)
+        identity.set_current_identity(anon)
 
 class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
     '''

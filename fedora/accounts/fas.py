@@ -98,7 +98,7 @@ def retrieve_db_info(dbKey):
     if fh:
         fh.close()
     if not dbInfo:
-        raise AuthError, 'Authentication source "%s" not configured' % (dbName,)
+        raise AuthError, 'Authentication source "%s" not configured' % (dbKey,)
     return dbInfo
 
 class FASError(Exception):

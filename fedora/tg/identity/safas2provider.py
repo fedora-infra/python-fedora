@@ -29,7 +29,7 @@ from fedora.accounts.fasLDAP import UserAccount, Person, Groups
 from turbogears.identity.saprovider import *
 from turbogears import config
 from fedora.accounts.tgfas2 import VisitIdentity
-#from fedora.accounts.fas2 import AuthError
+from fedora.accounts.fasLDAP import AuthError
 
 log = logging.getLogger(__name__)
 
@@ -75,6 +75,8 @@ class SaFasIdentity(SqlAlchemyIdentity):
         except AttributeError:
             # User hasn't been set yet
             pass
+        visit_identity_class.mapper.get_session().flush()
+        visit_identity_class.mapper.get_session().clear()
         visit = visit_identity_class.get_by(visit_key = self.visit_key)
         if not visit:
             self._user = None
@@ -102,13 +104,13 @@ class SaFasIdentity(SqlAlchemyIdentity):
         try:
             visit = visit_identity_class.get_by(visit_key=self.visit_key)
             visit.delete()
-            # Clear the current identity
-            anon = SaFasIdentity(None,None)
-            identity.set_current_identity(anon)
         except:
             pass
         else:
             visit_identity_class.mapper.get_session().flush()
+        # Clear the current identity
+        anon = SaFasIdentity(None,None)
+        identity.set_current_identity(anon)
 
 class SaFas2IdentityProvider(SqlAlchemyIdentityProvider):
     '''

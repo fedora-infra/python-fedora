@@ -1,14 +1,14 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.2.90.14
+Version:        0.2.90.15
 Release:        1%{?dist}
 Summary:        Python modules for integrating into Fedora Infrastructure
 
 Group:          Development/Languages
-License:        GPLv2+
+License:        GPLv2
 URL:            http://www.fedoraproject.org/wiki/Infrastructure/AccountSystem2/API
-Source0:        http://www.tiki-lounge.com/~toshio/fedora/%{name}-%{version}.tar.gz
+Source0:        http://toshio.fedoraproject.org/fedora/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
@@ -30,7 +30,7 @@ Python modules that allow your program to integrate with Fedora Infrastructure.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__python} setup.py install -O1 --skip-build --single-version-externally-managed --root $RPM_BUILD_ROOT
+%{__python} setup.py install --skip-build --root $RPM_BUILD_ROOT
 
  
 %clean
@@ -44,6 +44,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Sep 7 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.15-1
+- Make the fasLDAP module more OO.
+- Bugfixes.
+
 * Thu Aug 2 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.14-1
 - Fix safas2provider to only create the visit_identity class.
 - Add COPYING and AUTHORS files.

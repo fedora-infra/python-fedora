@@ -107,7 +107,8 @@ class BaseClient(object):
             Store a pickled session cookie.
         '''
         sessionFile = file(SESSION_FILE, 'w')
-        pickle.dump(self._sessionCookie, sessionFile)
+        save = {self.username : self._sessionCookie}
+        pickle.dump(save, sessionFile)
         sessionFile.close()
 
     def _load_session(self):
@@ -117,12 +118,16 @@ class BaseClient(object):
         if path.isfile(SESSION_FILE):
             sessionFile = file(SESSION_FILE, 'r')
             try:
-                self._sessionCookie = pickle.load(sessionFile)
+                savedSession = pickle.load(sessionFile)
 
                 log.debug('Loaded session %s' % self._sessionCookie)
             except EOFError:
                 log.error('Unable to load session from %s' % SESSION_FILE)
             sessionFile.close()
+        try:
+            self._sessionCookie = savedSession[self.username]
+        except KeyError:
+            log.debug('Session is for a different user')
 
     def send_request(self, method, auth=False, input=None):
         '''
