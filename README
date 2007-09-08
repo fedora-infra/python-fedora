@@ -151,6 +151,7 @@ Configuring the TurboGears interface for fas v2 is almost the same as
 configuring it for fas v1.  Here are the differences::
 
   identity.provider="safas2"
+  visit.saprovider.model="fedora.accounts.tgfas2.Visit"
   identity.saprovider.model.visit="fedora.accounts.tgfas2.VisitIdentity"
 
 ---------

@@ -47,6 +47,7 @@ rm -rf $RPM_BUILD_ROOT
 * Fri Sep 7 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.15-1
 - Make the fasLDAP module more OO.
 - Bugfixes.
+- Update the install line.
 
 * Thu Aug 2 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.14-1
 - Fix safas2provider to only create the visit_identity class.
