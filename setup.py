@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(name='python-fedora',
-        version='0.2.90.15',
+        version='0.2.90.16',
         description='Fedora Specific Python Modules',
         author='Toshio Kuratomi',
         author_email='toshio@fedoraproject.org',

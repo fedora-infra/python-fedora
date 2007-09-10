@@ -25,6 +25,7 @@ python-fedora, python module to interact with Fedora Infrastructure Services
 '''
 
 import ldap
+from ldap import modlist
 import datetime
 from random import Random
 import sha
@@ -67,7 +68,7 @@ class Server(object):
         ldif = ldap.modlist.modifyModlist(o, n)
 
         # commit
-        ldapServer.modify_s(base, ldif)
+        self.ldapConn.modify_s(base, ldif)
 
     def search(self, base, ldapFilter, attributes=None):
         ''' Basic search function '''

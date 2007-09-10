@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.2.90.15
+Version:        0.2.90.16
 Release:        1%{?dist}
 Summary:        Python modules for integrating into Fedora Infrastructure
 
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Sep 10 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.16-1
+- Bugfix to fasLDAP module.
+
 * Fri Sep 7 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.15-1
 - Make the fasLDAP module more OO.
 - Bugfixes.
