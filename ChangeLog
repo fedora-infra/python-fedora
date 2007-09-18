@@ -1,3 +1,15 @@
+=== 0.2.90.18 ===
+
+2007-09-18  Toshio Kuratomi <badger@Clingman> - r58
+* fedora/__init__.py, python-fedora.spec, setup.py: Bump to new release.
+
+2007-09-18  Toshio Kuratomi <badger@Clingman> - r57
+* fedora/accounts/fas.py: Add control-center-maint to the list of bugzilla
+  email exceptions.
+
+2007-09-18  Toshio Kuratomi <badger@Clingman> - r56
+* ChangeLog: Final after testing.
+
 === 0.2.90.17 ===
 
 2007-09-18  Toshio Kuratomi <badger@Clingman> - r55
