@@ -2,13 +2,13 @@
 %{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-fedora
-Version:        0.2.90.17
+Version:        0.2.90.18
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
 Group:          Development/Languages
 License:        GPLv2
-URL:            http://fedoraproject.org/wiki/Infrastructure/AccountSystem2/API
+URL:            http://hosted.fedoraproject.org/projects/python-fedora/
 Source0:        http://toshio.fedoraproject.org/fedora/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -18,8 +18,10 @@ BuildRequires:  python-setuptools
 Requires: python-simplejson
 
 %description
-Python modules that allow your program to talk to Fedora Infrastructure
-services.
+Python modules that handle communication with Fedora Infrastructure services.
+This set of modules helps with building clients that talk to Fedora
+Infrastructure's  TurboGears based services such as Bodhi, PackageDB,
+MirrorManager, and FAS2.
 
 %package infrastructure
 Summary: Python modules for building Fedora Infrastructure Services
@@ -30,7 +32,7 @@ Requires: python-sqlalchemy
 
 %description infrastructure
 Additional python modules that can be used on Fedora Infrastructure Servers to
-help build new services.
+help build new services.  This includes the server's authentication providers.
 
 %prep
 %setup -q
@@ -66,7 +68,13 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fedora/tg/visit/
 
 %changelog
-* Mon Sep 19 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.17-1
+* Tue Sep 18 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.18-1
+- Update to version wih handling of control-center-maint bugzilla address.
+
+* Tue Sep 18 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.17-2
+- Minor touchups to description and URL.
+
+* Mon Sep 17 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.17-1
 - Update to 0.2.90.17. 
 - Build separate packages for pieces useful on clients and only on the server.
 
