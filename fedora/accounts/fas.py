@@ -513,7 +513,7 @@ class AccountSystem(object):
         person[0] = self.__bugzilla_email.get(user, person['email'])
         for fieldNum in range(0, len(person) - 1):
             if isinstance(person[fieldNum], str):
-                person[fieldNum] = person[fieldNum].decode['utf-8']
+                person[fieldNum] = person[fieldNum].decode('utf-8')
         return (person, groups)
 
     def get_group_info(self, group):
@@ -529,7 +529,7 @@ class AccountSystem(object):
         if result:
             for fieldNum in range(0, len(result) - 1):
                 if isinstance(result[fieldNum], str):
-                    result[fieldNum] = result[fieldNum].decode['utf-8']
+                    result[fieldNum] = result[fieldNum].decode('utf-8')
             return result
         else:
             raise AuthError, 'No such group: %s' % group
