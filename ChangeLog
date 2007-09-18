@@ -1,5 +1,12 @@
 === 0.2.90.17 ===
 
+2007-09-18  Toshio Kuratomi <badger@Clingman> - r55
+* fedora/accounts/fas.py: Fix silly error calling function instead of
+  subscripting an array.
+
+2007-09-18  Toshio Kuratomi <badger@Clingman> - r54
+* ChangeLog: Sync up with last mintue changes.
+
 2007-09-17  Toshio Kuratomi <badger@Clingman> - r53
 * python-fedora.spec: Fix some minor file path problems with the spec.
 
