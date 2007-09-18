@@ -1,3 +1,11 @@
+=== 0.2.90.17 ===
+
+2007-09-17  Toshio Kuratomi <badger@Clingman> - r53
+* python-fedora.spec: Fix some minor file path problems with the spec.
+
+2007-09-17  Toshio Kuratomi <badger@Clingman> - r52
+* ChangeLog: Add a changelog.
+
 2007-09-17  Toshio Kuratomi <badger@Clingman> - r51
 * MANIFEST.in: Add ChangeLog
 * README, fedora/__init__.py, python-fedora.spec, setup.py: Version 0.2.90.17.
