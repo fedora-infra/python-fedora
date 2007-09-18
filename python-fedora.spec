@@ -1,4 +1,5 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+%{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-fedora
 Version:        0.2.90.17
@@ -53,15 +54,16 @@ rm -rf $RPM_BUILD_ROOT
 %doc README COPYING AUTHORS ChangeLog
 %dir %{python_sitelib}/fedora
 %dir %{python_sitelib}/fedora/tg
+%{python_sitelib}/fedora/__init__.py*
 %{python_sitelib}/fedora/tg/__init__.py*
 %{python_sitelib}/fedora/tg/client.py*
-%{python_sitelib}/python_fedora-0.2.90.16-py2.4.egg-info
+%{python_sitelib}/python_fedora-%{version}-py%{pyver}.egg-info
 
 %files infrastructure
 %defattr(-,root,root,-)
 %{python_sitelib}/fedora/accounts/
-%{python_sitelib}/fedora/identity/
-%{python_sitelib}/fedora/visit/
+%{python_sitelib}/fedora/tg/identity/
+%{python_sitelib}/fedora/tg/visit/
 
 %changelog
 * Mon Sep 19 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.17-1
