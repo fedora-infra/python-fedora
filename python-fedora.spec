@@ -1,24 +1,35 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.2.90.16
+Version:        0.2.90.17
 Release:        1%{?dist}
-Summary:        Python modules for integrating into Fedora Infrastructure
+Summary:        Python modules for talking to Fedora Infrastructure Services
 
 Group:          Development/Languages
 License:        GPLv2
-URL:            http://www.fedoraproject.org/wiki/Infrastructure/AccountSystem2/API
+URL:            http://fedoraproject.org/wiki/Infrastructure/AccountSystem2/API
 Source0:        http://toshio.fedoraproject.org/fedora/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
 BuildRequires:  python-devel
 BuildRequires:  python-setuptools
+Requires: python-simplejson
+
+%description
+Python modules that allow your program to talk to Fedora Infrastructure
+services.
+
+%package infrastructure
+Summary: Python modules for building Fedora Infrastructure Services
+Group: Development/Languages
+Requires: %{name} = %{version}-%{release}
 Requires: python-psycopg2
 Requires: python-sqlalchemy
 
-%description
-Python modules that allow your program to integrate with Fedora Infrastructure.
+%description infrastructure
+Additional python modules that can be used on Fedora Infrastructure Servers to
+help build new services.
 
 %prep
 %setup -q
@@ -39,11 +50,24 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc README COPYING AUTHORS
-%{python_sitelib}/*
+%doc README COPYING AUTHORS ChangeLog
+%dir %{python_sitelib}/fedora
+%dir %{python_sitelib}/fedora/tg
+%{python_sitelib}/fedora/tg/__init__.py*
+%{python_sitelib}/fedora/tg/client.py*
+%{python_sitelib}/python_fedora-0.2.90.16-py2.4.egg-info
 
+%files infrastructure
+%defattr(-,root,root,-)
+%{python_sitelib}/fedora/accounts/
+%{python_sitelib}/fedora/identity/
+%{python_sitelib}/fedora/visit/
 
 %changelog
+* Mon Sep 19 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.17-1
+- Update to 0.2.90.17. 
+- Build separate packages for pieces useful on clients and only on the server.
+
 * Mon Sep 10 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.16-1
 - Bugfix to fasLDAP module.
 

@@ -3,7 +3,7 @@ Fedora Infrastructure Python API
 ================================
 :Author: Toshio Kuratomi
 :Date: 21 July 2007
-:Version: 0.2.9.13
+:Version: 0.2.9.17
 
 The Fedora module provides a python API for services used in Fedora
 Infrastructure.  Its major usage is to talk to the Fedora Account System but
@@ -141,8 +141,8 @@ listed there won't be used within the web application.
 FAS v2
 ------
 
-Mike McGrath is working on a FAS v2 interface that works with the new LDAP
-backend.
+Mike McGrath and Ricky Zhou are working on a FAS v2 interface that works
+with the new LDAP backend.
 
 FAS v2 -- TurboGears
 ====================
