@@ -511,19 +511,9 @@ class AccountSystem(object):
         # list notation to set values even though you can use dict keys to
         # retrieve them.
         person[0] = self.__bugzilla_email.get(user, person['email'])
-
-        person[2] = unicode(person['username'], 'utf-8')
-        person[4] = unicode(person['human_name'], 'utf-8')
-        if 'comments' in person:
-            person[6] = unicode(person['comments'], 'utf-8')
-        if 'ircnick' in person:
-            person[8] = unicode(person['ircnick'], 'utf-8')
-        if 'postal_address' in person:
-            person[12] = unicode(person['postal_address'], 'utf-8')
-        if 'password' in person:
-            person[15] = unicode(person['password'], 'utf-8')
-        if 'internal_comments' in person:
-            person[16] = unicode(person['internal_comments'], 'utf-8')
+        for fieldNum in range(0, len(person) - 1):
+            if isinstance(person[fieldNum], str):
+                person[fieldNum] = person[fieldNum].decode['utf-8']
         return (person, groups)
 
     def get_group_info(self, group):
@@ -537,6 +527,9 @@ class AccountSystem(object):
         except psycopg2.databaseerror, e:
             self._raise_dberror()
         if result:
+            for fieldNum in range(0, len(result) - 1):
+                if isinstance(result[fieldNum], str):
+                    result[fieldNum] = result[fieldNum].decode['utf-8']
             return result
         else:
             raise AuthError, 'No such group: %s' % group
