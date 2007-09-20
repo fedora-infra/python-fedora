@@ -3,7 +3,7 @@ Fedora Infrastructure Python API
 ================================
 :Author: Toshio Kuratomi
 :Date: 21 July 2007
-:Version: 0.2.9.17
+:Version: 0.2.9.18
 
 The Fedora module provides a python API for services used in Fedora
 Infrastructure.  Its major usage is to talk to the Fedora Account System but
