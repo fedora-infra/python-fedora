@@ -2,19 +2,23 @@
 %{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-fedora
-Version:        0.2.90.18
+Version:        0.2.90.19
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
 Group:          Development/Languages
 License:        GPLv2
 URL:            http://hosted.fedoraproject.org/projects/python-fedora/
-Source0:        http://toshio.fedoraproject.org/fedora/%{name}-%{version}.tar.gz
+Source0:        http://toshio.fedorapeople.org/fedora/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
 BuildRequires:  python-devel
-BuildRequires:  python-setuptools
+%if 0%{?fedora} >= 8
+BuildRequires:  python-setuptools-devel
+%else
+BuildRequires: python-setuptools
+%endif
 Requires: python-simplejson
 
 %description
@@ -68,6 +72,15 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fedora/tg/visit/
 
 %changelog
+* Tue Sep 25 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.19-1
+- New upstream release with a FAS2 unicode fix.
+
+* Mon Sep 24 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.18-3
+- Fix the Source URL.  Should be fedorapeople rather than fedoraproject.
+
+* Fri Sep 21 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.18-2
+- BR: python-setuptools-devel as this has been split in the new versions.
+
 * Tue Sep 18 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.18-1
 - Update to version wih handling of control-center-maint bugzilla address.
 
