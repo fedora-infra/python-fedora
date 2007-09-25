@@ -1,3 +1,19 @@
+=== 0.2.90.19 ===
+
+2007-09-25  Toshio Kuratomi <badger@Clingman> - r62
+* fedora/__init__.py, setup.py: Update to version 0.2.90.19.
+* python-fedora.spec: Fixes from the Fedora review process.
+
+2007-09-24  Ricky Zhou <ricky@fedoraproject.org> - r61
+Make fasLDAP.py handle None values properly, move encode('utf8') into modify.
+
+2007-09-20  Toshio Ernie Kuratomi <toshio@publictest1.fedora.phx.redhat.com> - r60
+* README: Bump version (really, this commit is to try and stop trac from
+  spewing false commit notices.)
+
+2007-09-18  Toshio Kuratomi <badger@Clingman> - r59
+* ChangeLog: Update ChangeLog after final changes.
+
 === 0.2.90.18 ===
 
 2007-09-18  Toshio Kuratomi <badger@Clingman> - r58
