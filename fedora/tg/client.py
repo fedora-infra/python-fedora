@@ -30,12 +30,8 @@ import logging
 import cPickle as pickle
 import re
 import inspect
+import simplejson
 from os import path
-
-try:
-    import simplejson
-except ImportError:
-    import json
 
 log = logging.getLogger(__name__)
 
@@ -87,10 +83,7 @@ class BaseClient(object):
             else:
                 raise
 
-        try:
-            loginData = simplejson.load(loginPage)
-        except NameError:
-            loginData = json.read(loginPage.read())
+        loginData = simplejson.load(loginPage)
 
         if 'message' in loginData:
             raise AuthError, 'Unable to login to server: %s' % loginData['message']
@@ -141,7 +134,7 @@ class BaseClient(object):
         url = self.baseURL + method + '/?tg_format=json'
 
         response = None # the JSON that we get back from the server
-        data = None     # decoded JSON via json.read()
+        data = None     # decoded JSON via simplejson.load()
 
         log.debug('Creating request %s' % url)
         req = urllib2.Request(url)
@@ -160,16 +153,13 @@ class BaseClient(object):
         try:
             data = simplejson.load(response)
         except NameError:
-            try:
-                data = json.read(response.read())
-            except json.ReadException, e:
-                regex = re.compile('<span class="fielderror">(.*)</span>')
-                match = regex.search(e.message)
-                if match and len(match.groups()):
-                    log.error(match.groups()[0])
-                else:
-                    log.error('Unexpected ReadException during request:' + e)
-                raise ServerError, e.message
+            regex = re.compile('<span class="fielderror">(.*)</span>')
+            match = regex.search(e.message)
+            if match and len(match.groups()):
+                log.error(match.groups()[0])
+            else:
+                log.error('Unexpected ReadException during request:' + e)
+            raise ServerError, e.message
         except Exception, e:
             log.error('Error while parsing JSON data from server:', e)
             raise ServerError, str(e)
