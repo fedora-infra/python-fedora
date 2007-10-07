@@ -124,15 +124,13 @@ class BaseClient(object):
             sessionFile = file(SESSION_FILE, 'r')
             try:
                 savedSession = pickle.load(sessionFile)
-
+                self._sessionCookie = savedSession[self.username]
                 log.debug('Loaded session %s' % self._sessionCookie)
             except EOFError:
                 log.error('Unable to load session from %s' % SESSION_FILE)
+            except KeyError:
+                log.debug('Session is for a different user')
             sessionFile.close()
-        try:
-            self._sessionCookie = savedSession[self.username]
-        except KeyError:
-            log.debug('Session is for a different user')
 
     def send_request(self, method, auth=False, input=None):
         '''
