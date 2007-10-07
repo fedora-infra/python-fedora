@@ -47,11 +47,24 @@ class BaseClient(object):
     '''
         A command-line client to interact with Fedora TurboGears Apps.
     '''
-    def __init__(self, baseURL, username=None, password=None):
+    def __init__(self, baseURL, username=None, password=None, debug=False):
         self.baseURL = baseURL
         self.username = username
         self.password = password
         self._sessionCookie = None
+
+        # Setup our logger
+        sh = logging.StreamHandler()
+        if debug:
+            log.setLevel(logging.DEBUG)
+            sh.setLevel(logging.DEBUG)
+        else:
+            log.setLevel(logging.INFO)
+            sh.setLevel(logging.INFO)
+        format = logging.Formatter("%(message)s")
+        sh.setFormatter(format)
+        log.addHandler(sh)
+
         self._load_session()
         if username and password:
             self._authenticate()
