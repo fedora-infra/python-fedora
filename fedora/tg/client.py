@@ -75,7 +75,6 @@ class BaseClient(object):
         '''
         if not force and self._sessionCookie:
             return self._sessionCookie
-
         if not self.username:
             raise AuthError, 'username must be set'
         if not self.password:
@@ -158,24 +157,20 @@ class BaseClient(object):
             req.add_header('Cookie', self.session.output(attrs=[],
                                                    header='').strip())
         try:
-            response = urllib2.urlopen(req)
+            response = urllib2.urlopen(req).read()
         except urllib2.HTTPError, e:
             log.error(e)
             raise ServerError, str(e)
 
         try:
-            data = simplejson.load(response)
-        except NameError:
-            regex = re.compile('<span class="fielderror">(.*)</span>')
-            match = regex.search(e.message)
-            if match and len(match.groups()):
-                log.error(match.groups()[0])
-            else:
-                log.error('Unexpected ReadException during request:' + e)
-            raise ServerError, e.message
+            data = simplejson.loads(response)
         except Exception, e:
-            log.error('Error while parsing JSON data from server:', e)
-            raise ServerError, str(e)
+            regex = re.compile('<span class="fielderror">(.*)</span>')
+            match = regex.search(response)
+            if match and len(match.groups()):
+                return dict(tg_flash=match.groups()[0])
+            else:
+                raise ServerError, e.message
 
         if 'logging_in' in data:
             if (inspect.currentframe().f_back.f_code !=
