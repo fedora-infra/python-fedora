@@ -58,7 +58,7 @@ class Server(object):
 
     def modify(self, base, attribute, new, old=None):
         ''' Modify an attribute, requires write access '''
-        if new == None:
+        if new is None:
             return None
         new = str(new)
         if new == old:
@@ -354,6 +354,7 @@ class Person(object):
                     'givenName' : givenName,
                     'mail' : mail,
                     'fedoraPersonKeyId' : '',
+                    'fedoraPersonCertSerial' : -1,
                     'description' : '',
                     'fedoraPersonCreationDate' : str(now),
                     'telephoneNumber' : telephoneNumber,
