@@ -30,12 +30,8 @@ import logging
 import cPickle as pickle
 import re
 import inspect
+import simplejson
 from os import path
-
-try:
-    import simplejson
-except ImportError:
-    import json
 
 log = logging.getLogger(__name__)
 
@@ -51,11 +47,24 @@ class BaseClient(object):
     '''
         A command-line client to interact with Fedora TurboGears Apps.
     '''
-    def __init__(self, baseURL, username=None, password=None):
+    def __init__(self, baseURL, username=None, password=None, debug=False):
         self.baseURL = baseURL
         self.username = username
         self.password = password
         self._sessionCookie = None
+
+        # Setup our logger
+        sh = logging.StreamHandler()
+        if debug:
+            log.setLevel(logging.DEBUG)
+            sh.setLevel(logging.DEBUG)
+        else:
+            log.setLevel(logging.INFO)
+            sh.setLevel(logging.INFO)
+        format = logging.Formatter("%(message)s")
+        sh.setFormatter(format)
+        log.addHandler(sh)
+
         self._load_session()
         if username and password:
             self._authenticate()
@@ -66,7 +75,6 @@ class BaseClient(object):
         '''
         if not force and self._sessionCookie:
             return self._sessionCookie
-
         if not self.username:
             raise AuthError, 'username must be set'
         if not self.password:
@@ -87,10 +95,7 @@ class BaseClient(object):
             else:
                 raise
 
-        try:
-            loginData = simplejson.load(loginPage)
-        except NameError:
-            loginData = json.read(loginPage.read())
+        loginData = simplejson.load(loginPage)
 
         if 'message' in loginData:
             raise AuthError, 'Unable to login to server: %s' % loginData['message']
@@ -124,15 +129,13 @@ class BaseClient(object):
             sessionFile = file(SESSION_FILE, 'r')
             try:
                 savedSession = pickle.load(sessionFile)
-
+                self._sessionCookie = savedSession[self.username]
                 log.debug('Loaded session %s' % self._sessionCookie)
             except EOFError:
                 log.error('Unable to load session from %s' % SESSION_FILE)
+            except KeyError:
+                log.debug('Session is for a different user')
             sessionFile.close()
-        try:
-            self._sessionCookie = savedSession[self.username]
-        except KeyError:
-            log.debug('Session is for a different user')
 
     def send_request(self, method, auth=False, input=None):
         '''
@@ -143,7 +146,7 @@ class BaseClient(object):
         url = self.baseURL + method + '/?tg_format=json'
 
         response = None # the JSON that we get back from the server
-        data = None     # decoded JSON via json.read()
+        data = None     # decoded JSON via simplejson.load()
 
         log.debug('Creating request %s' % url)
         req = urllib2.Request(url)
@@ -154,27 +157,20 @@ class BaseClient(object):
             req.add_header('Cookie', self.session.output(attrs=[],
                                                    header='').strip())
         try:
-            response = urllib2.urlopen(req)
+            response = urllib2.urlopen(req).read()
         except urllib2.HTTPError, e:
             log.error(e)
             raise ServerError, str(e)
 
         try:
-            data = simplejson.load(response)
-        except NameError:
-            try:
-                data = json.read(response.read())
-            except json.ReadException, e:
-                regex = re.compile('<span class="fielderror">(.*)</span>')
-                match = regex.search(e.message)
-                if match and len(match.groups()):
-                    log.error(match.groups()[0])
-                else:
-                    log.error('Unexpected ReadException during request:' + e)
-                raise ServerError, e.message
+            data = simplejson.loads(response)
         except Exception, e:
-            log.error('Error while parsing JSON data from server:', e)
-            raise ServerError, str(e)
+            regex = re.compile('<span class="fielderror">(.*)</span>')
+            match = regex.search(response)
+            if match and len(match.groups()):
+                return dict(tg_flash=match.groups()[0])
+            else:
+                raise ServerError, e.message
 
         if 'logging_in' in data:
             if (inspect.currentframe().f_back.f_code !=
