@@ -3,13 +3,13 @@
 from setuptools import setup, find_packages
 
 setup(name='python-fedora',
-        version='0.2.90.19',
+        version='0.2.90.20',
         description='Fedora Specific Python Modules',
         author='Toshio Kuratomi',
         author_email='toshio@fedoraproject.org',
         license='GPLv2',
-        keywords='Fedora Account System',
-        url='http://www.fedoraproject.org/wiki/Infrastructure/AccountSystem2/API',
+        keywords='Fedora Python Modules',
+        url='https://hosted.fedoraproject.org/projects/python-fedora',
         packages=find_packages(),
         include_package_data=True,
         #install_requires=['psycopg2'],

@@ -2,7 +2,7 @@
 %{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-fedora
-Version:        0.2.90.19
+Version:        0.2.90.20
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -13,13 +13,8 @@ Source0:        http://toshio.fedorapeople.org/fedora/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
-BuildRequires:  python-devel
-%if 0%{?fedora} >= 8
-BuildRequires:  python-setuptools-devel
-%else
-BuildRequires: python-setuptools
-%endif
-Requires: python-simplejson
+BuildRequires:  python-devel python-setuptools-devel
+Requires:       python-simplejson
 
 %description
 Python modules that handle communication with Fedora Infrastructure services.
@@ -72,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fedora/tg/visit/
 
 %changelog
+* Wed Nov  7 2007 Luke Macken <lmacken@redhat.com> - 0.2.90.20-1
+- Latest upstream release
+
 * Tue Sep 25 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.19-1
 - New upstream release with a FAS2 unicode fix.
 
