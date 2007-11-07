@@ -1,3 +1,45 @@
+=== 0.2.90.20 ===
+
+2007-11-07  Luke Macken <lmacken@redhat.com> - r76
+More 0.2.90.20 changes
+2007-11-07  Luke Macken <lmacken@redhat.com> - r75
+Require SQLAlchemy 0.3 for python-fedora-infrastructure
+
+2007-11-07  Luke Macken <lmacken@redhat.com> - r74
+0.2.90.20
+2007-11-07  Toshio Kuratomi <badger@Clingman> - r73
+* fedora/accounts/fasLDAP.py: Simplify code that just duplicates dict.items().
+
+2007-10-31  Ricky Zhou <ricky@fedoraproject.org> - r72
+Store timestamps in LDAP instead of date strings.
+
+2007-10-29  Luke Macken <lmacken@redhat.com> - r71
+Merge with new bzr.fedoraproject.org branch
+
+2007-10-18  Ricky Zhou <ricky@fedoraproject.org> - r70
+Make output of Groups.byGroupName() always a dict.
+
+2007-10-17  Ricky Zhou <ricky@fedoraproject.org> - r69
+Add fedoraPersonCertSerial field.
+
+2007-10-02  Ricky Zhou <ricky@fedoraproject.org> - r68
+Fix possible unicode problems (hope I did this right).  
+
+2007-09-26  Ricky Zhou <ricky@fedoraproject.org> - r67
+Fix typo in AUTHORS
+
+2007-09-26  Ricky Zhou <ricky@fedoraproject.org> - r66
+Fix move str() and encode() out of add.
+
+2007-09-26  Ricky Zhou <ricky@fedoraproject.org> - r65
+Remove leftover debugging statement.
+
+2007-09-26  Ricky Zhou <ricky@fedoraproject.org> - r64
+Add a few str() and encode()
+
+2007-09-25  Toshio Kuratomi <badger@Clingman> - r63
+* ChangeLog: Update to final ChangeLog for the release.
+
 === 0.2.90.19 ===
 
 2007-09-25  Toshio Kuratomi <badger@Clingman> - r62
