@@ -3,7 +3,7 @@
 
 Name:           python-fedora
 Version:        0.2.90.20
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
 Group:          Development/Languages
@@ -27,7 +27,7 @@ Summary: Python modules for building Fedora Infrastructure Services
 Group: Development/Languages
 Requires: %{name} = %{version}-%{release}
 Requires: python-psycopg2
-Requires: python-sqlalchemy
+Requires: python-sqlalchemy0.3
 
 %description infrastructure
 Additional python modules that can be used on Fedora Infrastructure Servers to
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fedora/tg/visit/
 
 %changelog
+* Wed Nov  7 2007 Luke Macken <lmacken@redhat.com> - 0.2.90.20-2
+- Require SQLAlchemy 0.3 for python-fedora-infrastructure
+
 * Wed Nov  7 2007 Luke Macken <lmacken@redhat.com> - 0.2.90.20-1
 - Latest upstream release
 
