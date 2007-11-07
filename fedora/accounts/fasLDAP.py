@@ -49,8 +49,7 @@ class Server(object):
 
     def add(self, base, attributes):
         ''' Add a new group record to LDAP instance '''
-        attributes=[ (k, v) for k,v in attributes.items() ]
-        self.ldapConn.add_s(base, attributes)
+        self.ldapConn.add_s(base, attributes.items())
 
     def delete(self, base):
         ''' Delete target base '''
