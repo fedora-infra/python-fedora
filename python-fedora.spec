@@ -3,7 +3,7 @@
 
 Name:           python-fedora
 Version:        0.2.90.20
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
 Group:          Development/Languages
@@ -27,7 +27,12 @@ Summary: Python modules for building Fedora Infrastructure Services
 Group: Development/Languages
 Requires: %{name} = %{version}-%{release}
 Requires: python-psycopg2
+# This can go away when TurboGears can use SQLAlchemy >= 0.4
+%if 0%{?fedora} >= 8
 Requires: python-sqlalchemy0.3
+%else
+Requires: python-sqlalchemy
+%endif
 
 %description infrastructure
 Additional python modules that can be used on Fedora Infrastructure Servers to
@@ -67,6 +72,10 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fedora/tg/visit/
 
 %changelog
+* Wed Nov 14 2007 Luke Macken <lmacken@redhat.com> - 0.2.90.20-3
+- Handle our SQLAlchemy requirement differently for Fedora 8+, until
+  TurboGears can use SQLAlchemy >= 0.4
+
 * Wed Nov  7 2007 Luke Macken <lmacken@redhat.com> - 0.2.90.20-2
 - Require SQLAlchemy 0.3 for python-fedora-infrastructure
 
