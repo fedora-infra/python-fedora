@@ -3,7 +3,7 @@ Fedora Infrastructure Python API
 ================================
 :Author: Toshio Kuratomi
 :Date: 21 July 2007
-:Version: 0.2.9.18
+:Version: 0.2.9.21
 
 The Fedora module provides a python API for services used in Fedora
 Infrastructure.  Its major usage is to talk to the Fedora Account System but
@@ -178,16 +178,45 @@ appearing on the page as your message.
 
 Here's how you might do this using the tg client::
 
-  from fedora.tg.client import BaseClient
+  import getpass
+  import sys
+  from fedora.tg.client import BaseClient, AuthError
+
+  # Subclass BaseClient and add the methods you need to interact with the server
   class MyClient(BaseClient):
       def echo(self, message):
-          data = self.send_request('echo', auth=True, message=message)
+          # send_request() is the workhorse of BaseClient, sending the data
+          # over the wire to the server.
+          # The first argument is the server's method name.
+          # auth determines whether this request has to send authentication
+          #   tokens.  If tokens exist (a cookie) on the filesystem, it will be
+          #   used.  If not, it will use a username and password.
+          # input is the data to send to the server
+          data = self.send_request('echo', auth=True, input={'message':message})
           return data['echo_string']
 
   if __name__ == '__main__':
       username = 'toshio'
       password = 'XXXX'
+      # BASEURL is the base to which the server methods are appended.
+      # In this example, the echo method is at:
+      #   http://localhost:8080/echo_server/echo
       BASEURL = 'http://localhost:8080/echo_server/'
       client = MyClient(BASEURL, username, password)
-
-      print client.echo('This is a test')
+      
+      # Allow 3 password failures
+      for retry in range(0, 3):
+          try:
+              print client.echo('This is a test')
+          except AuthError, e:
+              # If authentication fails we get an AuthError.  We take a password
+              # from the userand try again.
+              if sys.stdin.isatty():
+                  # If this is an interactive session, use getpass
+                  client.password = getpass.getpass('Password: ')
+              else:
+                  # If this is part of a script, only try once to read the
+                  # password from stdin.  Then fail.
+                  if retry > 0:
+                      break
+                  client.password = sys.stdin.readline().rstrip()
