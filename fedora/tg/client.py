@@ -73,7 +73,9 @@ class BaseClient(object):
         '''
             Return an authenticated session cookie.
         '''
-        if not force and self._sessionCookie:
+        if force:
+            self._sessionCookie = None
+        if self._sessionCookie:
             return self._sessionCookie
         if not self.username:
             raise AuthError, 'username must be set'
@@ -159,6 +161,17 @@ class BaseClient(object):
         try:
             response = urllib2.urlopen(req).read()
         except urllib2.HTTPError, e:
+            if e.msg == 'Forbidden':
+                if (inspect.currentframe().f_back.f_code !=
+                        inspect.currentframe().f_code):
+                    self._authenticate(force=True)
+                    data = self.send_request(method, auth, input)
+                else:
+                    # We actually shouldn't ever reach here.  Unless something
+                    # goes drastically wrong _authenticate should raise an
+                    # AuthError
+                    raise AuthError, 'Unable to log into server: %s' % (
+                            data['message'],)
             log.error(e)
             raise ServerError, str(e)
 
