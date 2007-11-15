@@ -2,8 +2,8 @@
 %{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-fedora
-Version:        0.2.90.20
-Release:        3%{?dist}
+Version:        0.2.90.21
+Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
 Group:          Development/Languages
@@ -72,6 +72,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fedora/tg/visit/
 
 %changelog
+* Thu Nov 15 2007 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.90.21-1
+- Bugfix release for expired sessions.
+
 * Wed Nov 14 2007 Luke Macken <lmacken@redhat.com> - 0.2.90.20-3
 - Handle our SQLAlchemy requirement differently for Fedora 8+, until
   TurboGears can use SQLAlchemy >= 0.4
