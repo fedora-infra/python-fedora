@@ -1,4 +1,24 @@
+=== 0.2.90.21 ===
+
+2007-11-15  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r81
+* fedora/__init__.py, python-fedora.spec: Bump for new version.
+
+2007-11-15  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r80
+* README: Enhance the documentation for using BaseClient.
+
+2007-11-15  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r79
+* fedora/tg/client.py: BaseClient::_authenticate(): Clear the session if we
+  force reauthentication.
+  - BaseClient::send_request(): If we are told by the server that our request
+    is Forbidden, attempt to reauthenticate.
+
+2007-11-14  Luke Macken <lmacken@redhat.com> - r78
+Handle our SQLAlchemy requirement differently for Fedora 8+, until TurboGears can use SQLAlchemy >= 0.4
+
 === 0.2.90.20 ===
+
+2007-11-07  Toshio Kuratomi <badger@Clingman> - r77
+* Final ChangeLog for the release.
 
 2007-11-07  Luke Macken <lmacken@redhat.com> - r76
 More 0.2.90.20 changes
@@ -410,7 +430,7 @@ Add fedoraGroupRequires, fix empty value issues with LDAP, and catch more LDAP e
   from the local userId variable instead of trying to get it from a nonexistent
   user mapper.
 
-2007-01-20  Toshio Kuratomi <toshio@tiki-lounge.com> - r3
+2007-01-21  Toshio Kuratomi <toshio@tiki-lounge.com> - r3
 * python-fedora.spec: Add a spec file so this can be turned into an rpm.
 * fedora/accounts/fas.py:
   - adminUserId: Set a constant for the adminUserId.  This allows us to check
