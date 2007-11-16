@@ -67,7 +67,7 @@ class BaseClient(object):
 
         self._load_session()
         if username and password:
-            self._authenticate()
+            self._authenticate(force=True)
 
     def _authenticate(self, force=False):
         '''
@@ -116,9 +116,11 @@ class BaseClient(object):
 
     def _save_session(self):
         '''
-            Store our pickled session cookie.  This method loads our existing
-            session file and overwrites our current users cookie.  This allows
-            us to retain cookies for multiple users.
+            Store our pickled session cookie.
+            
+            This method loads our existing session file and modified our
+            current user's cookie.  This allows us to retain cookies for
+            multiple users.
         '''
         save = {}
         if path.isfile(SESSION_FILE):
@@ -147,7 +149,6 @@ class BaseClient(object):
                 log.error('Unable to load session from %s' % SESSION_FILE)
             except KeyError:
                 log.debug('Session is for a different user')
-                self._sessionCookie = None
             sessionFile.close()
 
     def send_request(self, method, auth=False, input=None):
