@@ -41,7 +41,6 @@ __version__='0.1'
 
 adminUserId = 100001
 
-import os
 import psycopg2
 import psycopg2.extras
 import sqlalchemy.pool as pool

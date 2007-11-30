@@ -31,6 +31,7 @@ from random import Random
 import sha
 from base64 import b64encode
 import sys
+import os
 
 dbName = 'fastest'
 
