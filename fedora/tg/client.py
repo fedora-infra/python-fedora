@@ -67,7 +67,7 @@ class BaseClient(object):
 
         self._load_session()
         if username and password:
-            self._authenticate()
+            self._authenticate(force=True)
 
     def _authenticate(self, force=False):
         '''
@@ -116,10 +116,22 @@ class BaseClient(object):
 
     def _save_session(self):
         '''
-            Store a pickled session cookie.
+            Store our pickled session cookie.
+            
+            This method loads our existing session file and modified our
+            current user's cookie.  This allows us to retain cookies for
+            multiple users.
         '''
+        save = {}
+        if path.isfile(SESSION_FILE):
+            sessionFile = file(SESSION_FILE, 'r')
+            try:
+                save = pickle.load(sessionFile)
+            except:
+                pass
+            sessionFile.close()
+        save[self.username] = self._sessionCookie
         sessionFile = file(SESSION_FILE, 'w')
-        save = {self.username : self._sessionCookie}
         pickle.dump(save, sessionFile)
         sessionFile.close()
 
