@@ -46,6 +46,7 @@ import psycopg2
 import psycopg2.extras
 import sqlalchemy.pool as pool
 import traceback
+from fasLDAP import retrieve_db_info
 
 psycopg2 = pool.manage(psycopg2, pool_size=5, max_overflow=15)
 
@@ -58,51 +59,6 @@ dbName = 'fedorausers'
 # Due to having live and test auth db's setup in the config file, we have to
 # use 'live' rather than 'auth' as the key.
 dbAlias = 'live'
-
-def retrieve_db_info(dbKey):
-    '''Retrieve information to connect to the db from the filesystem.
-    
-    Arguments:
-    :dbKey: The string identifying the database entry in the config file.
-
-    Returns: A dictionary containing the values to use in connecting to the
-      database.
-
-    Exceptions:
-    :IOError: Returned if the config file is not on the system.
-    :AuthError: Returned if there is no record found for dbKey in the
-      config file.
-    '''
-    # Open a filehandle to the config file
-    if os.environ.has_key('HOME') and os.path.isfile(
-            os.path.join(os.environ.get('HOME'), '.fedora-db-access')):
-        fh = file(os.path.join(
-            os.environ.get('HOME'), '.fedora-db-access'), 'r')
-    elif os.path.isfile('/etc/sysconfig/fedora-db-access'):
-        fh = file('/etc/sysconfig/fedora-db-access', 'r')
-    else:
-        raise IOError, 'fedora-db-access file does not exist.'
-
-    # Read the file until we get the information for the requested db
-    dbInfo = None
-    for line in fh.readlines():
-        if not line:
-            break
-        line = line.strip()
-        if not line or line[0] == '#':
-            continue
-        pieces = line.split(None, 1)
-        if len(pieces) < 2:
-            continue
-        if pieces[0] == dbKey:
-            dbInfo = eval(pieces[1])
-            break
-
-    if fh:
-        fh.close()
-    if not dbInfo:
-        raise AuthError, 'Authentication source "%s" not configured' % (dbKey,)
-    return dbInfo
 
 class FASError(Exception):
     pass
