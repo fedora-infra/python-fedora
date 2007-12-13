@@ -31,7 +31,7 @@ from turbogears.widgets import Widget
 class FedoraPeopleWidget(Widget):
     template = """
        <table xmlns:py="http://purl.org/kid/ns#" border="0">
-          <tr py:for="entry in entries">
+          <tr py:for="entry in entries[:5]">
             <td><img src="${entry['image']}" height="32" width="32"/></td>
             <td><a href="${entry['link']}">${entry['title']}</a></td>
           </tr>
@@ -43,18 +43,20 @@ class FedoraPeopleWidget(Widget):
         self.entries = []
         regex = re.compile('<img src="(.*)" alt="" />')
         feed = feedparser.parse('http://planet.fedoraproject.org/rss20.xml')
-        for entry in feed['entries'][:5]:
+        for entry in feed['entries']:
             self.entries.append({
                 'link'  : entry['link'],
                 'title' : entry['title'],
                 'image' : regex.match(entry['summary']).group(1)
             })
 
+    def __json__(self):
+        return self.entries
 
 class FedoraMaintainerWidget(Widget):
     template = """
        <table xmlns:py="http://purl.org/kid/ns#" border="0">
-          <tr py:for="pkg in packages">
+          <tr py:for="pkg in packages[:5]">
             <td><a href="https://admin.fedoraproject.org/pkgdb/packages/name/${pkg['name']}">${pkg['name']}</a></td>
           </tr>
        </table>
@@ -63,8 +65,10 @@ class FedoraMaintainerWidget(Widget):
 
     def __init__(self, username):
         page = urllib2.urlopen('https://admin.fedoraproject.org/pkgdb/users/packages/%s/?tg_format=json' % username)
-        self.packages = simplejson.load(page)['pkgs'][:5]
+        self.packages = simplejson.load(page)['pkgs']
 
+    def __json__(self):
+        return self.packages
 
 class BugzillaWidget(Widget):
     template = """
@@ -85,3 +89,6 @@ class BugzillaWidget(Widget):
             'email1'            : email,
             'emailassigned_to1' : True
         })[:5]
+
+    def __json__(self):
+        return self.bugs
