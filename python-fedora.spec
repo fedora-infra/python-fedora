@@ -2,7 +2,7 @@
 %{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-fedora
-Version:        0.2.90.23
+Version:        0.2.90.22
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -14,7 +14,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
 BuildRequires:  python-devel python-setuptools-devel
-Requires:       python-simplejson python-bugzilla python-feedparser
+Requires:       python-simplejson
 
 %description
 Python modules that handle communication with Fedora Infrastructure services.
@@ -27,6 +27,8 @@ Summary: Python modules for building Fedora Infrastructure Services
 Group: Development/Languages
 Requires: %{name} = %{version}-%{release}
 Requires: python-psycopg2
+Requires: python-bugzilla
+Requires: python-feedparser
 # This can go away when TurboGears can use SQLAlchemy >= 0.4
 %if 0%{?fedora} >= 8
 Requires: python-sqlalchemy0.3
@@ -63,7 +65,6 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fedora/__init__.py*
 %{python_sitelib}/fedora/tg/__init__.py*
 %{python_sitelib}/fedora/tg/client.py*
-%{python_sitelib}/fedora/tg/widgets.py*
 %{python_sitelib}/python_fedora-%{version}-py%{pyver}.egg-info
 
 %files infrastructure
@@ -71,15 +72,14 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fedora/accounts/
 %{python_sitelib}/fedora/tg/identity/
 %{python_sitelib}/fedora/tg/visit/
+%{python_sitelib}/fedora/tg/widgets.py*
 
 %changelog
-* Thu Dec 13 2007 Luke Macken <lmacken@redhat.com> - 0.2.90.23-1
+* Thu Dec 13 2007 Luke Macken <lmacken@redhat.com> - 0.2.90.22-1
+- Convert fasLDAP to get its connection information fedora-db-access.
 - Add requirements for python-feedparser and python-bugzilla
 - Add fedora.tg.widgets module containing a few proof-of-concept
   Fedora TurboGears widgets
-
-* Thu Nov 29 2007 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.90.22-1
-- Convert fasLDAP to get its connection information fedora-db-access.
 
 * Thu Nov 15 2007 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.90.21-1
 - Bugfix release for expired sessions.
