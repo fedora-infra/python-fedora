@@ -2,7 +2,7 @@
 %{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-fedora
-Version:        0.2.90.21
+Version:        0.2.90.22
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -72,6 +72,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fedora/tg/visit/
 
 %changelog
+* Thu Nov 29 2007 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.90.22-1
+- Convert fasLDAP to get its connection information fedora-db-access.
+
 * Thu Nov 15 2007 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.90.21-1
 - Bugfix release for expired sessions.
 
