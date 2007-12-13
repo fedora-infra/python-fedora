@@ -2,7 +2,7 @@
 %{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-fedora
-Version:        0.2.90.22
+Version:        0.2.90.23
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -14,7 +14,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
 BuildRequires:  python-devel python-setuptools-devel
-Requires:       python-simplejson
+Requires:       python-simplejson python-bugzilla python-feedparser
 
 %description
 Python modules that handle communication with Fedora Infrastructure services.
@@ -63,6 +63,7 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fedora/__init__.py*
 %{python_sitelib}/fedora/tg/__init__.py*
 %{python_sitelib}/fedora/tg/client.py*
+%{python_sitelib}/fedora/tg/widgets.py*
 %{python_sitelib}/python_fedora-%{version}-py%{pyver}.egg-info
 
 %files infrastructure
@@ -72,6 +73,11 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fedora/tg/visit/
 
 %changelog
+* Thu Dec 13 2007 Luke Macken <lmacken@redhat.com> - 0.2.90.23-1
+- Add requirements for python-feedparser and python-bugzilla
+- Add fedora.tg.widgets module containing a few proof-of-concept
+  Fedora TurboGears widgets
+
 * Thu Nov 29 2007 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.90.22-1
 - Convert fasLDAP to get its connection information fedora-db-access.
 
