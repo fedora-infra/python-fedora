@@ -182,8 +182,7 @@ class BaseClient(object):
                     # We actually shouldn't ever reach here.  Unless something
                     # goes drastically wrong _authenticate should raise an
                     # AuthError
-                    raise AuthError, 'Unable to log into server: %s' % (
-                            data['message'],)
+                    raise AuthError, 'Unable to log into server: %s' % str(e)
             log.error(e)
             raise ServerError, str(e)
 
