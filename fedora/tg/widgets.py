@@ -31,16 +31,17 @@ from turbogears.widgets import Widget
 class FedoraPeopleWidget(Widget):
     template = """
        <table xmlns:py="http://purl.org/kid/ns#"
-         class="widget FedoraPeopleWidget">
+         class="widget FedoraPeopleWidget" py:attrs="{'id': widgetId}">
           <tr py:for="entry in entries[:5]">
             <td><img src="${entry['image']}" height="32" width="32"/></td>
             <td><a href="${entry['link']}">${entry['title']}</a></td>
           </tr>
         </table>
     """
-    params = ["entries"]
+    params = ["widgetId", "entries"]
 
-    def __init__(self):
+    def __init__(self, widgetId=None):
+        self.widgetId = widgetId
         self.entries = []
         regex = re.compile('<img src="(.*)" alt="" />')
         feed = feedparser.parse('http://planet.fedoraproject.org/rss20.xml')
@@ -52,29 +53,31 @@ class FedoraPeopleWidget(Widget):
             })
 
     def __json__(self):
-        return self.entries
+        return {'id': self.widgetId, 'entries': self.entries}
 
 class FedoraMaintainerWidget(Widget):
     template = """
        <table xmlns:py="http://purl.org/kid/ns#"
-         class="widget FedoraMaintainerWidget">
+         class="widget FedoraMaintainerWidget" py:attrs="{'id': widgetId}">
           <tr py:for="pkg in packages[:5]">
             <td><a href="https://admin.fedoraproject.org/pkgdb/packages/name/${pkg['name']}">${pkg['name']}</a></td>
           </tr>
        </table>
     """
-    params = ["packages"]
+    params = ["widgetId", "packages"]
 
-    def __init__(self, username):
+    def __init__(self, username, widgetId=None):
+        self.widgetId = widgetId
         page = urllib2.urlopen('https://admin.fedoraproject.org/pkgdb/users/packages/%s/?tg_format=json' % username)
         self.packages = simplejson.load(page)['pkgs']
 
     def __json__(self):
-        return self.packages
+        return {'id': self.widgetId, 'packages': self.packages}
 
 class BugzillaWidget(Widget):
     template = """
-       <table xmlns:py="http://purl.org/kid/ns#" class="widget BugzillaWidget">
+       <table xmlns:py="http://purl.org/kid/ns#" class="widget BugzillaWidget"
+          py:attrs="{'id': widgetId}">
           <tr py:for="bug in bugs">
             <td>
               <a href="${bug.url}">${bug.bug_id}</a> ${bug.short_short_desc}
@@ -82,9 +85,10 @@ class BugzillaWidget(Widget):
           </tr>
        </table>
     """
-    params = ["bugs"]
+    params = ["widgetId", "bugs"]
 
-    def __init__(self, email):
+    def __init__(self, email, widgetId=None):
+        self.widgetId = widgetId
         bz = Bugzilla(url='https://bugzilla.redhat.com/xmlrpc.cgi')
         self.bugs = bz.query({
             'product'           : 'Fedora',
@@ -93,4 +97,4 @@ class BugzillaWidget(Widget):
         })[:5]
 
     def __json__(self):
-        return self.bugs
+        return {'id': self.widgetId, 'bugs': self.bugs}
