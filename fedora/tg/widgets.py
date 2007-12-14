@@ -30,7 +30,8 @@ from turbogears.widgets import Widget
 
 class FedoraPeopleWidget(Widget):
     template = """
-       <table xmlns:py="http://purl.org/kid/ns#" border="0">
+       <table xmlns:py="http://purl.org/kid/ns#"
+         class="widget FedoraPeopleWidget">
           <tr py:for="entry in entries[:5]">
             <td><img src="${entry['image']}" height="32" width="32"/></td>
             <td><a href="${entry['link']}">${entry['title']}</a></td>
@@ -55,7 +56,8 @@ class FedoraPeopleWidget(Widget):
 
 class FedoraMaintainerWidget(Widget):
     template = """
-       <table xmlns:py="http://purl.org/kid/ns#" border="0">
+       <table xmlns:py="http://purl.org/kid/ns#"
+         class="widget FedoraMaintainerWidget">
           <tr py:for="pkg in packages[:5]">
             <td><a href="https://admin.fedoraproject.org/pkgdb/packages/name/${pkg['name']}">${pkg['name']}</a></td>
           </tr>
@@ -72,7 +74,7 @@ class FedoraMaintainerWidget(Widget):
 
 class BugzillaWidget(Widget):
     template = """
-       <table xmlns:py="http://purl.org/kid/ns#" border="0">
+       <table xmlns:py="http://purl.org/kid/ns#" class="widget BugzillaWidget">
           <tr py:for="bug in bugs">
             <td>
               <a href="${bug.url}">${bug.bug_id}</a> ${bug.short_short_desc}
