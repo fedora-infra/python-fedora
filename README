@@ -154,6 +154,12 @@ configuring it for fas v1.  Here are the differences::
   visit.saprovider.model="fedora.accounts.tgfas2.Visit"
   identity.saprovider.model.visit="fedora.accounts.tgfas2.VisitIdentity"
 
+------------------
+TurboGears Widgets
+------------------
+We've started adding experimental TG Widgets to interact with specific aspects
+of Fedora.
+
 ---------
 TG Client
 ---------
