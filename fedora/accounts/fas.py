@@ -278,7 +278,7 @@ class AccountSystem(object):
         Exceptions:
         :AuthError: The user does not exist.
 
-        Returns: The userid to which hte email belongs.
+        Returns: The userid to which the email belongs.
         '''
         cursor = self.dbCmd
         try:
@@ -294,6 +294,52 @@ class AccountSystem(object):
             if email in self.__alternate_email:
                 return self.__alternate_email[email]
             raise AuthError, 'No such user: %s' % username
+
+    def get_users(self, keyField=None):
+        '''Retrieve most commonly needed data about all users.
+
+        This allows us to make one query of the database instead of multiple
+        when generating things like acl lists for cvs.
+
+        Arguments:
+          :keyField: the field from the database that we should key on for the
+            dict.  Valid keyFields are:
+
+        Returns: a dict keyed on keyField.  Each dict record contains a dict
+        with the following entries:
+          :id: User id in the account system
+          :username: The public username
+          :email: Email address
+          :bugzilla_email: Email address used in bugzilla
+          :human_name: The user's common name
+        '''
+        # assure ourselves of having a valid key for the dict
+        fields = ('id', 'email', 'bugzilla_email', 'username')
+        if keyField not in fields:
+            keyField = 'id'
+        
+        # Fetch the users from the database
+        cursor = self.dbCmd
+        try:
+            cursor.execute("select '' as bugzilla_email, id, username,"
+                " email, human_name"
+                " from person",
+                userDict)
+        except psycopg2.DatabaseError, e:
+            self._raise_dberror()
+
+        people = {}
+        # Add the users to a dict
+        for person in cursor.fetchall():
+            # Fill the bugzilla_email field.
+            # NOTE:  Because of a bug in the psycopg2 DictCursor, you have
+            # to use list notation to set values even though you can use
+            # dict keys to retrieve them.
+            person[0] = self.__bugzilla_email.get(person['id'],
+                    person['email'])
+            people[person[keyField]] = person
+
+        return people
 
     def get_user_info(self, user=None):
         ### FIXME: Check the information we return against the FAS2 schema.
