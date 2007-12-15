@@ -30,58 +30,9 @@ import time
 from random import Random
 import sha
 from base64 import b64encode
-import sys
-import os
+from util import AuthError, retrieve_db_info
 
 dbName = 'fastest'
-
-class AuthError(Exception):
-    pass
-
-def retrieve_db_info(dbKey):
-    '''Retrieve information to connect to the db from the filesystem.
-    
-    Arguments:
-    :dbKey: The string identifying the database entry in the config file.
-
-    Returns: A dictionary containing the values to use in connecting to the
-      database.
-
-    Exceptions:
-    :IOError: Returned if the config file is not on the system.
-    :AuthError: Returned if there is no record found for dbKey in the
-      config file.
-    '''
-    # Open a filehandle to the config file
-    if os.environ.has_key('HOME') and os.path.isfile(
-            os.path.join(os.environ.get('HOME'), '.fedora-db-access')):
-        fh = file(os.path.join(
-            os.environ.get('HOME'), '.fedora-db-access'), 'r')
-    elif os.path.isfile('/etc/sysconfig/fedora-db-access'):
-        fh = file('/etc/sysconfig/fedora-db-access', 'r')
-    else:
-        raise IOError, 'fedora-db-access file does not exist.'
-
-    # Read the file until we get the information for the requested db
-    dbInfo = None
-    for line in fh.readlines():
-        if not line:
-            break
-        line = line.strip()
-        if not line or line[0] == '#':
-            continue
-        pieces = line.split(None, 1)
-        if len(pieces) < 2:
-            continue
-        if pieces[0] == dbKey:
-            dbInfo = eval(pieces[1])
-            break
-
-    if fh:
-        fh.close()
-    if not dbInfo:
-        raise AuthError, 'Authentication source "%s" not configured' % (dbKey,)
-    return dbInfo
 
 class Server(object):
     def __init__(self, server=None, who=None, password=None):

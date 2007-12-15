@@ -45,7 +45,7 @@ import psycopg2
 import psycopg2.extras
 import sqlalchemy.pool as pool
 import traceback
-from fasLDAP import retrieve_db_info
+from util import retrieve_db_info, AuthError, FASError
 
 psycopg2 = pool.manage(psycopg2, pool_size=5, max_overflow=15)
 
@@ -58,12 +58,6 @@ dbName = 'fedorausers'
 # Due to having live and test auth db's setup in the config file, we have to
 # use 'live' rather than 'auth' as the key.
 dbAlias = 'live'
-
-class FASError(Exception):
-    pass
-
-class AuthError(FASError):
-    pass
 
 class DBError(FASError):
     pass
@@ -323,8 +317,7 @@ class AccountSystem(object):
         try:
             cursor.execute("select '' as bugzilla_email, id, username,"
                 " email, human_name"
-                " from person",
-                userDict)
+                " from person")
         except psycopg2.DatabaseError, e:
             self._raise_dberror()
 
