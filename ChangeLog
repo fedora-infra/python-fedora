@@ -1,4 +1,85 @@
+2007-12-14  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r100
+* python-fedora.spec: Add python-ldap to the list of requirements.
+
+2007-12-14  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r99
+* fedora/accounts/fasLDAP.py, fedora/accounts/util.py: Move FASError,
+  AuthError, and retrieve_db_info() to their own file.
+* fedora/accounts/fas.py: Use exceptions and retrieve_db_info() from util.py.
+  - get_users(): Fix a syntax error in the database retrieval.
+
+2007-12-14  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r98
+* fedora/accounts/fas.py: AccountSystem::get_users(): add a method to retrieve
+  common public information for all users.  This lets us query the database
+  once to get user information instead of almost once for every user in some
+  situations with some packages.
+
+2007-12-14  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r97
+* fedora/tg/client.py: Merge client exception fix.
+
+2007-12-14  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r96
+* fedora/tg/widgets.py: Add a widgetId to all the widgets.  This allows us to
+  have more than one of a widget on a page and perform operations on them
+  separately.
+
+2007-12-13  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r95
+* README: Initial widget docs.
+
+2007-12-13  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r94
+* fedora/tg/widgets.py: Give the widgets some classes so styles can be set
+  via stylesheets.
+
+2007-12-13  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r93
+* fedora/tg/widgets.py: Add a __json__ method to each widget so we can
+  return the data as json as well as returning a widget.
+  - Set limits on the data in the widget's display code rather than in the
+    widget's data.  This is better but probably not wuite what we want either.
+    Instead, how many entries to return maybe should be determined when we
+    call the widget.
+
+2007-12-13  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r92
+* fedora/tg/widgets.py: Add GPL header.
+
+2007-12-13  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r91
+* python-fedora.spec: 0.2.90.22 hasn't been released yet so keep that version.
+  - Move the widgets to the infrastructure subpackage because they'll be
+    used serverside.  Also keeps the extra Requires: out of the client
+    package.
+
+2007-12-13  Luke Macken <lmacken@redhat.com> - r90
+* Thu Dec 13 2007 Luke Macken <lmacken@redhat.com> - 0.2.90.23-1
+- Add requirements for python-feedparser and python-bugzilla
+- Add fedora.tg.widgets module containing a few proof-of-concept
+  Fedora TurboGears widgets
+
+2007-12-13  Luke Macken <lmacken@redhat.com> - r89
+Add fedora.tg.widgets module containing a few proof-of-concept Fedora TurboGears widgets
+
+2007-12-13  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r88
+* fedora/__init__.py, python-fedora.spec, setup.py: Bump version to 0.2.90.22
+
+2007-11-29  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r87
+* fedora/accounts/fas.py, fedora/accounts/fasLDAP.py: Fix import of os module
+  for retrieve_db_info().
+
+2007-11-29  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r86
+* Merge fixes for multiple users from upstream.
+
+2007-11-29  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r85
+* fedora/accounts/fas.py, fedora/accounts/fasLDAP.py: Move retrieve_db_info()
+  to fasLDAP.py.
+  - Use retrieve_db_info() to get the connectoin information to talk to the
+    LDAP server.
+
+2007-11-29  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r84
+* fedora/accounts/fasLDAP.py: Change the password in this file.
+
 === 0.2.90.21 ===
+
+2007-11-15  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r83
+* setup.py: Bump version.
+
+2007-11-15  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r82
+* Final ChangeLog for release.
 
 2007-11-15  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r81
 * fedora/__init__.py, python-fedora.spec: Bump for new version.
