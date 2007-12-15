@@ -32,6 +32,7 @@ import re
 import inspect
 import simplejson
 from os import path
+from urlparse import urljoin
 
 log = logging.getLogger(__name__)
 
@@ -82,7 +83,7 @@ class BaseClient(object):
         if not self.password:
             raise AuthError, 'password must be set'
 
-        req = urllib2.Request(self.baseURL + '/login?tg_format=json')
+        req = urllib2.Request(urljoin(self.baseURL, 'login?tg_format=json'))
         req.add_data(urllib.urlencode({
                 'user_name' : self.username,
                 'password'  : self.password,
@@ -157,7 +158,7 @@ class BaseClient(object):
             keyword parameters in **kw.  If auth is True, then the request is
             made with an authenticated session cookie.
         '''
-        url = self.baseURL + method + '/?tg_format=json'
+        url = urljoin(self.baseURL, method + '?tg_format=json')
 
         response = None # the JSON that we get back from the server
         data = None     # decoded JSON via simplejson.load()
