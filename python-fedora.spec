@@ -29,6 +29,7 @@ Requires: %{name} = %{version}-%{release}
 Requires: python-psycopg2
 Requires: python-bugzilla
 Requires: python-feedparser
+Requires: python-ldap
 # This can go away when TurboGears can use SQLAlchemy >= 0.4
 %if 0%{?fedora} >= 8
 Requires: python-sqlalchemy0.3
@@ -80,6 +81,8 @@ rm -rf $RPM_BUILD_ROOT
 - Add requirements for python-feedparser and python-bugzilla
 - Add fedora.tg.widgets module containing a few proof-of-concept
   Fedora TurboGears widgets
+- Add a new method to fas: get_users() that returns common public information
+  about all users.
 
 * Thu Nov 15 2007 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.90.21-1
 - Bugfix release for expired sessions.
