@@ -24,6 +24,10 @@ python-fedora, python module to interact with Fedora Infrastructure Services
 
 import os
 
+import gettext
+t = gettext.translation('python-fedora', '/usr/share/locale')
+_ = t.ugettext
+
 class FASError(Exception):
     pass
 
@@ -72,6 +76,6 @@ def retrieve_db_info(dbKey):
     if fh:
         fh.close()
     if not dbInfo:
-        raise AuthError, 'Authentication source "%s" not configured' % (dbKey,)
+        raise AuthError, _('Authentication source "%(db)s" not configured') \
+                % {'db': dbKey}
     return dbInfo
-

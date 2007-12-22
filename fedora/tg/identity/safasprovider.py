@@ -32,6 +32,10 @@ from fedora.accounts.tgfas import VisitIdentity
 from fedora.accounts.fas import AuthError
 from fedora.accounts.fas import DBError
 
+import gettext
+t = gettext.translation('python-fedora', '/usr/share/locale')
+_ = t.ugettext
+
 log = logging.getLogger('turbogears.identity.safasprovider')
 
 visit_identity_class = None
@@ -130,7 +134,8 @@ class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
     def __init__(self):
         global visit_identity_class
         visit_identity_class_path = config.get("identity.saprovider.model.visit", None)
-        log.info("Loading: %s", visit_identity_class_path)
+        log.info(_("Loading: %(visitmod)s") % \
+                {'visitmod': visit_identity_class_path})
         visit_identity_class = load_class(visit_identity_class_path)
 
     def create_provider_model(self):
@@ -153,18 +158,21 @@ class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
         try:
             verified = fas.verify_user_pass(user_name, password)
         except (AuthError, DBError), e:
-            log.warning('Error %s for %s' % (e, user_name))
+            log.warning(_('Error %(err)s for %(user)s') % \
+                    {'err': e, 'user': user_name})
             return None
         if not verified:
-            log.warning('Passwords do not match for user: %s', user_name)
+            log.warning(_('Passwords do not match for user: %(user)s') % \
+                    {'user': user_name})
             return None
 
-        log.info("Login successful for %s" % user_name)
+        log.info(_('Login successful for %(user)s') % {'user': user_name})
 
         try:
             userId = fas.get_user_id(user_name)
         except DBError, e:
-            log.warning('Error %s for %s' % (e, user_name))
+            log.warning(_('Error %(err)s for %(user)s') \
+                    % {'err': e, 'user': user_name})
             return None
 
         link = visit_identity_class.get_by(visit_key=visit_key)
@@ -190,8 +198,8 @@ class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
         try:
             result = fas.verify_user_pass(user_name, password)
         except (AuthError, DBError), e:
-            log.warning('AccountSystem threw an exception: %s for %s', (e,
-                user_name))
+            log.warning(_('AccountSystem threw an exception: %(err)s for' \
+                    ' %(user)s') % {'err': e, 'user': user_name})
             return False
         return result
 

@@ -32,6 +32,10 @@ import sha
 from base64 import b64encode
 from util import AuthError, retrieve_db_info
 
+import gettext
+t = gettext.translation('python-fedora', '/usr/share/locale')
+_ = t.ugettext
+
 dbName = 'fastest'
 
 class Server(object):
@@ -39,8 +43,8 @@ class Server(object):
         try:
             dbInfo = retrieve_db_info(dbName)
         except IOError:
-            raise AuthError, 'Authentication config file fedora-db-access is' \
-                    ' not available'
+            raise AuthError, _('Authentication config file fedora-db-access'
+                    ' is not available')
         server = server or dbInfo['host'] or 'localhost'
         who = 'cn=%s' % (who or dbInfo['user'])
         # Some db connections have no password
@@ -249,13 +253,15 @@ class Groups(object):
         try:
             g = self.byUserName(userName, includeUnapproved=True)[groupName]
         except:
-            raise TypeError, 'User not in group %s' % groupName
+            raise TypeError, _('User not in group %(group)s') \
+                    % {'group': groupName}
         try:
             self.__server.delete('cn=%s+fedoraRoleType=%s,ou=Roles,cn=%s,ou=People,dc=fedoraproject,dc=org' % (g.cn, g.fedoraRoleType, userName))
         except ldap.NO_SUCH_OBJECT:
             self.__server.delete('cn=%s,ou=Roles,cn=%s,ou=People,dc=fedoraproject,dc=org' % (g.cn, userName))
         except:
-            raise TypeError, 'Could Not delete %s from %s' % (userName, g.cn)
+            raise TypeError, _('Could Not delete %(username)s from %(group)s') \
+                    % {'username': userName, 'group': g.cn}
 
     @classmethod
     def apply(self, groupName, userName=None):
@@ -266,11 +272,12 @@ class Groups(object):
 
         if groupName in self.byUserName(userName):
             # Probably shouldn't be 'TypeError'
-            raise TypeError, 'Already in that group'
+            raise TypeError, _('Already in that group')
         try:
             self.byGroupName(groupName)
         except TypeError:
-            raise TypeError, 'Group "%s" does not exist' % groupName
+            raise TypeError, _('Group "%(group)s" does not exist') % \
+                    {'group': groupName}
 
         now = time.time()
 
@@ -435,9 +442,9 @@ class Person(object):
         g = Groups.byGroupName(group, includeUnapproved=True)[self.cn]
         if not g.fedoraRoleStatus.lower() == 'approved':
             '''User not approved or sponsored'''
-            raise TypeError, 'User is not approved'
+            raise TypeError, _('User is not approved')
         if g.fedoraRoleType.lower() == 'administrator':
-            raise TypeError, 'User cannot be upgraded beyond administrator'
+            raise TypeError, _('User cannot be upgraded beyond administrator')
         elif g.fedoraRoleType.lower() == 'sponsor':
             self.__server.modify(base, 'fedoraRoleType', 'administrator', g.fedoraRoleType)
         elif g.fedoraRoleType.lower() == 'user':
@@ -449,9 +456,10 @@ class Person(object):
         g = Groups.byGroupName(group, includeUnapproved=True)[self.cn]
         if not g.fedoraRoleStatus.lower() == 'approved':
             '''User not approved or sponsored'''
-            raise TypeError, 'User is not approved'
+            raise TypeError, _('User is not approved')
         if g.fedoraRoleType.lower() == 'user':
-            raise TypeError, 'User cannot be downgraded below user, did you mean remove?'
+            raise TypeError, _('User cannot be downgraded below user, did' \
+                    ' you mean remove?')
         elif g.fedoraRoleType.lower() == 'sponsor':
             self.__server.modify(base, 'fedoraRoleType', 'user', g.fedoraRoleType)
         elif g.fedoraRoleType.lower() == 'administrator':
@@ -475,7 +483,7 @@ class Person(object):
         secret = {} # contains both hash and password
 
         if not password:
-            rand = Random() 
+            rand = Random()
             password = ''
             # Exclude 0,O and l,1
             righthand = '23456qwertasdfgzxcvbQWERTASDFGZXCVB'

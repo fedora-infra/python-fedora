@@ -120,7 +120,8 @@ class SaFas2IdentityProvider(SqlAlchemyIdentityProvider):
     def __init__(self):
         global visit_identity_class
         visit_identity_class_path = config.get("identity.saprovider.model.visit", None)
-        log.info("Loading: %s", visit_identity_class_path)
+        log.info(_("Loading: %(visitmod)s") \
+                % {'visitmod': visit_identity_class_path})
         visit_identity_class = load_class(visit_identity_class_path)
 
     def create_provider_model(self):
@@ -134,10 +135,11 @@ class SaFas2IdentityProvider(SqlAlchemyIdentityProvider):
 
         verified = self.validate_password(user, user_name, password)
         if not verified:
-            log.warning('Passwords do not match for user: %s', user_name)
+            log.warning(_('Passwords do not match for user: %(user)s') %
+                    {'user': user_name})
             return None
 
-        log.info("Login successful for %s" % user_name)
+        log.info(_("Login successful for %(user)s") % {'user': user_name})
 
         link = visit_identity_class.get_by(visit_key=visit_key)
         if not link:
@@ -162,7 +164,8 @@ class SaFas2IdentityProvider(SqlAlchemyIdentityProvider):
         try:
             result = Person.auth(user_name, password)
         except AuthError, e:
-            log.warning('AccountSystem threw an exception: %s', e)
+            log.warning(_('AccountSystem threw an exception: %(err)s') % \
+                    {'err': e})
             return False
         return True
 

@@ -47,6 +47,10 @@ import sqlalchemy.pool as pool
 import traceback
 from util import retrieve_db_info, AuthError, FASError
 
+import gettext
+t = gettext.translation('python-fedora', '/usr/share/locale')
+_ = t.ugettext
+
 psycopg2 = pool.manage(psycopg2, pool_size=5, max_overflow=15)
 
 # When we encrypt the passwords in the database change to this:
@@ -85,8 +89,8 @@ class AccountSystem(object):
         try:
             dbInfo = retrieve_db_info(dbAlias)
         except IOError:
-            raise AuthError, 'Authentication config fedora-db-access is' \
-                    ' not available'
+            raise AuthError, _('Authentication config fedora-db-access is' \
+                    ' not available')
 
         # Load the database information into internal values
         self.dbName = dbName
@@ -240,7 +244,8 @@ class AccountSystem(object):
             else:
                 self.userid = self.get_user_id(user)
         else:
-            raise AuthError, 'Username/password mismatch for %s' % user
+            raise AuthError, _('Username/password mismatch for %(username)s') \
+                    % {'username': user}
 
     def get_user_id(self, username):
         '''Retrieve the userid from a username.
@@ -261,7 +266,8 @@ class AccountSystem(object):
         if result:
             return result[0]
         else:
-            raise AuthError, 'No such user: %s' % username
+            raise AuthError, _('No such user: %(username)s') \
+                    % {'username': username}
 
     def get_user_id_from_email(self, email):
         '''Retrieve a userid from an email address.
@@ -287,7 +293,8 @@ class AccountSystem(object):
             # Try running it through our list of oddball emails:
             if email in self.__alternate_email:
                 return self.__alternate_email[email]
-            raise AuthError, 'No such user: %s' % username
+            raise AuthError, _('No such user: %(username)s') \
+                    % {'username': username}
 
     def get_users(self, keyField=None):
         '''Retrieve most commonly needed data about all users.
@@ -297,7 +304,8 @@ class AccountSystem(object):
 
         Arguments:
           :keyField: the field from the database that we should key on for the
-            dict.  Valid keyFields are:
+            dict.  Valid keyFields are: 'id', 'email', 'bugzilla_email', or
+            'username'.
 
         Returns: a dict keyed on keyField.  Each dict record contains a dict
         with the following entries:
@@ -401,7 +409,7 @@ class AccountSystem(object):
         '''
         if not user:
             if not self.userId:
-                raise AuthError, 'No user set'
+                raise AuthError, _('No user set')
             user = self.userId
 
         if not isinstance(user, int):
@@ -500,7 +508,7 @@ class AccountSystem(object):
 
         # We couldn't find any records for this person
         if not person:
-            raise AuthError, 'No such user %(user)s' % userDict
+            raise AuthError, _('No such user %(user)s') % userDict
 
         # Fill the bugzilla_email field.
         # NOTE:  Because of a bug in the psycopg2 DictCursor, you have to use
@@ -528,7 +536,7 @@ class AccountSystem(object):
                     result[fieldNum] = result[fieldNum].decode('utf-8')
             return result
         else:
-            raise AuthError, 'No such group: %s' % group
+            raise AuthError, _('No such group: %(group)s') % {'group': group}
 
     def modify_user(self, user):
         '''Change information for user. (Admin or owner)

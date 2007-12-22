@@ -34,6 +34,10 @@ import simplejson
 from os import path
 from urlparse import urljoin
 
+import gettext
+t = gettext.translation('python-fedora', '/usr/share/locale')
+_ = t.ugettext
+
 log = logging.getLogger(__name__)
 
 SESSION_FILE = path.join(path.expanduser('~'), '.fedora_session')
@@ -79,9 +83,9 @@ class BaseClient(object):
         if self._sessionCookie:
             return self._sessionCookie
         if not self.username:
-            raise AuthError, 'username must be set'
+            raise AuthError, _('username must be set')
         if not self.password:
-            raise AuthError, 'password must be set'
+            raise AuthError, _('password must be set')
 
         req = urllib2.Request(urljoin(self.baseURL, 'login?tg_format=json'))
         req.add_data(urllib.urlencode({
@@ -94,22 +98,23 @@ class BaseClient(object):
             loginPage = urllib2.urlopen(req)
         except urllib2.HTTPError, e:
             if e.msg == 'Forbidden':
-                raise AuthError, 'Invalid username/password'
+                raise AuthError, _('Invalid username/password')
             else:
                 raise
 
         loginData = simplejson.load(loginPage)
 
         if 'message' in loginData:
-            raise AuthError, 'Unable to login to server: %s' % loginData['message']
+            raise AuthError, _('Unable to login to server: %(message)s') \
+                    % loginData
 
         self._sessionCookie = Cookie.SimpleCookie()
         try:
             self._sessionCookie.load(loginPage.headers['set-cookie'])
         except KeyError:
             self._sessionCookie = None
-            raise AuthError, 'Unable to login to the server.  Server did not' \
-                             'send back a cookie.'
+            raise AuthError, _('Unable to login to the server.  Server did' \
+                    ' not send back a cookie')
         self._save_session()
 
         return self._sessionCookie
@@ -145,11 +150,13 @@ class BaseClient(object):
             try:
                 savedSession = pickle.load(sessionFile)
                 self._sessionCookie = savedSession[self.username]
-                log.debug('Loaded session %s' % self._sessionCookie)
+                log.debug(_('Loaded session %(cookie)s') % \
+                        {'cookie': self._sessionCookie})
             except EOFError:
-                log.error('Unable to load session from %s' % SESSION_FILE)
+                log.error(_('Unable to load session from %(file)s') % \
+                        {'file': SESSION_FILE})
             except KeyError:
-                log.debug('Session is for a different user')
+                log.debug(_('Session is for a different user'))
             sessionFile.close()
 
     def send_request(self, method, auth=False, input=None):
@@ -163,7 +170,7 @@ class BaseClient(object):
         response = None # the JSON that we get back from the server
         data = None     # decoded JSON via simplejson.load()
 
-        log.debug('Creating request %s' % url)
+        log.debug(_('Creating request %(url)s') % {'url': url})
         req = urllib2.Request(url)
         if input:
             req.add_data(urllib.urlencode(input))
@@ -183,7 +190,8 @@ class BaseClient(object):
                     # We actually shouldn't ever reach here.  Unless something
                     # goes drastically wrong _authenticate should raise an
                     # AuthError
-                    raise AuthError, 'Unable to log into server: %s' % str(e)
+                    raise AuthError, _('Unable to log into server: %(error)s') \
+                            % {'error': str(e)}
             log.error(e)
             raise ServerError, str(e)
 
@@ -205,6 +213,6 @@ class BaseClient(object):
             else:
                 # We actually shouldn't ever reach here.  Unless something goes
                 # drastically wrong _authenticate should raise an AuthError
-                raise AuthError, 'Unable to log into server: %s' % (
-                        data['message'],)
+                raise AuthError, _('Unable to log into server: %(message)s') \
+                        % data
         return data
