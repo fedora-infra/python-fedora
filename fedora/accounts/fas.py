@@ -48,7 +48,7 @@ import traceback
 from util import retrieve_db_info, AuthError, FASError
 
 import gettext
-t = gettext.translation('python-fedora', '/usr/share/locale')
+t = gettext.translation('python-fedora', '/usr/share/locale', fallback=True)
 _ = t.ugettext
 
 psycopg2 = pool.manage(psycopg2, pool_size=5, max_overflow=15)
