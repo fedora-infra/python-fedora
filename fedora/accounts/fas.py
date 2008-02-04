@@ -128,6 +128,8 @@ class AccountSystem(object):
                 100060: 'sopwith@redhat.com',
                 # Control Center Team: Bugzilla user but email doesn't exist
                 9908: 'control-center-maint@redhat.com',
+                # Máirín Duffy
+                100548: 'duffy@redhat.com',
                 }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email
