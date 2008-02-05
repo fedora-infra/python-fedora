@@ -33,7 +33,7 @@ from fedora.accounts.fas import AuthError
 from fedora.accounts.fas import DBError
 
 import gettext
-t = gettext.translation('python-fedora', '/usr/share/locale')
+t = gettext.translation('python-fedora', '/usr/share/locale', fallback=True)
 _ = t.ugettext
 
 log = logging.getLogger('turbogears.identity.safasprovider')

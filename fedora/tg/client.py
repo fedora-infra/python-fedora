@@ -35,7 +35,7 @@ from os import path
 from urlparse import urljoin
 
 import gettext
-t = gettext.translation('python-fedora', '/usr/share/locale')
+t = gettext.translation('python-fedora', '/usr/share/locale', fallback=True)
 _ = t.ugettext
 
 log = logging.getLogger(__name__)

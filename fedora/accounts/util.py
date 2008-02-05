@@ -25,7 +25,7 @@ python-fedora, python module to interact with Fedora Infrastructure Services
 import os
 
 import gettext
-t = gettext.translation('python-fedora', '/usr/share/locale')
+t = gettext.translation('python-fedora', '/usr/share/locale', fallback=True)
 _ = t.ugettext
 
 class FASError(Exception):

@@ -33,7 +33,7 @@ from base64 import b64encode
 from util import AuthError, retrieve_db_info
 
 import gettext
-t = gettext.translation('python-fedora', '/usr/share/locale')
+t = gettext.translation('python-fedora', '/usr/share/locale', fallback=True)
 _ = t.ugettext
 
 dbName = 'fastest'
