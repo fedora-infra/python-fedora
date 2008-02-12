@@ -63,7 +63,7 @@ class Visit(object):
     A visit to your site
     '''
     def lookup_visit(cls, visit_key):
-        return Visit.get(visit_key)
+        return cls.query.get(visit_key)
     lookup_visit = classmethod(lookup_visit)
 
 class VisitIdentity(object):
