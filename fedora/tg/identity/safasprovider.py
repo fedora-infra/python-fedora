@@ -30,6 +30,7 @@ from turbogears.identity.saprovider import SqlAlchemyIdentity, \
         SqlAlchemyIdentityProvider
 from turbogears import config
 from turbogears.util import load_class
+from turbogears.database import session
 
 from fedora.accounts.fas import AccountSystem
 from fedora.accounts.tgfas import VisitIdentity
@@ -104,6 +105,25 @@ class SaFasIdentity(SqlAlchemyIdentity):
         self._user = FASUser(user, groupList)
         return self._user
     user = property(_get_user)
+
+    # Copied verbatim from saprovider.py.  Because this uses a global variable
+    # we cannot depend on inheritance to make a usable function.
+    def logout(self):
+        '''
+        Remove the link between this identity and the visit.
+        '''
+        if not self.visit_key:
+            return
+        try:
+            visit = visit_identity_class.query.filter_by(visit_key=self.visit_key).first()
+            session.delete(visit)
+            # Clear the current identity
+            anon = SqlAlchemyIdentity(None,None)
+            identity.set_current_identity(anon)
+        except:
+            pass
+        else:
+            session.flush()
 
 class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
     '''
