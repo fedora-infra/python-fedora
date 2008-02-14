@@ -1,3 +1,35 @@
+2008-02-13  Toshio Kuratomi <badger@Clingman> - r108
+* Merge the changes to make python-fedora compatible with TG-1.0.4 and SA-0.4.
+
+2008-02-05  Toshio Kuratomi <badger@Clingman> - r107
+* fedora/accounts/fasLDAP.py, fedora/accounts/util.py, fedora/tg/client.py,
+  fedora/tg/identity/safasprovider.py: gettext fixes just like the fix to
+  fas.py.
+
+2008-02-04  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r106
+* fedora/accounts/fas.py: Fix gettext setup to not traceback when no
+  translation is available.
+
+2008-02-03  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r105
+* fedora/accounts/fas.py: Add Máirín Duffy to the list of differing email
+  addresses.
+
+2007-12-21  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r104
+* First cut at i18n for python-fedora.  Mark all strings for extraction and
+  check in a pot file.
+
+2007-12-21  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r103
+* fedora/tg/identity/sabzprovider.py, fedora/tg/identity/sobzprovider.py:
+  Remove unused modules from use.
+
+2007-12-15  Luke Macken <lmacken@redhat.com> - r102
+Join our request URLs properly with urlparse.urljoin
+
+=== 0.2.90.22 ===
+
+2007-12-14  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r101
+* ChangeLog: Update for release.
+
 2007-12-14  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r100
 * python-fedora.spec: Add python-ldap to the list of requirements.
 
@@ -511,7 +543,7 @@ Add fedoraGroupRequires, fix empty value issues with LDAP, and catch more LDAP e
   from the local userId variable instead of trying to get it from a nonexistent
   user mapper.
 
-2007-01-21  Toshio Kuratomi <toshio@tiki-lounge.com> - r3
+2007-01-20  Toshio Kuratomi <toshio@tiki-lounge.com> - r3
 * python-fedora.spec: Add a spec file so this can be turned into an rpm.
 * fedora/accounts/fas.py:
   - adminUserId: Set a constant for the adminUserId.  This allows us to check
