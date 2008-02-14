@@ -2,7 +2,7 @@
 %{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-fedora
-Version:        0.2.90.22
+Version:        0.2.99.0
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -76,6 +76,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fedora/tg/widgets.py*
 
 %changelog
+* Wed Feb 13 2008 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.99.0-1
+- First beta of new release.  This release is for TG-1.0.4 and SA-0.4.
+
 * Thu Dec 13 2007 Luke Macken <lmacken@redhat.com> - 0.2.90.22-1
 - Convert fasLDAP to get its connection information fedora-db-access.
 - Add requirements for python-feedparser and python-bugzilla

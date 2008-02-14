@@ -1,0 +1,13 @@
+====
+NEWS
+====
+
+:Author: Toshio Kuratomi
+:Date: 13 Feb 2008
+:Version: 0.2.99.0
+
+--------
+0.2.99.0
+--------
+* This release is the first to offer TG-1.0.4 and SA-0.4 compatibility.  When
+  this is considered stable we will release as 0.3.
