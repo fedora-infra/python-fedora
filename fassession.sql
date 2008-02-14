@@ -1,4 +1,5 @@
 -- python-fedora, python module to interact with Fedora Infrastructure Services
+--
 -- Copyright © 2007  Red Hat, Inc. All rights reserved.
 --
 -- This copyrighted material is made available to anyone wishing to use, modify,
