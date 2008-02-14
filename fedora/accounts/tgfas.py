@@ -21,11 +21,11 @@
 python-fedora, python module to interact with Fedora Infrastructure Services
 '''
 
-import turbogears
-from datetime import *
-from sqlalchemy import *
-from sqlalchemy.ext.sessioncontext import SessionContext
-from sqlalchemy.ext.assignmapper import assign_mapper
+from datetime import datetime
+from sqlalchemy import MetaData
+from sqlalchemy import Table, Column, ForeignKey
+from sqlalchemy import String, Integer, DateTime
+from turbogears.database import mapper
 
 import fas
 
@@ -44,11 +44,7 @@ except:
     # Fallback to a local session db so we can operate locally
     dbUri = 'sqlite:////var/tmp/fasdb.sqlite'
 
-engine = create_engine(dbUri)
-metadata = DynamicMetaData()
-metadata.connect(dbUri)
-
-context = SessionContext(lambda:create_session(bind_to=engine))
+metadata = MetaData(dbUri)
 
 visits_table = Table('visit', metadata,
     Column('visit_key', String(40), primary_key=True),
@@ -57,18 +53,24 @@ visits_table = Table('visit', metadata,
 )
 
 visit_identity_table = Table('visit_identity', metadata,
-    Column('visit_key', String(40), primary_key=True),
+    Column('visit_key', String(40), ForeignKey('visit.visit_key'),
+        primary_key=True),
     Column('user_id', Integer, index=True)
 )
 
-metadata.create_all(checkfirst=True)
-
 class Visit(object):
+    '''
+    A visit to your site
+    '''
     def lookup_visit(cls, visit_key):
-        return Visit.get(visit_key)
+        return cls.query.get(visit_key)
     lookup_visit = classmethod(lookup_visit)
 
 class VisitIdentity(object):
+    '''
+    A Visit that is linked to a User object
+    '''
     pass
-assign_mapper(context, Visit, visits_table)
-assign_mapper(context, VisitIdentity, visit_identity_table)
+
+mapper(Visit, visits_table)
+mapper(VisitIdentity, visit_identity_table)

@@ -24,10 +24,15 @@ System.
 '''
 
 import logging
-from fedora.accounts.fas import AccountSystem
 
-from turbogears.identity.saprovider import *
+from sqlalchemy.orm import class_mapper
+from turbogears.identity.saprovider import SqlAlchemyIdentity, \
+        SqlAlchemyIdentityProvider
 from turbogears import config
+from turbogears.util import load_class
+from turbogears.database import session
+
+from fedora.accounts.fas import AccountSystem
 from fedora.accounts.tgfas import VisitIdentity
 from fedora.accounts.fas import AuthError
 from fedora.accounts.fas import DBError
@@ -83,12 +88,7 @@ class SaFasIdentity(SqlAlchemyIdentity):
 
         # If the user isn't logged in or we are unable to get information
         # about them from the fas database, return empty None
-        visit_identity_class.mapper.get_session().flush()
-        visit_identity_class.mapper.get_session().clear()
-        try:
-            visit = visit_identity_class.get_by(visit_key = self.visit_key)
-        except:
-            return None
+        visit = visit_identity_class.query.filter_by(visit_key = self.visit_key).first()
         if not visit:
             self._user = None
             return None
@@ -106,10 +106,8 @@ class SaFasIdentity(SqlAlchemyIdentity):
         return self._user
     user = property(_get_user)
 
-    ### FIXME: This is unnecessary once TG Bug #1238 is resolved.
-    # Basically, we do not want to refer to the app-wide session directly as
-    # we could be using a site-wide session.  Use the session associated with
-    # the mapper for the visit class instead.
+    # Copied verbatim from saprovider.py.  Because this uses a global variable
+    # we cannot depend on inheritance to make a usable function.
     def logout(self):
         '''
         Remove the link between this identity and the visit.
@@ -117,15 +115,15 @@ class SaFasIdentity(SqlAlchemyIdentity):
         if not self.visit_key:
             return
         try:
-            visit = visit_identity_class.get_by(visit_key=self.visit_key)
-            visit.delete()
+            visit = visit_identity_class.query.filter_by(visit_key=self.visit_key).first()
+            session.delete(visit)
+            # Clear the current identity
+            anon = SqlAlchemyIdentity(None,None)
+            identity.set_current_identity(anon)
         except:
             pass
         else:
-            visit_identity_class.mapper.get_session().flush()
-        # Clear the current identity
-        anon = SaFasIdentity(None,None)
-        identity.set_current_identity(anon)
+            session.flush()
 
 class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
     '''
@@ -139,7 +137,7 @@ class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
         visit_identity_class = load_class(visit_identity_class_path)
 
     def create_provider_model(self):
-        visit_identity_class.mapper.local_table.create(checkfirst=True)
+        class_mapper(visit_identity_class).local_table.create(checkfirst=True)
 
     def validate_identity(self, user_name, password, visit_key):
         '''
@@ -153,8 +151,6 @@ class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
             groups: a set of group IDs
             permissions: a set of permission IDs
         '''
-        visit_identity_class.mapper.get_session().flush()
-        visit_identity_class.mapper.get_session().clear()
         try:
             verified = fas.verify_user_pass(user_name, password)
         except (AuthError, DBError), e:
@@ -175,13 +171,14 @@ class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
                     % {'err': e, 'user': user_name})
             return None
 
-        link = visit_identity_class.get_by(visit_key=visit_key)
+        link = visit_identity_class.query.filter_by(visit_key=visit_key).first()
         if not link:
-            link = visit_identity_class(visit_key=visit_key, user_id = userId)
-            visit_identity_class.mapper.get_session().save(link)
+            link = visit_identity_class()
+            link.visit_key = visit_key
+            link.user_id = userId
         else:
             link.user_id = userId
-        visit_identity_class.mapper.get_session().flush()
+        session.flush()
         return SaFasIdentity(visit_key)
 
     def validate_password(self, user, user_name, password):
