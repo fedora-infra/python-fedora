@@ -21,5 +21,7 @@ setup(name=NAME,
             'turbogears.identity.provider' : (
                 'sabugzilla = fedora.tg.identity.sabzprovider:SaBugzillaIdentityProvider [tg]',
                 'safas = fedora.tg.identity.safasprovider:SaFasIdentityProvider [tg]',
-                'safas2 = fedora.tg.identity.safas2provider:SaFas2IdentityProvider [tg]')}
+                'safas2 = fedora.tg.identity.safas2provider:SaFas2IdentityProvider [tg]')
+            'turbogears.visit.manager' : 'safas = fedora.tg.visit.safasvisit:SaFasVisitManager [tg]'
+            }
         )
