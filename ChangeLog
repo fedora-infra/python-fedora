@@ -1,3 +1,12 @@
+2008-02-17  Toshio Kuratomi <badger@Clingman> - r117
+* python-fedora.spec: Add the visit provider.
+
+2008-02-17  Toshio Kuratomi <badger@Clingman> - r116
+* setup.py: Fix missing comma.
+
+2008-02-17  Toshio Kuratomi <badger@Clingman> - r115
+* ChangeLog: Update for release.
+
 2008-02-17  Toshio Kuratomi <badger@Clingman> - r114
 * python-fedora.spec: Add json.py to the files.
 
