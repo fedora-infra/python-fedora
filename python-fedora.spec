@@ -72,6 +72,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{python_sitelib}/fedora/accounts/
 %{python_sitelib}/fedora/tg/identity/
+%{python_sitelib}/fedora/tg/visit/
 %{python_sitelib}/fedora/tg/widgets.py*
 %{python_sitelib}/fedora/tg/json.py*
 
