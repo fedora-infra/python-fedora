@@ -1,3 +1,26 @@
+2008-02-17  Toshio Kuratomi <badger@Clingman> - r114
+* python-fedora.spec: Add json.py to the files.
+
+2008-02-17  Toshio Kuratomi <badger@Clingman> - r113
+* fedora/release.py, python-fedora.spec: Bump release.
+
+2008-02-15  Toshio Kuratomi <badger@Clingman> - r112
+* fedora/tg/visit/, fedora/tg/visit/__init__.py, fedora/tg/visit/safasvisit.py:
+  Re-add the visit plugin.  We need to make two changes to the Visit class in
+  order to work so we have to import it here.
+
+2008-02-15  Toshio Kuratomi <badger@Clingman> - r111
+* fedora/tg/json.py: Add a json module that let's us transform things into
+  json.  For now it has the SQLAlchemy functions from the packagedb.
+
+=== 0.2.99.0 ===
+
+2008-02-13  Toshio Kuratomi <badger@Clingman> - r110
+* python-fedora.spec: Add the release.py file.
+
+2008-02-13  Toshio Kuratomi <badger@Clingman> - r109
+* ChangeLog: Update for a new release.
+
 2008-02-13  Toshio Kuratomi <badger@Clingman> - r108
 * Merge the changes to make python-fedora compatible with TG-1.0.4 and SA-0.4.
 
