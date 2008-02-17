@@ -73,6 +73,7 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fedora/accounts/
 %{python_sitelib}/fedora/tg/identity/
 %{python_sitelib}/fedora/tg/widgets.py*
+%{python_sitelib}/fedora/tg/json.py*
 
 %changelog
 * Sun Feb 17 2008 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.99.1-1
