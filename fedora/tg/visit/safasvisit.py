@@ -13,11 +13,11 @@ log = logging.getLogger("turbogears.identity.savisit")
 
 visit_class = None
 
-class SAFasVisitManager(BaseVisitManager):
+class SaFasVisitManager(BaseVisitManager):
 
     def __init__(self, timeout):
         global visit_class
-        super(SAFasVisitManager,self).__init__(timeout)
+        super(SaFasVisitManager,self).__init__(timeout)
         visit_class_path = config.get("visit.saprovider.model",
                                "turbogears.visit.savisit.TG_Visit")
 
