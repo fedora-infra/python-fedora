@@ -28,8 +28,9 @@ class SaFasVisitManager(BaseVisitManager):
             log.error(msg)
 
         get_engine()
-        if visit_class is TG_Visit:
-            mapper(visit_class, visits_table)
+        # Not needed as we know that we're using our own visit class.
+        #if visit_class is TG_Visit:
+        #    mapper(visit_class, visits_table)
 
     def create_model(self):
         '''
