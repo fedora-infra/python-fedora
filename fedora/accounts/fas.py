@@ -130,6 +130,12 @@ class AccountSystem(object):
                 9908: 'control-center-maint@redhat.com',
                 # Máirín Duffy
                 100548: 'duffy@redhat.com',
+                # Muray McAllister: murray.mcallister@gmail.com
+                102321: 'mmcallis@redhat.com',
+                # Adam Jackson: ajackson@redhat.com
+                100433: 'ajax@redhat.com',
+                # William Jon McCann: mccann@jhu.edu
+                102489: 'jmccann@redhat.com',
                 }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email
