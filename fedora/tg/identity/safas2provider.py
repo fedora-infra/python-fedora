@@ -15,8 +15,9 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 #
-# Red Hat Author(s): Toshio Kuratomi <tkuratom@redhat.com>
-#                    Mike Mcgrath <mmcgrath@redhat.com>
+# Author(s): Toshio Kuratomi <tkuratom@redhat.com>
+#            Ricky Zhou <ricky@redhat.com>
+#            Mike Mcgrath <mmcgrath@redhat.com>
 #
 
 '''
@@ -24,47 +25,31 @@ This plugin provides authentication of passwords against the Fedora Account
 System.
 '''
 
+
+
+from sqlalchemy.orm import class_mapper
+from turbogears import config, identity
+from turbogears.identity.saprovider import SqlAlchemyIdentity, \
+        SqlAlchemyIdentityProvider
+from turbogears.database import session
+from turbogears.util import load_class
+
+import gettext
+t = gettext.translation('python-fedora', '/usr/share/locale', fallback=True)
+_ = t.ugettext
+
 import logging
-from fedora.accounts.fasLDAP import UserAccount, Person, Groups
+log = logging.getLogger('turbogears.identity.safasprovider')
 
-from turbogears.identity.saprovider import *
-from turbogears import config
-from fedora.accounts.tgfas2 import VisitIdentity
-from fedora.accounts.fasLDAP import AuthError
+try:
+    set, frozenset
+except NameError:
+    from sets import Set as set, ImmutableSet as frozenset
 
-log = logging.getLogger(__name__)
-
+# Global class references --
+# these will be set when the provider is initialised.
+user_class = None
 visit_identity_class = None
-
-class FASUser(object):
-    def __init__(self, user, groupList):
-        self.user_id = user.userName
-        self.user_name = user.userName
-        self.user = user
-        self.groups = groupList
-        self.permissions = None
-        self.display_name = user.givenName
-
-    def __json__(self):
-        return {'user_id': self.user_id,
-                'user_name': self.user_name,
-                'groups': self.groups,
-                'permissions': self.permissions,
-                'display_name': self.display_name
-                }
-
-class FASGroup(object):
-    def __init__(self, group):
-        self.group_id = group[0]
-        self.group_name = group[0]
-        self.display_name = group[0]
-        self.group = group[0]
-
-    def __json__(self):
-        return {'group_id': self.group_id,
-                'group_name': self.group_name,
-                'display_name': self.display_name
-                }
 
 class SaFasIdentity(SqlAlchemyIdentity):
     def __init__(self, visit_key, user=None):
@@ -74,28 +59,41 @@ class SaFasIdentity(SqlAlchemyIdentity):
         try:
             return self._user
         except AttributeError:
-            # User hasn't been set yet
+            # User hasn't already been set
             pass
-        visit_identity_class.mapper.get_session().flush()
-        visit_identity_class.mapper.get_session().clear()
-        visit = visit_identity_class.get_by(visit_key = self.visit_key)
+        # Attempt to load the user. After this code executes, there *WILL* be
+        # a _user attribute, even if the value is None.
+        ### TG: Difference: Can't use the inherited method b/c of global var
+        visit = visit_identity_class.query.filter_by(visit_key = self.visit_key).first()
         if not visit:
             self._user = None
             return None
-        user = Person.byUserName(visit.user_id)
-        groups = Groups.byUserName(user.userName)
-        groupList = []
-        for group in groups.items():
-            groupList.append(FASGroup(group))
-        # Construct a user from fas information
-        self._user = FASUser(user, groupList)
+        self._user = user_class.query.get(visit.user_id)
         return self._user
     user = property(_get_user)
 
-    ### FIXME: This is unnecessary once TG Bug #1238 is resolved.
-    # Basically, we do not want to refer to the app-wide session directly as
-    # we could be using a site-wide session.  Use the session associated with
-    # the mapper for the visit class instead.
+    def _get_user_name(self):
+        if not self.user:
+            return None
+        ### TG: Difference: Different name for the field
+        return self.user.username
+    user_name = property(_get_user_name)
+
+    def _get_groups(self):
+        try:
+            return self._groups
+        except AttributeError:
+            # Groups haven't been computed yet
+            pass
+        if not self.user:
+            self._groups = frozenset()
+        else:
+            ### TG: Difference.  Our model has a many::many for people:groups
+            # And an association proxy that links them together
+            self._groups = frozenset([g.group_name for g in self.user.memberships])
+        return self._groups
+    groups = property(_get_groups)
+
     def logout(self):
         '''
         Remove the link between this identity and the visit.
@@ -103,55 +101,84 @@ class SaFasIdentity(SqlAlchemyIdentity):
         if not self.visit_key:
             return
         try:
-            visit = visit_identity_class.get_by(visit_key=self.visit_key)
-            visit.delete()
+            ### TG: Difference: Can't inherit b/c this uses a global var
+            visit = visit_identity_class.query.filter_by(visit_key=self.visit_key).first()
+            session.delete(visit)
+            # Clear the current identity
+            anon = SqlAlchemyIdentity(None,None)
+            identity.set_current_identity(anon)
         except:
             pass
         else:
-            visit_identity_class.mapper.get_session().flush()
-        # Clear the current identity
-        anon = SaFasIdentity(None,None)
-        identity.set_current_identity(anon)
+            session.flush()
 
-class SaFas2IdentityProvider(SqlAlchemyIdentityProvider):
+class SaFasIdentityProvider(SqlAlchemyIdentityProvider):
     '''
     IdentityProvider that authenticates users against the fedora account system
     '''
     def __init__(self):
         global visit_identity_class
+        global user_class
+
+        user_class_path = config.get("identity.saprovider.model.user", None)
+        user_class = load_class(user_class_path)
         visit_identity_class_path = config.get("identity.saprovider.model.visit", None)
-        log.info(_("Loading: %(visitmod)s") \
-                % {'visitmod': visit_identity_class_path})
+        log.info(_("Loading: %(visitmod)s") % \
+                {'visitmod': visit_identity_class_path})
         visit_identity_class = load_class(visit_identity_class_path)
+        # Default encryption algorithm is to use plain text passwords
+        algorithm = config.get("identity.saprovider.encryption_algorithm", None)
+        self.encrypt_password = lambda pw: \
+                                    identity._encrypt_password(algorithm, pw)
 
     def create_provider_model(self):
-        visit_identity_class.mapper.local_table.create(checkfirst=True)
+        '''
+        Create the database tables if they don't already exist.
+        '''
+        class_mapper(user_class).local_table.create(checkfirst=True)
+        class_mapper(visit_identity_class).local_table.create(checkfirst=True)
 
     def validate_identity(self, user_name, password, visit_key):
-        visit_identity_class.mapper.get_session().flush()
-        visit_identity_class.mapper.get_session().clear()
+        '''
+        Look up the identity represented by user_name and determine whether the
+        password is correct.
 
-        user = Person.byUserName(user_name)
-
-        verified = self.validate_password(user, user_name, password)
-        if not verified:
-            log.warning(_('Passwords do not match for user: %(user)s') %
-                    {'user': user_name})
+        Must return either None if the credentials weren't valid or an object
+        with the following properties:
+            user_name: original user name
+            user: a provider dependant object (TG_User or similar)
+            groups: a set of group IDs
+            permissions: a set of permission IDs
+        '''
+        user = user_class.query.filter_by(username=user_name).first()
+        if not user:
+            log.warning("No such user: %s", user_name)
+            return None
+        if not self.validate_password(user, user_name, password):
+            log.info("Passwords don't match for user: %s", user_name)
             return None
 
-        log.info(_("Login successful for %(user)s") % {'user': user_name})
-
-        link = visit_identity_class.get_by(visit_key=visit_key)
+        log.info("associating user (%s) with visit (%s)", user.username,
+                  visit_key)
+        # Link the user to the visit
+        link = visit_identity_class.query.filter_by(visit_key=visit_key).first()
         if not link:
-            link = visit_identity_class(visit_key=visit_key, user_id=user_name)
-            visit_identity_class.mapper.get_session().save(link)
+            link = visit_identity_class()
+            link.visit_key = visit_key
+            link.user_id = user.id
         else:
-            link.user_id = user_name
-        visit_identity_class.mapper.get_session().flush()
-        return SaFasIdentity(visit_key)
+            link.user_id = user.id
+        session.flush()
+        return SaFasIdentity(visit_key, user)
 
     def validate_password(self, user, user_name, password):
-        '''Verify user and password match in the Account System.
+        '''
+        Check the supplied user_name and password against existing credentials.
+        Note: user_name is not used here, but is required by external
+        password validation schemes that might override this method.
+        If you use SqlAlchemyIdentityProvider, but want to check the passwords
+        against an external source (i.e. PAM, LDAP, Windows domain, etc),
+        subclass SqlAlchemyIdentityProvider, and override this method.
 
         Arguments:
         :user: User information.  Not used.
@@ -161,13 +188,7 @@ class SaFas2IdentityProvider(SqlAlchemyIdentityProvider):
         Returns: True if the password matches the username.  Otherwise False.
           Can return False for problems within the Account System as well.
         '''
-        try:
-            result = Person.auth(user_name, password)
-        except AuthError, e:
-            log.warning(_('AccountSystem threw an exception: %(err)s') % \
-                    {'err': e})
-            return False
-        return True
+        return user.password == self.encrypt_password(password)
 
     def load_identity(self, visit_key):
         '''Lookup the principal represented by visit_key.
@@ -175,17 +196,27 @@ class SaFas2IdentityProvider(SqlAlchemyIdentityProvider):
         Arguments:
         :visit_key: The session key for whom we're looking up an identity.
 
-        Returns: None if there is no principal for the given user ID.  Otherwise
-          an object with the following properties:
-            :user_name: original user name
-            :user: a provider dependant object (TG_User or similar)
-            :groups: a set of group IDs
-            :permissions: a set of permission IDs
+        Must return an object with the following properties:
+            user_name: original user name
+            user: a provider dependant object (TG_User or similar)
+            groups: a set of group IDs
+            permissions: a set of permission IDs
         '''
         return SaFasIdentity(visit_key)
 
     def anonymous_identity(self):
+        '''
+        Must return an object with the following properties:
+            user_name: original user name
+            user: a provider dependant object (TG_User or similar)
+            groups: a set of group IDs
+            permissions: a set of permission IDs
+        '''
+
         return SaFasIdentity(None)
 
     def authenticated_identity(self, user):
+        '''
+        Constructs Identity object for user that has no associated visit_key.
+        '''
         return SaFasIdentity(None, user)
