@@ -84,7 +84,7 @@ class JsonFasIdentity(BaseClient):
     def _authenticate(self, force=False):
         '''Override BaseClient so we can keep visit_key in sync.
         '''
-        cookie = super(JsonFasIdentity, self)._authenticate(force)
+        super(JsonFasIdentity, self)._authenticate(force)
         if self._sessionCookie[self.cookieName].value != self.visit_key:
             # When the visit_key changes (because the old key had expired or
             # been deleted from the db) change the visit_key in our variables
