@@ -205,11 +205,15 @@ class BaseClient(object):
         except KeyError:
             pass
 
+        jsonString = response.read()
         try:
-            data = simplejson.load(response)
+            data = simplejson.loads(jsonString)
+        except ValueError, e:
+            # The response wasn't JSON data
+            raise ServerError, str(e)
         except Exception, e:
             regex = re.compile('<span class="fielderror">(.*)</span>')
-            match = regex.search(response)
+            match = regex.search(jsonString)
             if match and len(match.groups()):
                 return dict(tg_flash=match.groups()[0])
             else:
