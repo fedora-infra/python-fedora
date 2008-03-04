@@ -25,7 +25,7 @@ System using JSON calls.
 
 import Cookie
 
-from cherrypy import request
+from cherrypy import response
 from sqlalchemy.orm import class_mapper
 from turbogears import config, identity
 from turbogears.identity.saprovider import SqlAlchemyIdentity, \
@@ -33,9 +33,7 @@ from turbogears.identity.saprovider import SqlAlchemyIdentity, \
 from turbogears.database import session
 from turbogears.util import load_class
 
-# Once this works, propogate the changes back to python-fedora and import as
-from fedora.tg.client import BaseClient
-#from client import BaseClient
+from fedora.tg.client import BaseClient, ServerError
 
 import gettext
 t = gettext.translation('python-fedora', '/usr/share/locale', fallback=True)
@@ -63,7 +61,7 @@ class JsonFasIdentity(BaseClient):
         if user:
             self._user = user
             self._groups = frozenset(
-                    [g['name'] for g in data['person']['approved_memberships']]
+                    [g['name'] for g in user['approved_memberships']]
                     )
         self.visit_key = visit_key
         # It's allowed to use a null value for a visit_key if we know we're
@@ -75,7 +73,9 @@ class JsonFasIdentity(BaseClient):
         # Set the cookie to the user's tg_visit key before requesting
         # authentication.  That way we link the two together.
         self._sessionCookie = Cookie.SimpleCookie()
-        self._sessionCookie[self.cookieName] = self.visit_key
+        self._sessionCookie[self.cookieName] = visit_key
+        response.simple_cookie[self.cookieName] = visit_key
+
         self.username = username
         self.password = password
         if username and password:
@@ -84,14 +84,13 @@ class JsonFasIdentity(BaseClient):
     def _authenticate(self, force=False):
         '''Override BaseClient so we can keep visit_key in sync.
         '''
-        super(JsonFasIdentity, self)._authenticate(force)
+        cookie = super(JsonFasIdentity, self)._authenticate(force)
         if self._sessionCookie[self.cookieName].value != self.visit_key:
             # When the visit_key changes (because the old key had expired or
             # been deleted from the db) change the visit_key in our variables
             # and the session cookie to be sent back to the client.
             self.visit_key = self._sessionCookie[self.cookieName].value
-            cookies = request.simple_cookie
-            cookies[self.cookieName] = self.visit_key
+            response.simple_cookie[self.cookieName] = self.visit_key
         return self._sessionCookie
     session = property(_authenticate)
 
@@ -106,7 +105,6 @@ class JsonFasIdentity(BaseClient):
         # a _user attribute, even if the value is None.
         # Query the account system URL for our given user's sessionCookie
         # FAS returns user and group listing
-        print 'sessionCookie:',self._sessionCookie
         try:
             data = self.send_request('user/view', auth=True)
         except:
@@ -133,6 +131,12 @@ class JsonFasIdentity(BaseClient):
     def _get_anonymous(self):
         return not self.user
     anonymous = property(_get_anonymous)
+
+    def _get_display_name(self):
+        if not self.user:
+            return None
+        return self.user['human_name']
+    display_name = property(_get_display_name)
 
     def _get_groups(self):
         try:
@@ -186,12 +190,12 @@ class JsonFasIdentityProvider(object):
         try:
             user = JsonFasIdentity(visit_key, username=user_name,
                     password=password)
-        except AuthError, e:
+        except ServerError, e:
             log.warning('Error logging in %(user)s: %(error)s' % {
-                'user': username, 'error': e})
+                'user': user_name, 'error': e})
             return None
 
-        return JsonFasIdentity(visit_key, user)
+        return user
 
     def validate_password(self, user, user_name, password):
         '''
@@ -235,7 +239,6 @@ class JsonFasIdentityProvider(object):
             groups: a set of group IDs
             permissions: a set of permission IDs
         '''
-
         return JsonFasIdentity(None)
 
     def authenticated_identity(self, user):

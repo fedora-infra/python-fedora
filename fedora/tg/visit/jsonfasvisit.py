@@ -15,8 +15,6 @@ from turbogears.visit.api import BaseVisitManager, Visit
 from turbogears.database import get_engine, metadata, session, mapper
 from turbogears.util import load_class
 
-# Once this works, propogate the changes back to python-fedora and import as
-# from fedora.tg.client import BaseClient
 from fedora.tg.client import BaseClient
 
 import gettext
