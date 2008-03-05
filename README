@@ -151,6 +151,7 @@ FAS v2 -- TurboGears
 Configuring the TurboGears interface for fas v2 is almost the same as
 configuring it for fas v1.  Here's what you should need::
 
+  fas.url='https://admin.fedoraproject.org/accounts/'
   visit.on=True
   visit.manager="jsonfas"
   identity.on="True"
