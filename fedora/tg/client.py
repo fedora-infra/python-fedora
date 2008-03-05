@@ -134,12 +134,20 @@ class BaseClient(object):
             try:
                 save = pickle.load(sessionFile)
             except:
+                # If there isn't a session file yet, there's no problem
                 pass
             sessionFile.close()
         save[self.username] = self._sessionCookie
-        sessionFile = file(SESSION_FILE, 'w')
-        pickle.dump(save, sessionFile)
-        sessionFile.close()
+        try:
+            sessionFile = file(SESSION_FILE, 'w')
+            pickle.dump(save, sessionFile)
+            sessionFile.close()
+        except IOError, e:
+            # If we can't save the file, issue a warning but go on.  The
+            # session just keeps you from having to type your password over
+            # and over.
+            log.warning(_('Unable to write to session file %(session)s:' \
+                    ' %(error)s') % {'session': SESSION_FILE, 'error': str(e)})
 
     def _load_session(self):
         '''
