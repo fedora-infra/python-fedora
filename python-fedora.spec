@@ -2,7 +2,7 @@
 %{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-fedora
-Version:        0.2.99.1
+Version:        0.2.99.2
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -31,11 +31,7 @@ Requires: python-bugzilla
 Requires: python-feedparser
 Requires: python-ldap
 # This can go away when TurboGears can use SQLAlchemy >= 0.4
-%if 0%{?fedora} >= 8
-Requires: python-sqlalchemy0.3
-%else
 Requires: python-sqlalchemy
-%endif
 
 %description infrastructure
 Additional python modules that can be used on Fedora Infrastructure Servers to
@@ -77,6 +73,10 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fedora/tg/json.py*
 
 %changelog
+* Mon Mar 3 2008 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.99.2-1
+- Third beta.  Changes to accomodate FAS2 included as FAS2, TG-1.0.4, and
+  SA-0.4 are going to all roll into the new platform together.
+
 * Sun Feb 17 2008 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.99.1-1
 - Second beta.
 

@@ -77,10 +77,10 @@ class SABase(object):
         # pylint: enable-msg=E1101
        
         # Load all the columns from the table
-        for key in self.mapper.props.keys(): # pylint: disable-msg=E1101
-            if isinstance(self.mapper.props[key], # pylint: disable-msg=E1101
-                    sqlalchemy.orm.properties.ColumnProperty):
-                props[key] = getattr(self, key)
+        for column in sqlalchemy.orm.object_mapper(self).iterate_properties:
+            if isinstance(column, sqlalchemy.orm.properties.ColumnProperty):
+                props[column.key] = getattr(self, column.key)
+
         # Load things that are explicitly listed
         for field in propList:
             props[field] = getattr(self, field)
@@ -93,8 +93,7 @@ class SABase(object):
                 pass
         return props
 
-@jsonify.when("isinstance(obj, sqlalchemy.orm.query.Query)" \
-        " or isinstance(obj, sqlalchemy.ext.selectresults.SelectResults)")
+@jsonify.when("isinstance(obj, sqlalchemy.orm.query.Query)")
 def jsonify_sa_select_results(obj):
     '''Transform selectresults into lists.
     
@@ -107,7 +106,9 @@ def jsonify_sa_select_results(obj):
             element.jsonProps = obj.jsonProps
     return list(obj)
 
-@jsonify.when("isinstance(obj, sqlalchemy.orm.attributes.InstrumentedList)")
+@jsonify.when('''(
+        isinstance(obj, sqlalchemy.orm.attributes.InstrumentedAttribute) or
+        isinstance(obj, sqlalchemy.ext.associationproxy._AssociationList))''')
 def jsonify_salist(obj):
     '''Transform SQLAlchemy InstrumentedLists into json.
     

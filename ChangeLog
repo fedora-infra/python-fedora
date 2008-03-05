@@ -1,3 +1,60 @@
+2008-03-04  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r128
+* fedora/release.py, python-fedora.spec: Bump version.
+
+2008-03-04  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r127
+* fedora/tg/identity/jsonfasprovider.py: Remove debug code left in from last
+  checkin.
+
+2008-03-04  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r126
+* fedora/tg/identity/jsonfasprovider.py:
+  - Make changes to cherrypy.response.simple_cookie instead of
+    cherrypy.request...  This actually changes things on the client.
+  - Import BaseClient from the fedora module instead of a local copy.
+  - __init__(): Fix the variable 'approved_memberships' is being pulled from.
+    + Set the user's cookie to the new visit_key as well.
+  - validate_identity(): Fix typo in warning message.
+    + Fix return.  We've already created a JsonFasIdentity object so don't try
+      to make another on return.
+
+2008-03-04  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r125
+* fedora/tg/client.py: _authenticate(): Improve error handling to account for
+  non-JSON data being returned from the server.
+
+2008-03-04  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r124
+Fixes bugs revealed when porting to the fas identity providers to json.
+* fedora/tg/client.py: _authenticate(): Instead of clearing the sessionCookie
+  when we want to force authentication, check that force is not set before we
+  return a cached authentication cookie.
+  - Always set the _sessionCookie.  This allows visit tracking to work.
+  - Be sure to check for and store the session cookie if the server returns a
+    new one to us.  Otherwise the change will be unavailable to client code.
+
+2008-03-04  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r123
+* fedora/tg/json.py: Port to SA-0.4.
+
+2008-03-04  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r122
+* fedora/tg/identity/jsonfasprovider.py: Identity provider that uses JSON calls
+  to the FAS server to authenticate.
+* fedora/tg/visit/jsonfasvisit.py: Visit manager that uses JSON calls to the
+  FAS server to authenticate.
+* setup.py: Register the new providers.
+
+2008-02-19  Toshio Kuratomi <badger@Clingman> - r121
+* fedora/tg/visit/safasvisit.py: Remove check whether a mapper exists as we
+  don't want to fallback on a visit session in the app local db.
+
+2008-02-19  Toshio Kuratomi <badger@Clingman> - r120
+* fedora/accounts/fas.py: Add a few more people who have separate bugzilla and
+  primary email addresses.
+
+2008-02-18  Toshio Kuratomi <badger@Clingman> - r119
+* fedora/tg/visit/safasvisit.py: Correct capitalization.
+
+=== 0.2.99.1 ===
+
+2008-02-17  Toshio Kuratomi <badger@Clingman> - r118
+* ChangeLog: Update for release.
+
 2008-02-17  Toshio Kuratomi <badger@Clingman> - r117
 * python-fedora.spec: Add the visit provider.
 
@@ -13,24 +70,24 @@
 2008-02-17  Toshio Kuratomi <badger@Clingman> - r113
 * fedora/release.py, python-fedora.spec: Bump release.
 
-2008-02-15  Toshio Kuratomi <badger@Clingman> - r112
+2008-02-16  Toshio Kuratomi <badger@Clingman> - r112
 * fedora/tg/visit/, fedora/tg/visit/__init__.py, fedora/tg/visit/safasvisit.py:
   Re-add the visit plugin.  We need to make two changes to the Visit class in
   order to work so we have to import it here.
 
-2008-02-15  Toshio Kuratomi <badger@Clingman> - r111
+2008-02-16  Toshio Kuratomi <badger@Clingman> - r111
 * fedora/tg/json.py: Add a json module that let's us transform things into
   json.  For now it has the SQLAlchemy functions from the packagedb.
 
 === 0.2.99.0 ===
 
-2008-02-13  Toshio Kuratomi <badger@Clingman> - r110
+2008-02-14  Toshio Kuratomi <badger@Clingman> - r110
 * python-fedora.spec: Add the release.py file.
 
-2008-02-13  Toshio Kuratomi <badger@Clingman> - r109
+2008-02-14  Toshio Kuratomi <badger@Clingman> - r109
 * ChangeLog: Update for a new release.
 
-2008-02-13  Toshio Kuratomi <badger@Clingman> - r108
+2008-02-14  Toshio Kuratomi <badger@Clingman> - r108
 * Merge the changes to make python-fedora compatible with TG-1.0.4 and SA-0.4.
 
 2008-02-05  Toshio Kuratomi <badger@Clingman> - r107
@@ -42,15 +99,15 @@
 * fedora/accounts/fas.py: Fix gettext setup to not traceback when no
   translation is available.
 
-2008-02-03  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r105
+2008-02-04  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r105
 * fedora/accounts/fas.py: Add Máirín Duffy to the list of differing email
   addresses.
 
-2007-12-21  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r104
+2007-12-22  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r104
 * First cut at i18n for python-fedora.  Mark all strings for extraction and
   check in a pot file.
 
-2007-12-21  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r103
+2007-12-22  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r103
 * fedora/tg/identity/sabzprovider.py, fedora/tg/identity/sobzprovider.py:
   Remove unused modules from use.
 
@@ -59,19 +116,19 @@ Join our request URLs properly with urlparse.urljoin
 
 === 0.2.90.22 ===
 
-2007-12-14  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r101
+2007-12-15  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r101
 * ChangeLog: Update for release.
 
-2007-12-14  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r100
+2007-12-15  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r100
 * python-fedora.spec: Add python-ldap to the list of requirements.
 
-2007-12-14  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r99
+2007-12-15  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r99
 * fedora/accounts/fasLDAP.py, fedora/accounts/util.py: Move FASError,
   AuthError, and retrieve_db_info() to their own file.
 * fedora/accounts/fas.py: Use exceptions and retrieve_db_info() from util.py.
   - get_users(): Fix a syntax error in the database retrieval.
 
-2007-12-14  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r98
+2007-12-15  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r98
 * fedora/accounts/fas.py: AccountSystem::get_users(): add a method to retrieve
   common public information for all users.  This lets us query the database
   once to get user information instead of almost once for every user in some
@@ -85,10 +142,10 @@ Join our request URLs properly with urlparse.urljoin
   have more than one of a widget on a page and perform operations on them
   separately.
 
-2007-12-13  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r95
+2007-12-14  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r95
 * README: Initial widget docs.
 
-2007-12-13  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r94
+2007-12-14  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r94
 * fedora/tg/widgets.py: Give the widgets some classes so styles can be set
   via stylesheets.
 
@@ -121,20 +178,20 @@ Add fedora.tg.widgets module containing a few proof-of-concept Fedora TurboGears
 2007-12-13  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r88
 * fedora/__init__.py, python-fedora.spec, setup.py: Bump version to 0.2.90.22
 
-2007-11-29  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r87
+2007-11-30  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r87
 * fedora/accounts/fas.py, fedora/accounts/fasLDAP.py: Fix import of os module
   for retrieve_db_info().
 
-2007-11-29  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r86
+2007-11-30  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r86
 * Merge fixes for multiple users from upstream.
 
-2007-11-29  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r85
+2007-11-30  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r85
 * fedora/accounts/fas.py, fedora/accounts/fasLDAP.py: Move retrieve_db_info()
   to fasLDAP.py.
   - Use retrieve_db_info() to get the connectoin information to talk to the
     LDAP server.
 
-2007-11-29  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r84
+2007-11-30  Toshio くらとみ <toshio@publictest1.fedora.phx.redhat.com> - r84
 * fedora/accounts/fasLDAP.py: Change the password in this file.
 
 === 0.2.90.21 ===
@@ -181,7 +238,7 @@ Store timestamps in LDAP instead of date strings.
 2007-10-29  Luke Macken <lmacken@redhat.com> - r71
 Merge with new bzr.fedoraproject.org branch
 
-2007-10-18  Ricky Zhou <ricky@fedoraproject.org> - r70
+2007-10-19  Ricky Zhou <ricky@fedoraproject.org> - r70
 Make output of Groups.byGroupName() always a dict.
 
 2007-10-17  Ricky Zhou <ricky@fedoraproject.org> - r69
@@ -190,10 +247,10 @@ Add fedoraPersonCertSerial field.
 2007-10-02  Ricky Zhou <ricky@fedoraproject.org> - r68
 Fix possible unicode problems (hope I did this right).  
 
-2007-09-26  Ricky Zhou <ricky@fedoraproject.org> - r67
+2007-09-27  Ricky Zhou <ricky@fedoraproject.org> - r67
 Fix typo in AUTHORS
 
-2007-09-26  Ricky Zhou <ricky@fedoraproject.org> - r66
+2007-09-27  Ricky Zhou <ricky@fedoraproject.org> - r66
 Fix move str() and encode() out of add.
 
 2007-09-26  Ricky Zhou <ricky@fedoraproject.org> - r65
@@ -211,7 +268,7 @@ Add a few str() and encode()
 * fedora/__init__.py, setup.py: Update to version 0.2.90.19.
 * python-fedora.spec: Fixes from the Fedora review process.
 
-2007-09-24  Ricky Zhou <ricky@fedoraproject.org> - r61
+2007-09-25  Ricky Zhou <ricky@fedoraproject.org> - r61
 Make fasLDAP.py handle None values properly, move encode('utf8') into modify.
 
 2007-09-20  Toshio Ernie Kuratomi <toshio@publictest1.fedora.phx.redhat.com> - r60
@@ -242,21 +299,21 @@ Make fasLDAP.py handle None values properly, move encode('utf8') into modify.
 2007-09-18  Toshio Kuratomi <badger@Clingman> - r54
 * ChangeLog: Sync up with last mintue changes.
 
-2007-09-17  Toshio Kuratomi <badger@Clingman> - r53
+2007-09-18  Toshio Kuratomi <badger@Clingman> - r53
 * python-fedora.spec: Fix some minor file path problems with the spec.
 
-2007-09-17  Toshio Kuratomi <badger@Clingman> - r52
+2007-09-18  Toshio Kuratomi <badger@Clingman> - r52
 * ChangeLog: Add a changelog.
 
-2007-09-17  Toshio Kuratomi <badger@Clingman> - r51
+2007-09-18  Toshio Kuratomi <badger@Clingman> - r51
 * MANIFEST.in: Add ChangeLog
 * README, fedora/__init__.py, python-fedora.spec, setup.py: Version 0.2.90.17.
 
-2007-09-17  Toshio Kuratomi <badger@Clingman> - r50
+2007-09-18  Toshio Kuratomi <badger@Clingman> - r50
 * fedora/accounts/fas.py: Simplify conversion to utf-8 of all person and group
   information.
 
-2007-09-14  Ricky Zhou <ricky@fedoraproject.org> - r49
+2007-09-15  Ricky Zhou <ricky@fedoraproject.org> - r49
 Add fedoraGroupRequires, fix empty value issues with LDAP, and catch more LDAP exceptions.
 
 === 0.2.90.16 ===
@@ -334,7 +391,7 @@ Add fedoraGroupRequires, fix empty value issues with LDAP, and catch more LDAP e
   like it was fixed in safasprovider.py.
 * python-fedora.spec, setup.py: Bump to version 0.2.90.14.
 
-2007-07-30  Toshio Kuratomi <toshio@tiki-lounge.com> - r41
+2007-07-31  Toshio Kuratomi <toshio@tiki-lounge.com> - r41
 * fedora/tg/client.py: BaseClient::_authenticate(): Take a force argument to
   force a new session.
     + Fix the login request with another '/'.
@@ -342,7 +399,7 @@ Add fedoraGroupRequires, fix empty value issues with LDAP, and catch more LDAP e
   - BaseClient::send_request(): If our request is sent back because it needs to
     login, force a reauthentication.
 
-2007-07-30  Toshio Kuratomi <toshio@tiki-lounge.com> - r40
+2007-07-31  Toshio Kuratomi <toshio@tiki-lounge.com> - r40
 * fedora/tg/client.py: Fix handling of other arguments to send_request().
 
 2007-07-30  Toshio Kuratomi <badger@Clingman> - r39
@@ -365,7 +422,7 @@ Add fedoraGroupRequires, fix empty value issues with LDAP, and catch more LDAP e
   - BaseClient::send_request(): Minor changes so we don't throw an exception
     if we use json rather than simplejson.
 
-2007-07-21  Toshio Kuratomi <toshio@tiki-lounge.com> - r36
+2007-07-22  Toshio Kuratomi <toshio@tiki-lounge.com> - r36
 * README: tab-> space fixes.
 * fedora/tg/client.py: Typo corrections.
 
@@ -388,10 +445,10 @@ Add fedoraGroupRequires, fix empty value issues with LDAP, and catch more LDAP e
   available.
 * python-fedora.spec, setup.py: Update to 0.2.90.12.
 
-2007-07-03  Toshio Kuratomi <toshio@tiki-lounge.com> - r31
+2007-07-04  Toshio Kuratomi <toshio@tiki-lounge.com> - r31
 * python-fedora.spec, setup.py: Update to 0.2.90.11.
 
-2007-07-03  Toshio Kuratomi <toshio@tiki-lounge.com> - r30
+2007-07-04  Toshio Kuratomi <toshio@tiki-lounge.com> - r30
 * fedora/accounts/fas.py: AccountSystem::dbCmd(): Change from defining this
   with a property decorator to property function syntax.  This makes it
   python 2.3 compatible.
@@ -399,7 +456,7 @@ Add fedoraGroupRequires, fix empty value issues with LDAP, and catch more LDAP e
   Add __json__() methods so we can output FASUser and FASGroups when the
   tg_format is set to json.
 
-2007-06-25  Toshio Kuratomi <toshio@tiki-lounge.com> - r29
+2007-06-26  Toshio Kuratomi <toshio@tiki-lounge.com> - r29
 * fedora/accounts/fas.py: Fix a bug when we lose a database connection while
   an app is running.
 * python-fedora.spec: Update changelog.
@@ -427,7 +484,7 @@ Add fedoraGroupRequires, fix empty value issues with LDAP, and catch more LDAP e
 * fedora/accounts/fasLDAP.py, fedora/tg/identity/safas2provider.py:
   fas2 updates from mmcgrath.
 
-2007-05-31  Toshio Kuratomi <toshio@tiki-lounge.com> - r24
+2007-06-01  Toshio Kuratomi <toshio@tiki-lounge.com> - r24
 * fedora/accounts/fas.py:
   - Up the maximum number of concurrent db connections to 15.
   - Add a DBError exception that is thrown when the connection to the db
@@ -450,7 +507,7 @@ Add fedoraGroupRequires, fix empty value issues with LDAP, and catch more LDAP e
   information so that bugzilla email has something to pull from.
 * python-fedora.spec, setup.py: New version 0.2.90.7
 
-2007-04-14  Toshio Kuratomi <toshio@tiki-lounge.com> - r21
+2007-04-15  Toshio Kuratomi <toshio@tiki-lounge.com> - r21
 * fedora/accounts/fas.py: Fix a problem with the bugzilla email address code.
 * python-fedora.spec, setup.py: Update version to 0.2.90.6.
 
@@ -467,7 +524,7 @@ Add fedoraGroupRequires, fix empty value issues with LDAP, and catch more LDAP e
   Pull in the AuthError definition from fas2.py/fas.py.
 * python-fedora.spec, setup.py: 0.2.90.4.
 
-2007-03-14  Toshio Kuratomi <toshio@tiki-lounge.com> - r18
+2007-03-15  Toshio Kuratomi <toshio@tiki-lounge.com> - r18
 * fedora/accounts/fas.py: Fix get_group_info().
 
 2007-03-14  Toshio Kuratomi <toshio@tiki-lounge.com> - r17
@@ -508,14 +565,14 @@ Add fedoraGroupRequires, fix empty value issues with LDAP, and catch more LDAP e
 * safasprovider.py: Catch the proper exception when the password does not
   validate.
 
-2007-02-26  Toshio Kuratomi <toshio@tiki-lounge.com> - r9
+2007-02-27  Toshio Kuratomi <toshio@tiki-lounge.com> - r9
 * MANIFEST.in: List additional files to include in the source tarball.
 * README: Short intro to using the fas v2 features.
 * fedora/accounts/tgfas2.py: fix the database name to be fassession2.
 * python-fedora.spec: Bump the version to 0.2.90.2.
 * setup.py: Bump version to 0.2.90.2.
 
-2007-02-26  Toshio Kuratomi <toshio@tiki-lounge.com> - r8
+2007-02-27  Toshio Kuratomi <toshio@tiki-lounge.com> - r8
 * fassession.sql: Database to store web session information for fas v1.  This
   is used by  TurboGears at the moment.
 * fassession2.sql: Database to store web session information for fas v2.  This
@@ -528,7 +585,7 @@ Add fedoraGroupRequires, fix empty value issues with LDAP, and catch more LDAP e
 * setup.py: Bump version to 0.2.90.1
   - Add the safas2 entrypoint.
 
-2007-02-10  Toshio Kuratomi <toshio@tiki-lounge.com> - r7
+2007-02-11  Toshio Kuratomi <toshio@tiki-lounge.com> - r7
 * README: Update with note that sqlalchemy.dburi must be set.
 * fedora/accounts/fas.py: AccountSystem::validate_password(): Be sure to fail
   anyone attempting to login with one of the system accounts (accounts with
@@ -575,7 +632,7 @@ Add fedoraGroupRequires, fix empty value issues with LDAP, and catch more LDAP e
   from the local userId variable instead of trying to get it from a nonexistent
   user mapper.
 
-2007-01-20  Toshio Kuratomi <toshio@tiki-lounge.com> - r3
+2007-01-21  Toshio Kuratomi <toshio@tiki-lounge.com> - r3
 * python-fedora.spec: Add a spec file so this can be turned into an rpm.
 * fedora/accounts/fas.py:
   - adminUserId: Set a constant for the adminUserId.  This allows us to check
