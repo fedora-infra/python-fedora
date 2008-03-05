@@ -30,7 +30,6 @@ Requires: python-psycopg2
 Requires: python-bugzilla
 Requires: python-feedparser
 Requires: python-ldap
-# This can go away when TurboGears can use SQLAlchemy >= 0.4
 Requires: python-sqlalchemy
 
 %description infrastructure
