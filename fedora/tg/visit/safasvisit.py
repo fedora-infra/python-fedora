@@ -8,6 +8,10 @@ from turbogears.visit.api import BaseVisitManager, Visit
 from turbogears.database import get_engine, metadata, session, mapper
 from turbogears.util import load_class
 
+import gettext
+t = gettext.translation('python-fedora', '/usr/share/locale', fallback=True)
+_ = t.ugettext
+
 import logging
 log = logging.getLogger("turbogears.identity.savisit")
 
@@ -23,8 +27,9 @@ class SaFasVisitManager(BaseVisitManager):
 
         visit_class = load_class(visit_class_path)
         if visit_class is None:
-            msg = 'No visit class found for %s' % visit_class_path
-            msg += ' , did you think to setup.py develop ?'
+            msg = _('No visit class found for %(visit_class_path)s,' \
+                    'did you think to setup.py develop ?'
+                    % {'visit_class_path': visit_class_path})
             log.error(msg)
 
         get_engine()
@@ -75,8 +80,8 @@ class SaFasVisitManager(BaseVisitManager):
         engine = table.get_engine()
         # Now update each of the visits with the most recent expiry
         for visit_key,expiry in queue.items():
-            log.info("updating visit (%s) to expire at %s", visit_key,
-                      expiry)
+            log.info(_("updating visit (%(key)s) to expire at %(expire)s")
+                    % {'key': visit_key, 'expire': expiry}))
             #get_engine().execute(table.update(table.c.visit_key==visit_key,
             engine.execute(table.update(table.c.visit_key==visit_key,
                               values={'expiry': expiry}))

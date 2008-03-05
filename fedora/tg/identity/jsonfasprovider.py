@@ -132,12 +132,6 @@ class JsonFasIdentity(BaseClient):
         return not self.user
     anonymous = property(_get_anonymous)
 
-    def _get_display_name(self):
-        if not self.user:
-            return None
-        return self.user['human_name']
-    display_name = property(_get_display_name)
-
     def _get_groups(self):
         try:
             return self._groups
@@ -191,7 +185,7 @@ class JsonFasIdentityProvider(object):
             user = JsonFasIdentity(visit_key, username=user_name,
                     password=password)
         except ServerError, e:
-            log.warning('Error logging in %(user)s: %(error)s' % {
+            log.warning(_('Error logging in %(user)s: %(error)s') % {
                 'user': user_name, 'error': e})
             return None
 
