@@ -86,8 +86,11 @@ class BaseClient(object):
             raise AuthError, _('password must be set')
 
         req = urllib2.Request(urljoin(self.baseURL, 'login?tg_format=json'))
-        req.add_header('Cookie', self._sessionCookie.output(attrs=[],
-            header='').strip())
+        if self._sessionCookie:
+            # If it exists, send the old sessionCookie so it is associated
+            # with the request.
+            req.add_header('Cookie', self._sessionCookie.output(attrs=[],
+                header='').strip())
         req.add_data(urllib.urlencode({
                 'user_name' : self.username,
                 'password'  : self.password,
