@@ -1,3 +1,15 @@
+2008-03-11  Toshio Kuratomi <badger@Clingman> - r136
+* fedora/release.py, python-fedora.spec: Bump version for new release.
+
+2008-03-11  Toshio Kuratomi <badger@Clingman> - r135
+* fedora/tg/identity/jsonfasprovider.py: Changes from ricky to enable both
+  user.human_name and user['human_name'].
+
+=== 0.2.99.3 ===
+
+2008-03-11  Toshio Kuratomi <badger@Clingman> - r134
+* ChangeLog: Update for new release.
+
 2008-03-11  Toshio Kuratomi <badger@Clingman> - r133
 * fedora/release.py, python-fedora.spec: Bump version for a new bugfix release.
 
