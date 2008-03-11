@@ -2,7 +2,7 @@
 %{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-fedora
-Version:        0.2.99.2
+Version:        0.2.99.3
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -23,7 +23,7 @@ Infrastructure's  TurboGears based services such as Bodhi, PackageDB,
 MirrorManager, and FAS2.
 
 %package infrastructure
-Summary: Python modules for building Fedora Infrastructure Services
+Summary: Python modules for building Fedora Services
 Group: Development/Languages
 Requires: %{name} = %{version}-%{release}
 Requires: python-psycopg2
@@ -33,8 +33,9 @@ Requires: python-ldap
 Requires: python-sqlalchemy
 
 %description infrastructure
-Additional python modules that can be used on Fedora Infrastructure Servers to
-help build new services.  This includes the server's authentication providers.
+Additional python modules that can be used to help create Fedora Services.
+This includes the a JSON-based auth provider for authenticating against FAS2
+over the network.
 
 %prep
 %setup -q
@@ -72,6 +73,13 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fedora/tg/json.py*
 
 %changelog
+* Tue Mar 11 2008 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.99.3-1
+- Fix a bug in BaseClient.
+
+* Fri Mar 7 2008 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.99.2-2
+- Small updates to description of -infrastructure as we're no longer tied to
+  Fedora Infrastructure boxes.
+
 * Mon Mar 3 2008 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.99.2-1
 - Third beta.  Changes to accomodate FAS2 included as FAS2, TG-1.0.4, and
   SA-0.4 are going to all roll into the new platform together.
