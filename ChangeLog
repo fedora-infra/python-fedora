@@ -1,43 +1,51 @@
-2008-03-04  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r128
-* fedora/release.py, python-fedora.spec: Bump version.
+2008-03-11  Toshio Kuratomi <badger@Clingman> - r133
+* fedora/release.py, python-fedora.spec: Bump version for a new bugfix release.
 
-2008-03-04  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r127
-* fedora/tg/identity/jsonfasprovider.py: Remove debug code left in from last
-  checkin.
+2008-03-06  Toshio Kuratomi <badger@Clingman> - r132
+* fedora/tg/client.py: Fix problem of not having a sessionCookie when trying
+  to authenticate for the very first time.
 
-2008-03-04  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r126
-* fedora/tg/identity/jsonfasprovider.py:
-  - Make changes to cherrypy.response.simple_cookie instead of
-    cherrypy.request...  This actually changes things on the client.
-  - Import BaseClient from the fedora module instead of a local copy.
-  - __init__(): Fix the variable 'approved_memberships' is being pulled from.
-    + Set the user's cookie to the new visit_key as well.
-  - validate_identity(): Fix typo in warning message.
-    + Fix return.  We've already created a JsonFasIdentity object so don't try
-      to make another on return.
+2008-03-04  Toshio Kuratomi <badger@Clingman> - r131
+* README: Add the fas.url config option to the install instructions for FASv2.
 
-2008-03-04  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r125
-* fedora/tg/client.py: _authenticate(): Improve error handling to account for
-  non-JSON data being returned from the server.
+2008-03-04  Toshio Kuratomi <badger@Clingman> - r130
+* NEWS: Update with the latest changes.
+* README: Update: FAS2 will have a JSON Provider and is not based on LDAP.
 
-2008-03-04  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r124
-Fixes bugs revealed when porting to the fas identity providers to json.
-* fedora/tg/client.py: _authenticate(): Instead of clearing the sessionCookie
-  when we want to force authentication, check that force is not set before we
-  return a cached authentication cookie.
-  - Always set the _sessionCookie.  This allows visit tracking to work.
-  - Be sure to check for and store the session cookie if the server returns a
-    new one to us.  Otherwise the change will be unavailable to client code.
+2008-03-04  Toshio Kuratomi <badger@Clingman> - r129
+* fedora/tg/identity/jsonfasprovider.py, fedora/tg/visit/safasvisit.py:
+  - Remove display_name.  It's not in the TurboGears identity so we won't
+    provide it in ours.
+  - Mark various strings for gettext.
 
-2008-03-04  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r123
-* fedora/tg/json.py: Port to SA-0.4.
+2008-03-04  Toshio Kuratomi <badger@Clingman> - r128
+* fedora/tg/client.py: Don't issue an error if we can't write to the session
+  file.  The session file just makes it so we don't have to keep typing our
+  password.  It shouldn't be fatal.
 
-2008-03-04  Toshio くらとみ <toshio@publictest10.fedoraproject.org> - r122
-* fedora/tg/identity/jsonfasprovider.py: Identity provider that uses JSON calls
-  to the FAS server to authenticate.
-* fedora/tg/visit/jsonfasvisit.py: Visit manager that uses JSON calls to the
-  FAS server to authenticate.
-* setup.py: Register the new providers.
+2008-03-04  Toshio Kuratomi <badger@Clingman> - r127
+* fedora/tg/identity/safas2provider.py: Remove safas2.  FAS2 has a private
+  identity module that builds on this.  It's private because the public
+  auth provider will either be based on json (written) or OpenID (not written).
+
+=== 0.2.99.2 ===
+
+2008-03-04  Toshio Kuratomi <badger@Clingman> - r126
+* python-fedora.spec: Remove confusing comment.
+
+2008-03-04  Toshio Kuratomi <badger@Clingman> - r125
+* Merge from trunk.
+
+2008-02-25  Toshio Kuratomi <badger@Clingman> - r124
+* fedora/accounts/fasLDAP.py: No LDAP for FAS2.  We'll be replacing this with
+  an SQLAlchemy model for FAS2's db.
+
+2008-02-25  Toshio Kuratomi <badger@Clingman> - r123
+* fedora/tg/identity/safas2provider.py: We're no longer going to use LDAP for
+  fas2.  New fasprovider to work with the FAS2 DB tables.
+
+2008-02-25  Toshio Kuratomi <badger@Clingman> - r122
+* fedora/accounts/fas.py: Ajax's email is fixed in the db.
 
 2008-02-19  Toshio Kuratomi <badger@Clingman> - r121
 * fedora/tg/visit/safasvisit.py: Remove check whether a mapper exists as we
