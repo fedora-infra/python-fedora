@@ -2,7 +2,7 @@
 %{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-fedora
-Version:        0.2.99.3
+Version:        0.2.99.4
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -73,6 +73,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fedora/tg/json.py*
 
 %changelog
+* Tue Mar 11 2008 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.99.4-1
+- Change from Ricky to enable user.human_name.
+
 * Tue Mar 11 2008 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.99.3-1
 - Fix a bug in BaseClient.
 
