@@ -15,7 +15,8 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 #
-# Red Hat Author(s): Toshio Kuratomi <tkuratom@redhat.com>
+# Author(s): Toshio Kuratomi <tkuratom@redhat.com>
+#            Ricky Zhou <ricky@fedoraproject.org>
 #
 
 '''
@@ -48,6 +49,20 @@ try:
     set, frozenset
 except NameError:
     from sets import Set as set, ImmutableSet as frozenset
+ 
+class DictContainer(dict):
+    def __init__(self, basedict):
+        for key in basedict:
+            if type(basedict[key]) == dict:
+                self[key] = DictContainer(basedict[key])
+            else:
+                self[key] = basedict[key]
+
+    def __getattr__(self, attr):
+        try:
+            return self[attr]
+        except KeyError:
+           raise AttributeError
 
 class JsonFasIdentity(BaseClient):
     '''Associate an identity with a person in the auth system.
@@ -115,7 +130,7 @@ class JsonFasIdentity(BaseClient):
         if not data['person']:
             self._user = None
             return None
-        self._user = data['person']
+        self._user = DictContainer(data['person'])
         self._groups = frozenset(
                 [g['name'] for g in data['person']['approved_memberships']]
                 )
@@ -131,6 +146,12 @@ class JsonFasIdentity(BaseClient):
     def _get_anonymous(self):
         return not self.user
     anonymous = property(_get_anonymous)
+
+    def _get_display_name(self):
+        if not self.user:
+            return None
+        return self.user['human_name']
+    display_name = property(_get_display_name)
 
     def _get_groups(self):
         try:
@@ -185,7 +206,7 @@ class JsonFasIdentityProvider(object):
             user = JsonFasIdentity(visit_key, username=user_name,
                     password=password)
         except ServerError, e:
-            log.warning(_('Error logging in %(user)s: %(error)s') % {
+            log.warning('Error logging in %(user)s: %(error)s' % {
                 'user': user_name, 'error': e})
             return None
 
