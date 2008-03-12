@@ -81,7 +81,7 @@ class SaFasVisitManager(BaseVisitManager):
         # Now update each of the visits with the most recent expiry
         for visit_key,expiry in queue.items():
             log.info(_("updating visit (%(key)s) to expire at %(expire)s")
-                    % {'key': visit_key, 'expire': expiry}))
+                    % {'key': visit_key, 'expire': expiry})
             #get_engine().execute(table.update(table.c.visit_key==visit_key,
             engine.execute(table.update(table.c.visit_key==visit_key,
                               values={'expiry': expiry}))
