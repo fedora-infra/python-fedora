@@ -53,6 +53,8 @@ class BaseClient(object):
         A command-line client to interact with Fedora TurboGears Apps.
     '''
     def __init__(self, baseURL, username=None, password=None, debug=False):
+        if baseURL[-1] != '/':
+            baseURL = baseURL +'/'
         self.baseURL = baseURL
         self.username = username
         self.password = password
@@ -176,6 +178,7 @@ class BaseClient(object):
             keyword parameters in **kw.  If auth is True, then the request is
             made with an authenticated session cookie.
         '''
+        method = method.lstrip('/')
         url = urljoin(self.baseURL, method + '?tg_format=json')
 
         response = None # the JSON that we get back from the server
@@ -213,7 +216,7 @@ class BaseClient(object):
         # In case the server returned a new session cookie to us
         try:
             self._sessionCookie.load(response.headers['set-cookie'])
-        except KeyError:
+        except (KeyError, AttributeError):
             pass
 
         jsonString = response.read()
