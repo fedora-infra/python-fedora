@@ -2,7 +2,7 @@
 %{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-fedora
-Version:        0.2.99.4
+Version:        0.2.99.5
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -73,6 +73,10 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fedora/tg/json.py*
 
 %changelog
+* Tue Mar 18 2008 Ricky Zhou <ricky@fedoraproject.org> - 0.2.99.5-1
+- Add fas2.py (an interface for apps to fetch data from FAS2 using
+  fedora.tg.client)
+
 * Tue Mar 11 2008 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.99.4-1
 - Change from Ricky to enable user.human_name.
 
