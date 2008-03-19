@@ -1,3 +1,7 @@
+import urllib
+import urllib2
+import simplejson
+from urlparse import urljoin
 from fedora.tg.client import BaseClient, AuthError, ServerError
 
 class AccountSystem(BaseClient):
@@ -47,3 +51,28 @@ class AccountSystem(BaseClient):
         request = self.send_request('json/user_id', auth=True)
         return request['people']
 
+    def authenticate(self, username, password):
+        """TODO"""
+        req = urllib2.Request(urljoin(self.baseURL, 'login?tg_format=json'))
+        req.add_data(urllib.urlencode({
+            'user_name' : username,
+            'password'  : password,
+            'login'     : 'Login'
+            }))
+        try:
+            response = urllib2.urlopen(req)
+        except urllib2.HTTPError, e:
+            if e.msg == 'Forbidden':
+                return False
+        jsonString = response.read()
+        try:
+            data = simplejson.loads(jsonString)
+        except ValueError, e:
+            # The response wasn't JSON data
+            raise ServerError, str(e)
+        try:
+            if data['user']:
+                return data['user']['username'] == username
+        except KeyError:
+            pass
+        return False
