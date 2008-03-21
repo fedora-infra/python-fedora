@@ -4,6 +4,14 @@ import simplejson
 from urlparse import urljoin
 from fedora.tg.client import BaseClient, AuthError, ServerError
 
+class FASError(Exception):
+    '''FAS Error'''
+    pass
+
+class CLAError(FASError):
+    '''CLA Error'''
+    pass
+
 class AccountSystem(BaseClient):
 
     def __init__(self, baseURL, username=None, password=None, debug=False):
@@ -50,6 +58,16 @@ class AccountSystem(BaseClient):
         """Returns a dict relating user IDs to usernames"""
         request = self.send_request('json/user_id', auth=True)
         return request['people']
+
+    def user_gencert(self):
+        """Generate a cert for a user"""
+        try:
+            request = self.send_request('user/gencert', auth=True)
+        except ServerError, e:
+            raise
+        if not request['cla']:
+            raise "CLA not signed"
+        return "%(cert)s\n%(key)s" % request
 
     def authenticate(self, username, password):
         """TODO"""

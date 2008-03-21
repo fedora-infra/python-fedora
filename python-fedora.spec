@@ -8,7 +8,7 @@ Summary:        Python modules for talking to Fedora Infrastructure Services
 
 Group:          Development/Languages
 License:        GPLv2
-URL:            http://hosted.fedoraproject.org/projects/python-fedora/
+URL:            https://fedorahosted.org/python-fedora/
 Source0:        http://toshio.fedorapeople.org/fedora/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -29,7 +29,6 @@ Requires: %{name} = %{version}-%{release}
 Requires: python-psycopg2
 Requires: python-bugzilla
 Requires: python-feedparser
-Requires: python-ldap
 Requires: python-sqlalchemy
 
 %description infrastructure
@@ -73,6 +72,10 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/fedora/tg/json.py*
 
 %changelog
+* Tue Mar 18 2008 Ricky Zhou <ricky@fedoraproject.org> - 0.2.99.6-1
+- Add gencert method in fedora.accounts.fas2
+- Remove old python-ldap dependency.
+
 * Tue Mar 18 2008 Ricky Zhou <ricky@fedoraproject.org> - 0.2.99.5-1
 - Add fas2.py (an interface for apps to fetch data from FAS2 using
   fedora.tg.client)
