@@ -172,6 +172,15 @@ class BaseClient(object):
                 log.debug(_('Session is for a different user'))
             sessionFile.close()
 
+    def logout(self):
+        '''
+            Logout from the server.
+        '''
+        try:
+            request = self.send_request('logout', auth=True)
+        except ServerError:
+            raise
+      
     def send_request(self, method, auth=False, input=None):
         '''
             Send a request to the server.  The given method is called with any

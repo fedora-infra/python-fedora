@@ -66,7 +66,7 @@ class AccountSystem(BaseClient):
         except ServerError, e:
             raise
         if not request['cla']:
-            raise "CLA not signed"
+            raise CLAError
         return "%(cert)s\n%(key)s" % request
 
     def authenticate(self, username, password):
