@@ -5,15 +5,8 @@ calls to the account system server.
 
 import Cookie
 
-from datetime import datetime
-
-from sqlalchemy import *
-from sqlalchemy.orm import class_mapper
-
 from turbogears import config
-from turbogears.visit.api import BaseVisitManager, Visit
-from turbogears.database import get_engine, metadata, session, mapper
-from turbogears.util import load_class
+from turbogears.visit.api import Visit
 
 from fedora.tg.client import BaseClient
 

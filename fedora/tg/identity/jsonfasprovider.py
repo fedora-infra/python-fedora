@@ -27,12 +27,7 @@ System using JSON calls.
 import Cookie
 
 from cherrypy import response
-from sqlalchemy.orm import class_mapper
 from turbogears import config, identity
-from turbogears.identity.saprovider import SqlAlchemyIdentity, \
-        SqlAlchemyIdentityProvider
-from turbogears.database import session
-from turbogears.util import load_class
 
 from fedora.tg.client import BaseClient, ServerError
 
