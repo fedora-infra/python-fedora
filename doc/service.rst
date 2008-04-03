@@ -205,9 +205,9 @@ Doing something different for json data
 ::
 
     if fedora.tg.util.request_format() == 'json':
-        return dict(tg_template='my.templates.error')
+        return dict(exc='Exception', tg_flash='An Error Occurred')
     else:
-        raise redirect('https://localhost:8080/my/error')
+        return dict(tg_template='my.templates.error')
 
 ------------
 Using SABase
