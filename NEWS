@@ -3,8 +3,33 @@ NEWS
 ====
 
 :Author: Toshio Kuratomi
-:Date: 4 Mar 2008
-:Version: 0.2.99.2
+:Date: 2 Apr 2008
+:Version: 0.2.99.6
+
+--------
+0.2.99.6
+--------
+Remove fas1 code.
+Document how BaseClient interacts with a server
+Move client code.
+Change BaseClient to work with Accept headers.
+
+--------
+0.2.99.5
+--------
+fas2.py shim to connect to fas2 via json for certain information.
+BaseClient bugfixes.
+
+--------
+0.2.99.4
+--------
+Enhancement to jsonfasprovider to provide both user.human_name and
+user['human_name'].
+
+--------
+0.2.99.3
+--------
+Bugfixes to BaseClient
 
 --------
 0.2.99.2

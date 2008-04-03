@@ -19,10 +19,8 @@ setup(name=NAME,
         extras_require = {'tg' : ['TurboGears >= 1.0.4']},
         entry_points = {
             'turbogears.identity.provider' : (
-                'safas = fedora.tg.identity.safasprovider:SaFasIdentityProvider [tg]',
                 'jsonfas = fedora.tg.identity.jsonfasprovider:JsonFasIdentityProvider [tg]'),
             'turbogears.visit.manager' : (
-                'safas = fedora.tg.visit.safasvisit:SaFasVisitManager [tg]',
                 'jsonfas = fedora.tg.visit.jsonfasvisit:JsonFasVisitManager [tg]')
             }
         )
