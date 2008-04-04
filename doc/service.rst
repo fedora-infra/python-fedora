@@ -3,7 +3,7 @@ Fedora Services
 ===============
 :Authors: Toshio Kuratomi
           Luke Macken
-:Date: 2 April 2008
+:Date: 4 April 2008
 :For Version: 0.3.x
 
 In the loosest sense, a Fedora Service is a web application that sends data
@@ -148,9 +148,9 @@ Marshalling
 ===========
 All data should be encoded in json before being returned.  This is normally
 taken care of automatically by TurboGears and simplejson.  If you are
-returning non-builtin objects you may have to define an `__json__()`__ method.
+returning non-builtin objects you may have to define an `__json__()`_ method.
 
-__ `Using __json__()`_
+.. _`__json__()`: `Using __json__()`_
 
 Unicode
 =======
@@ -191,29 +191,137 @@ When used in conjunction with json, ``exc=EXCEPTIONNAME``, and BaseClient_,
 identify what went wrong or display to the user.  It's equivalent to the
 message you would normally give when raising an exception.
 
+------------------------------------------------
+Performing Different Actions when Returning JSON
+------------------------------------------------
+
+So far we've run across two features of TurboGears that provide value to a
+web application but don't work when returning json data.  We provide a
+function that can code around this.  ``fedora.tg.util.request_format()`` will
+return the format that the page is being returned as.  Code can use this to
+check whether json output is expected and do something different based on it::
+
+    output = {'tg_flash': 'An Error Occurred'}
+    if fedora.tg.util.request_format() == 'json':
+        output['exc'] = 'ServerError'
+    else:
+        output['tg_template'] = 'my.templates.error'
+    return output
+
+In this example, we return an error through our "exception" mechanism if we
+are returning json and return an error page by resetting the template if not.
+
 Redirects
 =========
-In TG 1.0.3 and earlier, redirects cause problems when returning json data.
-Instead of raise redirect it is better to use tg_template to 
+Redirects do not play well with JSON [#] because TurboGears is unable to turn
+the function returned from the redirect into a dictionary that can be turned
+into JSON.
 
-Finish me
+Redirects are commonly used to express errors.  This is actually better
+expressed using tg_template_ because that method leaves the URL intact.
+That allows the end user to look for spelling mistakes in their URL.  If you
+need to use a redirect, the same recipe as above will allow you to split your
+code paths.
 
----------------------------------------
-Doing something different for json data
----------------------------------------
+.. [#] Last checked in TurboGears 1.0.4
 
-::
+tg_template
+===========
 
-    if fedora.tg.util.request_format() == 'json':
-        return dict(exc='Exception', tg_flash='An Error Occurred')
-    else:
-        return dict(tg_template='my.templates.error')
+Setting what template is returnedto a user by setting tg_template in the
+return dict (for instance, to display an error page without changing the URL)
+is a perfectly valid way to use TurboGears_.  Unfortunately, since JSON is
+simply another template in TurboGears_ you have to be sure not to interfere
+with the generation of json data.  You need to check whether json was
+requested using ``fedora.tg.util.request_format()`` and only return a
+different template if that's not the case.
 
 ------------
 Using SABase
 ------------
 
-Fill me up
+``fedora.tg.json`` contains several functions that help to convert SQLAlchemy_
+objects into json.  For the most part, these do their work behind the scenes.
+The ``SABase`` object, however, is one that you might need to take an active
+role in using.
+
+When you return an SQLAlchemy_ object in a controller to a template, the
+template is able to access any of the relations mapped to it.  So, instead of
+having to construct a list of people records from a table and
+the the list of groups that each of them are in you can pass in the list of
+people and let your template reference the relation properties to get the
+groups.  This is extremely convenient for templates but has a negative effect
+when returning json. Namely, the default methods for marshalling SQLAlchemy_
+objects to JSON only return the attributes of the object, not the relations
+that are linked to it.  So you can easily run into a situation where someone
+querying the JSON data for a page will not have all the information that a
+template has access to.
+
+SABase fixes this by allowing you to specify relations that your
+SQLAlchemy_ backed objects should marshall as json data.
+
+Further information on SABase can be found in the API documentation::
+
+  pydoc fedora.tg.json
+
+.. _SQLAlchemy: http://www.sqlalchemy.org
+
+Example
+=======
+
+SABase is a base class that you can use when defining objects
+in your project's model.  So the first step is defining the classes in your
+model to inherit from SABase::
+
+    from fedora.tg.json import SABase
+    from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
+    from turbogears.database import metadata, mapper
+
+    class Person(SABase):
+        pass
+    PersonTable = Table('person', metadata
+        Column('name', String, primary_key=True),
+        )
+
+    class Address(SABase):
+        pass
+    AddressTable = Table (
+        Column('id', Integer, primary_key=True),
+        Column('street', string),
+        Column('person_id', Integer, ForeignKey('person.name')
+        )
+
+    mapper(PersonTable, Person)
+    mapper(AddressTable, Address, properties = {
+        person: relation(Person, backref = 'addresses'),
+    })
+
+The next step is to tell SABase which properties should be copied (this
+allows you to omit large trees of objects when you only need the data from
+a few of them)::
+
+    @expose('my.templates.about_me')
+    @expose(allow_json=True)
+    def my_info(self):
+        person = Person.query.filter_by(name='Myself').one()
+        person.jsonProps = {'Person': ['addresses']}
+        return dict(myself=person}
+
+Now, when someone requests json data from my_info, they should get back a
+record for person that includes a property addresses.  Addresses will be a
+list of address records associated with the person.
+
+How it Works
+============
+
+SABase adds a special `__json__()`_ method to the class.  By default, this
+method returns a dict with all of the attributes that are backed by fields in
+the database.
+
+Adding entries to jsonProps adds the values for those properties to the
+returned dict as well.  If you need to override the `__json__()`_ method in
+your class you probably want to call SABase's `__json__()`_ unless you know
+that neither you nor any future subclasses will need it.
 
 ----------------
 Using __json__()
@@ -253,7 +361,3 @@ enough data so the client isn't looking for another method that can complete
 its needs) when returning data.
 
 .. _simplejson: http://undefined.org/python/#simplejson
-
-------------------
-A Complete Example
-------------------
