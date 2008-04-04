@@ -32,6 +32,8 @@ methods of transforming a class into json for a few common types.
 # lists, dicts, numbers and strings
 
 import sqlalchemy
+import sqlalchemy.orm
+import sqlalchemy.ext.associationproxy
 from turbojson.jsonify import jsonify
 
 class SABase(object):
