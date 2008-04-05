@@ -36,7 +36,7 @@ There is now a base class for creating a client application that can talk to
 a TurboGears server.  The TurboGears server may need a little bit of tweaking
 to make it work with the client.  Please see::
 
-  http://hosted.fedoraproject.org/projects/packagedb/wiki/CommandLineClient
+  http://fedorahosted.org/packagedb/wiki/CommandLineClient
 
 for details of how the server may need to be modified.
 
