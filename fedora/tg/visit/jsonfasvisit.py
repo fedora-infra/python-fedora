@@ -6,7 +6,7 @@ calls to the account system server.
 import Cookie
 
 from turbogears import config
-from turbogears.visit.api import Visit
+from turbogears.visit.api import Visit, BaseVisitManager
 
 from fedora.tg.client import BaseClient
 
@@ -17,7 +17,7 @@ _ = t.ugettext
 import logging
 log = logging.getLogger("turbogears.identity.savisit")
 
-class JsonFasVisitManager(BaseClient):
+class JsonFasVisitManager(BaseVisitManager):
     '''
     This proxies visit requests to the Account System Server running remotely.
 
@@ -28,22 +28,28 @@ class JsonFasVisitManager(BaseClient):
     cookieName = config.get('visit.cookie.name', 'tg-visit')
 
     def __init__(self, timeout, debug=None):
-        super(JsonFasVisitManager,self).__init__(self.fasURL, debug=debug)
+        self.debug = debug or False
+        BaseVisitManager.__init__(self, timeout, debug=debug)
 
     def create_model(self):
         '''
-        Create the Visit table if it doesn't already exist
+        Create the Visit table if it doesn't already exist.
+
+        Not needed as the visit tables reside remotely in the FAS2 database.
         '''
-        # Not needed as the visit tables reside remotely in the FAS2 database.
         pass
 
     def new_visit_with_key(self, visit_key):
+        '''
+        Return a new Visit objectwith the given key.
+        '''
         # Hit any URL in fas2 with the visit_key set.  That will call the
         # new_visit method in fas2
-        self._sessionCookie = Cookie.SimpleCookie()
-        self._sessionCookie[self.cookieName] = visit_key
-        data = self.send_request('', auth=True)
-        return Visit(self._sessionCookie[self.cookieName].value, True)
+        fas = BaseClient(self.fasURL, self.debug)
+        fas._sessionCookie = Cookie.SimpleCookie()
+        fas._sessionCookie[self.cookieName] = visit_key
+        data = fas.send_request('', auth=True)
+        return Visit(fas._sessionCookie[self.cookieName].value, True)
 
     def visit_for_key(self, visit_key):
         '''
@@ -52,9 +58,10 @@ class JsonFasVisitManager(BaseClient):
         '''
         # Hit any URL in fas2 with the visit_key set.  That will call the
         # new_visit method in fas2
-        self._sessionCookie = Cookie.SimpleCookie()
-        self._sessionCookie[self.cookieName] = visit_key
-        data = self.send_request('', auth=True)
+        fas = BaseClient(self.fasURL, self.debug)
+        fas._sessionCookie = Cookie.SimpleCookie()
+        fas._sessionCookie[self.cookieName] = visit_key
+        data = fas.send_request('', auth=True)
         # Knowing what happens in turbogears/visit/api.py when this is called,
         # we can shortcircuit this step and avoid a round trip to the FAS
         # server.
@@ -63,23 +70,17 @@ class JsonFasVisitManager(BaseClient):
         #     return None
         # # Hitting FAS has already updated the visit.
         # return Visit(visit_key, False)
-        if visit_key != self._sessionCookie[self.cookieName].value:
-            return Visit(self._sessionCookie[self.cookieName].value, True)
+        if visit_key != fas._sessionCookie[self.cookieName].value:
+            return Visit(fas._sessionCookie[self.cookieName].value, True)
         else:
             return Visit(visit_key, False)
 
     def update_queued_visits(self, queue):
-        # Let the visit_manager on the FAS server manage this
-        pass
-
-    def update_visit(self, visit_key, expiry):
-        ### FIXME: implement this.
-        pass
-
-    def shutdown(self, timeout=None):
-        # Since we don't run with threading and we don't update anything
-        # asynchronously we don't need to shutdown.
-        pass
-
-    def run(self):
-        pass
+        '''Update the visit information on the server'''
+        fas = BaseClient(self.fasURL, self.debug)
+        for visit_key in queue:
+            log.info("updating visit (%s)", visit_key)
+            fas._sessionCookie = Cookie.SimpleCookie()
+            fas._sessionCookie[self.cookieName] = visit_key
+            data = fas.send_request('', auth=True)
+            fas.send_request()
