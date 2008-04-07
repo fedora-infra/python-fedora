@@ -177,7 +177,7 @@ All URLs which return json data should set the ``exc`` variable when the
 method fails unexpectedly (a database call failed, a place where you would
 normally raise an exception, or where you'd redirect to an error page if a
 user was viewing the html version of the web app).  ``exc`` should be set
-to the name of an exception and tg_flash_ set to the message that wold
+to the name of an exception and tg_flash_ set to the message that would
 normally be given to the exception's constructor.  If the return is a success
 (expected values are being returned from the method or a value was updated
 successfully) ``exc`` may either be unset or set to ``None``.
@@ -235,6 +235,51 @@ simply another template in TurboGears_ you have to be sure not to interfere
 with the generation of json data.  You need to check whether json was
 requested using ``fedora.tg.util.request_format()`` and only return a
 different template if that's not the case.
+
+----------------
+Expected Methods
+----------------
+
+Certain controller methods are necessary in order for BaseClient_ to properly
+talk to your service.  Turbogears_ can quickstart an application template for
+you that sets most of these variables correctly::
+
+    $ tg-admin quickstart -i -s -p my my
+    # edit my/my/controllers.py
+
+login()
+=======
+
+You need to have a ``login()`` method in your application's root.  This method
+allows BaseClient_ to authenticate against your Service::
+
+         @expose(template="my.templates.login")
+    +    @expose(allow_json=True)
+         def login(self, forward_url=None, previous_url=None, *args, **kw):
+     
+             if not identity.current.anonymous \
+                 and identity.was_login_attempted() \
+                 and not identity.get_identity_errors():
+    +            # User is logged in
+    +            if 'json' == fedora.tg.util.request_format():
+    +                return dict(user=identity.current.user)
+    +            if not forward_url:
+    +                forward_url = turbogears.url('/')
+                 raise redirect(forward_url)
+
+logout()
+========
+
+The ``logout()`` method is similar to ``login()``.  It also needs to be
+modified to allow people to connect to it via json::
+
+    -    @expose()
+    +    @expose(allow_json=True)
+         def logout(self):
+             identity.current.logout()
+    +        if 'json' in fedora.tg.util.request_format():
+    +            return dict()
+             raise redirect("/")
 
 ------------
 Using SABase

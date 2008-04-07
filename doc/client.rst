@@ -4,7 +4,7 @@ fedora.tg.client
 :Authors: Toshio Kuratomi
           Luke Macken
 :Date: 2 April 2008
-:Document Version: 0.3.0
+:For Version: 0.3.x
 
 The client module allows you to easily code an application that talks to a
 `Fedora Service`_.  It handles the details of decoding the data sent from the
@@ -22,15 +22,30 @@ BaseClient
 The BaseClient class is the basis of all your interactions with the server.
 It is flexible enough to be used as is for talking with a service but is
 really meant to be subclassed and have methods written for it that do the
-things you specifically need to interact with the Fedora Service you care
-about.  Authors of Fedora Services are encouraged to provide their own
+things you specifically need to interact with the `Fedora Service`_ you care
+about.  Authors of a `Fedora Service`_ are encouraged to provide their own
 subclasses of BaseClient that make it easier for other people to use a
-particular Fedora Service out of the box.
+particular Service out of the box.
 
 Using Standalone
 ================
 
-If you don't want to subclass, using BaseClient should be as simple as
+If you don't want to subclass, using BaseClient should be as simple as::
+
+    from fedora.client import BaseClient, AppError, ServerError
+
+    client = BaseClient('https://admin.fedoraproject.org/pkgdb')
+    try:
+        collectionData = client.send_request('/collections', auth=False)
+    except ServerError, e:
+        print '%s' % e
+    except AppError, e:
+        print '%s: %s' % (e.exc, e.message)
+
+    for collection in collectionData['collections']:
+        print collection['name'], collection['version']
+
+First you import the BaseClient_ and exceptions from the fedora.client module.
 
 There is now a base class for creating a client application that can talk to
 a TurboGears server.  The TurboGears server may need a little bit of tweaking
