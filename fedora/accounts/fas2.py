@@ -36,28 +36,87 @@ class AccountSystem(BaseClient):
 
     def __init__(self, baseURL, username=None, password=None, debug=False):
         super(AccountSystem, self).__init__(baseURL=baseURL, username=username, password=password, debug=debug)
+        # Preseed a list of FAS accounts with bugzilla addresses
+        # This allows us to specify a different email for bugzilla than is
+        # in the FAS db.  It is a hack, however, until FAS has a field for the
+        # bugzilla address.
+        self.__bugzilla_email = {
+                # Konstantin Ryabitsev: mricon@gmail.com
+                100029: 'icon@fedoraproject.org',
+                # Sean Reifschneider: jafo@tummy.com
+                100488: 'jafo-redhat@tummy.com',
+                # Karen Pease: karen-pease@uiowa.edu
+                100281: 'meme@daughtersoftiresias.org',
+                # Robert Scheck: redhat@linuxnetz.de
+                100093: 'redhat-bugzilla@linuxnetz.de',
+                # Scott Bakers: bakers@web-ster.com
+                100881: 'scott@perturb.org',
+                # Colin Charles: byte@aeon.com.my
+                100014: 'byte@fedoraproject.org',
+                # W. Michael Petullo: mike@flyn.org
+                100136: 'redhat@flyn.org',
+                # Elliot Lee: sopwith+fedora@gmail.com
+                100060: 'sopwith@redhat.com',
+                # Control Center Team: Bugzilla user but email doesn't exist
+                9908: 'control-center-maint@redhat.com',
+                # Máirín Duffy
+                100548: 'duffy@redhat.com',
+                # Muray McAllister: murray.mcallister@gmail.com
+                102321: 'mmcallis@redhat.com',
+                # William Jon McCann: mccann@jhu.edu
+                102489: 'jmccann@redhat.com',
+                # Matt Domsch's rebuild script -- bz email goes to /dev/null
+                103590: ' ftbfs@fedoraproject.org',
+                }
+        # A few people have an email account that is used in owners.list but
+        # have setup a bugzilla account for their primary account system email
+        # address now.  Map these here.
+        self.__alternate_email = {
+                # Damien Durand: splinux25@gmail.com
+                'splinux@fedoraproject.org': 100406,
+                # Kevin Fenzi: kevin@tummy.com
+                'kevin-redhat-bugzilla@tummy.com': 100037,
+                }
+        for bugzillaMap in self.__bugzilla_email.items():
+            self.__alternate_email[bugzillaMap[1]] = bugzillaMap[0]
+
+        # We use the two mappings as follows::
+        # When looking up a user by email, use __alternate_email.
+        # When looking up a bugzilla email address use __bugzilla_email.
+        #
+        # This allows us to parse in owners.list and have a value for all the
+        # emails in there while not using the alternate email unless it is
+        # the only option.
 
     # TODO: Use exceptions properly
-    def group_by_id(self, id):
-        """Returns a group object based on its id"""
-        params = {'id': id}
+    def group_by_id(self, groupId):
+        '''Returns a group object based on its id'''
+        params = {'id': int(groupId)}
         request = self.send_request('json/group_by_id', auth=True, input=params)
         if request['success']:
             return request['group']
         else:
             return dict()
 
-    def person_by_id(self, id):
-        """Returns a person object based on its id"""
-        params = {'id': id}
-        request = self.send_request('json/person_by_id', auth=True, input=params)
+    def person_by_id(self, personId):
+        '''Returns a person object based on its id'''
+        personId = int(personId)
+        params = {'id': personId}
+        request = self.send_request('json/person_by_id', auth=True,
+                input=params)
+
         if request['success']:
+            if personId in self.__bugzilla_email:
+                request['person']['bugzilla_email'] = \
+                        self.__bugzilla_email[personId]
+            else:
+                request['person']['bugzilla_email'] = request['person']['email']
             return request['person']
         else:
             return dict()
 
     def group_by_name(self, groupname):
-        """Returns a group object based on its name"""
+        '''Returns a group object based on its name'''
         params = {'groupname': groupname}
         request = self.send_request('json/group_by_name', auth=True, input=params)
         if request['success']:
@@ -66,21 +125,31 @@ class AccountSystem(BaseClient):
             return dict()
 
     def person_by_username(self, username):
-        """Returns a person object based on its username"""
+        '''Returns a person object based on its username'''
         params = {'username': username}
         request = self.send_request('json/person_by_username', auth=True, input=params)
         if request['success']:
+            if person['id'] in self.__bugzilla_email:
+                request['person']['bugzilla_email'] = \
+                        self.__bugzilla_email[person['id']]
+            else:
+                request['person']['bugzilla_email'] = request['person']['email']
             return request['person']
         else:
             return dict()
 
     def user_id(self):
-        """Returns a dict relating user IDs to usernames"""
+        '''Returns a dict relating user IDs to usernames'''
         request = self.send_request('json/user_id', auth=True)
+        if person['id'] in self.__bugzilla_email:
+            request['person']['bugzilla_email'] = \
+                    self.__bugzilla_email[person['id']]
+        else:
+            request['person']['bugzilla_email'] = request['person']['email']
         return request['people']
 
     def user_gencert(self):
-        """Generate a cert for a user"""
+        '''Generate a cert for a user'''
         try:
             request = self.send_request('user/gencert', auth=True)
         except ServerError, e:
