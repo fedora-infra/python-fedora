@@ -22,7 +22,7 @@ import urllib
 import urllib2
 import simplejson
 from urlparse import urljoin
-from fedora.tg.client import BaseClient, AuthError, ServerError
+from fedora.client import BaseClient, AuthError, ServerError
 
 class FASError(Exception):
     '''FAS Error'''
@@ -129,7 +129,7 @@ class AccountSystem(BaseClient):
         params = {'username': username}
         request = self.send_request('json/person_by_username', auth=True, input=params)
         if request['success']:
-            if person['id'] in self.__bugzilla_email:
+            if request['person']['id'] in self.__bugzilla_email:
                 request['person']['bugzilla_email'] = \
                         self.__bugzilla_email[person['id']]
             else:
@@ -141,12 +141,11 @@ class AccountSystem(BaseClient):
     def user_id(self):
         '''Returns a dict relating user IDs to usernames'''
         request = self.send_request('json/user_id', auth=True)
-        if person['id'] in self.__bugzilla_email:
-            request['person']['bugzilla_email'] = \
-                    self.__bugzilla_email[person['id']]
-        else:
-            request['person']['bugzilla_email'] = request['person']['email']
-        return request['people']
+        people = {}
+        for person_id, username in request['people'].items():
+            # change userids from string back to integer
+            people[int(person_id)] = username
+        return people
 
     def user_gencert(self):
         '''Generate a cert for a user'''
