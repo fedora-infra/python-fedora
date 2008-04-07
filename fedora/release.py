@@ -2,7 +2,7 @@
 Information about this python-fedora release
 '''
 NAME = 'python-fedora'
-VERSION = '0.2.99.5'
+VERSION = '0.2.99.6'
 DESCRIPTION = 'Python modules for interacting with Fedora services'
 LONG_DESCRIPTION = '''
 The Fedora Project runs many different services.  These services help us to

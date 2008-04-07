@@ -2,7 +2,7 @@
 %{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-fedora
-Version:        0.2.99.5
+Version:        0.2.99.6
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -15,26 +15,18 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  python-devel python-setuptools-devel
 Requires:       python-simplejson
+Requires:       python-bugzilla
+Requires:       python-feedparser
+Requires:       python-sqlalchemy
+Provides:	python-fedora-infrastructure = %{version}-%{release}
+Obsoletes:	python-fedora-infrastructure < %{version}-%{release}
 
 %description
-Python modules that handle communication with Fedora Infrastructure services.
-This set of modules helps with building clients that talk to Fedora
-Infrastructure's  TurboGears based services such as Bodhi, PackageDB,
-MirrorManager, and FAS2.
-
-%package infrastructure
-Summary: Python modules for building Fedora Services
-Group: Development/Languages
-Requires: %{name} = %{version}-%{release}
-Requires: python-psycopg2
-Requires: python-bugzilla
-Requires: python-feedparser
-Requires: python-sqlalchemy
-
-%description infrastructure
-Additional python modules that can be used to help create Fedora Services.
-This includes the a JSON-based auth provider for authenticating against FAS2
-over the network.
+Python modules that help with building Fedora Services.  This includes a JSON
+based auth provider for authenticating against FAS2 over the network and a
+client that handles communication with the servers.  The client module can
+be used to build programs that communicate with Fedora Infrastructure's
+TurboGears Applications such as Bodhi, PackageDB, MirrorManager, and FAS2.
 
 %prep
 %setup -q
@@ -56,25 +48,17 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %doc README COPYING AUTHORS ChangeLog
-%dir %{python_sitelib}/fedora
-%dir %{python_sitelib}/fedora/tg
-%{python_sitelib}/fedora/*.py*
-%{python_sitelib}/fedora/tg/__init__.py*
-%{python_sitelib}/fedora/tg/client.py*
-%{python_sitelib}/python_fedora-%{version}-py%{pyver}.egg-info
-
-%files infrastructure
-%defattr(-,root,root,-)
-%{python_sitelib}/fedora/accounts/
-%{python_sitelib}/fedora/tg/identity/
-%{python_sitelib}/fedora/tg/visit/
-%{python_sitelib}/fedora/tg/widgets.py*
-%{python_sitelib}/fedora/tg/json.py*
+%{python_sitelib}/*
 
 %changelog
-* Tue Mar 18 2008 Ricky Zhou <ricky@fedoraproject.org> - 0.2.99.6-1
+* Mon Apr 7 2008 Ricky Zhou <ricky@fedoraproject.org> - 0.2.99.6-1
 - Add gencert method in fedora.accounts.fas2
 - Remove old python-ldap dependency.
+- Toshio Kuratomi added:
+  * Merge infrastructure subpackage into main package.
+  * Remove FAS1 code.
+  * Fix JsonVisitManager race condition.
+  * Start documentation on BaseClient/Fedora Service Architecture.
 
 * Tue Mar 18 2008 Ricky Zhou <ricky@fedoraproject.org> - 0.2.99.5-1
 - Add fas2.py (an interface for apps to fetch data from FAS2 using
