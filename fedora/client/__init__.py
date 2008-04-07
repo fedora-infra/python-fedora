@@ -167,7 +167,7 @@ class BaseClient(object):
                 log.debug(_('Loaded session %(cookie)s') % \
                         {'cookie': self._sessionCookie})
             except EOFError:
-                log.error(_('Unable to load session from %(file)s') % \
+                log.warning(_('Unable to load session from %(file)s') % \
                         {'file': SESSION_FILE})
             except KeyError:
                 log.debug(_('Session is for a different user'))
