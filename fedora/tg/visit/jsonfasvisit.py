@@ -29,7 +29,7 @@ class JsonFasVisitManager(BaseVisitManager):
 
     def __init__(self, timeout, debug=None):
         self.debug = debug or False
-        BaseVisitManager.__init__(self, timeout, debug=debug)
+        BaseVisitManager.__init__(self, timeout)
 
     def create_model(self):
         '''
