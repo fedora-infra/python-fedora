@@ -29,7 +29,7 @@ import Cookie
 from cherrypy import response
 from turbogears import config, identity
 
-from fedora.tg.client import BaseClient, ServerError
+from fedora.client import BaseClient, ServerError
 
 import gettext
 t = gettext.translation('python-fedora', '/usr/share/locale', fallback=True)

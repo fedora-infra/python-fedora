@@ -8,7 +8,7 @@ import Cookie
 from turbogears import config
 from turbogears.visit.api import Visit, BaseVisitManager
 
-from fedora.tg.client import BaseClient
+from fedora.client import BaseClient
 
 import gettext
 t = gettext.translation('python-fedora', '/usr/share/locale', fallback=True)
