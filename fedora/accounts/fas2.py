@@ -147,6 +147,29 @@ class AccountSystem(BaseClient):
             people[int(person_id)] = username
         return people
 
+    def people_by_id(self):
+        '''
+        Returns a dict relating user IDs to human_name, email, username,
+        and bugzilla email
+        '''
+        ### FIXME: This should be implemented on the server as a single call
+        request = self.send_request('/json/user_id', auth=True)
+        userToId = {}
+        people = {}
+        for person_id, username in request['people'].items():
+            # change userids from string back to integer
+            people[int(person_id)] = {'username': username}
+            userToId[username] = int(person_id)
+
+        # Retrieve further useful information about the users
+        request = self.send_request('/group/dump', auth=True)
+        for user in request['people']:
+            username = userToId[user[0]]
+            people[username]['email'] = user[1]
+            people[username]['human_name'] = user[2]
+
+        return people
+
     def user_gencert(self):
         '''Generate a cert for a user'''
         try:
