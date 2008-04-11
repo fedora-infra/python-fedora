@@ -2,7 +2,7 @@
 %{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-fedora
-Version:        0.2.99.6
+Version:        0.2.99.7
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -51,6 +51,10 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/*
 
 %changelog
+* Fri Apr 11 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.2.99.7-1
+- Add a method to accounts.fas2.AccountSystem to speed up retrieval of user
+  information.
+
 * Mon Apr 7 2008 Ricky Zhou <ricky@fedoraproject.org> - 0.2.99.6-1
 - Add gencert method in fedora.accounts.fas2
 - Remove old python-ldap dependency.
