@@ -157,9 +157,10 @@ class AccountSystem(BaseClient):
         userToId = {}
         people = {}
         for person_id, username in request['people'].items():
+            person_id = int(person_id)
             # change userids from string back to integer
-            people[int(person_id)] = {'username': username}
-            userToId[username] = int(person_id)
+            people[person_id] = {'username': username, 'id': person_id}
+            userToId[username] = person_id
 
         # Retrieve further useful information about the users
         request = self.send_request('/group/dump', auth=True)
