@@ -63,7 +63,7 @@ class JsonFasIdentity(BaseClient):
     '''Associate an identity with a person in the auth system.
     '''
     cookieName = config.get('visit.cookie.name', 'tg-visit')
-    fasURL = config.get('fas.url', 'https://admin.fedoraproject.org/admin/fas/')
+    fasURL = config.get('fas.url', 'https://admin.fedoraproject.org/accounts/')
 
     def __init__(self, visit_key, user=None, username=None, password=None,
             debug=False):
