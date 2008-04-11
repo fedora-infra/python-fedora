@@ -18,8 +18,8 @@ Requires:       python-simplejson
 Requires:       python-bugzilla
 Requires:       python-feedparser
 Requires:       python-sqlalchemy
-Provides:	python-fedora-infrastructure = %{version}-%{release}
-Obsoletes:	python-fedora-infrastructure < %{version}-%{release}
+Provides:       python-fedora-infrastructure = %{version}-%{release}
+Obsoletes:      python-fedora-infrastructure < %{version}-%{release}
 
 %description
 Python modules that help with building Fedora Services.  This includes a JSON
