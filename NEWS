@@ -4,7 +4,23 @@ NEWS
 
 :Author: Toshio Kuratomi
 :Date: 2 Apr 2008
-:Version: 0.2.99.6
+:Version: 0.2.99.8
+
+--------
+0.2.99.8
+--------
+* Fix a bug involving bugzilla_email addresses.
+* Fix a bug where an expired session cookie will cause send_request to complete
+  successfully but report failure.
+
+--------
+0.2.99.7
+--------
+* Fixes to json.py for JSON output with SA-0.4
+* Add bugzila_email to output of fas2 methods
+* Add people_by_id() method to fas2.AccountSystem that returns a dict of people
+  indexed by ID.  The people structure contains username, email, and
+  human_name... what we need for most of our lookups.
 
 --------
 0.2.99.6

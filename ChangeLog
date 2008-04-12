@@ -1,3 +1,33 @@
+2008-04-12  Toshio Kuratomi <badger@Clingman> - r178
+* fedora/release.py, python-fedora.spec: Bump for new release.
+
+2008-04-12  Toshio Kuratomi <badger@Clingman> - r177
+* fedora/client/__init__.py: BaseClient::send_request(): Fix the bugfix.
+  We need to re-raise the error if we've already been through the loop.
+  Otherwise, return the data we got from the recursive call to ourselves.
+
+2008-04-12  Toshio Kuratomi <badger@Clingman> - r176
+More changes pointed out by pylint including two bugs.
+* fedora/accounts/fas2.py: AccountSystem::person_by_username(): Fix returning
+  bugzilla_email when the email differs.  Would have tracebacked on an
+  undefined variable before.
+* fedora/client/__init__.py: BaseClient::send_request(): Fix to not return
+  a ServerError when we have to try two methods to authenticate but get
+  authenticated on the second try.
+
+2008-04-12  Toshio Kuratomi <badger@Clingman> - r175
+* fedora/tg/util.py: Fix arguments as pointed out by pylint.
+
+2008-04-12  Toshio Kuratomi <badger@Clingman> - r174
+* fedora/accounts/__init__.py, fedora/tg/client.py,
+  fedora/tg/identity/jsonfasprovider.py, fedora/tg/json.py,
+  fedora/tg/visit/jsonfasvisit.py: Trivial pylint cleanups.
+
+=== 0.2.99.7 ===
+
+2008-04-11  Toshio Kuratomi <badger@Clingman> - r173
+* Update ChangeLog for release.
+
 2008-04-11  Toshio Kuratomi <badger@Clingman> - r172
 * fedora/tg/json.py: Work around an architectural limitation of simplejson.
 
