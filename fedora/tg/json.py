@@ -71,7 +71,7 @@ class SABase(object):
         '''
         props = {}
         # pylint: disable-msg=E1101
-        if 'jsonProps' in self.__dict__ \
+        if hasattr(self, 'jsonProps') \
                 and self.jsonProps.has_key(self.__class__.__name__):
             propList = self.jsonProps[self.__class__.__name__]
         else:

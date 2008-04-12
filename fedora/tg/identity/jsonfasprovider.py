@@ -32,8 +32,9 @@ from turbogears import config, identity
 from fedora.client import BaseClient, ServerError
 
 import gettext
-t = gettext.translation('python-fedora', '/usr/share/locale', fallback=True)
-_ = t.ugettext
+translation = gettext.translation('python-fedora', '/usr/share/locale',
+        fallback=True)
+_ = translation.ugettext
 
 import crypt
 
@@ -41,10 +42,12 @@ import logging
 log = logging.getLogger('turbogears.identity.safasprovider')
 
 try:
+    # pylint: disable-msg=W0104
     set, frozenset
 except NameError:
-    from sets import Set as set, ImmutableSet as frozenset
- 
+    from sets import Set as set                 # pylint: disable-msg=W0622
+    from sets import ImmutableSet as frozenset  # pylint: disable-msg=W0622
+
 class DictContainer(dict):
     def __init__(self, basedict):
         for key in basedict:
@@ -57,7 +60,7 @@ class DictContainer(dict):
         try:
             return self[attr]
         except KeyError:
-           raise AttributeError
+            raise AttributeError
 
 class JsonFasIdentity(BaseClient):
     '''Associate an identity with a person in the auth system.
@@ -198,8 +201,8 @@ class JsonFasIdentityProvider(object):
             permissions: a set of permission IDs
         '''
         try:
-            user = JsonFasIdentity(visit_key, username=user_name,
-                    password=password)
+            user = JsonFasIdentity(visit_key, username = user_name,
+                    password = password)
         except ServerError, e:
             log.warning('Error logging in %(user)s: %(error)s' % {
                 'user': user_name, 'error': e})

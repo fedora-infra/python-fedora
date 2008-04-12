@@ -11,8 +11,8 @@ from turbogears.visit.api import Visit, BaseVisitManager
 from fedora.client import BaseClient
 
 import gettext
-t = gettext.translation('python-fedora', '/usr/share/locale', fallback=True)
-_ = t.ugettext
+translation = gettext.translation('python-fedora', '/usr/share/locale', fallback=True)
+_ = translation.ugettext
 
 import logging
 log = logging.getLogger("turbogears.identity.savisit")
@@ -48,7 +48,7 @@ class JsonFasVisitManager(BaseVisitManager):
         fas = BaseClient(self.fasURL, self.debug)
         fas._sessionCookie = Cookie.SimpleCookie()
         fas._sessionCookie[self.cookieName] = visit_key
-        data = fas.send_request('', auth=True)
+        fas.send_request('', auth=True)
         return Visit(fas._sessionCookie[self.cookieName].value, True)
 
     def visit_for_key(self, visit_key):
@@ -61,7 +61,7 @@ class JsonFasVisitManager(BaseVisitManager):
         fas = BaseClient(self.fasURL, self.debug)
         fas._sessionCookie = Cookie.SimpleCookie()
         fas._sessionCookie[self.cookieName] = visit_key
-        data = fas.send_request('', auth=True)
+        fas.send_request('', auth=True)
         # Knowing what happens in turbogears/visit/api.py when this is called,
         # we can shortcircuit this step and avoid a round trip to the FAS
         # server.
@@ -82,5 +82,5 @@ class JsonFasVisitManager(BaseVisitManager):
             log.info("updating visit (%s)", visit_key)
             fas._sessionCookie = Cookie.SimpleCookie()
             fas._sessionCookie[self.cookieName] = visit_key
-            data = fas.send_request('', auth=True)
+            fas.send_request('', auth=True)
             fas.send_request()
