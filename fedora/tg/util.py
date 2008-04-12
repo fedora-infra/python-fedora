@@ -23,7 +23,7 @@
 '''
 import cherrypy
 
-def request_format(self):
+def request_format():
     '''Return the output format that was reqeusted
     '''
     format = cherrypy.request.headers.get('Accept', '').lower()
