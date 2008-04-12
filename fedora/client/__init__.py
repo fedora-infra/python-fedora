@@ -61,16 +61,16 @@ class BaseClient(object):
         self._sessionCookie = None
 
         # Setup our logger
-        sh = logging.StreamHandler()
+        logHandler = logging.StreamHandler()
         if debug:
             log.setLevel(logging.DEBUG)
-            sh.setLevel(logging.DEBUG)
+            logHandler.setLevel(logging.DEBUG)
         else:
             log.setLevel(logging.INFO)
-            sh.setLevel(logging.INFO)
+            logHandler.setLevel(logging.INFO)
         format = logging.Formatter("%(message)s")
-        sh.setFormatter(format)
-        log.addHandler(sh)
+        logHandler.setFormatter(format)
+        log.addHandler(logHandler)
 
         self._load_session()
         if username and password:
@@ -137,11 +137,13 @@ class BaseClient(object):
         save = {}
         if path.isfile(SESSION_FILE):
             sessionFile = file(SESSION_FILE, 'r')
+            # pylint: disable-msg=W0702
             try:
                 save = pickle.load(sessionFile)
-            except:
+            except: # pylint: disable-msg=W0704
                 # If there isn't a session file yet, there's no problem
                 pass
+            # pylint: enable-msg=W0702
             sessionFile.close()
         save[self.username] = self._sessionCookie
         try:
@@ -178,16 +180,24 @@ class BaseClient(object):
             Logout from the server.
         '''
         try:
-            request = self.send_request('logout', auth=True)
-        except ServerError:
-            raise
+            self.send_request('logout', auth=True)
+        except AuthError: # pylint: disable-msg=W0704
+            # We don't need to fail for an auth error as we're getting rid of
+            # our authentication tokens here.
+            pass
       
     def send_request(self, method, auth=False, input=None):
+        '''Make an HTTP request to a server method.
+
+        The given method is called with any parameters set in reqParams.  If
+        auth is True, then the request is made with an authenticated session
+        cookie.
         '''
-            Send a request to the server.  The given method is called with any
-            keyword parameters in **kw.  If auth is True, then the request is
-            made with an authenticated session cookie.
-        '''
+        ### FIXME: We will change the name of this argument since input is a
+        # builtin.
+        reqParams = input
+        del input
+
         method = method.lstrip('/')
         url = urljoin(self.baseURL, method + '?tg_format=json')
 
@@ -197,8 +207,8 @@ class BaseClient(object):
         log.debug(_('Creating request %(url)s') % {'url': url})
         req = urllib2.Request(url)
         req.add_header('Accept', 'text/javascript')
-        if input:
-            req.add_data(urllib.urlencode(input))
+        if reqParams:
+            req.add_data(urllib.urlencode(reqParams))
 
         if auth:
             req.add_header('Cookie', self.session.output(attrs=[],
@@ -214,20 +224,20 @@ class BaseClient(object):
                 if (inspect.currentframe().f_back.f_code !=
                         inspect.currentframe().f_code):
                     self._authenticate(force=True)
-                    data = self.send_request(method, auth, input)
+                    data = self.send_request(method, auth, reqParams)
                 else:
                     # We actually shouldn't ever reach here.  Unless something
                     # goes drastically wrong _authenticate should raise an
                     # AuthError
+                    log.error(e)
                     raise AuthError, _('Unable to log into server: %(error)s') \
                             % {'error': str(e)}
-            log.error(e)
-            raise ServerError, str(e)
 
         # In case the server returned a new session cookie to us
         try:
             self._sessionCookie.load(response.headers['set-cookie'])
-        except (KeyError, AttributeError):
+        except (KeyError, AttributeError): # pylint: disable-msg=W0704
+            # It's okay if the server didn't send a new cookie
             pass
 
         jsonString = response.read()
@@ -248,7 +258,7 @@ class BaseClient(object):
             if (inspect.currentframe().f_back.f_code !=
                     inspect.currentframe().f_code):
                 self._authenticate(force=True)
-                data = self.send_request(method, auth, input)
+                data = self.send_request(method, auth, reqParams)
             else:
                 # We actually shouldn't ever reach here.  Unless something goes
                 # drastically wrong _authenticate should raise an AuthError

@@ -33,9 +33,16 @@ class CLAError(FASError):
     pass
 
 class AccountSystem(BaseClient):
+    '''An object for querying the Fedora Account System.
 
+    The Account System object provides a python API for talking to the Fedora
+    Account System.  It abstracts the http requests, cookie handling, and
+    other details so you can concentrate on the methods that are important to
+    your program.
+    '''
     def __init__(self, baseURL, username=None, password=None, debug=False):
-        super(AccountSystem, self).__init__(baseURL=baseURL, username=username, password=password, debug=debug)
+        super(AccountSystem, self).__init__(baseURL=baseURL, username=username,
+                password=password, debug=debug)
         # Preseed a list of FAS accounts with bugzilla addresses
         # This allows us to specify a different email for bugzilla than is
         # in the FAS db.  It is a hack, however, until FAS has a field for the
@@ -118,7 +125,8 @@ class AccountSystem(BaseClient):
     def group_by_name(self, groupname):
         '''Returns a group object based on its name'''
         params = {'groupname': groupname}
-        request = self.send_request('json/group_by_name', auth=True, input=params)
+        request = self.send_request('json/group_by_name', auth=True,
+                input=params)
         if request['success']:
             return request['group']
         else:
@@ -127,14 +135,15 @@ class AccountSystem(BaseClient):
     def person_by_username(self, username):
         '''Returns a person object based on its username'''
         params = {'username': username}
-        request = self.send_request('json/person_by_username', auth=True, input=params)
+        request = self.send_request('json/person_by_username', auth=True,
+                input=params)
+        person = request['person']
         if request['success']:
-            if request['person']['id'] in self.__bugzilla_email:
-                request['person']['bugzilla_email'] = \
-                        self.__bugzilla_email[person['id']]
+            if person['id'] in self.__bugzilla_email:
+                person['bugzilla_email'] = self.__bugzilla_email[person['id']]
             else:
-                request['person']['bugzilla_email'] = request['person']['email']
-            return request['person']
+                person['bugzilla_email'] = person['email']
+            return person
         else:
             return dict()
 
