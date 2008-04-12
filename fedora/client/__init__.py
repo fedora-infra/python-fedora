@@ -224,7 +224,7 @@ class BaseClient(object):
                 if (inspect.currentframe().f_back.f_code !=
                         inspect.currentframe().f_code):
                     self._authenticate(force=True)
-                    data = self.send_request(method, auth, reqParams)
+                    return self.send_request(method, auth, reqParams)
                 else:
                     # We actually shouldn't ever reach here.  Unless something
                     # goes drastically wrong _authenticate should raise an
@@ -232,6 +232,8 @@ class BaseClient(object):
                     log.error(e)
                     raise AuthError, _('Unable to log into server: %(error)s') \
                             % {'error': str(e)}
+            else:
+                raise
 
         # In case the server returned a new session cookie to us
         try:
