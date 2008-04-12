@@ -1,8 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
-%{!?pyver: %define pyver %(%{__python} -c "import sys ; print sys.version[:3]")}
 
 Name:           python-fedora
-Version:        0.2.99.7
+Version:        0.2.99.8
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -51,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/*
 
 %changelog
+* Sat Apr 12 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.2.99.8-1
+- New upstream release to fix two bugs found by a pylint run.
+
 * Fri Apr 11 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.2.99.7-1
 - Add a method to accounts.fas2.AccountSystem to speed up retrieval of user
   information.
