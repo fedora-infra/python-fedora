@@ -93,6 +93,15 @@ class SABase(object):
                 # Certain types of objects are terminal and won't allow setting
                 # jsonProps
                 pass
+
+            # Note: Because of the architecture of simplejson and turbojson,
+            # anything that inherits from a builtin list, tuple, basestring,
+            # or dict but needs special handling needs to be specified
+            # expicitly here.  Using the @jsonify.when() decorator won't work.
+            if isinstance(props[field],
+                    sqlalchemy.orm.collections.InstrumentedList):
+                props[field] = jsonify_salist(props[field])
+
         return props
 
 @jsonify.when("isinstance(obj, sqlalchemy.orm.query.Query)")
@@ -108,7 +117,11 @@ def jsonify_sa_select_results(obj):
             element.jsonProps = obj.jsonProps
     return list(obj)
 
+# Note: due to the way simplejson works, InstrumentedList has to be taken care
+# of explicitly in SABase's __json__() method.  (This is true of any object
+# derived from a builtin type (list, dict, tuple, etc))
 @jsonify.when('''(
+        isinstance(obj, sqlalchemy.orm.collections.InstrumentedList) or
         isinstance(obj, sqlalchemy.orm.attributes.InstrumentedAttribute) or
         isinstance(obj, sqlalchemy.ext.associationproxy._AssociationList))''')
 def jsonify_salist(obj):
