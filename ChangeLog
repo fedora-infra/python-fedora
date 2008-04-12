@@ -1,3 +1,149 @@
+2008-04-11  Toshio Kuratomi <badger@Clingman> - r172
+* fedora/tg/json.py: Work around an architectural limitation of simplejson.
+
+2008-04-11  Toshio Kuratomi <badger@Clingman> - r171
+* fedora/accounts/fas2.py: Add the userid to the information returned from
+  fas2.py:people_by_id().
+
+2008-04-11  Toshio Kuratomi <badger@Clingman> - r170
+* python-fedora.spec: Fix mixed tabs/spaces.
+
+2008-04-11  Toshio Kuratomi <badger@Clingman> - r169
+Merge default value fix from Ricky.
+
+2008-04-11  Toshio Kuratomi <badger@Clingman> - r168
+* fedora/release.py, python-fedora.spec: Update for new release.
+
+2008-04-11  Toshio Kuratomi <badger@Clingman> - r167
+* fedora/accounts/fas2.py: Add a people_by_id() method that returns a dict of
+  people indexed by ID.  The people structure contains username, email, and
+  human_name... what we need for most of our lookups.
+
+=== 0.2.99.6 ===
+
+2008-04-07  Toshio Kuratomi <badger@Clingman> - r166
+* fedora/tg/identity/jsonfasprovider.py, fedora/tg/visit/jsonfasvisit.py: Fix
+  two deprecated imports.
+
+2008-04-07  Toshio Kuratomi <badger@Clingman> - r165
+* fedora/tg/visit/jsonfasvisit.py: Fixhow we call BaseVisitManager.__init__().
+
+2008-04-07  Toshio Kuratomi <badger@Clingman> - r164
+* MANIFEST.in: Include the localisation files.
+
+2008-04-07  Toshio Kuratomi <badger@Clingman> - r163
+* fedora/release.py: Bump for next release.
+* python-fedora.spec: Merge -infrastrucutre subpackage.
+  - Bump release.
+
+2008-04-07  Toshio Kuratomi <badger@Clingman> - r162
+* README, doc/client.rst, doc/services.rst: Documentation update.
+
+2008-04-07  Toshio Kuratomi <badger@Clingman> - r161
+* fedora/tg/visit/jsonfasvisit.py: Fix a race and thread the visit queue.
+  - JsonFasVisitManager inherits from the threaded BaseVisitManager instead
+    of BaseClient.
+  - new_visit_with_key(), visit_for_key(): Create a new BaseClient everytime
+    this is invoked to prevent races when setting the _sessionCookie.
+  - update_queued_visit(): Create a BaseClient and ask the server to update
+    the visit.
+  - update_visit(), shutdown(), run(): Use the default versions now that we
+    have an asynchronous update_queued_visit() that does this.
+
+2008-04-07  Toshio Kuratomi <badger@Clingman> - r160
+* fedora/client/__init__.py: Make the log issue a warning instead of an
+  error for if the client can't read the session file.
+
+2008-04-07  Toshio Kuratomi <badger@Clingman> - r159
+* fedora/accounts/fas.py: Remove the last file dedicated to talking with fas1.
+
+2008-04-07  Toshio Kuratomi <badger@Clingman> - r158
+* fedora/accounts/fas2.py: Fix deprecated import.
+  - Fix a few copy/paste errors.
+  - AccountSystem::user_id(): Use an int for the user_id key instead of str.
+
+2008-04-07  Toshio Kuratomi <badger@Clingman> - r157
+* fedora/accounts/fas2.py: Re-add code to map email addresses that are
+  different from bugzilla email addresses.  This will go into the configs
+  table in the FAS2 database a t a later date.
+
+2008-04-05  lmacken <lmacken@crow> - r156
+Update hosted url
+2008-04-04  Toshio Kuratomi <badger@Clingman> - r155
+* Finish off unwritten sections.
+
+2008-04-04  Toshio Kuratomi <badger@Clingman> - r154
+* fedora/tg/json.py: Fix imports of sqlalchemy.orm and sqlalchemy.ext.
+
+2008-04-02  Toshio Kuratomi <badger@Clingman> - r153
+* MANIFEST.in, NEWS, setup.py: Update for no fas1 modules and the docs
+  directory.
+
+2008-04-02  Toshio Kuratomi <badger@Clingman> - r152
+* doc/service.rst: Make the example for doing something different for json
+  reflect a real-world problem.
+
+2008-04-02  Toshio Kuratomi <badger@Clingman> - r151
+* doc/service.rst: Typos and rst conformance fixes.
+  - Change error handling to return an exception name in exc.
+  - Add code for doing something different if json data was requested.
+
+2008-04-02  Toshio Kuratomi <badger@Clingman> - r150
+* fedora/accounts/tgfas.py, fedora/accounts/util.py: Remove more files that
+  were only needed for accessing FAS1's database.
+
+2008-04-02  Toshio Kuratomi <badger@Clingman> - r149
+* fedora/tg/util.py: Utility functions for tuurbogears servers.  Currently has
+ request_format() that tells what the requested output format is.
+
+2008-04-02  Toshio Kuratomi <badger@Clingman> - r148
+* fedora/tg/client.py: Add a DeprecationWarning.
+
+2008-04-02  Toshio Kuratomi <badger@Clingman> - r147
+* fedora/tg/client.py, fedora/client/__init__.py: Moved fedora.tg.client to
+  fedora.client.  Created a compatibility module in fedora.tg.client for now.
+
+2008-04-02  Toshio Kuratomi <badger@Clingman> - r146
+* doc/client.rst, doc/service.rst: Begin documenting BaseClient and the server
+  side support that makes it work.
+
+2008-04-02  Toshio Kuratomi <badger@Clingman> - r145
+* fedora/accounts/tgfas2.py, fedora/tg/identity/safasprovider.py,
+  fedora/tg/visit/safasvisit.py, fedora/tg/identity/jsonfasprovider.py,
+  fedora/tg/visit/jsonfasvisit.py: Remove fas1 and database access code.
+
+2008-04-02  Toshio Kuratomi <badger@Clingman> - r144
+Add license information.
+
+2008-03-21  Ricky Zhou <ricky@Max> - r143
+Correct raise in fas2.py, add logout method to client.py.
+
+2008-03-20  Ricky Zhou <ricky@Max> - r142
+Add gencert for fedora-packager-setup (will probably want to do some cleaning up before actual use).
+
+2008-03-19  Ricky Zhou <ricky@Max> - r141
+Add authenticate method.
+
+=== 0.2.99.5 ===
+
+2008-03-18  Ricky Zhou <ricky@Max> - r140
+Add fas2.py
+
+2008-03-12  Toshio Kuratomi <badger@Clingman> - r139
+* fedora/tg/visit/safasvisit.py: Fix a silly typo.
+
+2008-03-11  Toshio Kuratomi <badger@Clingman> - r138
+* fedora/tg/client.py:
+  - Fix url handling so joining URLs can have or lack leading and trailing
+    slashes without repurcussions.
+  - Fix the try: except block for retrieving the session cookie in 
+    send_request() to work with python 2.3.
+
+=== 0.2.99.4 ===
+
+2008-03-11  Toshio Kuratomi <badger@Clingman> - r137
+* ChangeLog: Update for new release.
+
 2008-03-11  Toshio Kuratomi <badger@Clingman> - r136
 * fedora/release.py, python-fedora.spec: Bump version for new release.
 
