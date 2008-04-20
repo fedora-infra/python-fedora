@@ -29,7 +29,7 @@ import Cookie
 from cherrypy import response
 from turbogears import config, identity
 
-from fedora.client import BaseClient, ServerError
+from fedora.client import BaseClient, FedoraServiceError
 
 import gettext
 translation = gettext.translation('python-fedora', '/usr/share/locale',
@@ -203,7 +203,7 @@ class JsonFasIdentityProvider(object):
         try:
             user = JsonFasIdentity(visit_key, username = user_name,
                     password = password)
-        except ServerError, e:
+        except FedoraServiceError, e:
             log.warning('Error logging in %(user)s: %(error)s' % {
                 'user': user_name, 'error': e})
             return None

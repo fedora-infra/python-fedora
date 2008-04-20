@@ -18,11 +18,10 @@
 # Author(s): Ricky Zhou <ricky@fedoraproject.org>
 #            Toshio Kuratomi <tkuratom@redhat.com>
 #
-import urllib
-import urllib2
-import simplejson
-from urlparse import urljoin
-from fedora.client import BaseClient, AuthError, ServerError
+'''
+Provide a client module for talking to the Fedora Account System.
+'''
+from fedora.client import BaseClient, AuthError, FedoraServiceError
 
 class FASError(Exception):
     '''FAS Error'''
@@ -184,34 +183,28 @@ class AccountSystem(BaseClient):
         '''Generate a cert for a user'''
         try:
             request = self.send_request('user/gencert', auth=True)
-        except ServerError, e:
+        except FedoraServiceError:
             raise
         if not request['cla']:
             raise CLAError
         return "%(cert)s\n%(key)s" % request
 
-    def authenticate(self, username, password):
-        """TODO"""
-        req = urllib2.Request(urljoin(self.baseURL, 'login?tg_format=json'))
-        req.add_data(urllib.urlencode({
-            'user_name' : username,
-            'password'  : password,
-            'login'     : 'Login'
-            }))
+    def verify_password(self, username, password):
+        '''Return whether the username and password pair match are valid.
+        
+        Arguments:
+        :username: username to try authenticating
+        :password: password for the user
+
+        Returns: True if the username/password are valid.  False otherwise.
+        '''
+        asUser = BaseClient(self.baseURL, username, password)
         try:
-            response = urllib2.urlopen(req)
-        except urllib2.HTTPError, e:
-            if e.msg == 'Forbidden':
-                return False
-        jsonString = response.read()
-        try:
-            data = simplejson.loads(jsonString)
-        except ValueError, e:
-            # The response wasn't JSON data
-            raise ServerError, str(e)
-        try:
-            if data['user']:
-                return data['user']['username'] == username
-        except KeyError:
-            pass
-        return False
+            # This will attempt to authenticate to the account system and
+            # raise an AuthError if the password and username don't match. 
+            asUser._authenticate(force=True)
+        except AuthError:
+            return False
+        except:
+            raise
+        return True

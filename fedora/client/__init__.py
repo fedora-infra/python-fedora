@@ -34,30 +34,56 @@ import simplejson
 from os import path
 from urlparse import urljoin
 
+import fedora.release
+
 import gettext
-t = gettext.translation('python-fedora', '/usr/share/locale', fallback=True)
-_ = t.ugettext
+translation = gettext.translation('python-fedora', '/usr/share/locale',
+        fallback=True)
+_ = translation.ugettext
 
 log = logging.getLogger(__name__)
 
 SESSION_FILE = path.join(path.expanduser('~'), '.fedora_session')
 
-class ServerError(Exception):
+class FedoraServiceError(Exception):
+    '''Base Exception for any problem talking with the Service.'''
     pass
 
-class AuthError(ServerError):
+class ServerError(FedoraServiceError):
+    '''Unable to talk to the server properly.'''
+    pass
+
+class AuthError(FedoraServiceError):
+    '''Error during authentication.  For instance, invalid password.'''
+    pass
+
+class AppError(FedoraServiceError):
+    '''Error condition that the server is passing back to the client.'''
     pass
 
 class BaseClient(object):
     '''
         A command-line client to interact with Fedora TurboGears Apps.
     '''
-    def __init__(self, baseURL, username=None, password=None, debug=False):
+    def __init__(self, baseURL, username=None, password=None,
+            useragent=None, debug=False):
+        '''
+        Arguments:
+        :baseUrl: Base of every URL used to contact the server
+        Keyword Arguments:
+        :username: username for establishing authenticated connections
+        :password: password to use with authenticated connections
+        :useragent: useragent string to use.  If not given, default to
+            "Fedora BaseClient/VERSION"
+        :debug: If True, log debug information
+        '''
         if baseURL[-1] != '/':
             baseURL = baseURL +'/'
         self.baseURL = baseURL
         self.username = username
         self.password = password
+        self.useragent = useragent or 'Fedora BaseClient/%(version)s' % {
+                'version': release.VERSION}
         self._sessionCookie = None
 
         # Setup our logger
@@ -88,6 +114,7 @@ class BaseClient(object):
             raise AuthError, _('password must be set')
 
         req = urllib2.Request(urljoin(self.baseURL, 'login?tg_format=json'))
+        req.add_header('User-agent', self.useragent)
         req.add_header('Accept', 'text/javascript')
         if self._sessionCookie:
             # If it exists, send the old sessionCookie so it is associated
@@ -206,6 +233,7 @@ class BaseClient(object):
 
         log.debug(_('Creating request %(url)s') % {'url': url})
         req = urllib2.Request(url)
+        req.add_header('User-agent', self.useragent)
         req.add_header('Accept', 'text/javascript')
         if reqParams:
             req.add_data(urllib.urlencode(reqParams))
@@ -248,13 +276,9 @@ class BaseClient(object):
         except ValueError, e:
             # The response wasn't JSON data
             raise ServerError, str(e)
-        except Exception, e:
-            regex = re.compile('<span class="fielderror">(.*)</span>')
-            match = regex.search(jsonString)
-            if match and len(match.groups()):
-                return dict(tg_flash=match.groups()[0])
-            else:
-                raise ServerError, e.message
+
+        if 'exc' in data:
+            raise AppError(name = data['exc'], message = data['tg_flash'])
 
         if 'logging_in' in data:
             if (inspect.currentframe().f_back.f_code !=
