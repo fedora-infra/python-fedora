@@ -7,6 +7,13 @@ NEWS
 :Version: 0.2.99.8
 
 --------
+0.2.99.9
+--------
+* This is what 0.2.99.9 was supposed to be.  The last release compatible with
+  0.2.99.7 and less.  Unfortunately, some incompatibilities snuck in.
+  Reverting those changes here.
+
+--------
 0.2.99.8
 --------
 * Fix a bug involving bugzilla_email addresses.
