@@ -72,7 +72,11 @@ class AccountSystem(BaseClient):
                 # William Jon McCann: mccann@jhu.edu
                 102489: 'jmccann@redhat.com',
                 # Matt Domsch's rebuild script -- bz email goes to /dev/null
-                103590: ' ftbfs@fedoraproject.org',
+                103590: 'ftbfs@fedoraproject.org',
+                # Sindre Pedersen Bjørdal: foolish@guezz.net
+                100460 : 'sindrepb@fedoraproject.org',
+                # Jesus M. Rodriguez: jmrodri@gmail.com
+                102180: 'jesusr@redhat.com',
                 }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email
@@ -173,9 +177,14 @@ class AccountSystem(BaseClient):
         # Retrieve further useful information about the users
         request = self.send_request('/group/dump', auth=True)
         for user in request['people']:
-            username = userToId[user[0]]
-            people[username]['email'] = user[1]
-            people[username]['human_name'] = user[2]
+            userid = userToId[user[0]]
+            person = people[userid]
+            person['email'] = user[1]
+            person['human_name'] = user[2]
+            if userid in self.__bugzilla_email:
+                person['bugzilla_email'] = self.__bugzilla_email[userid]
+            else:
+                person['bugzilla_email'] = person['email']
 
         return people
 
