@@ -4,7 +4,16 @@ NEWS
 
 :Author: Toshio Kuratomi
 :Date: 2 Apr 2008
-:Version: 0.2.99.8
+:Version: 0.2.99.10
+
+---------
+0.2.99.10
+---------
+* Minor update that:
+
+  1) Adds bugzilla email to the return from people_by_id().
+
+  2) Adds several more users whose bugzilla address don't match their fas email.
 
 --------
 0.2.99.9

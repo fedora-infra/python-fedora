@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.2.99.9
+Version:        0.2.99.10
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -50,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/*
 
 %changelog
+* Wed Apr 23 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.2.99.10-1
+- New upstream release.
+
 * Sun Apr 20 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.2.99.9-1
 - New upstream release.
 
@@ -181,31 +184,3 @@ rm -rf $RPM_BUILD_ROOT
 
 * Sun Apr 14 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.6-1
 - Fix bug with the new bugzilla email code.
-
-* Tue Apr 3 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.5-1
-- Update to latest fasLDAP.py.
-- Return bugzilla email address.
-- Add a method to lookup by email address.  This includes bugzilla email
-  addresses given in owners.list.
-
-* Wed Mar 14 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.4-1
-- Fix a bug with get_group_info().
-- Fix a bug in exception handling in the turbogears identity handler.
-
-* Wed Mar 14 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.3-1
-- Fix a bug in exception handling.
-- Fix a bug where we were not seeing updates to the FAS.
-  + In order to do this efficiently we also introduce a dependency on
-    sqlalchemy (for database connection pooling).
-
-* Fri Feb 9 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.2-1
-- Experimental fas2 support.
-
-* Fri Feb 9 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.1-1
-- Fix a brown paper bag issue.
-
-* Fri Feb 9 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2-1
-- Bug fix for tg sessions.
-
-* Thu Jan 18 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.1-1
-- Initial RPM Package.
