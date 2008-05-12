@@ -30,7 +30,6 @@ TurboGears Applications such as Bodhi, PackageDB, MirrorManager, and FAS2.
 %prep
 %setup -q
 
-
 %build
 %{__python} setup.py build
 
