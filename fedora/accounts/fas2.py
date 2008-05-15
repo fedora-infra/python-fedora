@@ -40,7 +40,8 @@ class AccountSystem(BaseClient):
     other details so you can concentrate on the methods that are important to
     your program.
     '''
-    def __init__(self, baseURL, username=None, password=None, debug=False):
+    def __init__(self, baseURL='https://admin.fedoraproject.org/accounts/',
+            username=None, password=None, debug=False):
         super(AccountSystem, self).__init__(baseURL=baseURL, username=username,
                 password=password, debug=debug)
         # Preseed a list of FAS accounts with bugzilla addresses

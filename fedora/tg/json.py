@@ -34,6 +34,7 @@ methods of transforming a class into json for a few common types.
 import sqlalchemy
 import sqlalchemy.orm
 import sqlalchemy.ext.associationproxy
+import sqlalchemy.engine.base.ResultProxy
 from turbojson.jsonify import jsonify
 
 class SABase(object):
@@ -135,3 +136,19 @@ def jsonify_salist(obj):
         for element in obj:
             element.jsonProps = obj.jsonProps
     return [jsonify(element) for element in  obj]
+
+@jsonify.when('''(
+        isinstance(obj, sqlalchemy.engine.base.ResultProxy)
+        )'''
+def jsonify_saresult(obj):
+    '''Transform SQLAlchemy ResultProxy into json.
+    
+    The one special thing is that we bind the special jsonProps into each
+    descendent.  This allows us to specify a jsonProps on the toplevel
+    query result and it will pass to all of its children.
+    '''
+    if 'jsonProps' in obj.__dict__:
+        for element in obj:
+            element.jsonProps = obj.jsonProps
+    return [list(row) for row in obj]
+

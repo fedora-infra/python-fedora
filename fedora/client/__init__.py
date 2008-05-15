@@ -31,6 +31,8 @@ import cPickle as pickle
 import re
 import inspect
 import simplejson
+import os
+import stat
 from os import path
 from urlparse import urljoin
 
@@ -148,9 +150,10 @@ class BaseClient(object):
         save[self.username] = self._sessionCookie
         try:
             sessionFile = file(SESSION_FILE, 'w')
+            os.chmod(SESSION_FILE, stat.S_IRUSR | stat.S_IWUSR)
             pickle.dump(save, sessionFile)
             sessionFile.close()
-        except IOError, e:
+        except Exception, e:
             # If we can't save the file, issue a warning but go on.  The
             # session just keeps you from having to type your password over
             # and over.
