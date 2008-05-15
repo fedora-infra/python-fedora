@@ -26,9 +26,8 @@ import cherrypy
 def request_format():
     '''Return the output format that was reqeusted
     '''
-    format = cherrypy.request.headers.get('Accept', '').lower()
-    if not format and 'tg_format' in cherrypy.request.params:
+    if 'tg_format' in cherrypy.request.params:
         format = cherrypy.request.params['tg_format']
     else:
-        format = 'default'
+        format = cherrypy.request.headers.get('Accept', 'default').lower()
     return format
