@@ -139,7 +139,7 @@ def jsonify_salist(obj):
 
 @jsonify.when('''(
         isinstance(obj, sqlalchemy.engine.base.ResultProxy)
-        )'''
+        )''')
 def jsonify_saresult(obj):
     '''Transform SQLAlchemy ResultProxy into json.
     
