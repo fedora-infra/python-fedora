@@ -4,7 +4,12 @@ NEWS
 
 :Author: Toshio Kuratomi
 :Date: 14 May 2008
-:Version: 0.2.99.11
+:Version: 0.2.99.11.1
+
+-----------
+0.2.99.11.1
+-----------
+Brown paper bag the previous release.  Fix a crasher bug.
 
 ---------
 0.2.99.11
