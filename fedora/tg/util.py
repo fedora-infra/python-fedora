@@ -31,3 +31,40 @@ def request_format():
     else:
         format = cherrypy.request.headers.get('Accept', 'default').lower()
     return format
+
+def jsonify_validation_errors():
+    '''Return an error for json if validation failed.
+
+    This function checks for two things:
+    
+    1) We're expected to return json data.
+    2) There were errors in the validation process.
+    
+    If both of those are true, this function constructs a response that
+    will return the validation error messages as json data.
+
+    All controller methods that are error_handlers need to use this::
+
+        @expose(template='templates.numberform')
+        def enter_number(self, number):
+            errors = fedora.tg.util.jsonify_validation_errors()
+            if errors:
+                return errors
+
+        @expose(allow_json=True)
+        @error_handler(enter_number)
+        @validate(form=number_form)
+        def save(self, number):
+            return dict(success=True)
+
+    Returns: None if there are no validation errors or json isn't requested,
+        otherwise returns a dictionary with the error that's suitable for
+        return from the controller.
+    '''
+    if request_format() != 'json':
+        return None
+    errors = getattr(cherrypy.request, 'validation_errors', None)
+    if errors:
+        message = '\n'.join([u'%s: %s' % (param, msg) for param, msg in
+            errors.items()])
+    return dict(exc='Invalid', message=message, tg_template='json')
