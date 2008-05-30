@@ -216,7 +216,7 @@ class BaseClient(object):
             # our authentication tokens here.
             pass
       
-    def send_request(self, method, auth=False, input=None):
+    def send_request(self, method, auth=False, reqParams=None):
         '''Make an HTTP request to a server method.
 
         The given method is called with any parameters set in reqParams.  If
