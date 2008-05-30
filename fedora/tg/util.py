@@ -26,9 +26,8 @@ import cherrypy
 def request_format():
     '''Return the output format that was reqeusted
     '''
-    if 'tg_format' in cherrypy.request.params:
-        format = cherrypy.request.params['tg_format']
-    else:
+    format = cherrypy.request.params.get('tg_format', '').lower()
+    if not format:
         format = cherrypy.request.headers.get('Accept', 'default').lower()
     return format
 
@@ -61,10 +60,13 @@ def jsonify_validation_errors():
         otherwise returns a dictionary with the error that's suitable for
         return from the controller.
     '''
-    if request_format() != 'json':
-        return None
     errors = getattr(cherrypy.request, 'validation_errors', None)
-    if errors:
-        message = '\n'.join([u'%s: %s' % (param, msg) for param, msg in
-            errors.items()])
-    return dict(exc='Invalid', message=message, tg_template='json')
+    if not (errors and request_format() == 'json'):
+        return None
+
+    message = '\n'.join([u'%s: %s' % (param, msg) for param, msg in
+        errors.items()])
+
+    # Note: explicit setting of tg_template is needed in TG < 1.0.4.4
+    # A fix has been applied for TG-1.0.4.5
+    return dict(exc='Invalid', tg_flash=message, tg_template='json')
