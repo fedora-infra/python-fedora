@@ -28,8 +28,6 @@ about.  Authors of a `Fedora Service`_ are encouraged to provide their own
 subclasses of BaseClient_ that make it easier for other people to use a
 particular Service out of the box.
 
-.. _`Fedora Service`: service.html
-
 Using Standalone
 ================
 
