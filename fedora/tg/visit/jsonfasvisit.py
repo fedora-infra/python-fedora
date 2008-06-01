@@ -10,9 +10,7 @@ from turbogears.visit.api import Visit, BaseVisitManager
 
 from fedora.client import BaseClient
 
-import gettext
-translation = gettext.translation('python-fedora', '/usr/share/locale', fallback=True)
-_ = translation.ugettext
+from fedora import _
 
 import logging
 log = logging.getLogger("turbogears.identity.savisit")
@@ -41,7 +39,7 @@ class JsonFasVisitManager(BaseVisitManager):
 
     def new_visit_with_key(self, visit_key):
         '''
-        Return a new Visit objectwith the given key.
+        Return a new Visit object with the given key.
         '''
         # Hit any URL in fas2 with the visit_key set.  That will call the
         # new_visit method in fas2
@@ -79,7 +77,7 @@ class JsonFasVisitManager(BaseVisitManager):
         '''Update the visit information on the server'''
         fas = BaseClient(self.fasURL, self.debug)
         for visit_key in queue:
-            log.info("updating visit (%s)", visit_key)
+            log.info(_('updating visit (%s)'), visit_key)
             fas._sessionCookie = Cookie.SimpleCookie()
             fas._sessionCookie[self.cookieName] = visit_key
             fas.send_request('', auth=True)
