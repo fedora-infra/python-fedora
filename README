@@ -1,16 +1,18 @@
-================================
-Fedora Infrastructure Python API
-================================
+====================
+Python Fedora Module
+====================
+
 :Author: Toshio Kuratomi
-:Date: 7 Apr 2008
+:Date: 1 June 2008
 :Version: 0.3.x
 
-The Fedora module provides a python API for services used in Fedora
-Infrastructure.  Its major usage is to talk to the Fedora Account System but
-it is taking on new packages for dealing with other aspects of Fedora.  For
-instance, a base class for interfacing a TurboGears server with a standalone
-(commandline or desktop) client and a common set of templates for Fedora
-TurboGears applications.
+The Fedora module provides a python API for building `Fedora Services`_ and
+clients that connect to them.  It has functions and classes that help to build
+TurboGears_ applications and classes to make building clients of those
+services much easier.
+
+.. _`Fedora Services`: doc/service.html
+.. _TurboGears: http://www.turbogears.org
 
 .. contents::
 
@@ -18,22 +20,20 @@ TurboGears applications.
 Installing
 ----------
 
-python-fedora is found in rpm form in Fedora Proper.  Sometimes a new version
-will be placed in the Fedora Infrastructure yum repository for testing within
-Infrastructure before being released to the general public.
+``python-fedora`` is found in rpm form in Fedora proper.  Sometimes a new
+version will be placed in the Fedora Infrastructure yum repository for testing
+within Infrastructure before being released to the general public.  Installing
+from the yum repository should be as easy as::
 
-From one of the machines in Fedora Infrastructure you can simply::
+	# yum install python-fedora
 
-  # yum install python-fedora
+If you want to install from a checkout of the development branch, follow these
+procedures::
 
-to get the latest version.
+    # bzr branch bzr://bzr.fedorahosted.org/bzr/python-fedora/python-fedora-devel
+    # cd python-fedora-devel
+    # python setup.py install
 
-If you want to install from a source checkout, follow these procedures::
-
-  # bzr branch bzr://bzr.fedorahosted.org/bzr/python-fedora/python-fedora-devel
-  # cd python-fedora-devel
-  # python setup.py install
-  
 See the configuration notes in each section for information on configuring
 your application after install.
 
@@ -41,131 +41,85 @@ your application after install.
 Fedora Accounts Integration
 ---------------------------
 
-This module allows code to integrate with the Fedora Accounts System.  It
-provides two modules, a general purpose python API
-and a TurboGears Identity Provider.  Because this module has to talk to the
-account database it is currently not possible to use it outside of the
-Fedora Infrastructure boxes.
+We provide several modules that make connecting to the `Fedora Account
+System`_ easier.
 
-General API
-===========
+.. _`Fedora Account System`: https://fedorahosted.org/fas
 
-Note: This API is not feature complete.  You can retrieve most information
-about a person or group but setting information is not possible.  Work is
-underway to create FAS2 based on an LDAP server so it is likely that this
-FAS API will continue to be a read-only API.  Use the older website.py file
-from the fedora-accounts cvs module if you need to write to the database.
+General Purpose API
+===================
+The ``fedora.accounts.fas2`` module allows code to integrate with the `Fedora
+Account System`_. It uses the JSON interface provided by the Account System
+servre to retrieve information about users.
 
-Using the general API requires instantiating an AccountSystem object.  You
-then use methods on the AccountSystem to get and set information on the
+Note: This API is not feature complete. If you'd like to help add methods,
+document the existing methods, or otherwise aid in development of this API
+please contact us on the infrastructure list: fedora-infrastructure@redhat.com
+or on IRC: lmacken, abadger1999, and ricky in #fedora-admin, irc.freenode.net.
+
+Using the general API requires instantiating an ``AccountSystem`` object. You
+then use methods on the ``AccountSystem`` to get and set information on the
 people in the account system.
 
-The AccountSystem object implements basic authorization for the account system.
-You tell the account system which user you are connecting as via the
-`change_user()` method.  Then you request information from the AccountSystem
-object.  The AccountSystem object will only retrieve information or set data
-that the authenticated user is allowed to.
-
-At the moment, there are only a few methods implemented.  Full documentation on these methods is available from the AccountSystem's docstrings from the
+At the moment, there are only a few methods implemented. Full documentation on
+these methods is available from the ``AccountSystem``'s docstrings from the
 interpreter or, for instance, by running::
 
-  $ pydoc fas.AccountSystem
+    $ pydoc fedora.accounts.fas2.AccountSystem
 
-from the directory that has fas.py in it.
+Here's an example of using the ``AccountSystem``::
 
-* verify_user_pass()
-* change_user()
-* get_user_id()
-* get_user_info()
+	from fedora.accounts.fas2 import AccountSystem
+	from fedora.client import AuthError,
 
+	# Get an AccountSystem object.  All AccountSystem methods need to be
+	# authenticated so you might as well give username and password here.
+	fas = AccountSystem(username='foo', password='bar')
 
-Here's an example of using the AccountSystem::
-
-  from fedora.accounts.fas import AccountSystem
-  
-  # Get an AccountSystem object.  When no user information is given you are
-  # connected as an anonymous user.
-  fas = AccountSystem()
-
-  # Set the user connecting to "me"
-  fas.change_user('me', 'mypassword')
-
-  # Get the user information for the authorized user.
-  MyInfo = fas.get_user_info()
-
-  # Get user information for another user.
-  YourInfo = fas.get_user_info('you')
-
-  # Verify that a user-password combination is valid
-  try:
-      valid = fas.verify_user_pass('me', 'mypassword')
-  except AuthError, e:
-      # The user was not in the database.  Typically you don't want to tell the
-      # application's user whether it was the username or password is bad.
-      valid = False
-
-  if not valid:
-      print 'The username and password were not valid'
+	people = fas.people_by_id()
 
 TurboGears Interface
 ====================
 
-The TurboGears interface uses the general API to connect the TurboGears visit
-and identity framework to your Fedora TurboGears application.  It does this
-through an identity plugin.  A visit plugin is also provided at this time but
-should go away once a few bugs are worked out of the TurboGears code.
-
-Using the TurboGears interface will authenticate your users against the Fedora
-Account System database and give your application a login session that can be
-shared with other TurboGears applications using the safas identity plugin.
+The TurboGears_ interface also uses the JSON interface to the account system.
+It provides a TurboGears_ ``visit`` and ``identity`` plugin so a TurboGears_
+application can authorize via FAS. Since the plugin operates over JSON, it is
+possible to use these plugins on hosts outside of Fedora Infrastructure as
+well as within.  Remember, however, that entering your Fedora password on a
+third party website requires you to trust that website. So doing things this
+way is more useful for developers wanting to work on their apps outside of
+Fedora Infrastructure than a general purpose solution for allowing Fedora
+Users to access your web app. (SSL client certificates and OpenID are better
+solutions to this problem but they are still being implemented in the FAS2
+server.)
 
 Configuring
 -----------
-To configure your TurboGears application, you need to set the following
+To configure your TurboGears_ application, you need to set the following
 variables in your pkgname/config/app.cfg file::
 
-  visit.on=True
-  visit.manager="safas"
-  visit.saprovider.model="fedora.accounts.tgfas.Visit"
-  identity.on="True"
-  identity.failure_url="/login"
-  identity.provider="safas"
-  identity.saprovider.model.visit="fedora.accounts.tgfas.VisitIdentity"
+    fas.url='https://admin.fedoraproject.org/accounts/'
+    visit.on=True
+    visit.manager="jsonfas"
+    identity.on="True"
+    identity.failure_url="/login"
+    identity.provider="jsonfas"
 
-If you are using sqlobject for your applications db access you may also have to
-set this::
+---------------
+Fedora Services
+---------------
 
-  sqlalchemy.dburi='sqlite://'
+``python-fedora`` provides several helper classes and functions for building a
+TurboGears_ application that works well with other `Fedora Services`_.  the
+`Fedora Services`_ documentation is the best place to learn more about these.
 
-This is due to a bug in the way TurboGears handles the identity.  The dburi
-listed there won't be used within the web application.
-
-------
-FAS v2
-------
-
-One of the goals for FAS v2 is to have an identity provider that can work
-inside or outside of the Fedora network.  To do that we're creating a jsonfas
-provider that contacts the FASv2 server over the internet.
-
-FAS v2 -- TurboGears
-====================
-
-Configuring the TurboGears interface for fas v2 is almost the same as
-configuring it for fas v1.  Here's what you should need::
-
-  fas.url='https://admin.fedoraproject.org/accounts/'
-  visit.on=True
-  visit.manager="jsonfas"
-  identity.on="True"
-  identity.failure_url="/login"
-  identity.provider="jsonfas"
-
-------------------
 TurboGears Widgets
-------------------
+==================
+
 We've started adding experimental TG Widgets to interact with specific aspects
-of Fedora.
+of Fedora.  This are a needs more work and integration with `MyFedora`_.
+
+.. _`MyFedora`: https://fedorahosted.org/myfedora
 
 -----------------
 TurboGears Client
