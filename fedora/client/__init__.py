@@ -36,12 +36,8 @@ import stat
 from os import path
 from urlparse import urljoin
 
-import fedora.release
-
-import gettext
-translation = gettext.translation('python-fedora', '/usr/share/locale',
-        fallback=True)
-_ = translation.ugettext
+from fedora import __version__
+from fedora import _
 
 log = logging.getLogger(__name__)
 
@@ -85,7 +81,7 @@ class BaseClient(object):
         self.username = username
         self.password = password
         self.useragent = useragent or 'Fedora BaseClient/%(version)s' % {
-                'version': release.VERSION}
+                'version': __version__}
         self._sessionCookie = None
 
         # Setup our logger

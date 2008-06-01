@@ -31,10 +31,7 @@ from turbogears import config, identity
 
 from fedora.client import BaseClient, FedoraServiceError
 
-import gettext
-translation = gettext.translation('python-fedora', '/usr/share/locale',
-        fallback=True)
-_ = translation.ugettext
+from fedora import _
 
 import crypt
 
@@ -176,7 +173,7 @@ class JsonFasIdentityProvider(object):
     '''
     def __init__(self):
         # Default encryption algorithm is to use plain text passwords
-        algorithm = config.get("identity.saprovider.encryption_algorithm", None)
+        algorithm = config.get('identity.saprovider.encryption_algorithm', None)
         self.encrypt_password = lambda pw: \
                                     identity._encrypt_password(algorithm, pw)
 
@@ -204,7 +201,7 @@ class JsonFasIdentityProvider(object):
             user = JsonFasIdentity(visit_key, username = user_name,
                     password = password)
         except FedoraServiceError, e:
-            log.warning('Error logging in %(user)s: %(error)s' % {
+            log.warning(_('Error logging in %(user)s: %(error)s') % {
                 'user': user_name, 'error': e})
             return None
 
