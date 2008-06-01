@@ -17,10 +17,10 @@ Python Fedora
 
 Modules to communicate with and help implement Fedora Services.
 '''
-from fedora import release
-__version__ = release.VERSION
-
 import gettext
 translation = gettext.translation('python-fedora', '/usr/share/locale',
         fallback=True)
 _ = translation.ugettext
+
+from fedora import release
+__version__ = release.VERSION
