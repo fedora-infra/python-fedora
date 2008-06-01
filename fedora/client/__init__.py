@@ -222,12 +222,13 @@ class BaseClient(object):
         The given method is called with any parameters set in reqParams.  If
         auth is True, then the request is made with an authenticated session
         cookie.
-        '''
-        ### FIXME: We will change the name of this argument since input is a
-        # builtin.
-        reqParams = input
-        del input
 
+        Arguments:
+        :method: Method to call on the server.  It's a url fragment that comes
+            after the baseURL set in __init__().
+        :auth: If True perform auth to the server, else do not.
+        :reqParams: Extra parameters to send to the server.
+        '''
         method = method.lstrip('/')
         url = urljoin(self.baseURL, method + '?tg_format=json')
 
