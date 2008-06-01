@@ -1,17 +1,18 @@
-================
-fedora.tg.client
-================
+=============
+fedora.client
+=============
 :Authors: Toshio Kuratomi
           Luke Macken
-:Date: 2 April 2008
+:Date: 28 May 2008
 :For Version: 0.3.x
 
 The client module allows you to easily code an application that talks to a
 `Fedora Service`_.  It handles the details of decoding the data sent from the
-Service into a python data structure and raises an Exception if an error is
+Service into a python data structure and raises an Exception_ if an error is
 encountered.
 
 .. _`Fedora Service`: service.html
+.. _Exception: Exceptions_
 
 .. contents::
 
@@ -19,18 +20,25 @@ encountered.
 BaseClient
 ----------
 
-The BaseClient class is the basis of all your interactions with the server.
+The BaseClient_ class is the basis of all your interactions with the server.
 It is flexible enough to be used as is for talking with a service but is
 really meant to be subclassed and have methods written for it that do the
 things you specifically need to interact with the `Fedora Service`_ you care
 about.  Authors of a `Fedora Service`_ are encouraged to provide their own
-subclasses of BaseClient that make it easier for other people to use a
+subclasses of BaseClient_ that make it easier for other people to use a
 particular Service out of the box.
+
+.. _`Fedora Service`: service.html
 
 Using Standalone
 ================
 
-If you don't want to subclass, using BaseClient should be as simple as::
+If you don't want to subclass, you can use BaseClient_ as a utility class to
+talk to any `Fedora Service`_.  There's three steps to this.  First you import
+the BaseClient_ and Exceptions_ from the ``fedora.client`` module.  Then you
+create a new BaseClient_ with the URL that points to the root of the
+`Fedora Service`_ you're interacting with.  Finally, you retrieve data from a
+method on the server.  Here's some code that illustrates the process::
 
     from fedora.client import BaseClient, AppError, ServerError
 
@@ -40,73 +48,227 @@ If you don't want to subclass, using BaseClient should be as simple as::
     except ServerError, e:
         print '%s' % e
     except AppError, e:
-        print '%s: %s' % (e.exc, e.message)
+        print '%s: %s' % (e.name, e.message)
 
     for collection in collectionData['collections']:
         print collection['name'], collection['version']
 
-First you import the BaseClient_ and exceptions from the fedora.client module.
+BaseClient Constructor
+~~~~~~~~~~~~~~~~~~~~~~
 
-There is now a base class for creating a client application that can talk to
-a TurboGears server.  The TurboGears server may need a little bit of tweaking
-to make it work with the client.  Please see::
+In our example we only provide ``BaseClient()`` with the URL fragment it uses
+as the base of all requests.  There are several more optional parameters that
+can be helpful.
 
-  http://fedorahosted.org/packagedb/wiki/CommandLineClient
+If you need to make an authenticated request you can specify the username and
+password to use when you construct your BaseClient_ using the ``username``
+and ``password`` keyword arguments.  If you do not use these, authenticated
+requests will try to connect via a cookie that was saved from previous runs of
+BaseClient_.  If that fails as well, BaseClient_ will throw an Exception_
+which you can catch in order to prompt for a new username and password::
 
-for details of how the server may need to be modified.
+    from fedora.client import BaseClient, AuthError
+    import getpass
+    client = BaseClient('https://admin.fedoraproject.org/pkgdb',
+            username='foo', password='bar')
+    # Note this is simplistic.  It only prompts once for another password.
+    # Your application may want to loop through this several times.
+    try:
+        collectionData = client.send_request('/collections', auth=True)
+    except AuthError, e:
+        client.password = getpass.getpass('Retype password for %s: ' % username)
+        collectionData = client.send_request('/collections', auth=True)
 
-As an example, let's say you have a TurboGears server that is setup to echo a
-message that you send to it.  Additionally, the server requires that you are
-logged in in order to access it.  Here's how you access the server from a web
-browser::
+Note that although you can set the ``username`` and ``password`` as shown
+above you do have to be careful in cases where your application is
+multithreaded or simply processes requests for more than one user with the
+same BaseClient_.  In those cases, you can accidentally overwrite the
+``username`` and ``password`` between two requests.  To avoid this, make sure
+you instantiate a separate BaseClient_ for every thread of control or for
+every request you handle.
 
-  $ lynx http://localhost:8080/echo_server/echo/?message='This is a test'
+The ``useragent`` parameter is useful for identifying in log files that
+your script is calling the server rather than another.  The default value is
+``Fedora BaseClient/VERSION`` where VERSION is the version of the BaseClient_
+module.  If you want to override this just give another string to this::
 
-The server will first send you to a login screen where you need to lgin with a
-username and password.  Then you will see a web page with 'This is a test'
-appearing on the page as your message.
+    client = BaseClient('https://admin.fedoraproject.org/pkgdb',
+            useragent='Package Database Client/1.0')
 
-Here's how you might do this using the tg client::
+The ``debug`` parameter turns on a little extra output when running the
+program.  Set it to true if you're having trouble and want to figure out what
+is happening inside of the BaseClient_ code.
 
-  import getpass
-  import sys
-  from fedora.tg.client import BaseClient, AuthError
+send_request()
+~~~~~~~~~~~~~~
 
-  # Subclass BaseClient and add the methods you need to interact with the server
-  class MyClient(BaseClient):
-      def echo(self, message):
-          # send_request() is the workhorse of BaseClient, sending the data
-          # over the wire to the server.
-          # The first argument is the server's method name.
-          # auth determines whether this request has to send authentication
-          #   tokens.  If tokens exist (a cookie) on the filesystem, it will be
-          #   used.  If not, it will use a username and password.
-          # input is the data to send to the server
-          data = self.send_request('echo', auth=True, input={'message':message})
-          return data['echo_string']
+``send_request()`` is what does the heavy lifting of making a request of the
+server, receiving the reply, and turning that into a python dictionary.  The
+usage is pretty straightforward.
 
-  if __name__ == '__main__':
-      username = 'toshio'
-      password = 'XXXX'
-      # BASEURL is the base to which the server methods are appended.
-      # In this example, the echo method is at:
-      #   http://localhost:8080/echo_server/echo
-      BASEURL = 'http://localhost:8080/echo_server/'
-      client = MyClient(BASEURL, username, password)
-      
-      # Allow 3 password failures
-      for retry in range(0, 3):
-          try:
-              print client.echo('This is a test')
-          except AuthError, e:
-              # If authentication fails we get an AuthError.  We take a password
-              # from the userand try again.
-              if sys.stdin.isatty():
-                  # If this is an interactive session, use getpass
-                  client.password = getpass.getpass('Password: ')
-              else:
-                  # If this is part of a script, only try once to read the
-                  # password from stdin.  Then fail.
-                  if retry > 0:
-                      break
-                  client.password = sys.stdin.readline().rstrip()
+The first argument to ``send_request()`` is ``method``. It contains the name
+of the method on the server.  It also has any of the positional parameters
+that the method expects (extra path information interpreted by the server for
+those building non-`TurboGears`_ applications).
+
+The ``auth`` keyword argument is a boolean.  If True, the session cookie for
+the user is sent to the server.  If this fails, the ``username`` and
+``password`` are sent.  If that fails, an Exception_ is raised that you can
+handle in your code.
+
+``reqParams`` contains a dictionary of additional keyword arguments for the
+server method.  These would be query parameters in a ``GET`` request.  Note
+that parameters passed as extra path information should be added to the method
+argument instead.
+
+An example::
+
+    import BaseClient
+    client = BaseClient('https://admin.fedoraproject.org/pkgdb/')
+    client.send_request('/package/name/python-fedora/', auth=False,
+            reqParams={'collectionVersion': '9', 'collectionName': 'Fedora'})
+
+In this particular example, knowing how the server works, ``/packages/name``
+defines the method that the server is going to invoke.  ``/python-fedora/``
+is a positional parameter for the name of the package we're looking up.
+``auth=False`` means that we'll try to look at this method without having to
+authenticate.  The reqParams sends two additional keyword arguments:
+``collectionName`` which specifies whether to filter on a single distro or
+include Fedora, Fedora EPEL, Fedora OLPC, and Red Hat Linux in the output and
+``collectionVersion`` which specifies whether to include EOL distributions in
+the output.
+
+The URL constructed by BaseClient_ to the server is::
+
+    https://admin.fedoraproject.org/pkgdb/package/name/python-fedora/?collectionName=Fedora&collectionVersion=9
+
+In previous releases of python-fedora, there would be one further query
+parameter:  ``tg_format=json``.  That parameter instructed the server to
+return the information as JSON data instead of HTML.  Although this is usually
+still supported in the server, BaseClient_ has deprecated this method.
+Servers should be configured  to use an ``Accept`` header to get this
+information instead.  See the `JSON output`_ section of the `Fedora Service`_
+documentation for more information about the server side.
+
+.. _`TurboGears`: http://www.turbogears.org/
+.. _`JSON output`: service.html#selecting-json-output
+
+Subclassing
+===========
+
+Building a client using subclassing builds on the information you've already
+seen inside of BaseClient_.  You might want to use this if you want to provide
+a module for third parties to access a particular `Fedora Service`_.  A
+subclass can provide a set of standard methods for calling the server instead
+of forcing the user to remember the URLs used to access the server directly.
+
+Here's an example that turns the previous calls into the basis of a python API
+to the `Fedora Package Database`_::
+
+    import getpass
+    import sys
+    from fedora.client import BaseClient, AuthError
+
+    class MyClient(BaseClient):
+        def __init__(self, baseURL='https://admin.fedoraproject.org/pkgdb',
+                username=None, password=None,
+                useragent='Package Database Client/1.0', debug=None):
+            super(BaseClient, self).__init__(baseURL, username, password,
+                    useragent, debug)
+
+        def collection_list(self):
+            '''Return a list of collections.'''
+            return client.send_request('/collection')
+
+        def package_owners(self, package, collectionName=None,
+                collectionVersion=None):
+            '''Return a mapping of release to owner for this package.'''
+            pkgData = client.send_request('/packages/name/%s' % (package),
+                    {'collectionName': collectionName,
+                    'collectionVersion': collectionVersion})
+            ownerMap = {}
+            for listing in pkgData['packageListings']:
+                ownerMap['-'.join(listing['collection']['name'],
+                        listing['collection']['version'])] = \
+                        listing['owneruser']
+            return ownerMap
+
+A few things to note:
+
+1) In our constructor we list a default ``baseURL`` and ``useragent``.  This
+   is usually a good idea as we know the URL of the `Fedora Service`_ we're
+   connecting to and we want to know that people are using our specific API.
+
+2) Sometimes we'll want methods that are thin shells around the server methods
+   like ``collection_list()``.  Other times we'll want to do more
+   post processing to get specific results as ``package_owners()`` does.  Both
+   types of methods are valid if they fit the needs of your API.  If you find
+   yourself writing more of the latter, though, you may want to consider
+   getting a new method implemented in the server that can return results more
+   appropriate to your needs as it could save processing on the server and
+   bandwidth downloading the data to get information that more closely matches
+   what you need.
+
+See ``pydoc fedora.accounts.fas2`` for a module that implements a standard
+client API for the `Fedora Account System`_
+
+.. _`Fedora Package Database`: https://fedorahosted.org/packagedb
+.. _`Fedora Account System`: https://fedorahosted.org/fas/
+
+---------------
+Handling Errors
+---------------
+
+BaseClient_ will throw a variety of errors that can be caught to tell you what
+kind of error was generated.
+
+Exceptions
+==========
+
+:``FedoraServiceError``: The base of all exceptions raised by BaseClient_.
+    If your code needs to catch any of the listed errors then you can catch
+    that to do so.
+
+:``ServerError``: Raised if there's  a problem communicating with the service.
+    For instance, if we receive an HTML response instead of JSON.
+
+:``AuthError``: If something happens during authentication, like an invalid
+    usernsme or password, AuthError will be raised.  You can catch this to
+    prompt the user for a new usernsme.
+
+:``AppError``: If there is a `server side error`_ when processing a request,
+    the `Fedora Service`_ can alert the client of this by setting certain
+    flags in the response.  BaseClient_  will see these flags and raise an
+    AppError.  The name of the error will be stored in AppError's ``name``
+    field.  The error's message will be stored in ``message``.
+
+.. _`server side error`: service.html#Error Handling
+
+Example
+=======
+Here's an example of the exceptions in action::
+
+    from fedora.client import ServerError, AuthError, AppError, BaseClient
+    import getpass
+    MAXRETRIES = 5
+
+    client = BaseClient('https://admin.fedoraproject.org/pkgdb')
+    for retry in range(0, MAXRETRIES):
+        try:
+            collectionData = client.send_request('/collections', auth=True)
+        except AuthError, e:
+            client.username = raw_input('Username: ').strip()
+            client.password = getpass.getpass('Password: ')
+            continue
+        except ServerError, e:
+            print 'Error talking to the server: %s' % e
+            break
+        except AppError, e:
+            print 'The server issued the following exception: %s: %s' % (
+                    e.name, e.message)
+
+        for collection in collectionData['collections']:
+            print collection['name'], collection['version']
+
+
+

@@ -3,7 +3,7 @@ Fedora Services
 ===============
 :Authors: Toshio Kuratomi
           Luke Macken
-:Date: 4 April 2008
+:Date: 28 May 2008
 :For Version: 0.3.x
 
 In the loosest sense, a Fedora Service is a web application that sends data
@@ -20,7 +20,7 @@ TurboGears
 
 All current Fedora Services are written in TurboGears_.  Examples in this
 document will be for that framework.  However, other frameworks can be used
-to write a Service if they can correctly create the data that BaseClient needs.
+to write a Service if they can correctly create the data that BaseClient_ needs.
 
 The TurboGears_ framework separates an application into model, view, and
 controller layers.  The model is typically a database and holds the raw data
@@ -49,7 +49,7 @@ document::
     from turbogears.controllers import RootController
     from turbogears import expose
 
-    class mycontroller(RootController):
+    class MyController(RootController):
         @expose(template='my.templates.amplifypage')
         def amplify(self, data):
             return dict(data=data.upper())
@@ -67,8 +67,8 @@ Selecting JSON Output
 =====================
 
 A URL in TurboGears_ can serve double duty by returning multiple formats
-depending on how it is called.  In most cases, the URL will return html or
-xhtml by default.  By adding the query parameter, ``tg_format=json`` you can
+depending on how it is called.  In most cases, the URL will return HTML or
+XHTML by default.  By adding the query parameter, ``tg_format=json`` you can
 switch from returning the default format to returning JSON data.  You need to
 add an ``@expose(allow_json=True)`` decorator [#]_ to your controller method to
 tell TurboGears_ that this controller should return JSON data::
@@ -83,7 +83,7 @@ tell TurboGears_ that this controller should return JSON data::
             as_format="json", accept_format="text/javascript")
 
 That means that the controller method will use the ``json`` template (uses
-TurboJson to marshall the returned data to JSON) to return data of type
+TurboJson to marshal the returned data to JSON) to return data of type
 ``text/javascript`` when either of these conditions is met:  a query param of 
 ``tg_format=json`` or an ``Accept: text/javascript`` header is sent.
 
@@ -102,7 +102,7 @@ Why Two Formats from a Single URL?
 ==================================
 
 When designing your URLs you might wonder why you'd want to return JSON and
-html from a single controller method instead of having two separate controller
+HTML from a single controller method instead of having two separate controller
 methods.  For instance, separating the URLs into their own namespaces might
 seem logical: ``/app/json/get_user/USERNAME`` as opposed to
 ``/app/user/USERNAME``.  Doing things with two URLs as opposed to one has both
@@ -126,9 +126,9 @@ Benefits of Multiple Methods for Each Format
 
 * Avoids special casing for error handlers (See below)
 * Separates URLs that you intend users to grab JSON data from URLs where you
-  only want to display html.
+  only want to display HTML.
 * Allows the URLs that support JSON to concentrate on trimming the size of the
-  data sent while URLs that only return html can return whole objects.
+  data sent while URLs that only return HTML can return whole objects.
 * Organization can be better if you don't have to include all of the pages
   that may only be useful for user interface elements.
 
@@ -144,7 +144,7 @@ Return Values
 The toplevel of the return values should be a dict.  This is the natural
 return value for TurboGears_ applications.
 
-Marshalling
+Marshaling
 ===========
 All data should be encoded in JSON before being returned.  This is normally
 taken care of automatically by TurboGears and simplejson.  If you are
@@ -155,14 +155,14 @@ returning non-builtin objects you may have to define an `__json__()`_ method.
 Unicode
 =======
 simplejson (and probably other JSON libraries) will take care of encoding
-unicode strings to JSON so be sure that you are passing unicode strings
+Unicode strings to JSON so be sure that you are passing Unicode strings
 around rather than encoded byte strings.
 
 Error Handling
 ==============
 
 In python, error conditions are handled by raising an exception.  However,
-an exception object will not propogate automatically through a return from
+an exception object will not propagate automatically through a return from
 the server.  Instead we set several special variables in the returned data
 to inform BaseClient_ of any errors.
 
@@ -176,7 +176,7 @@ exc
 All URLs which return JSON data should set the ``exc`` variable when the
 method fails unexpectedly (a database call failed, a place where you would
 normally raise an exception, or where you'd redirect to an error page if a
-user was viewing the html version of the web app).  ``exc`` should be set
+user was viewing the HTML version of the web app).  ``exc`` should be set
 to the name of an exception and tg_flash_ set to the message that would
 normally be given to the exception's constructor.  If the return is a success
 (expected values are being returned from the method or a value was updated
@@ -184,7 +184,7 @@ successfully) ``exc`` may either be unset or set to ``None``.
 
 tg_flash
 ~~~~~~~~
-When viewing the html web app, ``tg_flash`` can be set with a message to
+When viewing the HTML web app, ``tg_flash`` can be set with a message to
 display to the user either on the next page load or via an AJAX handler.
 When used in conjunction with JSON, ``exc=EXCEPTIONNAME``, and BaseClient_,
 ``tg_flash`` should be set to an error message that the client can use to
@@ -277,7 +277,7 @@ in the ``error_handler`` method::
             errors = fedora.tg.util.jsonify_validation_errors()
             if errors:
                 return errors
-            # Construct a dict to return the data error message as html via
+            # Construct a dict to return the data error message as HTML via
             # the errorpage template
             pass
 
@@ -289,7 +289,7 @@ in the ``error_handler`` method::
 
 When a user hits ``amplify()``'s URL, the validator checks whether ``data`` is
 a number.  If it is, it redirects to the error_handler, ``no_numbers()``.
-``no_numbers()`` will normally return html which is fine if we're simply
+``no_numbers()`` will normally return HTML which is fine if we're simply
 hitting ``amplify()`` from a web browser.  If we're hitting it from a
 BaseClient_ app, however, we need it to return JSON data instead.  To do that
 we use ``jsonify_validation_errors()`` which checks whether there was a
@@ -303,7 +303,7 @@ Expected Methods
 ----------------
 
 Certain controller methods are necessary in order for BaseClient_ to properly
-talk to your service.  Turbogears_ can quickstart an application template for
+talk to your service.  TurboGears_ can quickstart an application template for
 you that sets most of these variables correctly::
 
     $ tg-admin quickstart -i -s -p my my
@@ -358,14 +358,14 @@ having to construct a list of people records from a table and
 the the list of groups that each of them are in you can pass in the list of
 people and let your template reference the relation properties to get the
 groups.  This is extremely convenient for templates but has a negative effect
-when returning JSON. Namely, the default methods for marshalling SQLAlchemy_
+when returning JSON. Namely, the default methods for marshaling SQLAlchemy_
 objects to JSON only return the attributes of the object, not the relations
 that are linked to it.  So you can easily run into a situation where someone
 querying the JSON data for a page will not have all the information that a
 template has access to.
 
 SABase fixes this by allowing you to specify relations that your
-SQLAlchemy_ backed objects should marshall as JSON data.
+SQLAlchemy_ backed objects should marshal as JSON data.
 
 Further information on SABase can be found in the API documentation::
 
@@ -436,7 +436,7 @@ Using __json__()
 
 Sometimes you need to return an object that isn't a basic python type (list,
 tuple, dict, number. string, etc).  When that occurs, simplejson_ won't know
-how to marshall the data into JSON until you write own method to transform the
+how to marshal the data into JSON until you write own method to transform the
 values.  If this method is named __json__(), TurboGears_ will automatically
 perform the conversion when you return the object.
 
@@ -461,9 +461,9 @@ In this class, you have a variable and a property.  If you were to return it
 from a controller method without defining the __json__() method, TurboGears_
 would give you an error that it was unable to adapt the object to JSON.  The
 JSON method transforms the object into a dict with sensibly named values for
-the variable and property so that simplejson is able to marshall the data to
+the variable and property so that simplejson is able to marshal the data to
 JSON.  Note that you will often have to choose between space (more data takes
-more bandwidth to deliver to the enduser) and completeness (you need to return
+more bandwidth to deliver to the end user) and completeness (you need to return
 enough data so the client isn't looking for another method that can complete
 its needs) when returning data.
 
