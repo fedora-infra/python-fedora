@@ -105,7 +105,8 @@ class AccountSystem(BaseClient):
     def group_by_id(self, groupId):
         '''Returns a group object based on its id'''
         params = {'id': int(groupId)}
-        request = self.send_request('json/group_by_id', auth=True, input=params)
+        request = self.send_request('json/group_by_id', auth=True,
+                reqParams=params)
         if request['success']:
             return request['group']
         else:
@@ -116,7 +117,7 @@ class AccountSystem(BaseClient):
         personId = int(personId)
         params = {'id': personId}
         request = self.send_request('json/person_by_id', auth=True,
-                input=params)
+                reqParams=params)
 
         if request['success']:
             if personId in self.__bugzilla_email:
@@ -132,7 +133,7 @@ class AccountSystem(BaseClient):
         '''Returns a group object based on its name'''
         params = {'groupname': groupname}
         request = self.send_request('json/group_by_name', auth=True,
-                input=params)
+                reqParams=params)
         if request['success']:
             return request['group']
         else:
@@ -142,7 +143,7 @@ class AccountSystem(BaseClient):
         '''Returns a person object based on its username'''
         params = {'username': username}
         request = self.send_request('json/person_by_username', auth=True,
-                input=params)
+                reqParams=params)
         person = request['person']
         if request['success']:
             if person['id'] in self.__bugzilla_email:
