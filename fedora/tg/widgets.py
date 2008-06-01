@@ -29,6 +29,8 @@ from bugzilla import Bugzilla
 from turbogears.widgets import Widget
 
 class FedoraPeopleWidget(Widget):
+    '''Widget to display the Fedora People RSS Feed.
+    '''
     template = """
        <table xmlns:py="http://purl.org/kid/ns#"
          class="widget FedoraPeopleWidget" py:attrs="{'id': widgetId}">
@@ -56,6 +58,8 @@ class FedoraPeopleWidget(Widget):
         return {'id': self.widgetId, 'entries': self.entries}
 
 class FedoraMaintainerWidget(Widget):
+    '''Widget to show the packages a maintainer owns.
+    '''
     template = """
        <table xmlns:py="http://purl.org/kid/ns#"
          class="widget FedoraMaintainerWidget" py:attrs="{'id': widgetId}">
@@ -68,7 +72,8 @@ class FedoraMaintainerWidget(Widget):
 
     def __init__(self, username, widgetId=None):
         self.widgetId = widgetId
-        page = urllib2.urlopen('https://admin.fedoraproject.org/pkgdb/users/packages/%s/?tg_format=json' % username)
+        page = urllib2.urlopen('https://admin.fedoraproject.org/pkgdb/' \
+                'users/packages/%s/?tg_format=json' % username)
         self.packages = simplejson.load(page)['pkgs']
 
     def __json__(self):
