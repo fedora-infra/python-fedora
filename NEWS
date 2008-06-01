@@ -3,8 +3,25 @@ NEWS
 ====
 
 :Author: Toshio Kuratomi
-:Date: 2 Apr 2008
-:Version: 0.2.99.10
+:Date: 14 May 2008
+:Version: 0.2.99.11.1
+
+-----------
+0.2.99.11.1
+-----------
+Brown paper bag the previous release.  Fix a crasher bug.
+
+---------
+0.2.99.11
+---------
+Hopefully the last in this line of API.
+
+* Fix handling of tg_format=json asa query param when the server uses
+  tg.util.request_format()
+* Add a default jsonify method for SA ResultProxys
+* Don't traceback if there's a corrupted session file
+* Set permissions on the session file so only the user can read it.
+* Add a default BaseURL for fas2.AccountSystem
 
 ---------
 0.2.99.10

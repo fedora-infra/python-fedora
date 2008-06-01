@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.2.99.10
+Version:        0.2.99.11.1
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -30,7 +30,6 @@ TurboGears Applications such as Bodhi, PackageDB, MirrorManager, and FAS2.
 %prep
 %setup -q
 
-
 %build
 %{__python} setup.py build
 
@@ -46,10 +45,16 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc README COPYING AUTHORS ChangeLog
+%doc README COPYING AUTHORS ChangeLog doc
 %{python_sitelib}/*
 
 %changelog
+* Wed Apr 23 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.2.99.11.1-1
+- Fix a crasher bug.
+
+* Wed Apr 23 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.2.99.11-1
+- New upstream release.
+
 * Wed Apr 23 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.2.99.10-1
 - New upstream release.
 
