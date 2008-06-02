@@ -56,8 +56,10 @@ class DictContainer(dict):
     def __getattr__(self, attr):
         try:
             return self[attr]
-        except KeyError:
-            raise AttributeError
+        except KeyError, e:
+            raise AttributeError, _(
+                    "'%(name)s' object has no attribute '%(attr)s'") \
+                    %{'name': self.__class__.__name__, 'attr': e.message}
 
 class JsonFasIdentity(BaseClient):
     '''Associate an identity with a person in the auth system.
