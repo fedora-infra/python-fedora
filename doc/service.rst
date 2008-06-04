@@ -195,7 +195,7 @@ message you would normally give when raising an exception.
 Performing Different Actions when Returning JSON
 ------------------------------------------------
 
-So far we've run across two features of TurboGears that provide value to a
+So far we've run across three features of TurboGears_ that provide value to a
 web application but don't work when returning JSON data.  We provide a
 function that can code around this.  ``fedora.tg.util.request_format()`` will
 return the format that the page is being returned as.  Code can use this to

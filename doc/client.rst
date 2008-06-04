@@ -114,29 +114,29 @@ the user is sent to the server.  If this fails, the ``username`` and
 ``password`` are sent.  If that fails, an Exception_ is raised that you can
 handle in your code.
 
-``reqParams`` contains a dictionary of additional keyword arguments for the
-server method.  These would be query parameters in a ``GET`` request.  Note
-that parameters passed as extra path information should be added to the method
-argument instead.
+``req_params`` contains a dictionary of additional keyword arguments for the
+server method.  These would be the names and values returned via a form if it
+was a CGI.  Note that parameters passed as extra path information should be
+added to the ``method`` argument instead.
 
 An example::
 
     import BaseClient
     client = BaseClient('https://admin.fedoraproject.org/pkgdb/')
-    client.send_request('/package/name/python-fedora/', auth=False,
-            reqParams={'collectionVersion': '9', 'collectionName': 'Fedora'})
+    client.send_request('/package/name/python-fedora', auth=False,
+            req_params={'collectionVersion': '9', 'collectionName': 'Fedora'})
 
-In this particular example, knowing how the server works, ``/packages/name``
-defines the method that the server is going to invoke.  ``/python-fedora/``
+In this particular example, knowing how the server works, ``/packages/name/``
+defines the method that the server is going to invoke.  ``python-fedora``
 is a positional parameter for the name of the package we're looking up.
 ``auth=False`` means that we'll try to look at this method without having to
-authenticate.  The reqParams sends two additional keyword arguments:
+authenticate.  The ``req_params`` sends two additional keyword arguments:
 ``collectionName`` which specifies whether to filter on a single distro or
 include Fedora, Fedora EPEL, Fedora OLPC, and Red Hat Linux in the output and
-``collectionVersion`` which specifies whether to include EOL distributions in
-the output.
+``collectionVersion`` which specifies which version of the distribution to
+output for.
 
-The URL constructed by BaseClient_ to the server is::
+The URL constructed by BaseClient_ to the server could beexpressed as[#]_::
 
     https://admin.fedoraproject.org/pkgdb/package/name/python-fedora/?collectionName=Fedora&collectionVersion=9
 
@@ -150,6 +150,9 @@ documentation for more information about the server side.
 
 .. _`TurboGears`: http://www.turbogears.org/
 .. _`JSON output`: service.html#selecting-json-output
+.. _[#]: Note that the ``req_params`` are actually sent via ``POST`` request
+         rather than ``GET``.  Among other things, this means that values in
+         ``req_params`` won't show up in apache logs.
 
 Subclassing
 ===========
@@ -231,7 +234,7 @@ Exceptions
     For instance, if we receive an HTML response instead of JSON.
 
 :``AuthError``: If something happens during authentication, like an invalid
-    usernsme or password, AuthError will be raised.  You can catch this to
+    usernsme or password, ``AuthError`` will be raised.  You can catch this to
     prompt the user for a new usernsme.
 
 :``AppError``: If there is a `server side error`_ when processing a request,
@@ -267,6 +270,3 @@ Here's an example of the exceptions in action::
 
         for collection in collectionData['collections']:
             print collection['name'], collection['version']
-
-
-
