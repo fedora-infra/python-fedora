@@ -33,17 +33,17 @@ class FedoraPeopleWidget(Widget):
     '''
     template = """
        <table xmlns:py="http://purl.org/kid/ns#"
-         class="widget FedoraPeopleWidget" py:attrs="{'id': widgetId}">
+         class="widget FedoraPeopleWidget" py:attrs="{'id': widget_id}">
           <tr py:for="entry in entries[:5]">
             <td><img src="${entry['image']}" height="32" width="32"/></td>
             <td><a href="${entry['link']}">${entry['title']}</a></td>
           </tr>
         </table>
     """
-    params = ["widgetId", "entries"]
+    params = ["widget_id", "entries"]
 
-    def __init__(self, widgetId=None):
-        self.widgetId = widgetId
+    def __init__(self, widget_id=None):
+        self.widget_id = widget_id
         self.entries = []
         regex = re.compile('<img src="(.*)" alt="" />')
         feed = feedparser.parse('http://planet.fedoraproject.org/rss20.xml')
@@ -55,34 +55,35 @@ class FedoraPeopleWidget(Widget):
             })
 
     def __json__(self):
-        return {'id': self.widgetId, 'entries': self.entries}
+        return {'id': self.widget_id, 'entries': self.entries}
 
 class FedoraMaintainerWidget(Widget):
     '''Widget to show the packages a maintainer owns.
     '''
     template = """
        <table xmlns:py="http://purl.org/kid/ns#"
-         class="widget FedoraMaintainerWidget" py:attrs="{'id': widgetId}">
+         class="widget FedoraMaintainerWidget" py:attrs="{'id': widget_id}">
           <tr py:for="pkg in packages[:5]">
             <td><a href="https://admin.fedoraproject.org/pkgdb/packages/name/${pkg['name']}">${pkg['name']}</a></td>
           </tr>
        </table>
     """
-    params = ["widgetId", "packages"]
+    params = ["widget_id", "packages"]
 
-    def __init__(self, username, widgetId=None):
-        self.widgetId = widgetId
+    def __init__(self, username, widget_id=None):
+        self.widget_id = widget_id
         page = urllib2.urlopen('https://admin.fedoraproject.org/pkgdb/' \
                 'users/packages/%s/?tg_format=json' % username)
         self.packages = simplejson.load(page)['pkgs']
 
     def __json__(self):
-        return {'id': self.widgetId, 'packages': self.packages}
+        return {'id': self.widget_id, 'packages': self.packages}
 
 class BugzillaWidget(Widget):
+    '''Widget to show the stream of bugs submitted against a package.'''
     template = """
        <table xmlns:py="http://purl.org/kid/ns#" class="widget BugzillaWidget"
-          py:attrs="{'id': widgetId}">
+          py:attrs="{'id': widget_id}">
           <tr py:for="bug in bugs">
             <td>
               <a href="${bug.url}">${bug.bug_id}</a> ${bug.short_short_desc}
@@ -90,16 +91,16 @@ class BugzillaWidget(Widget):
           </tr>
        </table>
     """
-    params = ["widgetId", "bugs"]
+    params = ["widget_id", "bugs"]
 
-    def __init__(self, email, widgetId=None):
-        self.widgetId = widgetId
-        bz = Bugzilla(url='https://bugzilla.redhat.com/xmlrpc.cgi')
-        self.bugs = bz.query({
+    def __init__(self, email, widget_id=None):
+        self.widget_id = widget_id
+        bugzilla = Bugzilla(url='https://bugzilla.redhat.com/xmlrpc.cgi')
+        self.bugs = bugzilla.query({
             'product'           : 'Fedora',
             'email1'            : email,
             'emailassigned_to1' : True
         })[:5]
 
     def __json__(self):
-        return {'id': self.widgetId, 'bugs': self.bugs}
+        return {'id': self.widget_id, 'bugs': self.bugs}

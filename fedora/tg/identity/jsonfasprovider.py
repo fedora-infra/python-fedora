@@ -46,7 +46,9 @@ except NameError:
     from sets import ImmutableSet as frozenset  # pylint: disable-msg=W0622
 
 class DictContainer(dict):
+    '''Dictionary that also works from attribute lookups.'''
     def __init__(self, basedict):
+        super(DictContainer, self).__init__()
         for key in basedict:
             if type(basedict[key]) == dict:
                 self[key] = DictContainer(basedict[key])
@@ -64,12 +66,12 @@ class DictContainer(dict):
 class JsonFasIdentity(BaseClient):
     '''Associate an identity with a person in the auth system.
     '''
-    cookieName = config.get('visit.cookie.name', 'tg-visit')
-    fasURL = config.get('fas.url', 'https://admin.fedoraproject.org/accounts/')
+    cookie_name = config.get('visit.cookie.name', 'tg-visit')
+    fas_url = config.get('fas.url', 'https://admin.fedoraproject.org/accounts/')
 
     def __init__(self, visit_key, user=None, username=None, password=None,
             debug=False):
-        super(JsonFasIdentity, self).__init__(self.fasURL, debug=debug)
+        super(JsonFasIdentity, self).__init__(self.fas_url, debug=debug)
         if user:
             self._user = user
             self._groups = frozenset(
@@ -84,9 +86,9 @@ class JsonFasIdentity(BaseClient):
 
         # Set the cookie to the user's tg_visit key before requesting
         # authentication.  That way we link the two together.
-        self._sessionCookie = Cookie.SimpleCookie()
-        self._sessionCookie[self.cookieName] = visit_key
-        response.simple_cookie[self.cookieName] = visit_key
+        self._session_cookie = Cookie.SimpleCookie()
+        self._session_cookie[self.cookie_name] = visit_key
+        response.simple_cookie[self.cookie_name] = visit_key
 
         self.username = username
         self.password = password
@@ -97,26 +99,29 @@ class JsonFasIdentity(BaseClient):
         '''Override BaseClient so we can keep visit_key in sync.
         '''
         super(JsonFasIdentity, self)._authenticate(force)
-        if self._sessionCookie[self.cookieName].value != self.visit_key:
+        if self._session_cookie[self.cookie_name].value != self.visit_key:
             # When the visit_key changes (because the old key had expired or
             # been deleted from the db) change the visit_key in our variables
             # and the session cookie to be sent back to the client.
-            self.visit_key = self._sessionCookie[self.cookieName].value
-            response.simple_cookie[self.cookieName] = self.visit_key
-        return self._sessionCookie
+            self.visit_key = self._session_cookie[self.cookie_name].value
+            response.simple_cookie[self.cookie_name] = self.visit_key
+        return self._session_cookie
     session = property(_authenticate)
 
     def _get_user(self):
         '''Retrieve information about the user from cache or network.'''
+        # pylint: disable-msg=W0704
         try:
             return self._user
         except AttributeError:
             # User hasn't already been set
             pass
+        # pylint: enable-msg=W0704
         # Attempt to load the user. After this code executes, there *WILL* be
         # a _user attribute, even if the value is None.
         # Query the account system URL for our given user's sessionCookie
         # FAS returns user and group listing
+        # pylint: disable-msg=W0702
         try:
             data = self.send_request('user/view', auth=True)
         except:
@@ -124,6 +129,7 @@ class JsonFasIdentity(BaseClient):
             # framework doesn't know what to do otherwise.
             self._user = None
             return None
+        # pylint: enable-msg=W0702
         if not data['person']:
             self._user = None
             return None
@@ -135,22 +141,26 @@ class JsonFasIdentity(BaseClient):
     user = property(_get_user)
 
     def _get_user_name(self):
+        '''Return the username for the user.'''
         if not self.user:
             return None
         return self.user['username']
     user_name = property(_get_user_name)
 
     def _get_anonymous(self):
+        '''Return True if there's no user logged in.'''
         return not self.user
     anonymous = property(_get_anonymous)
 
     def _get_display_name(self):
+        '''Return the user's display name.'''
         if not self.user:
             return None
         return self.user['human_name']
     display_name = property(_get_display_name)
 
     def _get_groups(self):
+        '''Return the groups that a user is a member of.'''
         try:
             return self._groups
         except AttributeError:

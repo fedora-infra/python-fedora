@@ -28,7 +28,6 @@ import urllib
 import urllib2
 import logging
 import cPickle as pickle
-import re
 import inspect
 import simplejson
 import os
@@ -63,11 +62,11 @@ class BaseClient(object):
     '''
         A command-line client to interact with Fedora TurboGears Apps.
     '''
-    def __init__(self, baseURL, username=None, password=None,
+    def __init__(self, base_url, username=None, password=None,
             useragent=None, debug=False):
         '''
         Arguments:
-        :baseUrl: Base of every URL used to contact the server
+        :base_url: Base of every URL used to contact the server
         Keyword Arguments:
         :username: username for establishing authenticated connections
         :password: password to use with authenticated connections
@@ -75,26 +74,26 @@ class BaseClient(object):
             "Fedora BaseClient/VERSION"
         :debug: If True, log debug information
         '''
-        if baseURL[-1] != '/':
-            baseURL = baseURL +'/'
-        self.baseURL = baseURL
+        if base_url[-1] != '/':
+            base_url = base_url +'/'
+        self.base_url = base_url
         self.username = username
         self.password = password
         self.useragent = useragent or 'Fedora BaseClient/%(version)s' % {
                 'version': __version__}
-        self._sessionCookie = None
+        self._session_cookie = None
 
         # Setup our logger
-        logHandler = logging.StreamHandler()
+        log_handler = logging.StreamHandler()
         if debug:
             log.setLevel(logging.DEBUG)
-            logHandler.setLevel(logging.DEBUG)
+            log_handler.setLevel(logging.DEBUG)
         else:
             log.setLevel(logging.INFO)
-            logHandler.setLevel(logging.INFO)
+            log_handler.setLevel(logging.INFO)
         format = logging.Formatter("%(message)s")
-        logHandler.setFormatter(format)
-        log.addHandler(logHandler)
+        log_handler.setFormatter(format)
+        log.addHandler(log_handler)
 
         self._load_session()
         if username and password:
@@ -104,20 +103,20 @@ class BaseClient(object):
         '''
             Return an authenticated session cookie.
         '''
-        if not force and self._sessionCookie:
-            return self._sessionCookie
+        if not force and self._session_cookie:
+            return self._session_cookie
         if not self.username:
             raise AuthError, _('username must be set')
         if not self.password:
             raise AuthError, _('password must be set')
 
-        req = urllib2.Request(urljoin(self.baseURL, 'login?tg_format=json'))
+        req = urllib2.Request(urljoin(self.base_url, 'login?tg_format=json'))
         req.add_header('User-agent', self.useragent)
         req.add_header('Accept', 'text/javascript')
-        if self._sessionCookie:
+        if self._session_cookie:
             # If it exists, send the old sessionCookie so it is associated
             # with the request.
-            req.add_header('Cookie', self._sessionCookie.output(attrs=[],
+            req.add_header('Cookie', self._session_cookie.output(attrs=[],
                 header='').strip())
         req.add_data(urllib.urlencode({
                 'user_name' : self.username,
@@ -126,29 +125,29 @@ class BaseClient(object):
         }))
 
         try:
-            loginPage = urllib2.urlopen(req)
+            login_page = urllib2.urlopen(req)
         except urllib2.HTTPError, e:
             if e.msg == 'Forbidden':
                 raise AuthError, _('Invalid username/password')
             else:
                 raise
 
-        loginData = simplejson.load(loginPage)
+        login_data = simplejson.load(login_page)
 
-        if 'message' in loginData:
+        if 'message' in login_data:
             raise AuthError, _('Unable to login to server: %(message)s') \
-                    % loginData
+                    % login_data
 
-        self._sessionCookie = Cookie.SimpleCookie()
+        self._session_cookie = Cookie.SimpleCookie()
         try:
-            self._sessionCookie.load(loginPage.headers['set-cookie'])
+            self._session_cookie.load(login_page.headers['set-cookie'])
         except KeyError:
-            self._sessionCookie = None
+            self._session_cookie = None
             raise AuthError, _('Unable to login to the server.  Server did' \
                     ' not send back a cookie')
         self._save_session()
 
-        return self._sessionCookie
+        return self._session_cookie
     session = property(_authenticate)
 
     def _save_session(self):
@@ -161,22 +160,22 @@ class BaseClient(object):
         '''
         save = {}
         if path.isfile(SESSION_FILE):
-            sessionFile = file(SESSION_FILE, 'r')
+            session_file = file(SESSION_FILE, 'r')
             # pylint: disable-msg=W0702
             try:
-                save = pickle.load(sessionFile)
+                save = pickle.load(session_file)
             except: # pylint: disable-msg=W0704
                 # If there isn't a session file yet, there's no problem
                 pass
             # pylint: enable-msg=W0702
-            sessionFile.close()
-        save[self.username] = self._sessionCookie
+            session_file.close()
+        save[self.username] = self._session_cookie
         try:
-            sessionFile = file(SESSION_FILE, 'w')
+            session_file = file(SESSION_FILE, 'w')
             os.chmod(SESSION_FILE, stat.S_IRUSR | stat.S_IWUSR)
-            pickle.dump(save, sessionFile)
-            sessionFile.close()
-        except Exception, e:
+            pickle.dump(save, session_file)
+            session_file.close()
+        except Exception, e: # pylint: disable-msg=W0703
             # If we can't save the file, issue a warning but go on.  The
             # session just keeps you from having to type your password over
             # and over.
@@ -188,18 +187,18 @@ class BaseClient(object):
             Load a stored session cookie.
         '''
         if path.isfile(SESSION_FILE):
-            sessionFile = file(SESSION_FILE, 'r')
+            session_file = file(SESSION_FILE, 'r')
             try:
-                savedSession = pickle.load(sessionFile)
-                self._sessionCookie = savedSession[self.username]
+                saved_session = pickle.load(session_file)
+                self._session_cookie = saved_session[self.username]
                 log.debug(_('Loaded session %(cookie)s') % \
-                        {'cookie': self._sessionCookie})
+                        {'cookie': self._session_cookie})
             except EOFError:
                 log.warning(_('Unable to load session from %(file)s') % \
                         {'file': SESSION_FILE})
             except KeyError:
                 log.debug(_('Session is for a different user'))
-            sessionFile.close()
+            session_file.close()
 
     def logout(self):
         '''
@@ -212,21 +211,21 @@ class BaseClient(object):
             # our authentication tokens here.
             pass
       
-    def send_request(self, method, auth=False, reqParams=None):
+    def send_request(self, method, auth=False, req_params=None):
         '''Make an HTTP request to a server method.
 
-        The given method is called with any parameters set in reqParams.  If
+        The given method is called with any parameters set in req_params.  If
         auth is True, then the request is made with an authenticated session
         cookie.
 
         Arguments:
         :method: Method to call on the server.  It's a url fragment that comes
-            after the baseURL set in __init__().
+            after the base_url set in __init__().
         :auth: If True perform auth to the server, else do not.
-        :reqParams: Extra parameters to send to the server.
+        :req_params: Extra parameters to send to the server.
         '''
         method = method.lstrip('/')
-        url = urljoin(self.baseURL, method + '?tg_format=json')
+        url = urljoin(self.base_url, method + '?tg_format=json')
 
         response = None # the JSON that we get back from the server
         data = None     # decoded JSON via simplejson.load()
@@ -235,15 +234,15 @@ class BaseClient(object):
         req = urllib2.Request(url)
         req.add_header('User-agent', self.useragent)
         req.add_header('Accept', 'text/javascript')
-        if reqParams:
-            req.add_data(urllib.urlencode(reqParams))
+        if req_params:
+            req.add_data(urllib.urlencode(req_params))
 
         if auth:
             req.add_header('Cookie', self.session.output(attrs=[],
                 header='').strip())
-        elif self._sessionCookie:
+        elif self._session_cookie:
             # If the cookie exists, send it so that visit tracking works.
-            req.add_header('Cookie', self._sessionCookie.output(attrs=[],
+            req.add_header('Cookie', self._session_cookie.output(attrs=[],
                 header='').strip())
         try:
             response = urllib2.urlopen(req)
@@ -252,7 +251,7 @@ class BaseClient(object):
                 if (inspect.currentframe().f_back.f_code !=
                         inspect.currentframe().f_code):
                     self._authenticate(force=True)
-                    return self.send_request(method, auth, reqParams)
+                    return self.send_request(method, auth, req_params)
                 else:
                     # We actually shouldn't ever reach here.  Unless something
                     # goes drastically wrong _authenticate should raise an
@@ -265,14 +264,14 @@ class BaseClient(object):
 
         # In case the server returned a new session cookie to us
         try:
-            self._sessionCookie.load(response.headers['set-cookie'])
+            self._session_cookie.load(response.headers['set-cookie'])
         except (KeyError, AttributeError): # pylint: disable-msg=W0704
             # It's okay if the server didn't send a new cookie
             pass
 
-        jsonString = response.read()
+        json_string = response.read()
         try:
-            data = simplejson.loads(jsonString)
+            data = simplejson.loads(json_string)
         except ValueError, e:
             # The response wasn't JSON data
             raise ServerError, str(e)
@@ -284,7 +283,7 @@ class BaseClient(object):
             if (inspect.currentframe().f_back.f_code !=
                     inspect.currentframe().f_code):
                 self._authenticate(force=True)
-                data = self.send_request(method, auth, reqParams)
+                data = self.send_request(method, auth, req_params)
             else:
                 # We actually shouldn't ever reach here.  Unless something goes
                 # drastically wrong _authenticate should raise an AuthError

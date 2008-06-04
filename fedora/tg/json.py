@@ -53,30 +53,30 @@ class SABase(object):
 
         This method takes an SA mapped class and turns the "normal" python
         attributes into json.  The properties (from properties in the mapper)
-        are also included if they have an entry in jsonProps.  You make
-        use of this by setting jsonProps in the controller.
+        are also included if they have an entry in json_props.  You make
+        use of this by setting json_props in the controller.
 
         Example controller::
           john = model.Person.get_by(name='John')
           # Person has a property, addresses, linking it to an Address class.
           # Address has a property, phone_nums, linking it to a Phone class.
-          john.jsonProps = {'Person': ['addresses'],
+          john.json_props = {'Person': ['addresses'],
                   'Address': ['phone_nums']}
           return dict(person=john)
 
-        jsonProps is a dict that maps class names to lists of properties you
+        json_props is a dict that maps class names to lists of properties you
         want to output.  This allows you to selectively pick properties you
         are interested in for one class but not another.  You are responsible
         for avoiding loops.  ie: *don't* do this::
-            john.jsonProps = {'Person': ['addresses'], 'Address': ['people']}
+            john.json_props = {'Person': ['addresses'], 'Address': ['people']}
         '''
         props = {}
         # pylint: disable-msg=E1101
-        if hasattr(self, 'jsonProps') \
-                and self.jsonProps.has_key(self.__class__.__name__):
-            propList = self.jsonProps[self.__class__.__name__]
+        if hasattr(self, 'json_props') \
+                and self.json_props.has_key(self.__class__.__name__):
+            prop_list = self.json_props[self.__class__.__name__]
         else:
-            propList = {}
+            prop_list = {}
         # pylint: enable-msg=E1101
        
         # Load all the columns from the table
@@ -85,14 +85,14 @@ class SABase(object):
                 props[column.key] = getattr(self, column.key)
 
         # Load things that are explicitly listed
-        for field in propList:
+        for field in prop_list:
             props[field] = getattr(self, field)
             try:
                 # pylint: disable-msg=E1101
-                props[field].jsonProps = self.jsonProps
+                props[field].json_props = self.json_props
             except AttributeError: # pylint: disable-msg=W0704
                 # Certain types of objects are terminal and won't allow setting
-                # jsonProps
+                # json_props
                 pass
 
             # Note: Because of the architecture of simplejson and turbojson,
@@ -109,13 +109,13 @@ class SABase(object):
 def jsonify_sa_select_results(obj):
     '''Transform selectresults into lists.
     
-    The one special thing is that we bind the special jsonProps into each
-    descendent.  This allows us to specify a jsonProps on the toplevel
+    The one special thing is that we bind the special json_props into each
+    descendent.  This allows us to specify a json_props on the toplevel
     query result and it will pass to all of its children.
     '''
-    if 'jsonProps' in obj.__dict__:
+    if 'json_props' in obj.__dict__:
         for element in obj:
-            element.jsonProps = obj.jsonProps
+            element.json_props = obj.json_props
     return list(obj)
 
 # Note: due to the way simplejson works, InstrumentedList has to be taken care
@@ -128,13 +128,13 @@ def jsonify_sa_select_results(obj):
 def jsonify_salist(obj):
     '''Transform SQLAlchemy InstrumentedLists into json.
     
-    The one special thing is that we bind the special jsonProps into each
-    descendent.  This allows us to specify a jsonProps on the toplevel
+    The one special thing is that we bind the special json_props into each
+    descendent.  This allows us to specify a json_props on the toplevel
     query result and it will pass to all of its children.
     '''
-    if 'jsonProps' in obj.__dict__:
+    if 'json_props' in obj.__dict__:
         for element in obj:
-            element.jsonProps = obj.jsonProps
+            element.json_props = obj.json_props
     return [jsonify(element) for element in  obj]
 
 @jsonify.when('''(
@@ -143,12 +143,12 @@ def jsonify_salist(obj):
 def jsonify_saresult(obj):
     '''Transform SQLAlchemy ResultProxy into json.
     
-    The one special thing is that we bind the special jsonProps into each
-    descendent.  This allows us to specify a jsonProps on the toplevel
+    The one special thing is that we bind the special json_props into each
+    descendent.  This allows us to specify a json_props on the toplevel
     query result and it will pass to all of its children.
     '''
-    if 'jsonProps' in obj.__dict__:
+    if 'json_props' in obj.__dict__:
         for element in obj:
-            element.jsonProps = obj.jsonProps
+            element.json_props = obj.json_props
     return [list(row) for row in obj]
 

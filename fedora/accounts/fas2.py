@@ -39,10 +39,10 @@ class AccountSystem(BaseClient):
     other details so you can concentrate on the methods that are important to
     your program.
     '''
-    def __init__(self, baseURL='https://admin.fedoraproject.org/accounts/',
+    def __init__(self, base_url='https://admin.fedoraproject.org/accounts/',
             username=None, password=None, debug=False):
-        super(AccountSystem, self).__init__(baseURL=baseURL, username=username,
-                password=password, debug=debug)
+        super(AccountSystem, self).__init__(base_url=base_url,
+                username=username, password=password, debug=debug)
         # Preseed a list of FAS accounts with bugzilla addresses
         # This allows us to specify a different email for bugzilla than is
         # in the FAS db.  It is a hack, however, until FAS has a field for the
@@ -90,8 +90,8 @@ class AccountSystem(BaseClient):
                 # Kevin Fenzi: kevin@tummy.com
                 'kevin-redhat-bugzilla@tummy.com': 100037,
                 }
-        for bugzillaMap in self.__bugzilla_email.items():
-            self.__alternate_email[bugzillaMap[1]] = bugzillaMap[0]
+        for bugzilla_map in self.__bugzilla_email.items():
+            self.__alternate_email[bugzilla_map[1]] = bugzilla_map[0]
 
         # We use the two mappings as follows::
         # When looking up a user by email, use __alternate_email.
@@ -102,27 +102,27 @@ class AccountSystem(BaseClient):
         # the only option.
 
     # TODO: Use exceptions properly
-    def group_by_id(self, groupId):
+    def group_by_id(self, group_id):
         '''Returns a group object based on its id'''
-        params = {'id': int(groupId)}
+        params = {'id': int(group_id)}
         request = self.send_request('json/group_by_id', auth=True,
-                reqParams=params)
+                req_params=params)
         if request['success']:
             return request['group']
         else:
             return dict()
 
-    def person_by_id(self, personId):
+    def person_by_id(self, person_id):
         '''Returns a person object based on its id'''
-        personId = int(personId)
-        params = {'id': personId}
+        person_id = int(person_id)
+        params = {'id': person_id}
         request = self.send_request('json/person_by_id', auth=True,
-                reqParams=params)
+                req_params=params)
 
         if request['success']:
-            if personId in self.__bugzilla_email:
+            if person_id in self.__bugzilla_email:
                 request['person']['bugzilla_email'] = \
-                        self.__bugzilla_email[personId]
+                        self.__bugzilla_email[person_id]
             else:
                 request['person']['bugzilla_email'] = request['person']['email']
             return request['person']
@@ -133,7 +133,7 @@ class AccountSystem(BaseClient):
         '''Returns a group object based on its name'''
         params = {'groupname': groupname}
         request = self.send_request('json/group_by_name', auth=True,
-                reqParams=params)
+                req_params=params)
         if request['success']:
             return request['group']
         else:
@@ -143,7 +143,7 @@ class AccountSystem(BaseClient):
         '''Returns a person object based on its username'''
         params = {'username': username}
         request = self.send_request('json/person_by_username', auth=True,
-                reqParams=params)
+                req_params=params)
         person = request['person']
         if request['success']:
             if person['id'] in self.__bugzilla_email:
@@ -170,18 +170,18 @@ class AccountSystem(BaseClient):
         '''
         ### FIXME: This should be implemented on the server as a single call
         request = self.send_request('/json/user_id', auth=True)
-        userToId = {}
+        user_to_id = {}
         people = {}
         for person_id, username in request['people'].items():
             person_id = int(person_id)
             # change userids from string back to integer
             people[person_id] = {'username': username, 'id': person_id}
-            userToId[username] = person_id
+            user_to_id[username] = person_id
 
         # Retrieve further useful information about the users
         request = self.send_request('/group/dump', auth=True)
         for user in request['people']:
-            userid = userToId[user[0]]
+            userid = user_to_id[user[0]]
             person = people[userid]
             person['email'] = user[1]
             person['human_name'] = user[2]
@@ -211,11 +211,11 @@ class AccountSystem(BaseClient):
 
         Returns: True if the username/password are valid.  False otherwise.
         '''
-        asUser = BaseClient(self.baseURL, username, password)
+        as_user = BaseClient(self.base_url, username, password)
         try:
             # This will attempt to authenticate to the account system and
             # raise an AuthError if the password and username don't match. 
-            asUser._authenticate(force=True)
+            as_user._authenticate(force=True)
         except AuthError:
             return False
         except:

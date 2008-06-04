@@ -22,8 +22,8 @@ class JsonFasVisitManager(BaseVisitManager):
     We don't need to worry about threading and other concerns because our proxy
     doesn't cause any asynchronous calls.
     '''
-    fasURL = config.get('fas.url', 'https://admin.fedoraproject.org/admin/fas')
-    cookieName = config.get('visit.cookie.name', 'tg-visit')
+    fas_url = config.get('fas.url', 'https://admin.fedoraproject.org/admin/fas')
+    cookie_name = config.get('visit.cookie.name', 'tg-visit')
 
     def __init__(self, timeout, debug=None):
         self.debug = debug or False
@@ -43,11 +43,11 @@ class JsonFasVisitManager(BaseVisitManager):
         '''
         # Hit any URL in fas2 with the visit_key set.  That will call the
         # new_visit method in fas2
-        fas = BaseClient(self.fasURL, self.debug)
-        fas._sessionCookie = Cookie.SimpleCookie()
-        fas._sessionCookie[self.cookieName] = visit_key
+        fas = BaseClient(self.fas_url, self.debug)
+        fas._session_cookie = Cookie.SimpleCookie()
+        fas._session_cookie[self.cookie_name] = visit_key
         fas.send_request('', auth=True)
-        return Visit(fas._sessionCookie[self.cookieName].value, True)
+        return Visit(fas._session_cookie[self.cookie_name].value, True)
 
     def visit_for_key(self, visit_key):
         '''
@@ -56,29 +56,29 @@ class JsonFasVisitManager(BaseVisitManager):
         '''
         # Hit any URL in fas2 with the visit_key set.  That will call the
         # new_visit method in fas2
-        fas = BaseClient(self.fasURL, self.debug)
-        fas._sessionCookie = Cookie.SimpleCookie()
-        fas._sessionCookie[self.cookieName] = visit_key
+        fas = BaseClient(self.fas_url, self.debug)
+        fas._session_cookie = Cookie.SimpleCookie()
+        fas._session_cookie[self.cookie_name] = visit_key
         fas.send_request('', auth=True)
         # Knowing what happens in turbogears/visit/api.py when this is called,
         # we can shortcircuit this step and avoid a round trip to the FAS
         # server.
-        # if visit_key != self._sessionCookie[self.cookieName].value:
+        # if visit_key != self._session_cookie[self.cookie_name].value:
         #     # visit has expired
         #     return None
         # # Hitting FAS has already updated the visit.
         # return Visit(visit_key, False)
-        if visit_key != fas._sessionCookie[self.cookieName].value:
-            return Visit(fas._sessionCookie[self.cookieName].value, True)
+        if visit_key != fas._session_cookie[self.cookie_name].value:
+            return Visit(fas._session_cookie[self.cookie_name].value, True)
         else:
             return Visit(visit_key, False)
 
     def update_queued_visits(self, queue):
         '''Update the visit information on the server'''
-        fas = BaseClient(self.fasURL, self.debug)
+        fas = BaseClient(self.fas_url, self.debug)
         for visit_key in queue:
             log.info(_('updating visit (%s)'), visit_key)
-            fas._sessionCookie = Cookie.SimpleCookie()
-            fas._sessionCookie[self.cookieName] = visit_key
+            fas._session_cookie = Cookie.SimpleCookie()
+            fas._session_cookie[self.cookie_name] = visit_key
             fas.send_request('', auth=True)
             fas.send_request()
