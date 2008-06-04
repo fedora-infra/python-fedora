@@ -3,8 +3,36 @@ NEWS
 ====
 
 :Author: Toshio Kuratomi
-:Date: 14 May 2008
-:Version: 0.2.99.11.1
+:Date: 2 June 2008
+:Version: 0.3
+
+---
+0.3
+---
+
+Incompatibilities
+=================
+* Removal of camelCase.  Rename keyword arguments and public instance variables:
+  * client.BaseClient
+    *Note* that changes to this class propogate out to the same variable in
+    derived classes like fas2.AccountSystem and the BaseClient used in
+    JsonFasIdentity.
+    * __init__(): baseURL => base_url
+    * _sessionCookie => _session_cookie: this is a private variable but some
+      users use this anyway.  For users needing to access this, there's now
+      a more appropriate class for doing so (ProxyClass).
+  * accounts.fas2.AccountSystem
+    * group_by_id(): groupId => group_id
+    * person_by_id(): personId => person_id
+  * tg.widgets
+    * All widgets had widgetId => widget_id
+    * Also means accessing the variable is done via self.widget_id
+  * tg.json.SABase
+    * self.jsonProps => self.json_props
+* BaseClient.send_request() has keyword argument input renamed to req_params
+* Restructuring of Exceptions in BaseClient
+  * New base exception is FedoraServiceError if you want to catch that.
+* Rename accounts.fas2.AccountSystem.authenticate() to verify_password()
 
 -----------
 0.2.99.11.1
