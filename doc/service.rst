@@ -92,11 +92,15 @@ selecting JSON output.  BaseClient_ 0.2.99.6 and 0.3.x use both the header
 method and the query parameter since the argument was made that the header
 method is friendlier to other web frameworks.  0.4 intends to use the header
 alone.  If you use ``allow_json=True`` this change shouldn't matter.  If you
-specify the ``@expose("json")`` decorator manually it is advisable to include
-both ``as_format`` and ``accept_format`` in your decorator so you can handle
-either method.
+specify the ``@expose("json")`` decorator only ``accept_format`` is set.  So
+it is advisable to include both ``as_format`` and ``accept_format`` in your
+decorator.  Note that this is a limitation of TurboGears_ <= 1.0.4.4.  If your
+application is only going to run on TurboGears_ > 1.0.4.4 you should be able
+to use a plain ``@expose("json")`` [#]_.
 
 .. [#] http://docs.turbogears.org/1.0/ExposeDecorator#same-method-different-template
+
+.. [#] http://trac.turbogears.org/ticket/1459#comment:4
 
 Why Two Formats from a Single URL?
 ==================================
@@ -328,6 +332,22 @@ allows BaseClient_ to authenticate against your Service::
     +            if not forward_url:
     +                forward_url = turbogears.url('/')
                  raise redirect(forward_url)
+**
+
+For non-TurboGears Implementors
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you are implementing a server in a non-TurboGears_ framework, note that one
+of the ways to reach the ``login()`` method is through special parameters
+parsed by the TurboGears_ framework.  BaseClient_ uses these parameters
+instead of invoking the ``login()`` method directly as it saves a round trip
+when authenticating to the server.  It will be necessary for you to implement
+handling of these parameters (passed via ``POST``) on your application as well.
+
+The parameters are: ``user_name``, ``password``, and ``login``.  When these
+three parameters are sent to the server, the server authenticates the user
+and records their information before deciding what information to return to
+them from the URL.
 
 logout()
 ========
