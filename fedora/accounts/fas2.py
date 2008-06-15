@@ -23,6 +23,11 @@ Provide a client module for talking to the Fedora Account System.
 '''
 from fedora.client import BaseClient, AuthError, FedoraServiceError
 
+### FIXME: To merge:
+# /usr/bin/fasClient from fas
+# API from Will Woods
+# API from MyFedora
+
 class FASError(Exception):
     '''FAS Error'''
     pass
@@ -192,6 +197,37 @@ class AccountSystem(BaseClient):
 
         return people
 
+    def get_config(self, username, application, attribute):
+        '''Return the config entry for the key values.
+
+        Arguments:
+        :username: Username of the person
+        :application: Application for which the config is set
+        :attribute: Attribute key to lookup
+
+        Returns:
+        The unicode string that describes the value.
+        '''
+        request = self.send_request('configs/%s/%s/%s', auth=True)
+        if request and 'config' in request:
+            return request['config']
+        else:
+            return None
+        pass
+
+    def get_configs_like(self, username, application, pattern):
+        '''Return the config entry for the key values.
+
+        Arguments:
+        :username: Username of the person
+        :application: Application for which the config is set
+        :attribute: Attribute key:
+
+        Returns:
+        A dict of keys mapped to unicode strings that are the values.
+        '''
+        pass
+
     def user_gencert(self):
         '''Generate a cert for a user'''
         try:
@@ -203,7 +239,7 @@ class AccountSystem(BaseClient):
         return "%(cert)s\n%(key)s" % request
 
     def verify_password(self, username, password):
-        '''Return whether the username and password pair match are valid.
+        '''Return whether the username and password pair are valid.
         
         Arguments:
         :username: username to try authenticating
