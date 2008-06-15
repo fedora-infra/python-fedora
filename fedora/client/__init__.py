@@ -39,8 +39,15 @@ class AppError(FedoraServiceError):
     '''Error condition that the server is passing back to the client.'''
     pass
 
-from baseclient import BaseClient
-from proxyclient import ProxyClient
+### FIXME: when porting to py3k syntax, no need for try: except
+# pylint: disable-msg=W0611,W0403
+try:
+    from .baseclient import BaseClient
+    from .proxyclient import ProxyClient
+except SyntaxError:
+    from baseclient import BaseClient
+    from proxyclient import ProxyClient
+# pylint: enable-msg=W0611,W0403
 
 __all__ = ('FedoraServiceError', 'ServerError', 'AuthError', 'AppError',
         'ProxyClient', 'BaseClient',)

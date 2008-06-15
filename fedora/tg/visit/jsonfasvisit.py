@@ -8,9 +8,9 @@ import Cookie
 from turbogears import config
 from turbogears.visit.api import Visit, BaseVisitManager
 
-from fedora.client import BaseClient
+from fedora.client import ProxyClient
 
-from fedora import _
+from fedora import _, __version__
 
 import logging
 log = logging.getLogger("turbogears.identity.savisit")
@@ -24,9 +24,13 @@ class JsonFasVisitManager(BaseVisitManager):
     '''
     fas_url = config.get('fas.url', 'https://admin.fedoraproject.org/admin/fas')
     cookie_name = config.get('visit.cookie.name', 'tg-visit')
+    fas = None
 
     def __init__(self, timeout, debug=None):
         self.debug = debug or False
+        if not self.fas:
+            self.fas = ProxyClient(self.fas_url, debug=self.debug,
+                    useragent='JsonFasVisitManager/%s' % __version__)
         BaseVisitManager.__init__(self, timeout)
 
     def create_model(self):
@@ -43,11 +47,11 @@ class JsonFasVisitManager(BaseVisitManager):
         '''
         # Hit any URL in fas2 with the visit_key set.  That will call the
         # new_visit method in fas2
-        fas = BaseClient(self.fas_url, self.debug)
-        fas._session_cookie = Cookie.SimpleCookie()
-        fas._session_cookie[self.cookie_name] = visit_key
-        fas.send_request('', auth=True)
-        return Visit(fas._session_cookie[self.cookie_name].value, True)
+        old_cookie = Cookie.SimpleCookie()
+        old_cookie[self.cookie_name] = visit_key
+        session_cookie, data = self.fas.send_request('',
+                auth_params={'cookie': old_cookie})
+        return Visit(session_cookie[self.cookie_name].value, True)
 
     def visit_for_key(self, visit_key):
         '''
@@ -56,10 +60,10 @@ class JsonFasVisitManager(BaseVisitManager):
         '''
         # Hit any URL in fas2 with the visit_key set.  That will call the
         # new_visit method in fas2
-        fas = BaseClient(self.fas_url, self.debug)
-        fas._session_cookie = Cookie.SimpleCookie()
-        fas._session_cookie[self.cookie_name] = visit_key
-        fas.send_request('', auth=True)
+        old_cookie = Cookie.SimpleCookie()
+        old_cookie[self.cookie_name] = visit_key
+        session_cookie, data = fas.send_request('',
+                auth_params={'cookie': old_cookie})
         # Knowing what happens in turbogears/visit/api.py when this is called,
         # we can shortcircuit this step and avoid a round trip to the FAS
         # server.
@@ -68,17 +72,16 @@ class JsonFasVisitManager(BaseVisitManager):
         #     return None
         # # Hitting FAS has already updated the visit.
         # return Visit(visit_key, False)
-        if visit_key != fas._session_cookie[self.cookie_name].value:
-            return Visit(fas._session_cookie[self.cookie_name].value, True)
+        if visit_key != session_cookie[self.cookie_name].value:
+            return Visit(session_cookie[self.cookie_name].value, True)
         else:
             return Visit(visit_key, False)
 
     def update_queued_visits(self, queue):
         '''Update the visit information on the server'''
-        fas = BaseClient(self.fas_url, self.debug)
+        # Hit any URL in fas with each visit_key to update the sessions
         for visit_key in queue:
             log.info(_('updating visit (%s)'), visit_key)
-            fas._session_cookie = Cookie.SimpleCookie()
-            fas._session_cookie[self.cookie_name] = visit_key
+            old_cookie = Cookie.SimpleCookie()
+            old_cookie[self.cookie_name] = visit_key
             fas.send_request('', auth=True)
-            fas.send_request()

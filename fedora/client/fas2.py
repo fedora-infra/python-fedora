@@ -21,7 +21,7 @@
 '''
 Provide a client module for talking to the Fedora Account System.
 '''
-from fedora.client import BaseClient, AuthError, FedoraServiceError
+from fedora.client import BaseClient, ProxyClient, AuthError, FedoraServiceError
 
 ### FIXME: To merge:
 # /usr/bin/fasClient from fas
@@ -44,10 +44,29 @@ class AccountSystem(BaseClient):
     other details so you can concentrate on the methods that are important to
     your program.
     '''
+    proxy = None
     def __init__(self, base_url='https://admin.fedoraproject.org/accounts/',
-            username=None, password=None, debug=False):
-        super(AccountSystem, self).__init__(base_url=base_url,
-                username=username, password=password, debug=debug)
+            *args, **kwargs):
+        '''Create the AccountSystem client object.
+
+        Keyword Arguments:
+        :base_url: Base of every URL used to contact the server.  Defalts to
+            the Fedora PackageDB instance.
+        :useragent: useragent string to use.  If not given, default to
+            "Fedora BaseClient/VERSION"
+        :debug: If True, log debug information
+        :username: username for establishing authenticated connections
+        :password: password to use with authenticated connections
+        :session_cookie: user's session_cookie to connect to the server
+        :cache_session: if set to true, cache the user's session cookie on the
+            filesystem between runs.
+        '''
+        super(AccountSystem, self).__init__(base_url, args, kwargs)
+        # We need a single proxy for the class to verify username/passwords
+        # against.
+        if not self.proxy:
+            self.proxy = ProxyClient(base_url, useragent, debug)
+
         # Preseed a list of FAS accounts with bugzilla addresses
         # This allows us to specify a different email for bugzilla than is
         # in the FAS db.  It is a hack, however, until FAS has a field for the
@@ -213,6 +232,7 @@ class AccountSystem(BaseClient):
             return request['config']
         else:
             return None
+        ### FIXME: Finish writing me on the client and the server
         pass
 
     def get_configs_like(self, username, application, pattern):
@@ -226,6 +246,7 @@ class AccountSystem(BaseClient):
         Returns:
         A dict of keys mapped to unicode strings that are the values.
         '''
+        ### FIXME: Finish writing me on the client and the server
         pass
 
     def user_gencert(self):
@@ -240,18 +261,18 @@ class AccountSystem(BaseClient):
 
     def verify_password(self, username, password):
         '''Return whether the username and password pair are valid.
-        
+
         Arguments:
         :username: username to try authenticating
         :password: password for the user
 
         Returns: True if the username/password are valid.  False otherwise.
         '''
-        as_user = BaseClient(self.base_url, username, password)
         try:
             # This will attempt to authenticate to the account system and
             # raise an AuthError if the password and username don't match. 
-            as_user._authenticate(force=True)
+            self.proxy.send_request('/',
+                    auth_params={'username': username, 'password': password})
         except AuthError:
             return False
         except:

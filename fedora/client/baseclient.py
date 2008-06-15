@@ -18,6 +18,8 @@
 # Red Hat Author(s): Luke Macken <lmacken@redhat.com>
 #                    Toshio Kuratomi <tkuratom@redhat.com>
 #
+'''Command line client for a user to interact with a Fedora Service.'''
+
 import os
 import stat
 from os import path
@@ -32,7 +34,13 @@ log = logging.getLogger(__name__)
 SESSION_FILE = path.join(path.expanduser('~'), '.fedora_session')
 
 from fedora.client import AuthError
-from fedora.client import ProxyClient
+### FIXME: when porting to py3k syntax, no need for try: except
+# pylint: disable-msg=W0403
+try:
+    from .proxyclient import ProxyClient
+except SyntaxError:
+    from proxyclient import ProxyClient
+# pylint: enable-msg=W0403
 
 class BaseClient(ProxyClient):
     '''
@@ -60,13 +68,10 @@ class BaseClient(ProxyClient):
                 debug=debug)
         self.username = username
         self.password = password
+        self.cache_session = cache_session
+        self._session_cookie = None
         if session_cookie:
             self.session_cookie = session_cookie
-        else:
-            self._load_session()
-
-        if username and password and not self.session_cookie:
-            self._authenticate(force=True)
 
     def __load_cookies(self):
         '''load cookie data from a file.
@@ -126,7 +131,7 @@ class BaseClient(ProxyClient):
         multiple users.
         '''
         # Start with the previous users
-        if self.username:
+        if self.cache_session and self.username:
             save = self.__load_cookies()
             save[self.username] = session_cookie
             # Save the cookies to the filesystem
@@ -192,11 +197,13 @@ class BaseClient(ProxyClient):
         auth_params = {'username': self.username, 'password': self.password,
                 'cookie': self.session_cookie}
         # Remove empty params
-        map(auth_params.__delitem__, (key for key, value in
-                auth_params.items() if not value))
+        # pylint: disable-msg=W0104
+        [auth_params.__delitem__(key) for key, value in auth_params.items()
+                if not value]
+        # pylint: enable-msg=W0104
 
         session_cookie, data = super(BaseClient, self).send_request(method,
-                req_params=req_params, auth_params=auth_params)
+                req_params = req_params, auth_params = auth_params)
         # In case the server returned a new session cookie to us
         if self.session_cookie != session_cookie:
             self.session_cookie = session_cookie

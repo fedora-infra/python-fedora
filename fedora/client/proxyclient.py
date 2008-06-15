@@ -18,6 +18,8 @@
 # Red Hat Author(s): Luke Macken <lmacken@redhat.com>
 #                    Toshio Kuratomi <tkuratom@redhat.com>
 #
+'''Implement a class that sets up simple communication to a Fedora Service.'''
+
 import Cookie
 import urllib
 import urllib2
@@ -27,14 +29,20 @@ from urlparse import urljoin
 from fedora import __version__
 from fedora import _
 
+from fedora.client import AuthError, ServerError, AppError
+
 log = logging.getLogger(__name__)
 
 class ProxyClient(object):
+    # pylint: disable-msg=R0903
     '''
-    A client to a Fedora Service.  This class is optimized for use as a proxy
-    multiple users to a service.  The ProxyClient is designed to be threadsafe
-    so that code can instantiate one instance of the class and use it for
-    multiple requests for different users from different threads.
+    A client to a Fedora Service.  This class is optimized to proxy multiple
+    users to a service.  ProxyClient is designed to be threadsafe so that
+    code can instantiate one instance of the class and use it for multiple
+    requests for different users from different threads.
+
+    If you want something that can manage one user's connection to a Fedora
+    Service, then look into using BaseClient instead.
     '''
     def __init__(self, base_url, useragent=None, debug=False):
         '''Create a client configured for a particular service.
@@ -68,8 +76,9 @@ class ProxyClient(object):
         return False
 
     def __set_debug(self, debug=False):
-        '''Set to return debugging information.
-        '''
+        '''Change debug level.'''
+        # pylint: disable-msg=E1103
+        # Logger and RootLogger actually do have setLevel() method
         if debug:
             log.setlevel(logging.DEBUG)
             self._log_handler.setLevel(logging.DEBUG)
@@ -115,9 +124,9 @@ class ProxyClient(object):
         if auth_params:
             cookie = None
             username = None
-            if cookie in auth_params:
+            if 'cookie' in auth_params:
                 session_cookie = auth_params['cookie']
-            if username in auth_params and password in auth_params:
+            if 'username' in auth_params and 'password' in auth_params:
                 username = auth_params['username']
                 password = auth_params['password']
             elif username in auth_params or password in auth_params:
