@@ -77,13 +77,14 @@ which you can catch in order to prompt for a new username and password::
         client.password = getpass.getpass('Retype password for %s: ' % username)
         collectionData = client.send_request('/collections', auth=True)
 
-Note that although you can set the ``username`` and ``password`` as shown
-above you do have to be careful in cases where your application is
-multithreaded or simply processes requests for more than one user with the
-same BaseClient_.  In those cases, you can accidentally overwrite the
-``username`` and ``password`` between two requests.  To avoid this, make sure
-you instantiate a separate BaseClient_ for every thread of control or for
-every request you handle.
+.. warning::
+    Note that although you can set the ``username`` and ``password`` as shown
+    above you do have to be careful in cases where your application is
+    multithreaded or simply processes requests for more than one user with the
+    same BaseClient_.  In those cases, you can accidentally overwrite the
+    ``username`` and ``password`` between two requests.  To avoid this, make
+    sure you instantiate a separate BaseClient_ for every thread of control or
+    for every request you handle.
 
 The ``useragent`` parameter is useful for identifying in log files that
 your script is calling the server rather than another.  The default value is
@@ -136,7 +137,7 @@ include Fedora, Fedora EPEL, Fedora OLPC, and Red Hat Linux in the output and
 ``collectionVersion`` which specifies which version of the distribution to
 output for.
 
-The URL constructed by BaseClient_ to the server could beexpressed as[#]_::
+The URL constructed by BaseClient_ to the server could be expressed as[#]_::
 
     https://admin.fedoraproject.org/pkgdb/package/name/python-fedora/?collectionName=Fedora&collectionVersion=9
 
