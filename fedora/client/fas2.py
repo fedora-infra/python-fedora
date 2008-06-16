@@ -21,7 +21,8 @@
 '''
 Provide a client module for talking to the Fedora Account System.
 '''
-from fedora.client import BaseClient, ProxyClient, AuthError, FedoraServiceError
+from fedora.client import BaseClient, ProxyClient, \
+        AuthError, AppError, FedoraServiceError
 
 ### FIXME: To merge:
 # /usr/bin/fasClient from fas
@@ -129,8 +130,8 @@ class AccountSystem(BaseClient):
     def group_by_id(self, group_id):
         '''Returns a group object based on its id'''
         params = {'id': int(group_id)}
-        request = self.send_request('json/group_by_id', auth=True,
-                req_params=params)
+        request = self.send_request('json/group_by_id', auth = True,
+                req_params = params)
         if request['success']:
             return request['group']
         else:
@@ -156,8 +157,8 @@ class AccountSystem(BaseClient):
     def group_by_name(self, groupname):
         '''Returns a group object based on its name'''
         params = {'groupname': groupname}
-        request = self.send_request('json/group_by_name', auth=True,
-                req_params=params)
+        request = self.send_request('json/group_by_name', auth = True,
+                req_params = params)
         if request['success']:
             return request['group']
         else:
@@ -166,8 +167,8 @@ class AccountSystem(BaseClient):
     def person_by_username(self, username):
         '''Returns a person object based on its username'''
         params = {'username': username}
-        request = self.send_request('json/person_by_username', auth=True,
-                req_params=params)
+        request = self.send_request('json/person_by_username', auth = True,
+                req_params = params)
         person = request['person']
         if request['success']:
             if person['id'] in self.__bugzilla_email:
@@ -227,27 +228,35 @@ class AccountSystem(BaseClient):
         Returns:
         The unicode string that describes the value.
         '''
-        request = self.send_request('configs/%s/%s/%s', auth=True)
-        if request and 'config' in request:
-            return request['config']
-        else:
-            return None
-        ### FIXME: Finish writing me on the client and the server
-        pass
+        request = self.send_request('configs/%s/%s/%s' %
+                (username, application, attribute), auth=True)
+        if 'exc' in request:
+            raise AppError(name = request['exc'], message = request['tg_flash'])
+        return request['configs'][0].value
 
-    def get_configs_like(self, username, application, pattern):
-        '''Return the config entry for the key values.
+    def get_configs_like(self, username, application, pattern=u'*'):
+        '''Return the config entries that match the keys and the pattern.
 
         Arguments:
         :username: Username of the person
         :application: Application for which the config is set
-        :attribute: Attribute key:
+        :pattern: A pattern to select values for.  This accepts * as a
+            wildcard character. Default='*'
 
         Returns:
-        A dict of keys mapped to unicode strings that are the values.
+        A dict mapping ``attribute`` to ``value``.
         '''
-        ### FIXME: Finish writing me on the client and the server
-        pass
+        if not isinstance(pattern, unicode) and isinstance(pattern, basestring):
+            pattern = unicode(pattern, 'utf-8', 'replace')
+        pattern = pattern.translate({ord(u'*'): ur'%'}).lower()
+
+        request = self.send_request('configs/%s/%s/%s' %
+                (username, application, pattern), auth=True)
+        if 'exc' in request:
+            raise AppError(name = request['exc'], message = request['tg_flash'])
+
+        configs = dict((cfg.attribute, cfg.value) for cfg in request['configs'])
+        return configs
 
     def user_gencert(self):
         '''Generate a cert for a user'''
