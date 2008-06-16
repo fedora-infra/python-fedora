@@ -171,7 +171,7 @@ class BaseClient(ProxyClient):
             pass
         del(self.session_cookie)
 
-    def send_request(self, method, req_params=None, auth=True):
+    def send_request(self, method, req_params=None, auth=False):
         '''Make an HTTP request to a server method.
 
         The given method is called with any parameters set in req_params.  If
