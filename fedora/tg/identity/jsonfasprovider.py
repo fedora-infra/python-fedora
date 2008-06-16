@@ -111,7 +111,8 @@ class JsonFasIdentity(BaseClient):
             # and the session cookie to be sent back to the client.
             self.visit_key = self.session_cookie[self.cookie_name].value
             response.simple_cookie[self.cookie_name] = self.visit_key
-        return super(JsonFasIdentity, self).send_request(method, req_params, auth)
+        return super(JsonFasIdentity, self).send_request(method, req_params,
+                auth)
 
     def _get_user(self):
         '''Retrieve information about the user from cache or network.'''
