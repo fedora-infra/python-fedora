@@ -31,7 +31,7 @@ from turbogears import config, identity
 
 from fedora.client import BaseClient, FedoraServiceError
 
-from fedora import _
+from fedora import _, __version__
 
 import crypt
 
@@ -68,10 +68,11 @@ class JsonFasIdentity(BaseClient):
     '''
     cookie_name = config.get('visit.cookie.name', 'tg-visit')
     fas_url = config.get('fas.url', 'https://admin.fedoraproject.org/accounts/')
+    debug = config.get('jsonfas.debug', False)
+    useragent = 'JsonFasIdentity/%s' % __version__,
+    cache_session = False
 
-    def __init__(self, visit_key, user=None, username=None, password=None,
-            debug=False):
-        super(JsonFasIdentity, self).__init__(self.fas_url, debug=debug)
+    def __init__(self, visit_key, user=None, username=None, password=None):
         if user:
             self._user = user
             self._groups = frozenset(
@@ -86,27 +87,31 @@ class JsonFasIdentity(BaseClient):
 
         # Set the cookie to the user's tg_visit key before requesting
         # authentication.  That way we link the two together.
-        self._session_cookie = Cookie.SimpleCookie()
-        self._session_cookie[self.cookie_name] = visit_key
+        session_cookie = Cookie.SimpleCookie()
+        session_cookie[self.cookie_name] = visit_key
+        super(JsonFasIdentity, self).__init__(self.fas_url,
+                useragent=self.useragent, debug=self.debug,
+                username=username, password=password,
+                session_cookie=session_cookie, cache_session=self.cache_session)
+        self.session_cookie = session_cookie
         response.simple_cookie[self.cookie_name] = visit_key
 
-        self.username = username
-        self.password = password
-        if username and password:
-            self._authenticate(force=True)
+        # Send a request so that we associate the visit_cookie with the user
+        self.send_request('', auth=True)
 
-    def _authenticate(self, force=False):
-        '''Override BaseClient so we can keep visit_key in sync.
+    def send_request(self, method, req_params=None, auth=False):
+        '''Make an HTTP Request to a server method.
+
+        We need to override the send_request provided by ``BaseClient`` to
+        keep the visit_key in sync.
         '''
-        super(JsonFasIdentity, self)._authenticate(force)
-        if self._session_cookie[self.cookie_name].value != self.visit_key:
+        if self.session_cookie[self.cookie_name].value != self.visit_key:
             # When the visit_key changes (because the old key had expired or
             # been deleted from the db) change the visit_key in our variables
             # and the session cookie to be sent back to the client.
-            self.visit_key = self._session_cookie[self.cookie_name].value
+            self.visit_key = self.session_cookie[self.cookie_name].value
             response.simple_cookie[self.cookie_name] = self.visit_key
-        return self._session_cookie
-    session = property(_authenticate)
+        return super(JsonFasIdentity, self).send_request(method, req_params, auth)
 
     def _get_user(self):
         '''Retrieve information about the user from cache or network.'''
