@@ -49,8 +49,10 @@ class JsonFasVisitManager(BaseVisitManager):
         # new_visit method in fas2
         old_cookie = Cookie.SimpleCookie()
         old_cookie[self.cookie_name] = visit_key
-        session_cookie, data = self.fas.send_request('',
+        # We only need to get the session cookie from this request
+        request_data = self.fas.send_request('',
                 auth_params={'cookie': old_cookie})
+        session_cookie = request_data[0]
         return Visit(session_cookie[self.cookie_name].value, True)
 
     def visit_for_key(self, visit_key):
@@ -62,8 +64,11 @@ class JsonFasVisitManager(BaseVisitManager):
         # new_visit method in fas2
         old_cookie = Cookie.SimpleCookie()
         old_cookie[self.cookie_name] = visit_key
-        session_cookie, data = fas.send_request('',
+        # We only need to get the session cookie from this request
+        request_data = self.fas.send_request('',
                 auth_params={'cookie': old_cookie})
+        session_cookie = request_data[0]
+
         # Knowing what happens in turbogears/visit/api.py when this is called,
         # we can shortcircuit this step and avoid a round trip to the FAS
         # server.
@@ -84,4 +89,4 @@ class JsonFasVisitManager(BaseVisitManager):
             log.info(_('updating visit (%s)'), visit_key)
             old_cookie = Cookie.SimpleCookie()
             old_cookie[self.cookie_name] = visit_key
-            fas.send_request('', auth=True)
+            self.fas.send_request('', auth=True)

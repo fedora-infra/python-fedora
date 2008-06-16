@@ -186,6 +186,8 @@ class JsonFasIdentityProvider(object):
     def __init__(self):
         # Default encryption algorithm is to use plain text passwords
         algorithm = config.get('identity.saprovider.encryption_algorithm', None)
+        # pylint: disable-msg=W0212
+        # TG does this so we shouldn't get rid of it.
         self.encrypt_password = lambda pw: \
                                     identity._encrypt_password(algorithm, pw)
 
@@ -209,6 +211,8 @@ class JsonFasIdentityProvider(object):
             groups: a set of group IDs
             permissions: a set of permission IDs
         '''
+        # pylint: disable-msg=R0201
+        # TG identity providers have this method so we can't get rid of it.
         try:
             user = JsonFasIdentity(visit_key, username = user_name,
                     password = password)
@@ -236,7 +240,10 @@ class JsonFasIdentityProvider(object):
         Returns: True if the password matches the username.  Otherwise False.
           Can return False for problems within the Account System as well.
         '''
-        
+        # pylint: disable-msg=W0613,R0201
+        # TG identity providers take user_name in case an external provider
+        # needs it so we can't get rid of it.
+        # TG identity providers have this method so we can't get rid of it.
         return user.password == crypt.crypt(password, user.password)
 
     def load_identity(self, visit_key):
@@ -251,6 +258,8 @@ class JsonFasIdentityProvider(object):
             groups: a set of group IDs
             permissions: a set of permission IDs
         '''
+        # pylint: disable-msg=R0201
+        # TG identity providers have this method so we can't get rid of it.
         return JsonFasIdentity(visit_key)
 
     def anonymous_identity(self):
@@ -261,10 +270,14 @@ class JsonFasIdentityProvider(object):
             groups: a set of group IDs
             permissions: a set of permission IDs
         '''
+        # pylint: disable-msg=R0201
+        # TG identity providers have this method so we can't get rid of it.
         return JsonFasIdentity(None)
 
     def authenticated_identity(self, user):
         '''
         Constructs Identity object for user that has no associated visit_key.
         '''
+        # pylint: disable-msg=R0201
+        # TG identity providers have this method so we can't get rid of it.
         return JsonFasIdentity(None, user)

@@ -129,7 +129,7 @@ class ProxyClient(object):
             if 'username' in auth_params and 'password' in auth_params:
                 username = auth_params['username']
                 password = auth_params['password']
-            elif username in auth_params or password in auth_params:
+            elif 'username' in auth_params or 'password' in auth_params:
                 raise AuthError, _('username and password must both be set in'
                         ' auth_params')
             if not cookie or username:

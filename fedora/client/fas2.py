@@ -65,7 +65,7 @@ class AccountSystem(BaseClient):
         # We need a single proxy for the class to verify username/passwords
         # against.
         if not self.proxy:
-            self.proxy = ProxyClient(base_url, useragent, debug)
+            self.proxy = ProxyClient(base_url, self.useragent, self.debug)
 
         # Preseed a list of FAS accounts with bugzilla addresses
         # This allows us to specify a different email for bugzilla than is
