@@ -93,7 +93,7 @@ class JsonFasIdentity(BaseClient):
                 useragent=self.useragent, debug=self.debug,
                 username=username, password=password,
                 session_cookie=session_cookie, cache_session=self.cache_session)
-        self.session_cookie = session_cookie
+
         response.simple_cookie[self.cookie_name] = visit_key
 
         # Send a request so that we associate the visit_cookie with the user
