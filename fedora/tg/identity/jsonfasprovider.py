@@ -45,24 +45,6 @@ except NameError:
     from sets import Set as set                 # pylint: disable-msg=W0622
     from sets import ImmutableSet as frozenset  # pylint: disable-msg=W0622
 
-class DictContainer(dict):
-    '''Dictionary that also works from attribute lookups.'''
-    def __init__(self, basedict):
-        super(DictContainer, self).__init__()
-        for key in basedict:
-            if type(basedict[key]) == dict:
-                self[key] = DictContainer(basedict[key])
-            else:
-                self[key] = basedict[key]
-
-    def __getattr__(self, attr):
-        try:
-            return self[attr]
-        except KeyError, e:
-            raise AttributeError, _(
-                    "'%(name)s' object has no attribute '%(attr)s'") \
-                    %{'name': self.__class__.__name__, 'attr': e.message}
-
 class JsonFasIdentity(BaseClient):
     '''Associate an identity with a person in the auth system.
     '''
@@ -139,7 +121,7 @@ class JsonFasIdentity(BaseClient):
         if not data['person']:
             self._user = None
             return None
-        self._user = DictContainer(data['person'])
+        self._user = data['person']
         self._groups = frozenset(
                 [g['name'] for g in data['person']['approved_memberships']]
                 )
