@@ -209,7 +209,7 @@ class ProxyClient(object):
         # Note: ?tg_format=json is going away in the future as the Accept
         # header should serve the same purpose in a more framework neutral
         # manner.
-        url = urljoin(self.base_url, method + '?tg_format=json')
+        url = urljoin(self.base_url, urllib.quote(method) + '?tg_format=json')
 
         response = None # the JSON that we get back from the server
         data = None     # decoded JSON via simplejson.load()
@@ -235,7 +235,7 @@ class ProxyClient(object):
             req.add_header('Cookie', session_cookie.output(attrs=[],
                 header='').strip())
 
-        log.debug(_('Creating request %(url)s') % {'url': req.get_full_url})
+        log.debug(_('Creating request %(url)s') % {'url': req.get_full_url()})
         log.debug(_('Headers: %(header)s') % {'header': req.headers})
         log.debug(_('Data: %(data)s') % {'data': req.data})
         try:
