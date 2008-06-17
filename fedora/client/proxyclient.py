@@ -218,13 +218,17 @@ class ProxyClient(object):
         req.add_header('User-agent', self.useragent)
         req.add_header('Accept', 'text/javascript')
 
+        complete_params = {}
         if req_params:
-            req.add_data(urllib.urlencode(req_params))
+            complete_params = req_params
         if username and password:
             # Adding this to the request data prevents it from being logged by
             # apache.
-            req.add_data(urllib.urlencode({'user_name': username,
-                    'password': password, 'login': 'Login'}))
+            complete_params.update({'user_name': username,
+                    'password': password, 'login': 'Login'})
+        if complete_params:
+            req.add_data(urllib.urlencode(complete_params))
+
         if session_cookie:
             # Anytime the cookie exists, send it so that visit tracking works.
             # Will also authenticate us if there's a need.
