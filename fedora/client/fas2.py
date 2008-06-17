@@ -284,7 +284,7 @@ class AccountSystem(BaseClient):
         :attribute: The name of the config key that we're setting
         :value: The value to set this to
         '''
-        request = self.send_request('configs/set/%s/%s/%s' %
+        request = self.send_request('config/set/%s/%s/%s' %
                 (username, application, attribute),
                 req_params={'value': value}, auth=True)
 
