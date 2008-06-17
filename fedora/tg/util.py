@@ -35,10 +35,10 @@ def jsonify_validation_errors():
     '''Return an error for json if validation failed.
 
     This function checks for two things:
-    
+
     1) We're expected to return json data.
     2) There were errors in the validation process.
-    
+
     If both of those are true, this function constructs a response that
     will return the validation error messages as json data.
 
