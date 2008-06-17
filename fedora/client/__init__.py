@@ -37,7 +37,10 @@ class AuthError(FedoraServiceError):
 
 class AppError(FedoraServiceError):
     '''Error condition that the server is passing back to the client.'''
-    pass
+    def __init__(self, name, message):
+        super(AppError, self).__init__(name, message)
+        self.name = name
+        self.message = message
 
 ### FIXME: when porting to py3k syntax, no need for try: except
 # pylint: disable-msg=W0611,W0403
