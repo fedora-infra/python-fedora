@@ -127,6 +127,9 @@ class AccountSystem(BaseClient):
         # the only option.
 
     # TODO: Use exceptions properly
+
+    ### Groups ###
+
     def group_by_id(self, group_id):
         '''Returns a group object based on its id'''
         params = {'id': int(group_id)}
@@ -136,6 +139,18 @@ class AccountSystem(BaseClient):
             return request['group']
         else:
             return dict()
+
+    def group_by_name(self, groupname):
+        '''Returns a group object based on its name'''
+        params = {'groupname': groupname}
+        request = self.send_request('json/group_by_name', auth = True,
+                req_params = params)
+        if request['success']:
+            return request['group']
+        else:
+            return dict()
+
+    ### People ###
 
     def person_by_id(self, person_id):
         '''Returns a person object based on its id'''
@@ -151,16 +166,6 @@ class AccountSystem(BaseClient):
             else:
                 request['person']['bugzilla_email'] = request['person']['email']
             return request['person']
-        else:
-            return dict()
-
-    def group_by_name(self, groupname):
-        '''Returns a group object based on its name'''
-        params = {'groupname': groupname}
-        request = self.send_request('json/group_by_name', auth = True,
-                req_params = params)
-        if request['success']:
-            return request['group']
         else:
             return dict()
 
@@ -217,6 +222,8 @@ class AccountSystem(BaseClient):
 
         return people
 
+    ### Configs ###
+
     def get_config(self, username, application, attribute):
         '''Return the config entry for the key values.
 
@@ -225,17 +232,22 @@ class AccountSystem(BaseClient):
         :application: Application for which the config is set
         :attribute: Attribute key to lookup
 
-        Returns:
-        The unicode string that describes the value.
+        Returns: The unicode string that describes the value.  If no entry
+            matched the username, application, and attribute then None is
+            returned.
         '''
-        request = self.send_request('configs/%s/%s/%s' %
+        request = self.send_request('configs/list/%s/%s/%s' %
                 (username, application, attribute), auth=True)
         if 'exc' in request:
             raise AppError(name = request['exc'], message = request['tg_flash'])
-        return request['configs'][0].value
+
+        return request['configs'].get(application, None)
 
     def get_configs_like(self, username, application, pattern=u'*'):
         '''Return the config entries that match the keys and the pattern.
+
+        Note: authentication on the server will prevent anyone but the user
+        or a fas admin from viewing or changing their configs.
 
         Arguments:
         :username: Username of the person
@@ -246,17 +258,33 @@ class AccountSystem(BaseClient):
         Returns:
         A dict mapping ``attribute`` to ``value``.
         '''
-        if not isinstance(pattern, unicode) and isinstance(pattern, basestring):
-            pattern = unicode(pattern, 'utf-8', 'replace')
-        pattern = pattern.translate({ord(u'*'): ur'%'}).lower()
-
-        request = self.send_request('configs/%s/%s/%s' %
+        request = self.send_request('configs/list/%s/%s/%s' %
                 (username, application, pattern), auth=True)
         if 'exc' in request:
             raise AppError(name = request['exc'], message = request['tg_flash'])
 
-        configs = dict((cfg.attribute, cfg.value) for cfg in request['configs'])
-        return configs
+        return request['configs']
+
+    def set_config(self, username, application, attribute, value):
+        '''Set a config entry in FAS for the user.
+
+        Note: authentication on the server will prevent anyone but the user
+        or a fas admin from viewing or changing their configs.
+
+        Arguments:
+        :username: Username of the person
+        :application: Application for which the config is set
+        :attribute: The name of the config key that we're setting
+        :value: The value to set this to
+        '''
+        request = self.send_request('configs/set/%s/%s/%s' %
+                (username, application, attribute),
+                req_params={'value': value}, auth=True)
+
+        if 'exc' in request:
+            raise AppError(name = request['exc'], message = request['tg_flash'])
+
+    ### Certs ###
 
     def user_gencert(self):
         '''Generate a cert for a user'''
@@ -267,6 +295,8 @@ class AccountSystem(BaseClient):
         if not request['cla']:
             raise CLAError
         return "%(cert)s\n%(key)s" % request
+
+    ### Passwords ###
 
     def verify_password(self, username, password):
         '''Return whether the username and password pair are valid.
