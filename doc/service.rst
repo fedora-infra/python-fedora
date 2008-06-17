@@ -276,7 +276,7 @@ in the ``error_handler`` method::
 
     class mycontroller(RootController):
 
-        @expose(template='my.templates.errorpage')
+        @expose(template='my.templates.errorpage', allow_json=True)
         def no_numbers(self, data):
             errors = fedora.tg.util.jsonify_validation_errors()
             if errors:
@@ -285,7 +285,7 @@ in the ``error_handler`` method::
             # the errorpage template
             pass
 
-        @expose(template='my.templates.amplifypage')
+        @expose(template='my.templates.amplifypage', allow_json=True)
         @error_handler('no_numbers')
         @validate(form=amplify_form)
         def amplify(self, data):
