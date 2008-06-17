@@ -64,8 +64,9 @@ class BaseClient(ProxyClient):
         '''
         self.useragent = useragent or 'Fedora BaseClient/%(version)s' % {
                 'version': __version__}
-        super(BaseClient, self).__init__(base_url, useragent=useragent,
+        super(BaseClient, self).__init__(base_url, useragent=self.useragent,
                 debug=debug)
+
         self.username = username
         self.password = password
         self.cache_session = cache_session

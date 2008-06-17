@@ -23,6 +23,7 @@ Provide a client module for talking to the Fedora Account System.
 '''
 from fedora.client import BaseClient, ProxyClient, \
         AuthError, AppError, FedoraServiceError
+from fedora import __version__
 
 ### FIXME: To merge:
 # /usr/bin/fasClient from fas
@@ -62,7 +63,10 @@ class AccountSystem(BaseClient):
         :cache_session: if set to true, cache the user's session cookie on the
             filesystem between runs.
         '''
-        super(AccountSystem, self).__init__(base_url, args, kwargs)
+        if 'useragent' not in kwargs:
+            kwargs['useragent'] = 'Fedora Account System Client/%s' \
+                    % __version__
+        super(AccountSystem, self).__init__(base_url, *args, **kwargs)
         # We need a single proxy for the class to verify username/passwords
         # against.
         if not self.proxy:
@@ -236,12 +240,15 @@ class AccountSystem(BaseClient):
             matched the username, application, and attribute then None is
             returned.
         '''
-        request = self.send_request('configs/list/%s/%s/%s' %
+        request = self.send_request('config/list/%s/%s/%s' %
                 (username, application, attribute), auth=True)
         if 'exc' in request:
             raise AppError(name = request['exc'], message = request['tg_flash'])
 
-        return request['configs'].get(application, None)
+        # Return the value if it exists, else None.
+        if 'configs' in request and attribute in request['configs']:
+            return request['configs'][attribute]
+        return None
 
     def get_configs_like(self, username, application, pattern=u'*'):
         '''Return the config entries that match the keys and the pattern.
@@ -258,7 +265,7 @@ class AccountSystem(BaseClient):
         Returns:
         A dict mapping ``attribute`` to ``value``.
         '''
-        request = self.send_request('configs/list/%s/%s/%s' %
+        request = self.send_request('config/list/%s/%s/%s' %
                 (username, application, pattern), auth=True)
         if 'exc' in request:
             raise AppError(name = request['exc'], message = request['tg_flash'])

@@ -143,10 +143,8 @@ class ProxyClient(object):
 
     def __set_debug(self, debug=False):
         '''Change debug level.'''
-        # pylint: disable-msg=E1103
-        # Logger and RootLogger actually do have setLevel() method
         if debug:
-            log.setlevel(logging.DEBUG)
+            log.setLevel(logging.DEBUG)
             self._log_handler.setLevel(logging.DEBUG)
         else:
             log.setLevel(logging.ERROR)
@@ -187,9 +185,10 @@ class ProxyClient(object):
         Returns: a tuple of data and session_cookie returned from the server.
         '''
         # Check whether we need to authenticate for this request
+        session_cookie = None
+        username = None
+        password = None
         if auth_params:
-            cookie = None
-            username = None
             if 'cookie' in auth_params:
                 session_cookie = auth_params['cookie']
             if 'username' in auth_params and 'password' in auth_params:
@@ -198,7 +197,7 @@ class ProxyClient(object):
             elif 'username' in auth_params or 'password' in auth_params:
                 raise AuthError, _('username and password must both be set in'
                         ' auth_params')
-            if not cookie or username:
+            if not (session_cookie or username):
                 raise AuthError, _('No known authentication methods specified:'
                         ' set "cookie" in auth_params or set both username and'
                         ' password in auth_params')
@@ -215,7 +214,6 @@ class ProxyClient(object):
         response = None # the JSON that we get back from the server
         data = None     # decoded JSON via simplejson.load()
 
-        log.debug(_('Creating request %(url)s') % {'url': url})
         req = urllib2.Request(url)
         req.add_header('User-agent', self.useragent)
         req.add_header('Accept', 'text/javascript')
@@ -233,6 +231,9 @@ class ProxyClient(object):
             req.add_header('Cookie', session_cookie.output(attrs=[],
                 header='').strip())
 
+        log.debug(_('Creating request %(url)s') % {'url': req.get_full_url})
+        log.debug(_('Headers: %(header)s') % {'header': req.headers})
+        log.debug(_('Data: %(data)s') % {'data': req.data})
         try:
             response = urllib2.urlopen(req)
         except urllib2.HTTPError, e:

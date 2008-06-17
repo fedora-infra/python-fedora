@@ -22,6 +22,8 @@
 ### FIXME: Functionality to merge:
 # cvs-int's CVSROOT/admin/pkgdb-client
 
+from fedora import __version__
+
 ### FIXME: when porting to py3k syntax, no need for try: except
 # pylint: disable-msg=W0403
 try:
@@ -48,7 +50,9 @@ class PackageDBClient(BaseClient):
         :cache_session: if set to true, cache the user's session cookie on the
             filesystem between runs.
         '''
-        super(PackageDBClient, self).__init__(base_url, args, kwargs)
+        if 'useragent' not in kwargs:
+            kwargs['useragent'] = 'Fedora PackageDB Client/%s' % __version__
+        super(PackageDBClient, self).__init__(base_url, *args, **kwargs)
 
     def get_owners(self, package, collection=None, collection_ver=None):
         '''Retrieve the ownership information for a package.
