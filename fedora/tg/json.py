@@ -78,7 +78,7 @@ class SABase(object):
         else:
             prop_list = {}
         # pylint: enable-msg=E1101
-       
+
         # Load all the columns from the table
         for column in sqlalchemy.orm.object_mapper(self).iterate_properties:
             if isinstance(column, sqlalchemy.orm.properties.ColumnProperty):
@@ -108,7 +108,7 @@ class SABase(object):
 @jsonify.when("isinstance(obj, sqlalchemy.orm.query.Query)")
 def jsonify_sa_select_results(obj):
     '''Transform selectresults into lists.
-    
+
     The one special thing is that we bind the special json_props into each
     descendent.  This allows us to specify a json_props on the toplevel
     query result and it will pass to all of its children.
@@ -127,7 +127,7 @@ def jsonify_sa_select_results(obj):
         isinstance(obj, sqlalchemy.ext.associationproxy._AssociationList))''')
 def jsonify_salist(obj):
     '''Transform SQLAlchemy InstrumentedLists into json.
-    
+
     The one special thing is that we bind the special json_props into each
     descendent.  This allows us to specify a json_props on the toplevel
     query result and it will pass to all of its children.
@@ -142,7 +142,7 @@ def jsonify_salist(obj):
         )''')
 def jsonify_saresult(obj):
     '''Transform SQLAlchemy ResultProxy into json.
-    
+
     The one special thing is that we bind the special json_props into each
     descendent.  This allows us to specify a json_props on the toplevel
     query result and it will pass to all of its children.
@@ -151,4 +151,3 @@ def jsonify_saresult(obj):
         for element in obj:
             element.json_props = obj.json_props
     return [list(row) for row in obj]
-
