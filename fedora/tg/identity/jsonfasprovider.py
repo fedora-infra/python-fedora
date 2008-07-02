@@ -50,8 +50,7 @@ class JsonFasIdentity(BaseClient):
     '''
     cookie_name = config.get('visit.cookie.name', 'tg-visit')
     fas_url = config.get('fas.url', 'https://admin.fedoraproject.org/accounts/')
-    debug = config.get('jsonfas.debug', False)
-    useragent = 'JsonFasIdentity/%s' % __version__,
+    useragent = 'JsonFasIdentity/%s' % __version__
     cache_session = False
 
     def __init__(self, visit_key, user=None, username=None, password=None):
@@ -61,25 +60,30 @@ class JsonFasIdentity(BaseClient):
                     [g['name'] for g in user['approved_memberships']]
                     )
         self.visit_key = visit_key
-        # It's allowed to use a null value for a visit_key if we know we're
-        # generating an anonymous user.  The json interface doesn't handle
-        # that, though, and there's no reason for us to make it.
-        if not visit_key:
-            return
+        if visit_key:
+            # Set the cookie to the user's tg_visit key before requesting
+            # authentication.  That way we link the two together.
+            session_cookie = Cookie.SimpleCookie()
+            session_cookie[self.cookie_name] = visit_key
+        else:
+            session_cookie = None
 
-        # Set the cookie to the user's tg_visit key before requesting
-        # authentication.  That way we link the two together.
-        session_cookie = Cookie.SimpleCookie()
-        session_cookie[self.cookie_name] = visit_key
+        debug = config.get('jsonfas.debug', False)
         super(JsonFasIdentity, self).__init__(self.fas_url,
-                useragent=self.useragent, debug=self.debug,
+                useragent=self.useragent, debug=debug,
                 username=username, password=password,
                 session_cookie=session_cookie, cache_session=self.cache_session)
+
+        if self.debug:
+            import inspect
+            caller = inspect.getouterframes(inspect.currentframe())[1][3]
+            log.debug('JsonFasIdentity.__init__ caller: %s' % caller)
 
         response.simple_cookie[self.cookie_name] = visit_key
 
         # Send a request so that we associate the visit_cookie with the user
         self.send_request('', auth=True)
+        log.debug('Leaving JsonFasIdentity.__init__')
 
     def send_request(self, method, req_params=None, auth=False):
         '''Make an HTTP Request to a server method.
@@ -87,12 +91,14 @@ class JsonFasIdentity(BaseClient):
         We need to override the send_request provided by ``BaseClient`` to
         keep the visit_key in sync.
         '''
+        log.debug('entering jsonfas send_request')
         if self.session_cookie[self.cookie_name].value != self.visit_key:
             # When the visit_key changes (because the old key had expired or
             # been deleted from the db) change the visit_key in our variables
             # and the session cookie to be sent back to the client.
             self.visit_key = self.session_cookie[self.cookie_name].value
             response.simple_cookie[self.cookie_name] = self.visit_key
+        log.debug('leaving jsonfas send_request')
         return super(JsonFasIdentity, self).send_request(method, req_params,
                 auth)
 
@@ -105,6 +111,12 @@ class JsonFasIdentity(BaseClient):
             # User hasn't already been set
             pass
         # pylint: enable-msg=W0704
+
+        if self.debug:
+            import inspect
+            caller = inspect.getouterframes(inspect.currentframe())[1][3]
+            log.debug('JSONFASPROVIDER.send_request caller: %s' % caller)
+
         # Attempt to load the user. After this code executes, there *WILL* be
         # a _user attribute, even if the value is None.
         # Query the account system URL for our given user's sessionCookie
@@ -130,6 +142,11 @@ class JsonFasIdentity(BaseClient):
 
     def _get_user_name(self):
         '''Return the username for the user.'''
+        if self.debug:
+            import inspect
+            caller = inspect.getouterframes(inspect.currentframe())[1][3]
+            log.debug('JsonFasProvider._get_user_name caller: %s' % caller)
+
         if not self.user:
             return None
         return self.user['username']

@@ -121,18 +121,21 @@ class ProxyClient(object):
             "Fedora ProxyClient/VERSION"
         :debug: If True, log debug information
         '''
-        if base_url[-1] != '/':
-            base_url = base_url +'/'
-        self.base_url = base_url
-        self.useragent = useragent or 'Fedora ProxyClient/%(version)s' % {
-                'version': __version__}
-
         # Setup our logger
         self._log_handler = logging.StreamHandler()
         self.debug = debug
         format = logging.Formatter("%(message)s")
         self._log_handler.setFormatter(format)
         log.addHandler(self._log_handler)
+
+        log.debug('proxyclient.__init__:entered')
+        if base_url[-1] != '/':
+            base_url = base_url +'/'
+        self.base_url = base_url
+        self.useragent = useragent or 'Fedora ProxyClient/%(version)s' % {
+                'version': __version__}
+
+        log.debug('proxyclient.__init__:exited')
 
     def __get_debug(self):
         '''Return whether we have debug logging turned on.
@@ -184,6 +187,7 @@ class ProxyClient(object):
 
         Returns: a tuple of data and session_cookie returned from the server.
         '''
+        log.debug('proxyclient.send_request: entered')
         # Check whether we need to authenticate for this request
         session_cookie = None
         username = None
@@ -270,4 +274,5 @@ class ProxyClient(object):
         if 'exc' in data:
             raise AppError(name = data['exc'], message = data['tg_flash'])
 
+        log.debug('proxyclient.send_request: exited')
         return new_session_cookie, DictContainer(data)
