@@ -23,14 +23,7 @@
 # cvs-int's CVSROOT/admin/pkgdb-client
 
 from fedora import __version__
-
-### FIXME: when porting to py3k syntax, no need for try: except
-# pylint: disable-msg=W0403
-try:
-    from .baseclient import BaseClient
-except SyntaxError:
-    from baseclient import BaseClient
-# pylint: enable-msg=W0403
+from fedora.client import BaseClient
 
 class PackageDBClient(BaseClient):
     '''Provide an easy to use interface to the PackageDB.'''

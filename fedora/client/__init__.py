@@ -42,15 +42,8 @@ class AppError(FedoraServiceError):
         self.name = name
         self.message = message
 
-### FIXME: when porting to py3k syntax, no need for try: except
-# pylint: disable-msg=W0611,W0403
-try:
-    from .baseclient import BaseClient
-    from .proxyclient import ProxyClient
-except SyntaxError:
-    from baseclient import BaseClient
-    from proxyclient import ProxyClient
-# pylint: enable-msg=W0611,W0403
+from fedora.client.proxyclient import ProxyClient
+from fedora.client.baseclient import BaseClient
 
 __all__ = ('FedoraServiceError', 'ServerError', 'AuthError', 'AppError',
         'ProxyClient', 'BaseClient',)

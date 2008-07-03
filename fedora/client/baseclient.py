@@ -33,14 +33,7 @@ log = logging.getLogger(__name__)
 
 SESSION_FILE = path.join(path.expanduser('~'), '.fedora_session')
 
-from fedora.client import AuthError
-### FIXME: when porting to py3k syntax, no need for try: except
-# pylint: disable-msg=W0403
-try:
-    from .proxyclient import ProxyClient
-except SyntaxError:
-    from proxyclient import ProxyClient
-# pylint: enable-msg=W0403
+from fedora.client import AuthError, ProxyClient
 
 class BaseClient(ProxyClient):
     '''
