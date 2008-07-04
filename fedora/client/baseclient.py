@@ -25,6 +25,7 @@ import stat
 from os import path
 import logging
 import cPickle as pickle
+import warnings
 
 from fedora import __version__
 from fedora import _
@@ -165,7 +166,7 @@ class BaseClient(ProxyClient):
             pass
         del(self.session_cookie)
 
-    def send_request(self, method, req_params=None, auth=False):
+    def send_request(self, method, req_params=None, auth=False, **kwargs):
         '''Make an HTTP request to a server method.
 
         The given method is called with any parameters set in req_params.  If
@@ -178,6 +179,28 @@ class BaseClient(ProxyClient):
         :req_params: Extra parameters to send to the server.
         :auth: If True perform auth to the server, else do not.
         '''
+        # Check for deprecated arguments.  This section can go once we hit 0.4
+        if len(kwargs) >= 1:
+            for arg in kwargs:
+                # If we have extra args, raise an error
+                if arg != 'input':
+                    raise TypeError('send_request() got an unexpected'
+                            " keyword argument '%s'" % arg)
+            if req_params:
+                # We don't want to allow input if req_params was already given
+                raise TypeError('send_request() got an unexpected keyword'
+                        " argument 'input'")
+            if len(kwargs) > 1:
+                # We shouldn't get here
+                raise TypeError('send_request() got an unexpected keyword'
+                        ' argument')
+
+            # Error checking over, set req_params to the value in input
+            warnings.warn(_("send_request(input) is deprecated.  Use"
+                    " send_request(req_params) instead"), DeprecationWarning,
+                    stacklevel=2)
+            req_params = kwargs['input']
+
         if auth == True:
             # We need something to do auth.  Check user/pass
             if not self.username and self.password:
