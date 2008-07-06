@@ -1,4 +1,3 @@
-#!/usr/bin/python -tt
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; version 2 of the License.
@@ -15,197 +14,246 @@
 # Copyright 2007  Red Hat, Inc
 # Authors: Luke Macken <lmacken@redhat.com>
 
+"""
+This module provides a client interface for bodhi.
+"""
+
 import re
-import sys
 import koji
 import logging
-import urllib2
 
 from yum import YumBase
 from textwrap import wrap
 from os.path import join, expanduser, exists
-from getpass import getpass, getuser
-from optparse import OptionParser
 from ConfigParser import ConfigParser
 
-from fedora.client import BaseClient, AuthError, ServerError
+from fedora.client import BaseClient
 
-__version__ = '$Revision: $'[11:-2]
+__version__ = '0.5.0'
 __description__ = 'Command line tool for interacting with Bodhi'
 
-BODHI_URL = 'http://publictest10.fedoraproject.org/updates/'
 log = logging.getLogger(__name__)
+
+
+class BodhiClientException(Exception):
+    pass
 
 
 class BodhiClient(BaseClient):
 
-    def new(self, builds, opts):
-        log.info("Creating new update for %s" % builds)
-        params = {
-                'builds'  : builds,
-                'release' : opts.release.upper(),
-                'type'    : opts.type,
-                'bugs'    : opts.bugs,
-                'notes'   : opts.notes
-        }
-        if hasattr(opts, 'request') and getattr(opts, 'request'):
-            params['request'] = opts.request
-        data = self.send_request('save', auth=True, req_params=params)
-        log.info(data['tg_flash'])
-        if data.has_key('update'):
-            log.info(data['update'])
+    def __init__(self, base_url='https://admin.fedoraproject.org/bodhi/',
+                 useragent='Fedora Bodhi Client/%s' % __version__,
+                 *args, **kwargs):
+        """ The BodhiClient constructor.
 
-    def edit(self, builds, opts):
-        log.info("Editing update for %s" % builds)
-        params = {
-                'builds'  : builds,
-                'edited'  : builds,
-                'release' : opts.release.upper(),
-                'type'    : opts.type,
-                'bugs'    : opts.bugs,
-                'notes'   : opts.notes
-        }
-        if hasattr(opts, 'request') and getattr(opts, 'request'):
-            params['request'] = opts.request
-        data = self.send_request('save', auth=True, req_params=params)
-        log.info(data['tg_flash'])
-        if data.has_key('update'):
-            log.info(data['update'])
+        Arguments:
+        :base_url: Base of every URL used to contact the server.  Defaults to
+            the Fedora Bodhi instance.
+        :useragent: useragent string to use.  If not given, default to
+            "Fedora BaseClient/VERSION"
+        :username: username for establishing authenticated connections
+        :password: password to use with authenticated connections
+        :session_cookie: user's session_cookie to connect to the server
+        :cache_session: if set to True, cache the user's session cookie on the
+            filesystem between runs.
+        :debug: If True, log debug information
 
-    def list(self, opts, package=None, showcount=True):
-        args = { 'tg_paginate_limit' : opts.limit }
+        """
+        super(BodhiClient, self).__init__(base_url, useragent=useragent,
+                                          *args, **kwargs)
+
+    def save(self, builds, release, type, bugs, notes, request='testing',
+             suggest_reboot=False, inheritance=False, autokarma=True,
+             stable_karma=3, unstable_karma=-3, edited=''):
+        """ Save an update.
+
+        This entails either creating a new update, or editing an existing one.
+        To edit an existing update, you must specify the update title in
+        the ``edited`` keyword argument.
+
+        Arguments:
+        :builds: A list of koji builds for this update.
+        :release: The release that this update is for.
+        :type: The type of this update: ``security``, ``bugfix``,
+            ``enhancement``, and ``newpackage``.
+        :bugs: A list of Red Hat Bugzilla ID's associated with this update.
+        :notes: Details as to why this update exists.
+        :request: Request for this update to change state, either to
+            ``testing``, ``stable``, ``unpush``, ``obsolete`` or None.
+        :suggest_reboot: Suggest that the user reboot after update.
+        :inheritance: Follow koji build inheritance, which may result in this
+            update being pushed out to additional releases.
+        :autokarma: Allow bodhi to automatically change the state of this
+            update based on the ``karma`` from user feedback.  It will
+            push your update to ``stable`` once it reaches the ``stable_karma``
+            and unpush your update when reaching ``unstable_karma``.
+        :stable_karma: The upper threshold for marking an update as ``stable``.
+        :unstable_karma: The lower threshold for unpushing an update.
+        :edited: The update title of the existing update that we are editing.
+
+        """
+        return self.send_request('save', auth=True, req_params={
+                'suggest_reboot': suggest_reboot,
+                'unstable_karma': unstable_karma,
+                'stable_karma': stable_karma,
+                'inheritance': inheritance,
+                'autokarma': autokarma,
+                'release': release.upper(),
+                'request': request,
+                'builds': builds,
+                'edited': edited,
+                'notes': notes,
+                'type': type,
+                'bugs': bugs,
+                })
+
+    def list(self, release=None, status=None, type=None, bugs=None,
+             request=None, mine=None, package=None, limit=10):
+        """ Query bodhi for a list of updates.
+
+        Arguments:
+        :builds: A list of koji builds for this update.  Any new builds will
+            be created, and any removed builds will be removed from the update
+            specified by ``edited``.
+        :release: The release that this update is for.
+        :type: The type of this update: ``security``, ``bugfix``,
+            ``enhancement``, and ``newpackage``.
+        :bugs: A list of Red Hat Bugzilla ID's associated with this update.
+        :notes: Details as to why this update exists.
+        :request: Request for this update to change state, either to
+            ``testing``, ``stable``, ``unpush``, ``obsolete`` or None.
+        :mine: If True, only query the users updates.
+        :package: A package name or a name-version-release.
+        :limit: The maximum number of updates to display.
+
+        """
+        params = {
+                'tg_paginate_limit': limit,
+                'release': release,
+                'package': package,
+                'request': request,
+                'status': status,
+                'type': type,
+                'bugs': bugs,
+                'mine': mine,
+                }
         auth = False
-        for arg in ('release', 'status', 'type', 'bugs', 'request', 'mine'):
-            if getattr(opts, arg):
-                args[arg] = getattr(opts, arg)
-        if package:
-            args['package'] = package[0]
-        if args.has_key('mine'):
+        if params['mine']:
             auth = True
-        data = self.send_request('list', req_params=args, auth=auth)
-        if data.has_key('tg_flash') and data['tg_flash']:
-            log.error(data['tg_flash'])
-            sys.exit(-1)
-        if data['num_items'] > 1:
-            from pprint import pprint
-            for update in data['updates']:
-                pprint(update)
-                log.info(' %s\t%s\t%s' % (update['title'], update['type'],
-                                          update['status']))
-        else:
-            for update in data['updates']:
-                log.info(self._update_str(update))
-            if showcount:
-                log.info("%d updates found (%d shown)" % (data['num_items'],
-                                                          len(data['updates'])))
+        for key, value in params.items():
+            if not value:
+                del params[key]
+        return self.send_request('list', req_params=params, auth=auth)
+
+    def request(self, update, request):
+        """ Request an update state change.
+
+        Arguments:
+        :update: The title of the update
+        :request: The request (``testing``, ``stable``, ``obsolete``)
+
+        """
+        return self.send_request('request', auth=True, req_params={
+                'update': update,
+                'action': request,
+                })
+
+    def comment(self, update, comment, karma=0):
+        """ Add a comment to an update.
+
+        Arguments:
+        :update: The title of the update comment on.
+        :comment: The text of the comment.
+        :karma: The karma of this comment (-1, 0, 1)
+
+        """
+        return self.send_request('comment', auth=True, req_params={
+                'karma': karma,
+                'title': update,
+                'text': comment,
+                })
 
     def delete(self, update):
-        params = { 'update' : update }
-        data = self.send_request('delete', req_params=params, auth=True)
-        log.info(data['tg_flash'])
+        """ Delete an update.
 
-    def __koji_session(self):
-        config = ConfigParser()
-        if exists(join(expanduser('~'), '.koji', 'config')):
-            config.readfp(open(join(expanduser('~'), '.koji', 'config')))
-        else:
-            config.readfp(open('/etc/koji.conf'))
-        cert = expanduser(config.get('koji', 'cert'))
-        ca = expanduser(config.get('koji', 'ca'))
-        serverca = expanduser(config.get('koji', 'serverca'))
-        session = koji.ClientSession(config.get('koji', 'server'))
-        session.ssl_login(cert=cert, ca=ca, serverca=serverca)
-        return session
+        Arguments
+        :update: The title of the update to delete
 
-    koji_session = property(fget=__koji_session)
-
-    def candidates(self, opts):
         """
-        Display a list of candidate builds which could potentially be pushed
-        as updates.  This is a very expensive operation.
+        return self.send_request('delete', auth=True,
+                                 req_params={'update': update})
+
+    def candidates(self):
+        """ Get a list list of update candidates.
+
+        This method is a generator that returns a list of koji builds that
+        could potentially be pushed as updates.
         """
-        data = self.send_request("dist_tags")
+        if not self.username:
+            raise BodhiClientException, 'You must specify a username'
+        data = self.send_request('dist_tags')
         for tag in [tag + '-updates-candidate' for tag in data['tags']]:
             for build in self.koji_session.listTagged(tag, latest=True):
-                if build['owner_name'] == opts.username:
-                    log.info("%-40s %-20s" % (build['nvr'], build['tag_name']))
+                if build['owner_name'] == self.username:
+                    yield build
 
-    def testable(self, opts):
-        """
-        Display a list of installed updates that you have yet to test
-        and provide feedback for.
-        """
-        fedora = file('/etc/fedora-release').readlines()[0].split()[2]
-        if fedora == '7': fedora = 'c7'
-        tag = 'dist-f%s-updates-testing' % fedora
-        builds = self.koji_session.listTagged(tag, latest=True)
+    def testable(self):
+        """ Get a list of installed testing updates.
 
+        This method is a generate that yields packages that you currently
+        have installed that you have yet to test and provide feedback for.
+
+        """
         yum = YumBase()
         yum.doConfigSetup(init_plugins=False)
-
+        fedora = file('/etc/fedora-release').readlines()[0].split()[2]
+        tag = 'dist-f%s-updates-testing' % fedora
+        builds = self.koji_session.listTagged(tag, latest=True)
         for build in builds:
             pkgs = yum.rpmdb.searchNevra(name=build['name'],
-                                         epoch=None,
                                          ver=build['version'],
                                          rel=build['release'],
+                                         epoch=None,
                                          arch=None)
             if len(pkgs):
-                self.list(opts, package=[build['nvr']], showcount=False)
-
-    def comment(self, opts, update):
-        params = {
-                'text'  : opts.comment,
-                'karma' : opts.karma,
-                'title' : update
-        }
-        data = self.send_request('comment', req_params=params, auth=True)
-        if data['tg_flash']:
-            log.info(data['tg_flash'])
-        if data.has_key('update'):
-            log.info(data['update'])
-
-    def request(self, opts, update):
-        params = { 'action' : opts.request, 'update' : update }
-        data = self.send_request('request', req_params=params, auth=True)
-        log.info(data['tg_flash'])
-        if data.has_key('update'):
-            log.info(data['update'])
+                yield self.list(package=[build['nvr']])
 
     def masher(self):
-        data = self.send_request('admin/masher', auth=True)
-        log.info(data['masher_str'])
+        """ Return the status of bodhi's masher """
+        return self.send_request('admin/masher', auth=True)
 
-    def push(self, opts):
-        data = self.send_request('admin/push', auth=True)
-        log.info("[ %d Pending Requests ]" % len(data['updates']))
-        for status in ('testing', 'stable', 'obsolete'):
-            updates = filter(lambda x: x['request'] == status, data['updates'])
-            if len(updates):
-                log.info("\n" + status.title() + "\n========")
-                for update in updates:
-                    log.info("%s" % update['title'])
+    def push(self):
+        """ Return a list of requests """
+        return self.send_request('admin/push', auth=True)
 
-        ## Confirm that we actually want to push these updates
-        sys.stdout.write("\nPush these updates? [n]")
-        sys.stdout.flush()
-        yes = sys.stdin.readline().strip()
-        if yes.lower() in ('y', 'yes'):
-            log.info("Pushing!")
-            self.send_request('admin/mash', auth=True, req_params={
-                    'updates' : [u['title'] for u in data['updates']] })
+    def push_updates(self, updates):
+        """ Push a list of updates.
 
-    def parse_file(self,opts):
+        Arguments
+        :updates: A list of update titles to ``push``.
+
+        """
+        return self.send_request('admin/mash', auth=True,
+                                 req_params={'updates': updates})
+
+    def parse_file(self, input_file):
+        """ Parse an update template file.
+
+        Arguments
+        :input_file: The filename of the update template.
+
+        Returns a dictionary of parsed update values that can be directly
+        passed to the ``save`` method.
+
+        """
         regex = re.compile(r'^(BUG|bug|TYPE|type|REQUEST|request)=(.*$)')
-        types = {'S':'security','B':'bugfix','E':'enhancement'}
-        requests = {'T':'testing','S':'stable'}
-        def _split(var, delim):
-            if var: return var.split(delim)
-            else: return []
-        notes = _split(opts.notes,'\n')
-        bugs = _split(opts.bugs,',')
-        log.info("Reading from %s " % opts.input_file)
-        if exists(opts.input_file):
-            f = open(opts.input_file)
+        types = {'S': 'security', 'B': 'bugfix', 'E': 'enhancement'}
+        requests = {'T': 'testing', 'S': 'stable'}
+        notes = []
+        bugs = []
+        log.info("Reading from %s " % input_file)
+        if exists(input_file):
+            f = open(input_file)
             lines = f.readlines()
             f.close()
             for line in lines:
@@ -213,29 +261,35 @@ class BodhiClient(BaseClient):
                     continue
                 src = regex.search(line)
                 if src:
-                    cmd,para = tuple(src.groups())
+                    cmd, para = tuple(src.groups())
                     cmd = cmd.upper()
                     if cmd == 'BUG':
                         para = [p for p in para.split(' ')]
                         bugs.extend(para)
                     elif cmd == 'TYPE':
-                        opts.type = types[para.upper()]
+                        type = types[para.upper()]
                     elif cmd == 'REQUEST':
-                        opts.request = requests[para.upper()]
-                else: # This is notes
+                        request = requests[para.upper()]
+                else: # The remaining data is considered to be the notes
                     notes.append(line.strip())
         if notes:
-            opts.notes = "\r\n".join(notes)
+            notes = "\r\n".join(notes)
         if bugs:
-            opts.bugs = ','.join(bugs)
-        log.debug("Type : %s" % opts.type)
-        log.debug("Request: %s" % opts.request)
-        log.debug('Bugs:\n%s' % opts.bugs)
-        log.debug('Notes:\n%s' % opts.notes)
+            bugs = ','.join(bugs)
+        log.debug("Type : %s" % type)
+        log.debug("Request: %s" % request)
+        log.debug('Bugs:\n%s' % bugs)
+        log.debug('Notes:\n%s' % notes)
         self.file_parsed = True
+        return dict(type=type, request=request, bugs=bugs, notes=notes)
 
-    def _update_str(self, update):
-        """ Return a string representation of a given update """
+    def update_str(self, update):
+        """ Return a string representation of a given update dictionary.
+
+        Arguments
+        :update: An update dictionary, acquired by the ``list`` method.
+
+        """
         val = "%s\n%s\n%s\n" % ('=' * 80, '\n'.join(
             wrap(update['title'].replace(',', ', '), width=80,
                  initial_indent=' '*5, subsequent_indent=' '*5)), '=' * 80)
@@ -283,141 +337,25 @@ class BodhiClient(BaseClient):
                     comments.append('\n'.join(text))
             val += '\n'.join(comments).lstrip() + '\n'
         if update['updateid']:
-            val += "\n  %s\n" % ('%s%s/%s' % (BODHI_URL,
+            val += "\n  %s\n" % ('%s%s/%s' % (self.base_url,
                                               update['release']['name'],
                                               update['updateid']))
         else:
-            val += "\n  %s\n" % ('%s%s' % (BODHI_URL, update['title']))
+            val += "\n  %s\n" % ('%s%s' % (self.base_url, update['title']))
         return val
 
-def setup_logger():
-    global log
-    sh = logging.StreamHandler()
-    level = opts.verbose and logging.DEBUG or logging.INFO
-    log.setLevel(level)
-    sh.setLevel(level)
-    format = logging.Formatter("%(message)s")
-    sh.setFormatter(format)
-    log.addHandler(sh)
+    def __koji_session(self):
+        """ Return an authenticated koji session """
+        config = ConfigParser()
+        if exists(join(expanduser('~'), '.koji', 'config')):
+            config.readfp(open(join(expanduser('~'), '.koji', 'config')))
+        else:
+            config.readfp(open('/etc/koji.conf'))
+        cert = expanduser(config.get('koji', 'cert'))
+        ca = expanduser(config.get('koji', 'ca'))
+        serverca = expanduser(config.get('koji', 'serverca'))
+        session = koji.ClientSession(config.get('koji', 'server'))
+        session.ssl_login(cert=cert, ca=ca, serverca=serverca)
+        return session
 
-
-if __name__ == '__main__':
-    usage = "usage: %prog [options] [build|package]"
-    parser = OptionParser(usage, description=__description__,
-                          version=__version__)
-
-    ## Actions
-    parser.add_option("-n", "--new", action="store_true", dest="new",
-                      help="Submit a new update")
-    parser.add_option("-e", "--edit", action="store_true", dest="edit",
-                      help="Edit an existing update")
-    parser.add_option("-M", "--masher", action="store_true", dest="masher",
-                      help="Display the status of the Masher (releng only)")
-    parser.add_option("-P", "--push", action="store_true", dest="push",
-                      help="Display and push any pending updates (releng only)")
-    parser.add_option("-d", "--delete", action="store_true", dest="delete",
-                      help="Delete an update")
-    parser.add_option("", "--file", action="store", type="string",
-                      dest="input_file", help="Get update details from a file")
-    parser.add_option("-m", "--mine", action="store_true", dest="mine",
-                      help="Display a list of your updates")
-    parser.add_option("-C", "--candidates", action="store_true",
-                      help="Display a list of your update candidates",
-                      dest="candidates")
-    parser.add_option("-T", "--testable", action="store_true",
-                      help="Display a list of installed updates that you "
-                           "could test and provide feedback for")
-    parser.add_option("-c", "--comment", action="store", dest="comment",
-                      help="Comment on an update")
-    parser.add_option("-k", "--karma", action="store", dest="karma",
-                      metavar="[+1|-1]", default=0,
-                      help="Give karma to a specific update (default: 0)")
-    parser.add_option("-R", "--request", action="store", dest="request",
-                      metavar="STATE", help="Request that an action be "
-                      "performed on an update [testing|stable|unpush|obsolete]")
-
-    ## Details
-    parser.add_option("-s", "--status", action="store", type="string",
-                      dest="status", help="List [pending|testing|stable|"
-                      "obsolete] updates")
-    parser.add_option("-b", "--bugs", action="store", type="string",
-                      dest="bugs", help="Specify any number of Bugzilla IDs "
-                      "(--bugs=1234,5678)", default="")
-    parser.add_option("-r", "--release", action="store", type="string",
-                      dest="release", help="Specify a release [F7|F8]")
-    parser.add_option("-N", "--notes", action="store", type="string",
-                      dest="notes", help="Update notes", default="")
-    parser.add_option("-t", "--type", action="store", type="string",
-                      help="Update type [bugfix|security|enhancement]",
-                      dest="type")
-    parser.add_option("-u", "--username", action="store", type="string",
-                      dest="username", default=getuser(),
-                      help="Login username for bodhi")
-
-    ## Output
-    parser.add_option("-v", "--verbose", action="store_true", dest="verbose",
-                      help="Show debugging messages")
-    parser.add_option("-l", "--limit", action="store", type="int", dest="limit",
-                      default=10, help="Maximum number of updates to return "
-                      "(default: 10)")
-
-    (opts, args) = parser.parse_args()
-    setup_logger()
-
-    bodhi = BodhiClient(BODHI_URL, username=opts.username, password=None,
-                        debug=opts.verbose)
-
-    def verify_args(args):
-        if not args and len(args) != 1:
-            log.error("Please specifiy a comma-separated list of builds")
-            sys.exit(-1)
-
-    while True:
-        try:
-            if opts.new:
-                verify_args(args)
-                if opts.input_file and not hasattr(bodhi, 'file_parsed'):
-                    bodhi.parse_file(opts)
-                if not opts.release:
-                    log.error("Error: No release specified (ie: -r F8)")
-                    sys.exit(-1)
-                if not opts.type:
-                    log.error("Error: No update type specified (ie: -t bugfix)")
-                    sys.exit(-1)
-                bodhi.new(args[0], opts)
-            elif opts.edit:
-                verify_args(args)
-                bodhi.edit(args[0], opts)
-            elif opts.request:
-                verify_args(args)
-                bodhi.request(opts, args[0])
-            elif opts.delete:
-                verify_args(args)
-                bodhi.delete(args[0])
-            elif opts.push:
-                bodhi.push(opts)
-            elif opts.masher:
-                bodhi.masher()
-            elif opts.testable:
-                bodhi.testable(opts)
-            elif opts.candidates:
-                bodhi.candidates(opts)
-            elif opts.comment or opts.karma:
-                if not len(args) or not args[0]:
-                    log.error("Please specify an update to comment on")
-                    sys.exit(-1)
-                bodhi.comment(opts, args[0])
-            elif opts.status or opts.bugs or opts.release or opts.type or \
-                 opts.mine or args:
-                bodhi.list(opts, args)
-            else:
-                parser.print_help()
-            break
-        except AuthError:
-            bodhi.password = getpass('Password for %s: ' % opts.username)
-        except ServerError, e:
-            log.error(e.message)
-            sys.exit(-1)
-        except urllib2.URLError, e:
-            log.error(e)
-            sys.exit(-1)
+    koji_session = property(fget=__koji_session)
