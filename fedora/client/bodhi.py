@@ -30,8 +30,6 @@ from ConfigParser import ConfigParser
 from fedora.client import BaseClient
 
 __version__ = '0.5.0'
-__description__ = 'Command line tool for interacting with Bodhi'
-
 log = logging.getLogger(__name__)
 
 
