@@ -4,11 +4,11 @@ NEWS
 
 :Authors: Toshio Kuratomi, Luke Macken
 :Date: 2 June 2008
-:Version: 0.2.99.12
+:Version: 0.3
 
----------
-0.2.99.12
----------
+---
+0.3
+---
 * New fedora.client.bodhi API
 * Lots of bugfixes
 
