@@ -11,6 +11,16 @@ NEWS
 ---
 * New fedora.client.bodhi API
 * Lots of bugfixes
+* New fedora.client.ProxyClient class that can be used for writing proxies and
+  lower level clients that talk to Fedora Services.
+  - BaseClient rewritten to run on top of ProxyClient.
+* Rearranging of many modules.  The old names should still work but issue a
+  DeprecationWarning and the new location to import the module from.
+* Documentation on how to build a Fedora Service that will work well with
+  BaseClient and documentation on building apps with BaseClient.
+  - Note that present Fedora Services (Bodhi, PackageDB, MirrorManager, FAS2)
+    will need to be updated to conform to this spec.  Until that happens, not
+    everything (notably, error handling) will work 100% correctly.
 
 Incompatibilities
 =================
@@ -39,7 +49,9 @@ Incompatibilities
   will be removing input in 0.4.x.
 * Restructuring of Exceptions in BaseClient
   * New base exception is FedoraServiceError if you want to catch that.
-* Rename accounts.fas2.AccountSystem.authenticate() to verify_password()
+* Movement of fedora.tg.client to fedora.client
+* Movement of fedora.accounts.fas2 to fedora.client.fas2
+* Rename fedora.client.fas2.AccountSystem.authenticate() to verify_password()
 
 -----------
 0.2.99.11.1
