@@ -1,3 +1,279 @@
+2008-07-08  Toshio Kuratomi <badger@Clingman> - r248
+* NEWS: Fill in more detail on what to expect.
+
+2008-07-08  Toshio Kuratomi <badger@Clingman> - r247
+* NEWS: Note which incompatibilities are merely deprecated rather than
+  will fail to work with the old methods.
+
+2008-07-08  Luke Macken <lmacken@redhat.com> - r246
+Update the news, release module, and spec for a 0.3 release
+
+2008-07-08  Luke Macken <lmacken@redhat.com> - r245
+Remove a stray '}' character
+
+2008-07-08  Toshio Kuratomi <badger@Clingman> - r244
+Merge Luke's changes from the repository.
+
+2008-07-08  Toshio Kuratomi <badger@Clingman> - r243
+* fedora/client/baseclient.py: _get_session_cookie(): Return an empty string
+  when no username is specified.
+  - send_request(): If only one of username or password do not send either to
+    proxyclient.send_request().
+
+2008-07-05  Luke Macken <lmacken@redhat.com> - r242
+Remove the unnecessary __description__ from the bodhi module
+
+2008-07-05  Luke Macken <lmacken@redhat.com> - r241
+Give the fedora.client.bodhi module a real API
+
+2008-07-05  Luke Macken <lmacken@redhat.com> - r240
+Add a fedora.client.bodhi module
+
+2008-07-05  Toshio Kuratomi <badger@Clingman> - r239
+* fedora/client/fas2.py: Add Roozbeh to the list of bugzilla emails that
+  differ.
+
+2008-07-03  Toshio Kuratomi <badger@Clingman> - r238
+* fedora/client/baseclient.py: deprecate input in send_request() instead of
+  just getting rid of it.
+ 
+--------------This line and the following will be ignored --------------
+
+modified:
+  fedora/client/baseclient.py
+
+2008-07-03  Toshio Kuratomi <badger@Clingman> - r237
+* fedora/tg/json.py: Issue a DeprecationWarning instead of outright failing if
+  a program hasn't been ported from using jsonProps to json_props.
+
+2008-07-02  Luke Macken <lmacken@redhat.com> - r236
+Switch to using absolute imports, as the .relative style throw SyntaxErrors 
+that cannot be caught in Python2.4.
+
+2008-07-02  Toshio Kuratomi <badger@Clingman> - r235
+Add a bunch of log messages to debug why we're creating more than one identity
+per request.
+
+2008-06-21  Toshio Kuratomi <badger@Clingman> - r234
+Clean up whitespace.
+
+2008-06-19  Toshio Kuratomi <badger@Clingman> - r233
+Fix the import so we're importing fas2 instead of clients in general.
+
+2008-06-17  Toshio Kuratomi <badger@Clingman> - r232
+Fix a bug when someone sends a non-valid url string to send_request().
+
+2008-06-17  Toshio Kuratomi <badger@Clingman> - r231
+Fix URL for config set.
+
+2008-06-17  Toshio Kuratomi <badger@Clingman> - r230
+Fix passing req_params to send_request.
+
+2008-06-17  Toshio Kuratomi <badger@Clingman> - r229
+* Lots of new fixes to the ProxyClient/BaseClient/configs stack.
+
+2008-06-17  Toshio Kuratomi <badger@Clingman> - r228
+Add an __init__ to AppError to fix saving the message.
+
+2008-06-17  Toshio Kuratomi <badger@Clingman> - r227
+* New URL for gettings configs: configs => configs/list
+* get_config(): Return None if no config was returned
+* get_configs_like(): Move unicodification and change to wildcards from
+  client to the server.
+* get_configs_like(): Move dictifying of results onto the server as well.
+* Add new method set_configs()
+* Comment headers for different parts of AccountSystem class
+* Move group_by_name near the other group methods.
+
+2008-06-17  Toshio Kuratomi <badger@Clingman> - r226
+Whitespace normalization.
+
+2008-06-17  Toshio Kuratomi <badger@Clingman> - r225
+* doc/service.rst: Add allow_json=True to the validation example
+
+2008-06-16  Toshio Kuratomi <badger@Clingman> - r224
+Finish get_config() and get_configs_like().
+
+2008-06-16  Toshio Kuratomi <badger@Clingman> - r223
+Remove DictContainer from here as it should now be taken care of in the base
+class.
+
+2008-06-16  Toshio Kuratomi <badger@Clingman> - r222
+Add DictContainer to proxyclient.  This means that anything returning data via
+send_request() will now return a DictContainer.
+
+2008-06-16  Toshio Kuratomi <badger@Clingman> - r221
+Split a line for a pylint warning.
+
+2008-06-16  Toshio Kuratomi <badger@Clingman> - r220
+* Few changes for the port that weren't in the last commit.
+
+2008-06-16  Toshio Kuratomi <badger@Clingman> - r219
+* Port jsonfas identity provider to new BaseClient.
+
+2008-06-16  Toshio Kuratomi <badger@Clingman> - r218
+Switch BaseClient.sen_request()'s default for auth to False to match previous
+versions (and common sense).
+
+2008-06-16  Toshio Kuratomi <badger@Clingman> - r217
+Fix remaining pylint messages including three that were errors.
+
+2008-06-15  Toshio Kuratomi <badger@Clingman> - r216
+* Fix a bunch of new pylint issues including two actual errors where variable
+  names had to be updated.
+
+2008-06-14  Toshio Kuratomi <badger@Clingman> - r215
+* Move fas2 from fedora.accounts to fedora.client.
+* Add a pkgdb.py module.
+
+2008-06-14  Toshio Kuratomi <badger@Clingman> - r214
+Start using sphinx markup for some things.
+
+2008-06-14  Toshio Kuratomi <badger@Clingman> - r213
+* Add empty definitions of config functions to fas2.py.  We need to fill these
+  in for myfedora to work.
+
+2008-06-14  Toshio Kuratomi <badger@Clingman> - r212
+* Move BaseClient and ProxyClient to their own files.  Import them into
+__init__ and use __all__ to make them appear properly.
+
+2008-06-14  Toshio Kuratomi <badger@Clingman> - r211
+* fedora/tg/client.py: Make DeprecationWarning a little more clear.
+
+2008-06-14  Toshio Kuratomi <badger@Clingman> - r210
+* fedora/client/__init__.py: Implement threadsafe ProxyClient and reimplement
+  BaseClient on top of that.
+
+2008-06-14  Toshio Kuratomi <badger@Clingman> - r209
+* doc/service.rst: Note about login via POST parameters and @expose("json") bug
+  being fixed.
+
+2008-06-09  Toshio Kuratomi <badger@Clingman> - r208
+* doc/Makefile, doc/conf.py, doc/index.rst: MAke documentation buildable via
+  sphinx.
+
+2008-06-04  Toshio Kuratomi <badger@Clingman> - r207
+* Fixdocumentation for change in BaseClient parameter names.
+
+2008-06-03  Toshio Kuratomi <badger@Clingman> - r206
+* NEWS: List of incompatibilities between 0.2.99.11.1 and 0.3.
+
+2008-06-03  Toshio Kuratomi <badger@Clingman> - r205
+* camelCase and pylint changes.  All variables and parameters have been
+  converted from camelCae to foo_bar conventions per PEP8.
+  - A few remaining pylint warnings have been dealt with.
+
+2008-06-02  Toshio Kuratomi <badger@Clingman> - r204
+Make the AttributeError raisefd by DictContainer more verbose.
+
+2008-06-01  Toshio Kuratomi <badger@Clingman> - r203
+Rearrange imports of gettext and release because of dependencies in
+circular import.
+
+2008-06-01  Toshio Kuratomi <badger@Clingman> - r202
+Merge changes from the stable branch.
+
+2008-06-01  Toshio Kuratomi <badger@Clingman> - r201
+Add docstrings.
+
+2008-06-01  Toshio Kuratomi <badger@Clingman> - r200
+One more file that has gettext unification.
+
+2008-06-01  Toshio Kuratomi <badger@Clingman> - r199
+Unify gettext setup in fedora/__init__.py.  Now any module can
+from fedora import _ and use that for marking translatable strings.
+
+2008-06-01  Toshio Kuratomi <badger@Clingman> - r198
+Remove redundant definition of Fedora Service.
+
+2008-06-01  Toshio Kuratomi <badger@Clingman> - r197
+Update README for changes in the API leading to 0.3 and the documentation that
+now lives in doc/service.rst
+
+2008-06-01  Toshio Kuratomi <badger@Clingman> - r196
+* fedora/accounts/fas2.py: Rename of send_request()'s input to reqParam.
+
+2008-06-01  Toshio Kuratomi <badger@Clingman> - r195
+* fedora/client/__init__.py: Remove munging of input => reqParams as we are
+  now passing reqParams.
+
+2008-06-01  Toshio Kuratomi <badger@Clingman> - r194
+* Finish documentation of BaseClient.
+* Spell check BaseClient and Service documentation.
+
+2008-05-30  Toshio Kuratomi <badger@Clingman> - r193
+* fedora/tg/util.py: request_format(): Simplify the logic a little
+  - jsonify_validation_errors(): Fix bug where we tracebacked instead of
+    returning None when json was requested but no errors were returned.
+    This won't be triggered with TG-1.0.4.4 but will be triggered in
+    TG-1.0.4.5 or later.
+
+2008-05-30  Toshio Kuratomi <badger@Clingman> - r192
+* fedora/client/__init__.py: Rename input => reqParams in send_request() as
+  we're breaking backwards compatibility anyway.
+
+2008-05-28  Toshio Kuratomi <badger@Clingman> - r191
+* doc/service.rst: Documentation on jsonify_validation_errors().
+
+2008-05-28  Toshio Kuratomi <badger@Clingman> - r190
+* fedora/tg/util.py: New function jsonify_validation_errors() that returns
+  a dictionary for returning from a @error_handler() method if validation
+  errors occurrred and we're expecting json.
+
+2008-05-15  Luke Macken <lmacken@x300> - r189
+Fix a syntax error in fedora.tg.json
+
+2008-05-14  Toshio Kuratomi <badger@Clingman> - r188
+* fedora/tg/util.py: Fix up handling of requests.   New algorithm:
+  first check tg_format because people are more apt to use the query param
+  when they want to override other things going on.  Then use Accept Header.
+
+2008-05-12  Toshio Kuratomi <badger@Clingman> - r187
+* Merge from python-fedora-stable
+
+2008-05-12  Toshio Kuratomi <badger@Clingman> - r186
+* python-fedora.spec: Change download URL to fedorahosted.org.
+
+2008-05-12  Toshio Kuratomi <badger@Clingman> - r185
+* fedora/tg/json.py: Add a jsonify for ResultProxy.
+
+2008-05-12  Toshio Kuratomi <badger@Clingman> - r184
+* fedora/client/__init__.py: Fix to not traceback in case of a corrupted
+  session file.
+  - Fix to set permissions to only the user on the session file.
+
+2008-04-23  Toshio Kuratomi <badger@Clingman> - r183
+* fedora/accounts/fas2.py: Add a default baseURL.  Since this is a client
+  specifically for FAS, we should give a default value for that.
+
+2008-04-23  Toshio Kuratomi <badger@Clingman> - r182
+* Merge bz fixes from -stable.
+
+2008-04-20  Toshio Kuratomi <badger@Clingman> - r181
+* fedora/client/__init__.py: New exception hierarchy.  FedoraServiceError is
+  at the base.  AuthError is for authentication problems, ServerError for
+  unexpected errors from the request or the http server returning an error.
+  AppError is for exceptions raised by the Fedora Service that the application
+  could handle.
+    + BaseClient::send_request(): Process exceptions using the new standard
+      instead of our old kludges.
+  - Add a useragent property that lets the script set a custom useragent
+    string.
+* fedora/accounts/fas2.py: Rename authenticate() to verify_password() since
+  that's the actual usage of the function.  Use the BaseClient._authenticate()
+  function to verify the legitimacy of the username/password.
+* fedora/tg/identity/jsonfasprovider.py: Port to new BaseClient exceptions.
+
+=== 0.2.99.9 ===
+
+2008-04-20  Toshio Kuratomi <badger@Clingman> - r180
+* Bump version for 0.2.99.9 backwards compat release.
+
+=== 0.2.99.8 ===
+
+2008-04-12  Toshio Kuratomi <badger@Clingman> - r179
+* ChangeLog, NEWS: Update ChangeLog and NEWS for new release.
+
 2008-04-12  Toshio Kuratomi <badger@Clingman> - r178
 * fedora/release.py, python-fedora.spec: Bump for new release.
 
