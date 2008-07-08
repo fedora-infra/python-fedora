@@ -3,7 +3,7 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 2 June 2008
+:Date: 8 July 2008
 :Version: 0.3
 
 ---
@@ -22,7 +22,7 @@ Incompatibilities
     * __init__(): baseURL => base_url
     * _sessionCookie => _session_cookie: this is a private variable but some
       users use this anyway.  For users needing to access this, there's now
-      a more appropriate class for doing so (ProxyClass).
+      a more appropriate class for doing so (ProxyClient).
   * accounts.fas2.AccountSystem
     * group_by_id(): groupId => group_id
     * person_by_id(): personId => person_id
@@ -31,8 +31,12 @@ Incompatibilities
     * Also means accessing the variable is done via self.widget_id
   * tg.json.SABase
     * self.jsonProps => self.json_props
+      *Note*: jsonProps will still work but is Deprecated.  Please update your
+      code as we will be removing jsonProps in 0.4.x.
 * The input keyword argument to BaseClient.send_request has been
   deprecated in favor of req_params.
+  *Note*: Using input will still work in 0.3.  Please update your code as we
+  will be removing input in 0.4.x.
 * Restructuring of Exceptions in BaseClient
   * New base exception is FedoraServiceError if you want to catch that.
 * Rename accounts.fas2.AccountSystem.authenticate() to verify_password()
