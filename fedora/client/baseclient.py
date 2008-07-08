@@ -209,7 +209,7 @@ class BaseClient(ProxyClient):
             if self.username and self.password:
                 # Add the username and password and we're all set
                 auth_params['username'] = self.username
-                auth_params['password'] = self.password}
+                auth_params['password'] = self.password
             else:
                 # No?  Check for session_cookie
                 if not self.session_cookie:
