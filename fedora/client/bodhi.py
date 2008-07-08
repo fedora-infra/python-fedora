@@ -281,13 +281,24 @@ class BodhiClient(BaseClient):
         self.file_parsed = True
         return dict(type=type, request=request, bugs=bugs, notes=notes)
 
-    def update_str(self, update):
+    def update_str(self, update, minimal=False):
         """ Return a string representation of a given update dictionary.
 
         Arguments
         :update: An update dictionary, acquired by the ``list`` method.
+        :minimal: Return a minimal one-line representation of the update.
 
         """
+        if minimal:
+            val = ""
+            date = update['date_pushed'] and update['date_pushed'].split()[0] \
+                                          or update['date_submitted'].split()[0]
+            val += ' %-43s  %-11s  %-8s  %10s ' % (update['builds'][0]['nvr'],
+                                                   update['type'],
+                                                   update['status'], date)
+            for build in update['builds'][1:]:
+                val += '\n %s' % build['nvr']
+            return val
         val = "%s\n%s\n%s\n" % ('=' * 80, '\n'.join(
             wrap(update['title'].replace(',', ', '), width=80,
                  initial_indent=' '*5, subsequent_indent=' '*5)), '=' * 80)
