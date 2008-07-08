@@ -32,7 +32,7 @@ class PackageDBClient(BaseClient):
         '''Create the PackageDBClient.
 
         Keyword Arguments:
-        :base_url: Base of every URL used to contact the server.  Defalts to
+        :base_url: Base of every URL used to contact the server.  Defaults to
             the Fedora PackageDB instance.
         :useragent: useragent string to use.  If not given, default to
             "Fedora BaseClient/VERSION"
