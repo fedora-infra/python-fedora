@@ -105,8 +105,8 @@ class BodhiClient(BaseClient):
                 'bugs': bugs,
                 })
 
-    def list(self, release=None, status=None, type=None, bugs=None,
-             request=None, mine=None, package=None, limit=10):
+    def query(self, release=None, status=None, type=None, bugs=None,
+              request=None, mine=None, package=None, limit=10):
         """ Query bodhi for a list of updates.
 
         Arguments:
@@ -214,7 +214,7 @@ class BodhiClient(BaseClient):
                                          epoch=None,
                                          arch=None)
             if len(pkgs):
-                yield self.list(package=[build['nvr']])
+                yield self.query(package=[build['nvr']])
 
     def masher(self):
         """ Return the status of bodhi's masher """
