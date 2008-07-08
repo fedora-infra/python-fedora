@@ -2,13 +2,15 @@
 NEWS
 ====
 
-:Author: Toshio Kuratomi
+:Authors: Toshio Kuratomi, Luke Macken
 :Date: 2 June 2008
-:Version: 0.3
+:Version: 0.2.99.12
 
----
-0.3
----
+---------
+0.2.99.12
+---------
+* New fedora.client.bodhi API
+* Lots of bugfixes
 
 Incompatibilities
 =================
@@ -29,7 +31,8 @@ Incompatibilities
     * Also means accessing the variable is done via self.widget_id
   * tg.json.SABase
     * self.jsonProps => self.json_props
-* BaseClient.send_request() has keyword argument input renamed to req_params
+* The input keyword argument to BaseClient.send_request has been
+  deprecated in favor of req_params.
 * Restructuring of Exceptions in BaseClient
   * New base exception is FedoraServiceError if you want to catch that.
 * Rename accounts.fas2.AccountSystem.authenticate() to verify_password()
