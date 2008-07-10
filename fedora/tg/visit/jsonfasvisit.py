@@ -92,5 +92,5 @@ class JsonFasVisitManager(BaseVisitManager):
             log.info(_('updating visit (%s)'), visit_key)
             old_cookie = Cookie.SimpleCookie()
             old_cookie[self.cookie_name] = visit_key
-            self.fas.send_request('', auth=True)
+            self.fas.send_request('', auth_params={'cookie': old_cookie})
         log.debug('JsonFasVisitManager.update_queued_visits: exit')
