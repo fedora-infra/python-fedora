@@ -285,9 +285,9 @@ in the ``error_handler`` method::
             # the errorpage template
             pass
 
-        @expose(template='my.templates.amplifypage', allow_json=True)
-        @error_handler('no_numbers')
         @validate(form=amplify_form)
+        @error_handler('no_numbers')
+        @expose(template='my.templates.amplifypage', allow_json=True)
         def amplify(self, data):
             return dict(data=data.upper())
 
@@ -301,6 +301,12 @@ validation error and whether we need to return JSON data.  If both of those
 are true, it returns a dictionary with the validation errors.  This dictionary
 is appropriate for returning from the controller method in response to a
 JSON request.
+
+*Note* When defining @error_handler() order of decorators can be important.
+The short story is to always make @validate() and @error_handler() the first
+decorators of your method.  The longer version is that this is known to cause
+errors with the json request not being honored or skipping identity checks
+when the method is its own error handler.
 
 ----------------
 Expected Methods
