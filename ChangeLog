@@ -1,3 +1,18 @@
+2008-07-11  Toshio Kuratomi <badger@Clingman> - r253
+Create a function to jsonify sets.
+
+2008-07-10  Toshio Kuratomi <badger@Clingman> - r252
+Make validation errors set a flash message for both html and json.
+
+2008-07-10  Toshio Kuratomi <badger@Clingman> - r251
+Fix an unported portion of the jsonfasvisit manager.
+
+2008-07-10  Toshio Kuratomi <badger@Clingman> - r250
+Add information about a caveat to service.rst documentation.
+
+2008-07-08  Toshio Kuratomi <badger@Clingman> - r249
+* Update ChangeLog for release.
+
 2008-07-08  Toshio Kuratomi <badger@Clingman> - r248
 * NEWS: Fill in more detail on what to expect.
 
