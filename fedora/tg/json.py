@@ -174,3 +174,8 @@ def jsonify_saresult(obj):
         for element in obj:
             element.json_props = obj.jsonProps
     return [list(row) for row in obj]
+
+@jsonify.when('''(isinstance(obj, set))''')
+def jsonify_set(obj):
+    '''Transform a set into a list.'''
+    return list(obj)
