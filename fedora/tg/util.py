@@ -22,6 +22,7 @@
 '''Miscellaneous functions of use on the server.
 '''
 import cherrypy
+from turbogears import flash
 
 def request_format():
     '''Return the output format that was reqeusted
@@ -60,13 +61,24 @@ def jsonify_validation_errors():
         otherwise returns a dictionary with the error that's suitable for
         return from the controller.
     '''
+    # Check for validation errors
     errors = getattr(cherrypy.request, 'validation_errors', None)
-    if not (errors and request_format() == 'json'):
+    if not errors:
         return None
 
-    message = '\n'.join([u'%s: %s' % (param, msg) for param, msg in
+    # Set the message for both html and json output
+    format = request_format()
+    if format == 'html':
+        separator = u'<br />'
+    else:
+        separator = u'\n'
+    message = separator.join([u'%s: %s' % (param, msg) for param, msg in
         errors.items()])
+    flash(message)
 
-    # Note: explicit setting of tg_template is needed in TG < 1.0.4.4
-    # A fix has been applied for TG-1.0.4.5
-    return dict(exc='Invalid', tg_flash=message, tg_template='json')
+    # If json, return additional information to make this an exception
+    if format == 'json':
+        # Note: explicit setting of tg_template is needed in TG < 1.0.4.4
+        # A fix has been applied for TG-1.0.4.5
+        return dict(exc='Invalid', tg_template='json')
+    return None

@@ -105,11 +105,13 @@ class BaseClient(ProxyClient):
 
     def _get_session_cookie(self):
         '''Attempt to retrieve the session cookie from the filesystem.'''
-        # If none exists, return None
         if self._session_cookie:
             return self._session_cookie
-        saved_sessions = self.__load_cookies()
-        self._session_cookie = saved_sessions.get(self.username, '')
+        if not self.username:
+            self._session_cookie = ''
+        else:
+            saved_sessions = self.__load_cookies()
+            self._session_cookie = saved_sessions.get(self.username, '')
         if not self._session_cookie:
             log.debug(_('No session cached for "%s"') % self.username)
 
@@ -201,18 +203,22 @@ class BaseClient(ProxyClient):
                     stacklevel=2)
             req_params = kwargs['input']
 
+        auth_params = {'cookie': self.session_cookie}
         if auth == True:
             # We need something to do auth.  Check user/pass
-            if not self.username and self.password:
+            if self.username and self.password:
+                # Add the username and password and we're all set
+                auth_params['username'] = self.username
+                auth_params['password'] = self.password
+            else:
                 # No?  Check for session_cookie
                 if not self.session_cookie:
+                    # Not enough information to auth
                     raise AuthError, 'Auth was requested but no way to' \
                             ' perform auth was given.  Please set username' \
                             ' and password or session_cookie before calling' \
                             ' this function with auth=True'
 
-        auth_params = {'username': self.username, 'password': self.password,
-                'cookie': self.session_cookie}
         # Remove empty params
         # pylint: disable-msg=W0104
         [auth_params.__delitem__(key) for key, value in auth_params.items()

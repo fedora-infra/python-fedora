@@ -109,6 +109,8 @@ class AccountSystem(BaseClient):
                 102180: 'jesusr@redhat.com',
                 # Jeff Sheltren: jeff@osuosl.org
                 100058: 'sheltren@fedoraproject.org',
+                # Roozbeh Pournader: roozbeh@farsiweb.info
+                100350: 'roozbeh@gmail.com',
                 }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email
