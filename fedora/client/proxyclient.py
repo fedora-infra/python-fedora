@@ -21,6 +21,7 @@
 '''Implement a class that sets up simple communication to a Fedora Service.'''
 
 import Cookie
+import re
 import urllib
 import urllib2
 import logging
@@ -241,7 +242,10 @@ class ProxyClient(object):
 
         log.debug(_('Creating request %(url)s') % {'url': req.get_full_url()})
         log.debug(_('Headers: %(header)s') % {'header': req.headers})
-        log.debug(_('Data: %(data)s') % {'data': req.data})
+        if debug:
+            debug_data = re.sub(r'(&?)password[^&]\+(&?)',
+                    '\g<1>password=XXXX\g<2>', req.data)
+            log.debug(_('Data: %(data)s') % {'data': req.data})
         try:
             response = urllib2.urlopen(req)
         except urllib2.HTTPError, e:
