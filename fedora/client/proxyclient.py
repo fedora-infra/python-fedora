@@ -147,7 +147,7 @@ class ProxyClient(object):
 
     def __set_debug(self, debug=False):
         '''Change debug level.'''
-        if self.debug:
+        if debug:
             log.setLevel(logging.DEBUG)
             self._log_handler.setLevel(logging.DEBUG)
         else:
@@ -242,7 +242,7 @@ class ProxyClient(object):
 
         log.debug(_('Creating request %(url)s') % {'url': req.get_full_url()})
         log.debug(_('Headers: %(header)s') % {'header': req.headers})
-        if debug:
+        if self.debug:
             debug_data = re.sub(r'(&?)password[^&]\+(&?)',
                     '\g<1>password=XXXX\g<2>', req.data)
             log.debug(_('Data: %(data)s') % {'data': req.data})
