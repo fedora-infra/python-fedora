@@ -245,7 +245,7 @@ class ProxyClient(object):
         if self.debug:
             debug_data = re.sub(r'(&?)password[^&]\+(&?)',
                     '\g<1>password=XXXX\g<2>', req.data)
-            log.debug(_('Data: %(data)s') % {'data': req.data})
+            log.debug(_('Data: %(data)s') % {'data': debug_data})
         try:
             response = urllib2.urlopen(req)
         except urllib2.HTTPError, e:
