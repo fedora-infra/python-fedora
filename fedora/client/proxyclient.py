@@ -147,7 +147,7 @@ class ProxyClient(object):
 
     def __set_debug(self, debug=False):
         '''Change debug level.'''
-        if debug:
+        if self.debug:
             log.setLevel(logging.DEBUG)
             self._log_handler.setLevel(logging.DEBUG)
         else:
