@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.3
+Version:        0.3.1
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -49,6 +49,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/*
 
 %changelog
+* Mon Jul 14 2008 Luke Macken <lmacken@redhat.com> - 0.3.1-1
+- New upstream bugfix release
+
 * Wed Jul 02 2008 Luke Macken <lmacken@redhat.com> - 0.3-1
 - New upstream release.
 
