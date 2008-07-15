@@ -249,7 +249,10 @@ class BodhiClient(BaseClient):
         requests = {'T': 'testing', 'S': 'stable'}
         notes = []
         bugs = []
+        type_ = None
+        request = None
         log.info("Reading from %s " % input_file)
+        input_file = expanduser(input_file)
         if exists(input_file):
             f = open(input_file)
             lines = f.readlines()
@@ -265,7 +268,7 @@ class BodhiClient(BaseClient):
                         para = [p for p in para.split(' ')]
                         bugs.extend(para)
                     elif cmd == 'TYPE':
-                        type = types[para.upper()]
+                        type_ = types[para.upper()]
                     elif cmd == 'REQUEST':
                         request = requests[para.upper()]
                 else: # The remaining data is considered to be the notes
@@ -274,12 +277,13 @@ class BodhiClient(BaseClient):
             notes = "\r\n".join(notes)
         if bugs:
             bugs = ','.join(bugs)
-        log.debug("Type : %s" % type)
+        log.debug("Type : %s" % type_)
         log.debug("Request: %s" % request)
         log.debug('Bugs:\n%s' % bugs)
         log.debug('Notes:\n%s' % notes)
-        self.file_parsed = True
-        return dict(type=type, request=request, bugs=bugs, notes=notes)
+        parsed = dict(type=type_, request=request, bugs=bugs, notes=notes)
+        [parsed.__delitem__(key) for key, value in parsed.items() if not value]
+        return parsed
 
     def update_str(self, update, minimal=False):
         """ Return a string representation of a given update dictionary.
