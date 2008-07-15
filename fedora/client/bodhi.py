@@ -293,6 +293,8 @@ class BodhiClient(BaseClient):
         :minimal: Return a minimal one-line representation of the update.
 
         """
+        if isinstance(update, basestring):
+            return update
         if minimal:
             val = ""
             date = update['date_pushed'] and update['date_pushed'].split()[0] \
