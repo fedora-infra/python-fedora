@@ -67,13 +67,11 @@ def jsonify_validation_errors():
         return None
 
     # Set the message for both html and json output
+    message = u'\n'.join([u'%s: %s' % (param, msg) for param, msg in
+        errors.items()])
     format = request_format()
     if format == 'html':
-        separator = u'<br />'
-    else:
-        separator = u'\n'
-    message = separator.join([u'%s: %s' % (param, msg) for param, msg in
-        errors.items()])
+        message.translate({ord('\n'): u'<br />\n'})
     flash(message)
 
     # If json, return additional information to make this an exception
