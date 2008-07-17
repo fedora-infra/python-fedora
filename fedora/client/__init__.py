@@ -108,8 +108,17 @@ class DictContainer(dict):
         else:
             self[key] = value
 
+# We want people to be able to import fedora.client.*Client directly
+# pylint: disable-msg=W0611
 from fedora.client.proxyclient import ProxyClient
 from fedora.client.baseclient import BaseClient
+from fedora.client.fas2 import AccountSystem, FASError, CLAError
+from fedora.client.pkgdb import PkgdbClient
+from fedora.client.bodhi import BodhiClient, BodhiClientException
+# pylint: enable-msg=W0611
 
 __all__ = ('FedoraServiceError', 'ServerError', 'AuthError', 'AppError',
-        'ProxyClient', 'BaseClient', 'DictContainer')
+        'DictContainer',
+        'FASError', 'CLAError', 'BodhiClientException',
+        'ProxyClient', 'BaseClient', 'AccountSystem', 'PkgdbClient',
+        'BodhiClient')
