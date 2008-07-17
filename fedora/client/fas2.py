@@ -21,7 +21,7 @@
 '''
 Provide a client module for talking to the Fedora Account System.
 '''
-from fedora.client import BaseClient, ProxyClient, \
+from fedora.client import DictContainer, BaseClient, ProxyClient, \
         AuthError, AppError, FedoraServiceError
 from fedora import __version__
 
@@ -207,7 +207,7 @@ class AccountSystem(BaseClient):
         ### FIXME: This should be implemented on the server as a single call
         request = self.send_request('/json/user_id', auth=True)
         user_to_id = {}
-        people = {}
+        people = DictContainer()
         for person_id, username in request['people'].items():
             person_id = int(person_id)
             # change userids from string back to integer
