@@ -120,12 +120,12 @@ class DictContainer(dict):
 from fedora.client.proxyclient import ProxyClient
 from fedora.client.baseclient import BaseClient
 from fedora.client.fas2 import AccountSystem, FASError, CLAError
-from fedora.client.pkgdb import PkgdbClient
+from fedora.client.pkgdb import PackageDBClient
 from fedora.client.bodhi import BodhiClient, BodhiClientException
 # pylint: enable-msg=W0611
 
 __all__ = ('FedoraServiceError', 'ServerError', 'AuthError', 'AppError',
         'FedoraClientError', 'DictContainer',
         'FASError', 'CLAError', 'BodhiClientException',
-        'ProxyClient', 'BaseClient', 'AccountSystem', 'PkgdbClient',
+        'ProxyClient', 'BaseClient', 'AccountSystem', 'PackageDBClient',
         'BodhiClient')
