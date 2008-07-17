@@ -22,7 +22,7 @@
 Provide a client module for talking to the Fedora Account System.
 '''
 from fedora.client import DictContainer, BaseClient, ProxyClient, \
-        AuthError, AppError, FedoraServiceError
+        AuthError, AppError, FedoraServiceError, FedoraClientError
 from fedora import __version__
 
 ### FIXME: To merge:
@@ -30,7 +30,7 @@ from fedora import __version__
 # API from Will Woods
 # API from MyFedora
 
-class FASError(Exception):
+class FASError(FedoraClientError):
     '''FAS Error'''
     pass
 

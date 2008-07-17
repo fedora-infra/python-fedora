@@ -27,13 +27,13 @@ from textwrap import wrap
 from os.path import join, expanduser, exists
 from ConfigParser import ConfigParser
 
-from fedora.client import BaseClient
+from fedora.client import BaseClient, FedoraClientError
 
 __version__ = '0.5.0'
 log = logging.getLogger(__name__)
 
 
-class BodhiClientException(Exception):
+class BodhiClientException(FedoraClientError):
     pass
 
 
