@@ -60,7 +60,7 @@ class BodhiClient(BaseClient):
         super(BodhiClient, self).__init__(base_url, useragent=useragent,
                                           *args, **kwargs)
 
-    def save(self, builds, release, type, bugs, notes, request='testing',
+    def save(self, builds, release, type_, bugs, notes, request='testing',
              suggest_reboot=False, inheritance=False, autokarma=True,
              stable_karma=3, unstable_karma=-3, edited=''):
         """ Save an update.
@@ -72,7 +72,7 @@ class BodhiClient(BaseClient):
         Arguments:
         :builds: A list of koji builds for this update.
         :release: The release that this update is for.
-        :type: The type of this update: ``security``, ``bugfix``,
+        :type_: The type of this update: ``security``, ``bugfix``,
             ``enhancement``, and ``newpackage``.
         :bugs: A list of Red Hat Bugzilla ID's associated with this update.
         :notes: Details as to why this update exists.
@@ -101,11 +101,11 @@ class BodhiClient(BaseClient):
                 'builds': builds,
                 'edited': edited,
                 'notes': notes,
-                'type': type,
+                'type_': type_,
                 'bugs': bugs,
                 })
 
-    def query(self, release=None, status=None, type=None, bugs=None,
+    def query(self, release=None, status=None, type_=None, bugs=None,
               request=None, mine=None, package=None, limit=10):
         """ Query bodhi for a list of updates.
 
@@ -114,7 +114,7 @@ class BodhiClient(BaseClient):
             be created, and any removed builds will be removed from the update
             specified by ``edited``.
         :release: The release that this update is for.
-        :type: The type of this update: ``security``, ``bugfix``,
+        :type_: The type of this update: ``security``, ``bugfix``,
             ``enhancement``, and ``newpackage``.
         :bugs: A list of Red Hat Bugzilla ID's associated with this update.
         :notes: Details as to why this update exists.
@@ -131,7 +131,7 @@ class BodhiClient(BaseClient):
                 'package': package,
                 'request': request,
                 'status': status,
-                'type': type,
+                'type_': type_,
                 'bugs': bugs,
                 'mine': mine,
                 }
