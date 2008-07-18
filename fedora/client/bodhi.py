@@ -216,6 +216,14 @@ class BodhiClient(BaseClient):
             if len(pkgs):
                 yield self.query(package=[build['nvr']])
 
+    def latest_builds(self, package):
+        """ Get a list of the latest builds for this package.
+
+        Returns a dictionary of the release dist tag to the latest build.
+        """
+        return self.send_request('latest_builds',
+                                 req_params={'package': package})
+
     def masher(self):
         """ Return the status of bodhi's masher """
         return self.send_request('admin/masher', auth=True)
