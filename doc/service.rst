@@ -328,7 +328,7 @@ allows BaseClient_ to authenticate against your Service::
          @expose(template="my.templates.login")
     +    @expose(allow_json=True)
          def login(self, forward_url=None, previous_url=None, *args, **kw):
-     
+
              if not identity.current.anonymous \
                  and identity.was_login_attempted() \
                  and not identity.get_identity_errors():
@@ -338,12 +338,11 @@ allows BaseClient_ to authenticate against your Service::
     +            if not forward_url:
     +                forward_url = turbogears.url('/')
                  raise redirect(forward_url)
-**
 
 For non-TurboGears Implementors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you are implementing a server in a non-TurboGears_ framework, note that one
+If you are implementing a server in a non-TurboGears framework, note that one
 of the ways to reach the ``login()`` method is through special parameters
 parsed by the TurboGears_ framework.  BaseClient_ uses these parameters
 instead of invoking the ``login()`` method directly as it saves a round trip

@@ -19,7 +19,7 @@ class JsonFasVisitManager(BaseVisitManager):
     '''
     This proxies visit requests to the Account System Server running remotely.
     '''
-    fas_url = config.get('fas.url', 'https://admin.fedoraproject.org/admin/fas')
+    fas_url = config.get('fas.url', 'https://admin.fedoraproject.org/accounts')
     cookie_name = config.get('visit.cookie.name', 'tg-visit')
     fas = None
 

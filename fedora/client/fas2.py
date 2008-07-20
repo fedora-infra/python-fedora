@@ -21,8 +21,10 @@
 '''
 Provide a client module for talking to the Fedora Account System.
 '''
-from fedora.client import BaseClient, ProxyClient, \
-        AuthError, AppError, FedoraServiceError
+import urllib
+
+from fedora.client import DictContainer, BaseClient, ProxyClient, \
+        AuthError, AppError, FedoraServiceError, FedoraClientError
 from fedora import __version__
 
 ### FIXME: To merge:
@@ -30,7 +32,7 @@ from fedora import __version__
 # API from Will Woods
 # API from MyFedora
 
-class FASError(Exception):
+class FASError(FedoraClientError):
     '''FAS Error'''
     pass
 
@@ -156,6 +158,24 @@ class AccountSystem(BaseClient):
         else:
             return dict()
 
+    def group_members(self, groupname):
+        '''Return a list of people approved for a group.
+
+        This method returns a list of people who are in the requested group.
+        The people are all approved in the group.  Unapproved people are not
+        shown.  The format of data is::
+
+        [{'username': 'person1', 'role_type': 'user'},
+        {'username': 'person2', 'role_type': 'sponsor'}]
+
+        role_type can be one of 'user', 'sponsor', or 'administrator'.
+        '''
+        request = self.send_request('/group/dump/%s' %
+                urllib.quote(groupname), auth=True)
+
+        return [DictContainer(username=user[0], role_type=user[3])
+                    for user in request['people']]
+
     ### People ###
 
     def person_by_id(self, person_id):
@@ -207,7 +227,7 @@ class AccountSystem(BaseClient):
         ### FIXME: This should be implemented on the server as a single call
         request = self.send_request('/json/user_id', auth=True)
         user_to_id = {}
-        people = {}
+        people = DictContainer()
         for person_id, username in request['people'].items():
             person_id = int(person_id)
             # change userids from string back to integer

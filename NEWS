@@ -6,7 +6,25 @@ NEWS
 :Date: 8 July 2008
 :Version: 0.3
 
----
+0.3.2
+-----
+* Bodhi API parameter 'type' renamed to 'type_'
+* Added BodhiClient.latest_builds method
+* New FAS group_members() method to return people's status in a group.
+* Fixed the default fas.url value in the jsonfas visit manager
+* Creation of a new FedoraClientError base Exception class
+* Better i18n support
+* Added all clients to the base of the fedora.client module
+* Various other bugfixes
+
+0.3.1
+-----
+* Fix an unported portion of the jsonfasvisit manager.
+* Make validation errors set a flash message for both html and json
+* Create a function to jsonify sets.
+* Make sure we don't log a user's password.
+* Bugfixes in the bodhi update template parsing code
+
 0.3
 ---
 * New fedora.client.bodhi API

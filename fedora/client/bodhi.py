@@ -27,13 +27,13 @@ from textwrap import wrap
 from os.path import join, expanduser, exists
 from ConfigParser import ConfigParser
 
-from fedora.client import BaseClient
+from fedora.client import BaseClient, FedoraClientError
 
 __version__ = '0.5.0'
 log = logging.getLogger(__name__)
 
 
-class BodhiClientException(Exception):
+class BodhiClientException(FedoraClientError):
     pass
 
 
@@ -60,7 +60,7 @@ class BodhiClient(BaseClient):
         super(BodhiClient, self).__init__(base_url, useragent=useragent,
                                           *args, **kwargs)
 
-    def save(self, builds, release, type, bugs, notes, request='testing',
+    def save(self, builds, release, type_, bugs, notes, request='testing',
              suggest_reboot=False, inheritance=False, autokarma=True,
              stable_karma=3, unstable_karma=-3, edited=''):
         """ Save an update.
@@ -72,7 +72,7 @@ class BodhiClient(BaseClient):
         Arguments:
         :builds: A list of koji builds for this update.
         :release: The release that this update is for.
-        :type: The type of this update: ``security``, ``bugfix``,
+        :type_: The type of this update: ``security``, ``bugfix``,
             ``enhancement``, and ``newpackage``.
         :bugs: A list of Red Hat Bugzilla ID's associated with this update.
         :notes: Details as to why this update exists.
@@ -101,11 +101,11 @@ class BodhiClient(BaseClient):
                 'builds': builds,
                 'edited': edited,
                 'notes': notes,
-                'type': type,
+                'type_': type_,
                 'bugs': bugs,
                 })
 
-    def query(self, release=None, status=None, type=None, bugs=None,
+    def query(self, release=None, status=None, type_=None, bugs=None,
               request=None, mine=None, package=None, limit=10):
         """ Query bodhi for a list of updates.
 
@@ -114,7 +114,7 @@ class BodhiClient(BaseClient):
             be created, and any removed builds will be removed from the update
             specified by ``edited``.
         :release: The release that this update is for.
-        :type: The type of this update: ``security``, ``bugfix``,
+        :type_: The type of this update: ``security``, ``bugfix``,
             ``enhancement``, and ``newpackage``.
         :bugs: A list of Red Hat Bugzilla ID's associated with this update.
         :notes: Details as to why this update exists.
@@ -131,7 +131,7 @@ class BodhiClient(BaseClient):
                 'package': package,
                 'request': request,
                 'status': status,
-                'type': type,
+                'type_': type_,
                 'bugs': bugs,
                 'mine': mine,
                 }
@@ -216,6 +216,14 @@ class BodhiClient(BaseClient):
             if len(pkgs):
                 yield self.query(package=[build['nvr']])
 
+    def latest_builds(self, package):
+        """ Get a list of the latest builds for this package.
+
+        Returns a dictionary of the release dist tag to the latest build.
+        """
+        return self.send_request('latest_builds',
+                                 req_params={'package': package})
+
     def masher(self):
         """ Return the status of bodhi's masher """
         return self.send_request('admin/masher', auth=True)
@@ -249,7 +257,10 @@ class BodhiClient(BaseClient):
         requests = {'T': 'testing', 'S': 'stable'}
         notes = []
         bugs = []
+        type_ = None
+        request = None
         log.info("Reading from %s " % input_file)
+        input_file = expanduser(input_file)
         if exists(input_file):
             f = open(input_file)
             lines = f.readlines()
@@ -265,7 +276,7 @@ class BodhiClient(BaseClient):
                         para = [p for p in para.split(' ')]
                         bugs.extend(para)
                     elif cmd == 'TYPE':
-                        type = types[para.upper()]
+                        type_ = types[para.upper()]
                     elif cmd == 'REQUEST':
                         request = requests[para.upper()]
                 else: # The remaining data is considered to be the notes
@@ -274,12 +285,13 @@ class BodhiClient(BaseClient):
             notes = "\r\n".join(notes)
         if bugs:
             bugs = ','.join(bugs)
-        log.debug("Type : %s" % type)
+        log.debug("Type : %s" % type_)
         log.debug("Request: %s" % request)
         log.debug('Bugs:\n%s' % bugs)
         log.debug('Notes:\n%s' % notes)
-        self.file_parsed = True
-        return dict(type=type, request=request, bugs=bugs, notes=notes)
+        parsed = dict(type=type_, request=request, bugs=bugs, notes=notes)
+        [parsed.__delitem__(key) for key, value in parsed.items() if not value]
+        return parsed
 
     def update_str(self, update, minimal=False):
         """ Return a string representation of a given update dictionary.
@@ -289,6 +301,8 @@ class BodhiClient(BaseClient):
         :minimal: Return a minimal one-line representation of the update.
 
         """
+        if isinstance(update, basestring):
+            return update
         if minimal:
             val = ""
             date = update['date_pushed'] and update['date_pushed'].split()[0] \
