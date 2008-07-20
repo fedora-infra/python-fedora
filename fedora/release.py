@@ -5,7 +5,7 @@ Information about this python-fedora release
 from fedora import _
 
 NAME = 'python-fedora'
-VERSION = '0.3.1'
+VERSION = '0.3.2'
 DESCRIPTION = _('Python modules for interacting with Fedora services')
 LONG_DESCRIPTION = _('''
 The Fedora Project runs many different services.  These services help us to
