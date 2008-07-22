@@ -186,7 +186,7 @@ class ProxyClient(object):
         except urllib2.HTTPError, e:
             if e.msg == 'Forbidden':
                 # Wrong username or password
-                log.error(e)
+                log.debug(e)
                 raise AuthError, _('Unable to log into server.  Invalid'
                         ' authentication tokens.  Send new username and'
                         ' password:  %(error)s') % {'error': str(e)}
