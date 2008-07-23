@@ -31,14 +31,11 @@ methods of transforming a class into json for a few common types.
 # @jsonify can convert your objects to following types:
 # lists, dicts, numbers and strings
 
-import warnings
 import sqlalchemy
 import sqlalchemy.orm
 import sqlalchemy.ext.associationproxy
 import sqlalchemy.engine.base
 from turbojson.jsonify import jsonify
-
-from fedora import _
 
 class SABase(object):
     '''Base class for SQLAlchemy mapped objects.
