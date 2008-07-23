@@ -231,7 +231,7 @@ Exceptions
     If your code needs to catch any of the listed errors then you can catch
     that to do so.
 
-:``ServerError``: Raised if there's  a problem communicating with the service.
+:``ServerError``: Raised if there's a problem communicating with the service.
     For instance, if we receive an HTML response instead of JSON.
 
 :``AuthError``: If something happens during authentication, like an invalid
