@@ -74,15 +74,14 @@ class SABase(object):
             john.json_props = {'Person': ['addresses'], 'Address': ['people']}
         '''
         props = {}
-        # pylint: disable-msg=E1101
+        prop_list = {}
         if hasattr(self, 'json_props'):
             for base_class in self.__class__.__mro__:
+                # pylint: disable-msg=E1101
                 if base_class.__name__ in self.json_props:
                     prop_list = self.json_props[self.__class__.__name__]
                     break
-        else:
-            prop_list = {}
-        # pylint: enable-msg=E1101
+                # pylint: enable-msg=E1101
 
         # Load all the columns from the table
         for column in sqlalchemy.orm.object_mapper(self).iterate_properties:
