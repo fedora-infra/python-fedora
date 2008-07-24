@@ -31,14 +31,11 @@ methods of transforming a class into json for a few common types.
 # @jsonify can convert your objects to following types:
 # lists, dicts, numbers and strings
 
-import warnings
 import sqlalchemy
 import sqlalchemy.orm
 import sqlalchemy.ext.associationproxy
 import sqlalchemy.engine.base
 from turbojson.jsonify import jsonify
-
-from fedora import _
 
 class SABase(object):
     '''Base class for SQLAlchemy mapped objects.
@@ -74,20 +71,14 @@ class SABase(object):
             john.json_props = {'Person': ['addresses'], 'Address': ['people']}
         '''
         props = {}
-        # pylint: disable-msg=E1101
-        if hasattr(self, 'json_props') \
-                and self.json_props.has_key(self.__class__.__name__):
-            prop_list = self.json_props[self.__class__.__name__]
-        elif hasattr(self, 'jsonProps') \
-                and self.jsonProps.has_key(self.__class__.__name__):
-            # jsonProps is deprecated.
-            warnings.warn(_('jsonProps has been renamed to json_props.'
-                '  jsonProps will disappear in 0.4'), DeprecationWarning,
-                stacklevel=2)
-            prop_list = self.jsonProps[self.__class__.__name__]
-        else:
-            prop_list = {}
-        # pylint: enable-msg=E1101
+        prop_list = {}
+        if hasattr(self, 'json_props'):
+            for base_class in self.__class__.__mro__:
+                # pylint: disable-msg=E1101
+                if base_class.__name__ in self.json_props:
+                    prop_list = self.json_props[base_class.__name__]
+                    break
+                # pylint: enable-msg=E1101
 
         # Load all the columns from the table
         for column in sqlalchemy.orm.object_mapper(self).iterate_properties:
@@ -126,11 +117,6 @@ def jsonify_sa_select_results(obj):
     if 'json_props' in obj.__dict__:
         for element in obj:
             element.json_props = obj.json_props
-    elif 'jsonProps' in obj.__dict__:
-        warnings.warn(_('jsonProps has been renamed to json_props.  jsonProps'
-                ' will disappear in 0.4'), DeprecationWarning, stacklevel=2)
-        for element in obj:
-            element.json_props = obj.jsonProps
     return list(obj)
 
 # Note: due to the way simplejson works, InstrumentedList has to be taken care
@@ -150,11 +136,6 @@ def jsonify_salist(obj):
     if 'json_props' in obj.__dict__:
         for element in obj:
             element.json_props = obj.json_props
-    elif 'jsonProps' in obj.__dict__:
-        warnings.warn(_('jsonProps has been renamed to json_props.  jsonProps'
-                ' will disappear in 0.4'), DeprecationWarning, stacklevel=2)
-        for element in obj:
-            element.json_props = obj.jsonProps
     return [jsonify(element) for element in  obj]
 
 @jsonify.when('''(
@@ -170,11 +151,6 @@ def jsonify_saresult(obj):
     if 'json_props' in obj.__dict__:
         for element in obj:
             element.json_props = obj.json_props
-    elif 'jsonProps' in obj.__dict__:
-        warnings.warn(_('jsonProps has been renamed to json_props.  jsonProps'
-                ' will disappear in 0.4'), DeprecationWarning, stacklevel=2)
-        for element in obj:
-            element.json_props = obj.jsonProps
     return [list(row) for row in obj]
 
 @jsonify.when('''(isinstance(obj, set))''')

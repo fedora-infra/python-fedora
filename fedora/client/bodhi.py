@@ -289,7 +289,7 @@ class BodhiClient(BaseClient):
         log.debug("Request: %s" % request)
         log.debug('Bugs:\n%s' % bugs)
         log.debug('Notes:\n%s' % notes)
-        parsed = dict(type=type_, request=request, bugs=bugs, notes=notes)
+        parsed = dict(type_=type_, request=request, bugs=bugs, notes=notes)
         [parsed.__delitem__(key) for key, value in parsed.items() if not value]
         return parsed
 
