@@ -76,7 +76,7 @@ class SABase(object):
             for base_class in self.__class__.__mro__:
                 # pylint: disable-msg=E1101
                 if base_class.__name__ in self.json_props:
-                    prop_list = self.json_props[self.__class__.__name__]
+                    prop_list = self.json_props[base_class.__name__]
                     break
                 # pylint: enable-msg=E1101
 
