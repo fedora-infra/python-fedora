@@ -3,8 +3,15 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 8 July 2008
-:Version: 0.3
+:Date: 23 July 2008
+:Version: 0.3.x
+
+0.3.3
+-----
+* Allow json_props in SABase to follow class inheritance.
+* Remove 0.2 compatibility variable jsonProps.  This was broken and everything
+  that was using it has been ported to use json_props instead.
+* Misc bugfixes with the jsonfas provider.
 
 0.3.2
 -----

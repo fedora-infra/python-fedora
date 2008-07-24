@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.3.2
+Version:        0.3.3
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -50,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/*
 
 %changelog
+* Wed Jul 23 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.3-1
+- A few fixes for the new fas release.
+
 * Sun Jul 20 2008 Luke Macken <lmacken@redhat.com> - 0.3.2-1
 - Latest upstream release
 - Add koji to the Requires
