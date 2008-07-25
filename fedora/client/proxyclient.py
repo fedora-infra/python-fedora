@@ -166,7 +166,7 @@ class ProxyClient(object):
             complete_params.update({'user_name': username,
                     'password': password, 'login': 'Login'})
         if complete_params:
-            req.add_data(urllib.urlencode(complete_params))
+            req.add_data(urllib.urlencode(complete_params, doseq=True))
 
         if session_cookie:
             # Anytime the cookie exists, send it so that visit tracking works.
