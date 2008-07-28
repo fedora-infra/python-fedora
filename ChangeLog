@@ -1,3 +1,116 @@
+2008-07-28  Toshio Kuratomi <badger@Clingman> - r288
+Update for 0.3.4 release.
+
+2008-07-25  Toshio Kuratomi <badger@Clingman> - r287
+Fixbug in sending lists through a URL.
+
+2008-07-24  Paul W. Frields <stickster@gmail.com> - r286
+Added new people_by_groupname() method
+
+== 0.3.4 ==
+
+2008-07-24  Toshio Kuratomi <badger@Clingman> - r285
+Pull in tags from stable branch.
+
+2008-07-23  Toshio Kuratomi <badger@Clingman> - r284
+Update version for the 0.3.3 release.
+
+2008-07-23  Toshio Kuratomi <badger@Clingman> - r283
+Fix wrong key value used in json_props handling.
+
+2008-07-23  Toshio Kuratomi <badger@Clingman> - r282
+Whitespace.
+
+2008-07-23  Toshio Kuratomi <badger@Clingman> - r281
+Remove unused imports.
+
+2008-07-23  Toshio Kuratomi <badger@Clingman> - r280
+Fix a bug when using json_props.
+
+2008-07-22  Toshio Kuratomi <badger@Clingman> - r279
+turn an error message into a debug message.
+
+2008-07-21  Toshio Kuratomi <badger@Clingman> - r278
+* Remove jsonProps compat stuff as it's broken and we've ported everything that
+  used it.
+* Change algorithm that looks for matches for json_props to understand
+  inheritance.
+
+2008-07-19  Luke Macken <lmacken@redhat.com> - r277
+More bodhi s/type/type_/ changes
+
+2008-07-19  Luke Macken <lmacken@redhat.com> - r276
+Update our NEWS file
+=== 0.3.2 ===
+
+2008-07-19  Luke Macken <lmacken@redhat.com> - r275
+0.3.2
+2008-07-18  Luke Macken <lmacken@redhat.com> - r274
+[bodhi] Add a latest_builds method
+2008-07-18  Luke Macken <lmacken@redhat.com> - r273
+[bodhi] Change 'type' argument to save() and query() to 'type_'
+
+2008-07-17  Toshio Kuratomi <badger@Clingman> - r272
+New group_members() method to return people's status in a group.
+
+2008-07-17  Toshio Kuratomi <badger@Clingman> - r271
+Merge fix from the repo.
+
+2008-07-17  Toshio Kuratomi <badger@Clingman> - r270
+Fix debug method to not traceback when there's no data being sent.
+
+2008-07-17  Toshio Kuratomi <badger@Clingman> - r269
+Spell PackageDBClient right.
+
+2008-07-17  Toshio Kuratomi <badger@Clingman> - r268
+Make the client Exceptions use FedoraClientError as their base class.
+
+2008-07-17  Toshio Kuratomi <badger@Clingman> - r267
+Import gettext into json.py since it has translatable error messages.
+
+2008-07-17  Toshio Kuratomi <badger@Clingman> - r266
+Add all of our clients to this level so from fedora.client import FooClient
+works.
+
+2008-07-17  Toshio Kuratomi <badger@Clingman> - r265
+* Move DictContainer to client.__init__() nad let people import it.
+* Use DictContainer for the result of fas2.people_by_id().
+
+2008-07-15  Toshio Kuratomi <badger@Clingman> - r264
+Slight simplification of the error message construction.
+
+=== 0.3.1 ===
+
+2008-07-14  Luke Macken <lmacken@redhat.com> - r263
+Update our spec and release module for 0.3.1
+2008-07-14  Luke Macken <lmacken@redhat.com> - r262
+[bodhi] Support older bodhi instances that only return update strings
+
+2008-07-14  Luke Macken <lmacken@redhat.com> - r261
+[bodhi] Bugfixes in the update template file parsing code
+
+2008-07-14  Toshio Kuratomi <badger@Clingman> - r260
+And a regex fix.
+
+2008-07-14  Toshio Kuratomi <badger@Clingman> - r259
+Once more.  This time use th evariable that we've removed the password from.
+
+2008-07-14  Toshio Kuratomi <badger@Clingman> - r258
+Oops.  The previous change was done in the wrong place.  Need to change it in
+send_request(), *not* in _set_debug().
+
+2008-07-14  Toshio Kuratomi <badger@Clingman> - r257
+Fix last patch to use self.debug.
+
+2008-07-14  Toshio Kuratomi <badger@Clingman> - r256
+Make sure we don't log a user's password.
+
+2008-07-11  Toshio Kuratomi <badger@Clingman> - r255
+Fix some errors in ReStructuredText syntax.
+
+2008-07-11  Toshio Kuratomi <badger@Clingman> - r254
+Update changeLog for last minute bugfixes.
+
 2008-07-11  Toshio Kuratomi <badger@Clingman> - r253
 Create a function to jsonify sets.
 
@@ -43,6 +156,7 @@ Give the fedora.client.bodhi module a real API
 
 2008-07-05  Luke Macken <lmacken@redhat.com> - r240
 Add a fedora.client.bodhi module
+=== 0.3 ===
 
 2008-07-05  Toshio Kuratomi <badger@Clingman> - r239
 * fedora/client/fas2.py: Add Roozbeh to the list of bugzilla emails that
