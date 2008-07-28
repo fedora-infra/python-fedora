@@ -3,8 +3,12 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 23 July 2008
+:Date: 28 July 2008
 :Version: 0.3.x
+
+0.3.4
+-----
+* Fix to proxyclient allow sending sequence types via send_request().
 
 0.3.3
 -----
