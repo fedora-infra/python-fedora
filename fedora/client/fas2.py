@@ -248,6 +248,23 @@ class AccountSystem(BaseClient):
 
         return people
 
+    ### Utils ###
+
+    def people_by_groupname(self, groupname):
+        '''Return a list of persons for the given groupname.
+
+        Arguments:
+        :groupname: Name of the group to look up
+
+        Returns: A list of person objects from the group.  If the
+        group contains no entries, then an empty list is returned.
+        '''
+        people = self.people_by_id()
+        group = dict(self.group_by_name(groupname))
+        userids = [user[u'person_id'] for user in
+                   group[u'approved_roles'] + group[u'unapproved_roles']]
+        return [people[userid] for userid in userids]
+
     ### Configs ###
 
     def get_config(self, username, application, attribute):

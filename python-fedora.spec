@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.3.3
+Version:        0.3.4
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -50,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/*
 
 %changelog
+* Mon Jul 28 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.4-1
+- Small fix to proxyclient.send_request() for sequence types.
+
 * Wed Jul 23 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.3-1
 - A few fixes for the new fas release.
 
