@@ -13,7 +13,7 @@ Fixbug in sending lists through a URL.
 2008-07-24  Paul W. Frields <stickster@gmail.com> - r286
 Added new people_by_groupname() method
 
-== 0.3.4 ==
+== 0.3.3 ==
 
 2008-07-24  Toshio Kuratomi <badger@Clingman> - r285
 Pull in tags from stable branch.
