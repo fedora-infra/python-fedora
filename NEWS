@@ -9,6 +9,7 @@ NEWS
 0.3.4
 -----
 * Fix to proxyclient allow sending sequence types via send_request().
+* New fedora.client.fas2.AccountSystem method people_by_groupname()
 
 0.3.3
 -----
