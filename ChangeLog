@@ -1,3 +1,9 @@
+2008-07-28  Toshio Kuratomi <badger@Clingman> - r290
+Add people_by_groupname() to NEWS and Paul Frields to AUTHORS.
+
+2008-07-28  Toshio Kuratomi <badger@Clingman> - r289
+* Update ChangeLog for release.
+
 2008-07-28  Toshio Kuratomi <badger@Clingman> - r288
 Update for 0.3.4 release.
 
