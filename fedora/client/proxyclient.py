@@ -26,6 +26,7 @@ import urllib
 import urllib2
 import logging
 import simplejson
+import warnings
 from urlparse import urljoin
 from fedora import __version__
 from fedora import _
@@ -45,7 +46,8 @@ class ProxyClient(object):
     If you want something that can manage one user's connection to a Fedora
     Service, then look into using BaseClient instead.
     '''
-    def __init__(self, base_url, useragent=None, debug=False):
+    def __init__(self, base_url, useragent=None, session_name='tg-visit',
+            session_as_cookie=True, debug=False):
         '''Create a client configured for a particular service.
 
         Arguments:
@@ -54,6 +56,11 @@ class ProxyClient(object):
         Keyword Arguments:
         :useragent: useragent string to use.  If not given, default to
             "Fedora ProxyClient/VERSION"
+        :session_name: name of the cookie to use with session handling
+        :session_as_cookie: If set to True, return the session as a
+            SimpleCookie.  If False, return a session_id.  This flag allows us
+            to maintain compatibility for the 0.3 branch.  In 0.4, code will
+            have to deal with session_id's instead of cookies.
         :debug: If True, log debug information
         '''
         # Setup our logger
@@ -69,7 +76,14 @@ class ProxyClient(object):
         self.base_url = base_url
         self.useragent = useragent or 'Fedora ProxyClient/%(version)s' % {
                 'version': __version__}
-
+        self.session_name = session_name
+        self.session_as_cookie = session_as_cookie
+        if session_as_cookie:
+            warnings.warn(_("Returning cookies from send_request() is"
+                " deprecated and will be removed in 0.4.  Please port your"
+                " code to use a sesison_id instead by calling the ProxyClient"
+                " constructor with session_as_cookie=False"),
+                DeprecationWarning, stacklevel=2)
         log.debug('proxyclient.__init__:exited')
 
     def __get_debug(self):
@@ -110,8 +124,11 @@ class ProxyClient(object):
         :req_params: dict containing extra parameters to send to the server.
         :auth_params: dict containing one or more means of authenticating to
             the server.  Valid entries in this dict are:
-            :cookie: A Cookie.SimpleCookie to send as a session cookie to the
-                server.
+            :cookie: *Deprecated* Use session_id instead.  If both cookie and
+                session_id are set, only session_id will be used.
+                A Cookie.SimpleCookie to send as a session cookie to the server
+            :session_id: Session id to put in a cookie to construct an identity
+                for the server.
             :username: Username to send to the server.
             :password: Password to use with username to send to the server.
             Note that cookie can be sent alone but if one of username or
@@ -120,7 +137,9 @@ class ProxyClient(object):
             of sending cookies that do not match with the username in this
             case as the server can decide what to do in this case.
 
-        Returns: a tuple of data and session_cookie returned from the server.
+        Returns: a tuple of session cookie and data returned from the server.
+                 If ProxyClient was created with session_as_cookie=False, return
+                 a tuple of session_id and data instead.
         '''
         log.debug('proxyclient.send_request: entered')
         # Check whether we need to authenticate for this request
@@ -128,7 +147,14 @@ class ProxyClient(object):
         username = None
         password = None
         if auth_params:
-            if 'cookie' in auth_params:
+            if 'session_id' in auth_params:
+                session_cookie = Cookie.SimpleCookie()
+                session_cookie[self.session_name] = auth_params['session_id']
+            elif 'cookie' in auth_params:
+                warnings.warn(_("Giving a cookie to send_request() to"
+                " authenticate is deprecated and will be removed in 0.4."
+                " Please port your code to use session_id instead."
+                DeprecationWarning, stacklevel=2)
                 session_cookie = auth_params['cookie']
             if 'username' in auth_params and 'password' in auth_params:
                 username = auth_params['username']
@@ -200,6 +226,13 @@ class ProxyClient(object):
         except (KeyError, AttributeError): # pylint: disable-msg=W0704
             # It's okay if the server didn't send a new cookie
             pass
+        if self.session_as_cookie:
+            new_session = new_session_cookie
+        else:
+            # Retrieve the session id from the cookie
+            new_session = new_session_cookie.get(self.session_name, '')
+            if new_session:
+                new_session = new_session.value()
 
         # Read the response
         json_string = response.read()
@@ -214,4 +247,4 @@ class ProxyClient(object):
             raise AppError(name = data['exc'], message = data['tg_flash'])
 
         log.debug('proxyclient.send_request: exited')
-        return new_session_cookie, DictContainer(data)
+        return new_session, DictContainer(data)

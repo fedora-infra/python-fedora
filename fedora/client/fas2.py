@@ -61,7 +61,9 @@ class AccountSystem(BaseClient):
         :debug: If True, log debug information
         :username: username for establishing authenticated connections
         :password: password to use with authenticated connections
-        :session_cookie: user's session_cookie to connect to the server
+        :session_cookie: *Deprecated* Use session_id instead.
+			User's session_cookie to connect to the server
+        :session_id: user's session_id to connect to the server
         :cache_session: if set to true, cache the user's session cookie on the
             filesystem between runs.
         '''
@@ -72,7 +74,8 @@ class AccountSystem(BaseClient):
         # We need a single proxy for the class to verify username/passwords
         # against.
         if not self.proxy:
-            self.proxy = ProxyClient(base_url, self.useragent, self.debug)
+            self.proxy = ProxyClient(base_url, self.useragent,
+                    session_as_cookie=False, self.debug)
 
         # Preseed a list of FAS accounts with bugzilla addresses
         # This allows us to specify a different email for bugzilla than is

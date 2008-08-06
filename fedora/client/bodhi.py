@@ -51,7 +51,9 @@ class BodhiClient(BaseClient):
             "Fedora BaseClient/VERSION"
         :username: username for establishing authenticated connections
         :password: password to use with authenticated connections
-        :session_cookie: user's session_cookie to connect to the server
+        :session_cookie: *Deprecated*  Use session_id instead.
+			User's session_cookie to connect to the server
+        :session_id: user's session_id to connect to the server
         :cache_session: if set to True, cache the user's session cookie on the
             filesystem between runs.
         :debug: If True, log debug information

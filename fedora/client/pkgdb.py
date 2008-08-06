@@ -39,7 +39,9 @@ class PackageDBClient(BaseClient):
         :debug: If True, log debug information
         :username: username for establishing authenticated connections
         :password: password to use with authenticated connections
-        :session_cookie: user's session_cookie to connect to the server
+        :session_id: user's session_id to connect to the server
+        :session_cookie: *Deprecated* use session_id instead.
+            user's session_cookie to connect to the server
         :cache_session: if set to true, cache the user's session cookie on the
             filesystem between runs.
         '''
