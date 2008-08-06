@@ -153,7 +153,7 @@ class ProxyClient(object):
             elif 'cookie' in auth_params:
                 warnings.warn(_("Giving a cookie to send_request() to"
                 " authenticate is deprecated and will be removed in 0.4."
-                " Please port your code to use session_id instead."
+                " Please port your code to use session_id instead."),
                 DeprecationWarning, stacklevel=2)
                 session_cookie = auth_params['cookie']
             if 'username' in auth_params and 'password' in auth_params:
@@ -232,7 +232,7 @@ class ProxyClient(object):
             # Retrieve the session id from the cookie
             new_session = new_session_cookie.get(self.session_name, '')
             if new_session:
-                new_session = new_session.value()
+                new_session = new_session.value
 
         # Read the response
         json_string = response.read()

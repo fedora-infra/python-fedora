@@ -3,8 +3,14 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 28 July 2008
+:Date: 6 Aug 2008
 :Version: 0.3.x
+
+0.3.5
+-----
+* Deprecate cookie auth in favor of session_id auth (but maintain compatibility)
+* Internally, use session_id instead of cookie.
+* Change the session file from ~/.fedora_session to ~/.fedora/.fedora_session
 
 0.3.4
 -----
