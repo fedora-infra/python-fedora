@@ -78,7 +78,9 @@ class BaseClient(ProxyClient):
         elif session_cookie:
             warnings.warn(_("session_cookie is deprecated, use session_id"
                     " instead"), DeprecationWarning, stacklevel=2)
-            self.session_id = session_cookie.get(self.session_name, '')
+            session_id = session_cookie.get(self.session_name, '')
+            if session_id:
+                self.session_id = session_id.value
 
     def __load_ids(self):
         '''load id data from a file.
@@ -152,7 +154,7 @@ class BaseClient(ProxyClient):
         '''
         # Start with the previous users
         if self.cache_session and self.username:
-            save = self.__load_cookies()
+            save = self.__load_ids()
             save[self.username] = session_id
             # Save the ids to the filesystem
             self.__save_ids(save)
@@ -204,7 +206,10 @@ class BaseClient(ProxyClient):
         '''
         warnings.warn(_("session_cookie is deprecated, use session_id"
             " instead"), DeprecationWarning, stacklevel=2)
-        self.session_id = session_cookie.get(self.session_name, '')
+        session_id = session_cookie.get(self.session_name, '')
+        if session_id:
+            session_id = session_id.value
+        self.session_id = session_id
 
     def _del_session_cookie(self):
         '''*Deprecated* Delete the session cookie from the filesystem.'''
