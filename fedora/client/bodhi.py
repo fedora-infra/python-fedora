@@ -25,7 +25,7 @@ import logging
 from yum import YumBase
 from textwrap import wrap
 from os.path import join, expanduser, exists
-from ConfigParser import ConfigParser
+from iniparse.compat import ConfigParser
 
 from fedora.client import BaseClient, FedoraClientError
 
@@ -62,9 +62,9 @@ class BodhiClient(BaseClient):
         super(BodhiClient, self).__init__(base_url, useragent=useragent,
                                           *args, **kwargs)
 
-    def save(self, builds, release, type_, bugs, notes, request='testing',
-             suggest_reboot=False, inheritance=False, autokarma=True,
-             stable_karma=3, unstable_karma=-3, edited=''):
+    def save(self, builds='', type_='', bugs='', notes='', request='testing',
+             close_bugs=True, suggest_reboot=False, inheritance=False,
+             autokarma=True, stable_karma=3, unstable_karma=-3, edited=''):
         """ Save an update.
 
         This entails either creating a new update, or editing an existing one.
@@ -73,13 +73,13 @@ class BodhiClient(BaseClient):
 
         Arguments:
         :builds: A list of koji builds for this update.
-        :release: The release that this update is for.
         :type_: The type of this update: ``security``, ``bugfix``,
             ``enhancement``, and ``newpackage``.
         :bugs: A list of Red Hat Bugzilla ID's associated with this update.
         :notes: Details as to why this update exists.
         :request: Request for this update to change state, either to
             ``testing``, ``stable``, ``unpush``, ``obsolete`` or None.
+        :close_bugs: Close bugs when update is stable
         :suggest_reboot: Suggest that the user reboot after update.
         :inheritance: Follow koji build inheritance, which may result in this
             update being pushed out to additional releases.
@@ -94,11 +94,11 @@ class BodhiClient(BaseClient):
         """
         return self.send_request('save', auth=True, req_params={
                 'suggest_reboot': suggest_reboot,
+                'close_bugs': close_bugs,
                 'unstable_karma': unstable_karma,
                 'stable_karma': stable_karma,
                 'inheritance': inheritance,
                 'autokarma': autokarma,
-                'release': release.upper(),
                 'request': request,
                 'builds': builds,
                 'edited': edited,
@@ -250,50 +250,45 @@ class BodhiClient(BaseClient):
         Arguments
         :input_file: The filename of the update template.
 
-        Returns a dictionary of parsed update values that can be directly
-        passed to the ``save`` method.
+        Returns an array of dictionaries of parsed update values which
+        can be directly passed to the ``save`` method.
 
         """
-        regex = re.compile(r'^(BUG|bug|TYPE|type|REQUEST|request)=(.*$)')
-        types = {'S': 'security', 'B': 'bugfix', 'E': 'enhancement'}
-        requests = {'T': 'testing', 'S': 'stable'}
-        notes = []
-        bugs = []
-        type_ = None
-        request = None
         log.info("Reading from %s " % input_file)
         input_file = expanduser(input_file)
         if exists(input_file):
+            defaults = {
+                'type': 'bugfix',
+                'request': 'testing',
+                'notes': '',
+                'bugs': '',
+                'close_bugs': 'True',
+                'autokarma': 'True',
+                'stable_karma': 3,
+                'unstable_karma': -3,
+                'suggest_reboot': 'False',
+                }
+            config = ConfigParser(defaults)
             f = open(input_file)
-            lines = f.readlines()
+            config.readfp(f)
             f.close()
-            for line in lines:
-                if line[0] == ':' or line[0] == '#':
-                    continue
-                src = regex.search(line)
-                if src:
-                    cmd, para = tuple(src.groups())
-                    cmd = cmd.upper()
-                    if cmd == 'BUG':
-                        para = [p for p in para.split(' ')]
-                        bugs.extend(para)
-                    elif cmd == 'TYPE':
-                        type_ = types[para.upper()]
-                    elif cmd == 'REQUEST':
-                        request = requests[para.upper()]
-                else: # The remaining data is considered to be the notes
-                    notes.append(line.strip())
-        if notes:
-            notes = "\r\n".join(notes)
-        if bugs:
-            bugs = ','.join(bugs)
-        log.debug("Type : %s" % type_)
-        log.debug("Request: %s" % request)
-        log.debug('Bugs:\n%s' % bugs)
-        log.debug('Notes:\n%s' % notes)
-        parsed = dict(type_=type_, request=request, bugs=bugs, notes=notes)
-        [parsed.__delitem__(key) for key, value in parsed.items() if not value]
-        return parsed
+            updates = []
+            for section in config.sections():
+                update = {}
+                update['builds'] = section
+                update['type_'] = config.get(section, 'type')
+                update['request'] = config.get(section, 'request')
+                update['bugs'] = config.get(section, 'bugs')
+                update['close_bugs'] = config.getboolean(section, 'close_bugs')
+                update['notes'] = config.get(section, 'notes')
+                update['autokarma'] = config.getboolean(section, 'autokarma')
+                update['stable_karma'] = config.getint(section, 'stable_karma')
+                update['unstable_karma'] = config.getint(section,
+                                                         'unstable_karma')
+                update['suggest_reboot'] = config.getboolean(section,
+                                                             'suggest_reboot')
+                updates.append(update)
+        return updates
 
     def update_str(self, update, minimal=False):
         """ Return a string representation of a given update dictionary.
