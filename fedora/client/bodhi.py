@@ -18,7 +18,6 @@
 This module provides a client interface for bodhi.
 """
 
-import re
 import koji
 import logging
 
