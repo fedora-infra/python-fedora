@@ -55,7 +55,7 @@ class PackageDBClient(BaseClient):
 
         :arg package: Name of the package to retrieve package information about.
         :kwarg collection: Limit the returned information to this collection
-            'Fedora', 'Fedora EPEL', Fedora OLPC', etc.
+            ('Fedora', 'Fedora EPEL', Fedora OLPC', etc)
         :kwarg collection_ver: If collection is specified, further limit to this
             version of the collection.
 
