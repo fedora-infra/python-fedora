@@ -204,7 +204,7 @@ class ProxyClient(object):
         log.debug(_('Headers: %(header)s') % {'header': req.headers})
         if self.debug and req.data:
             debug_data = re.sub(r'(&?)password[^&]+(&?)',
-                    '\g<1>password=XXXX\g<2>', req.data)
+                    '\g<1>password=xxxxxxx\g<2>', req.data)
             log.debug(_('Data: %(data)s') % {'data': debug_data})
 
         try:
