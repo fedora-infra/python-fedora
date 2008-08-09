@@ -12,34 +12,55 @@ Client
     :members:
     :undoc-members:
 
-.. autoclass:: fedora.client.FASError
+.. autoexception:: fedora.client.FASError
     :members:
     :undoc-members:
 
-.. autoclass:: fedora.client.CLAError
+.. autoexception:: fedora.client.CLAError
     :members:
     :undoc-members:
 
-.. autoclass:: fedora.client.BodhiClientException
+.. autoexception:: fedora.client.BodhiClientException
     :members:
     :undoc-members:
+
+Generic Clients
+===============
+
+BaseClient
+----------
+
+.. autoclass:: fedora.client.BaseClient
+    :members:
+    :undoc-members:
+
+ProxyClient
+-----------
+
+.. autoclass:: fedora.client.ProxyClient
+    :members:
+    :undoc-members:
+
+
+Clients for Specific Services
+=============================
 
 Fedora Account System
-======================
+----------------------
 
 .. autoclass:: fedora.client.AccountSystem
     :members:
     :undoc-members:
 
 Bodhi
-=====
+-----
 
-.. autoclass:: fedora.client.Bodhi
+.. autoclass:: fedora.client.BodhiClient
     :members:
     :undoc-members:
 
 Package Database
-================
+----------------
 
 .. autoclass:: fedora.client.PackageDBClient
     :members:
