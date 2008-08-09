@@ -31,19 +31,18 @@ class PackageDBClient(BaseClient):
             *args, **kwargs):
         '''Create the PackageDBClient.
 
-        Keyword Arguments:
-        :base_url: Base of every URL used to contact the server.  Defaults to
-            the Fedora PackageDB instance.
-        :useragent: useragent string to use.  If not given, default to
-            "Fedora BaseClient/VERSION"
-        :debug: If True, log debug information
-        :username: username for establishing authenticated connections
-        :password: password to use with authenticated connections
-        :session_id: user's session_id to connect to the server
-        :session_cookie: *Deprecated* use session_id instead.
+        :kwarg base_url: Base of every URL used to contact the server.
+            Defaults to the Fedora PackageDB instance.
+        :kwarg useragent: useragent string to use.  If not given, default to
+            "Fedora PackageDB Client/VERSION"
+        :kwarg debug: If True, log debug information
+        :kwarg username: username for establishing authenticated connections
+        :kwarg password: password to use with authenticated connections
+        :kwarg session_id: user's session_id to connect to the server
+        :kwarg session_cookie: **Deprecated** use session_id instead.
             user's session_cookie to connect to the server
-        :cache_session: if set to true, cache the user's session cookie on the
-            filesystem between runs.
+        :kwarg cache_session: if set to true, cache the user's session cookie
+            on the filesystem between runs.
         '''
         if 'useragent' not in kwargs:
             kwargs['useragent'] = 'Fedora PackageDB Client/%s' % __version__
@@ -54,14 +53,14 @@ class PackageDBClient(BaseClient):
 
         URL: Same information as /packages/name/%s
 
-        Arguments:
-        :package: Name of the package to retrieve package information about.
-        :collection: Limit the returned information to this collection
-            ('Fedora', 'EPEL', OLPC', etc)
-        :collection_ver: If collection is specified, further limit to this
+        :arg package: Name of the package to retrieve package information about.
+        :kwarg collection: Limit the returned information to this collection
+            'Fedora', 'Fedora EPEL', Fedora OLPC', etc.
+        :kwarg collection_ver: If collection is specified, further limit to this
             version of the collection.
 
-        Returns: dict of ownership information for the package.
+        :return: dict of ownership information for the package
+        :rtype: dict of ownership information for the package
         '''
         method = '/packages/name/%s' % package
         if collection:

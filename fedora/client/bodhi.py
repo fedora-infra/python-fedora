@@ -51,7 +51,7 @@ class BodhiClient(BaseClient):
         :username: username for establishing authenticated connections
         :password: password to use with authenticated connections
         :session_cookie: *Deprecated*  Use session_id instead.
-			User's session_cookie to connect to the server
+            User's session_cookie to connect to the server
         :session_id: user's session_id to connect to the server
         :cache_session: if set to True, cache the user's session cookie on the
             filesystem between runs.
@@ -70,25 +70,27 @@ class BodhiClient(BaseClient):
         To edit an existing update, you must specify the update title in
         the ``edited`` keyword argument.
 
-        Arguments:
-        :builds: A list of koji builds for this update.
-        :type_: The type of this update: ``security``, ``bugfix``,
+        :kwarg builds: A list of koji builds for this update.
+        :kwarg type\_: The type of this update: ``security``, ``bugfix``,
             ``enhancement``, and ``newpackage``.
-        :bugs: A list of Red Hat Bugzilla ID's associated with this update.
-        :notes: Details as to why this update exists.
-        :request: Request for this update to change state, either to
+        :kwarg bugs: A list of Red Hat Bugzilla ID's associated with this
+            update.
+        :kwarg notes: Details as to why this update exists.
+        :kwarg request: Request for this update to change state, either to
             ``testing``, ``stable``, ``unpush``, ``obsolete`` or None.
-        :close_bugs: Close bugs when update is stable
-        :suggest_reboot: Suggest that the user reboot after update.
-        :inheritance: Follow koji build inheritance, which may result in this
-            update being pushed out to additional releases.
-        :autokarma: Allow bodhi to automatically change the state of this
+        :kwarg close_bugs: Close bugs when update is stable
+        :kwarg suggest_reboot: Suggest that the user reboot after update.
+        :kwarg inheritance: Follow koji build inheritance, which may result in
+            this update being pushed out to additional releases.
+        :kwarg autokarma: Allow bodhi to automatically change the state of this
             update based on the ``karma`` from user feedback.  It will
             push your update to ``stable`` once it reaches the ``stable_karma``
             and unpush your update when reaching ``unstable_karma``.
-        :stable_karma: The upper threshold for marking an update as ``stable``.
-        :unstable_karma: The lower threshold for unpushing an update.
-        :edited: The update title of the existing update that we are editing.
+        :kwarg stable_karma: The upper threshold for marking an update as
+            ``stable``.
+        :kwarg unstable_karma: The lower threshold for unpushing an update.
+        :kwarg edited: The update title of the existing update that we are
+            editing.
 
         """
         return self.send_request('save', auth=True, req_params={
@@ -109,6 +111,8 @@ class BodhiClient(BaseClient):
     def query(self, release=None, status=None, type_=None, bugs=None,
               request=None, mine=None, package=None, limit=10):
         """ Query bodhi for a list of updates.
+
+        ***FIXME*** Docstring arguments do not match method arguments
 
         Arguments:
         :builds: A list of koji builds for this update.  Any new builds will

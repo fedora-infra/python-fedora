@@ -50,18 +50,16 @@ class ProxyClient(object):
             session_as_cookie=True, debug=False):
         '''Create a client configured for a particular service.
 
-        Arguments:
-        :base_url: Base of every URL used to contact the server
+        :arg base_url: Base of every URL used to contact the server
 
-        Keyword Arguments:
-        :useragent: useragent string to use.  If not given, default to
+        :kwarg useragent: useragent string to use.  If not given, default to
             "Fedora ProxyClient/VERSION"
-        :session_name: name of the cookie to use with session handling
-        :session_as_cookie: If set to True, return the session as a
+        :kwarg session_name: name of the cookie to use with session handling
+        :kwarg session_as_cookie: If set to True, return the session as a
             SimpleCookie.  If False, return a session_id.  This flag allows us
             to maintain compatibility for the 0.3 branch.  In 0.4, code will
             have to deal with session_id's instead of cookies.
-        :debug: If True, log debug information
+        :kwarg debug: If True, log debug information
         '''
         # Setup our logger
         self._log_handler = logging.StreamHandler()
@@ -88,13 +86,19 @@ class ProxyClient(object):
 
     def __get_debug(self):
         '''Return whether we have debug logging turned on.
+
+        :Returns: True if debugging is on, False otherwise.
         '''
         if self._log_handler.level <= logging.DEBUG:
             return True
         return False
 
     def __set_debug(self, debug=False):
-        '''Change debug level.'''
+        '''Change debug level.
+
+        :kwarg debug: A true value to turn debugging on, false value to turn it
+            off.
+        '''
         if debug:
             log.setLevel(logging.DEBUG)
             self._log_handler.setLevel(logging.DEBUG)
@@ -110,36 +114,40 @@ class ProxyClient(object):
     def send_request(self, method, req_params=None, auth_params=None):
         '''Make an HTTP request to a server method.
 
-        The given method is called with any parameters set in req_params.  If
-        auth is True, then the request is made with an authenticated session
+        The given method is called with any parameters set in ``req_params``.
+        If auth is True, then the request is made with an authenticated session
         cookie.  Note that path parameters should be set by adding onto the
         method, not via ``req_params``.
 
-        Arguments:
-        :method: Method to call on the server.  It's a url fragment that comes
-            after the base_url set in __init__().  Note that any parameters set
-            as extra path information should be listed here, not in req_params.
+        :arg method: Method to call on the server.  It's a url fragment that
+            comes after the base_url set in __init__().  Note that any
+            parameters set as extra path information should be listed here,
+            not in ``req_params``.
+        :kwarg req_params: dict containing extra parameters to send to the
+            server
+        :kwarg auth_params: dict containing one or more means of authenticating
+            to the server.  Valid entries in this dict are:
 
-        Keyword Arguments:
-        :req_params: dict containing extra parameters to send to the server.
-        :auth_params: dict containing one or more means of authenticating to
-            the server.  Valid entries in this dict are:
-            :cookie: *Deprecated* Use session_id instead.  If both cookie and
-                session_id are set, only session_id will be used.
-                A Cookie.SimpleCookie to send as a session cookie to the server
+            :cookie: **Deprecated** Use ``session_id`` instead.  If both
+                ``cookie`` and ``session_id`` are set, only ``session_id`` will
+                be used.  A ``Cookie.SimpleCookie`` to send as a session cookie
+                to the server
             :session_id: Session id to put in a cookie to construct an identity
-                for the server.
-            :username: Username to send to the server.
-            :password: Password to use with username to send to the server.
+                for the server
+            :username: Username to send to the server
+            :password: Password to use with username to send to the server
+
             Note that cookie can be sent alone but if one of username or
             password is set the other must as well.  Code can set all of these
             if it wants and all of them will be sent to the server.  Be careful
             of sending cookies that do not match with the username in this
             case as the server can decide what to do in this case.
 
-        Returns: a tuple of session cookie and data returned from the server.
-                 If ProxyClient was created with session_as_cookie=False, return
-                 a tuple of session_id and data instead.
+        :returns: If ProxyClient is created with session_as_cookie=True (the
+            default), a tuple of session cookie and data from the server.
+            If ProxyClient was created with session_as_cookie=False, a tuple
+            of session_id and data instead.
+        :rtype: tuple of session information and data from server
         '''
         log.debug('proxyclient.send_request: entered')
         # Check whether we need to authenticate for this request

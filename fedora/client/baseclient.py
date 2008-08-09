@@ -46,22 +46,20 @@ class BaseClient(ProxyClient):
             password=None, session_cookie=None, session_id=None,
             session_name='tg-visit', cache_session=True):
         '''
-        Arguments:
-        :base_url: Base of every URL used to contact the server
+        :arg base_url: Base of every URL used to contact the server
 
-        Keyword Arguments:
-        :useragent: useragent string to use.  If not given, default to
+        :kwarg useragent: Useragent string to use.  If not given, default to
             "Fedora BaseClient/VERSION"
-        :session_name: name of the cookie to use with session handling
-        :debug: If True, log debug information
-        :username: username for establishing authenticated connections
-        :password: password to use with authenticated connections
-        :session_cookie: *Deprecated* Use session_id instead.  If both
+        :kwarg session_name: name of the cookie to use with session handling
+        :kwarg debug: If True, log debug information
+        :kwarg username: Username for establishing authenticated connections
+        :kwarg password: Password to use with authenticated connections
+        :kwarg session_cookie: *Deprecated* Use session_id instead.  If both
             session_id and session_cookie is given, only session_id will be
             used.  User's session_cookie to connect to the server.
-        :session_id: The id of the user's session.
-        :cache_session: if set to true, cache the user's session data on the
-            filesystem between runs.
+        :kwarg session_id: id of the user's session
+        :kwarg cache_session: If set to true, cache the user's session data on
+            the filesystem between runs
         '''
         self.useragent = useragent or 'Fedora BaseClient/%(version)s' % {
                 'version': __version__}
@@ -85,7 +83,7 @@ class BaseClient(ProxyClient):
     def __load_ids(self):
         '''load id data from a file.
 
-        Returns: the complete mapping of users to session ids.
+        :Returns: Complete mapping of users to session ids
         '''
         saved_session = {}
         if path.isfile(SESSION_FILE):
@@ -102,8 +100,7 @@ class BaseClient(ProxyClient):
     def __save_ids(self, save):
         '''Save the cached ids file.
 
-        Arguments:
-        :save: The dict of usernames to ids to save.
+        :arg save: The dict of usernames to ids to save.
         '''
         # Make sure the directory exists
         if not path.isdir(SESSION_DIR):
@@ -126,7 +123,13 @@ class BaseClient(ProxyClient):
                     ' %(error)s') % {'session': SESSION_FILE, 'error': str(e)})
 
     def _get_session_id(self):
-        '''Attempt to retrieve the session id from the filesystem.'''
+        '''Attempt to retrieve the session id from the filesystem.
+
+        Note: this method will cache the session_id in memory rather than fetch
+        the id from the filesystem each time.
+
+        :Returns: session_id
+        '''
         if self._session_id:
             return self._session_id
         if not self.username:
@@ -145,8 +148,7 @@ class BaseClient(ProxyClient):
     def _set_session_id(self, session_id):
         '''Store our pickled session id.
 
-        Arguments:
-        :session_id: id to set our internal id to
+        :arg session_id: id to set our internal id to
 
         This method loads our existing session file and modifies our
         current user's id.  This allows us to retain ids for
@@ -183,8 +185,12 @@ class BaseClient(ProxyClient):
         ''')
 
     def _get_session_cookie(self):
-        '''*Deprecated* Attempt to retrieve the session cookie from the
-        filesystem.'''
+        '''**Deprecated** Use session_id instead.
+
+        Attempt to retrieve the session cookie from the filesystem.
+
+        :Returns: user's session cookie
+        '''
         warnings.warn(_("session_cookie is deprecated, use session_id"
             " instead"), DeprecationWarning, stacklevel=2)
         session_id = self.session_id
@@ -195,10 +201,10 @@ class BaseClient(ProxyClient):
         return cookie
 
     def _set_session_cookie(self, session_cookie):
-        '''*Deprecated* Store our pickled session cookie.
+        '''**Deprecated** Use session_id instead.
+        Store our pickled session cookie.
 
-        Arguments:
-        :session_cookie: cookie to set our internal cookie to
+        :arg session_cookie: cookie to set our internal cookie to
 
         This method loads our existing session file and modifies our
         current user's cookie.  This allows us to retain cookies for
@@ -212,7 +218,10 @@ class BaseClient(ProxyClient):
         self.session_id = session_id
 
     def _del_session_cookie(self):
-        '''*Deprecated* Delete the session cookie from the filesystem.'''
+        '''**Deprecated** Use session_id instead.
+
+        Delete the session cookie from the filesystem.
+        '''
         warnings.warn(_("session_cookie is deprecated, use session_id"
             " instead"), DeprecationWarning, stacklevel=2)
         del(self.session_id)
@@ -242,11 +251,12 @@ class BaseClient(ProxyClient):
         auth is True, then the request is made with an authenticated session
         cookie.
 
-        Arguments:
-        :method: Method to call on the server.  It's a url fragment that comes
-            after the base_url set in __init__().
-        :req_params: Extra parameters to send to the server.
-        :auth: If True perform auth to the server, else do not.
+        :arg method: Method to call on the server.  It's a url fragment that
+            comes after the base_url set in __init__().
+        :kwarg req_params: Extra parameters to send to the server.
+        :kwarg auth: If True perform auth to the server, else do not.
+        :returns: The data from the server
+        :rtype: DictContainer
         '''
         # Check for deprecated arguments.  This section can go once we hit 0.4
         if len(kwargs) >= 1:
