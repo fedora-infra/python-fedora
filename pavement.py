@@ -1,10 +1,14 @@
-#!/usr/bin/python -tt
-
 from paver.defaults import *
-from fedora.release import *
 
+import sys, os
 import paver.doctools
-from setuptools import setup, find_packages
+import paver.runtime
+
+from setuptools import find_packages
+
+sys.path.insert(0, str(paver.runtime.path.getcwd()))
+
+from fedora.release import *
 
 options(
     setup = Bunch(
@@ -37,7 +41,28 @@ options(
         docroot='.',
         builddir='build-doc',
         sourcedir='doc'
+        ),
+    pylint=Bunch(
+        module=['fedora']
         )
-
-
     )
+
+#
+# Generic Tasks
+#
+
+try:
+    from pylint import lint
+    has_pylint = True
+except ImportError:
+    has_pylint = False
+
+if has_pylint:
+    @task
+    def pylint():
+        '''Check the module you're building with pylint.'''
+        options.order('pylint', add_rest=True)
+        pylintopts = options.module
+        dry('pylint %s' % (" ".join(pylintopts)), lint.Run, pylintopts)
+
+
