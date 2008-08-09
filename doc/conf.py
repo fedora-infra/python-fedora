@@ -13,6 +13,9 @@
 
 import sys, os, re
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+import fedora.release
+
 # If your extensions are in another directory, add it here.
 #sys.path.append(os.path.dirname(__file__))
 
@@ -24,7 +27,7 @@ import sys, os, re
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest']
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['.templates']
+templates_path = ['templates']
 
 # The suffix of source filenames.
 source_suffix = '.rst'
@@ -33,8 +36,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General substitutions.
-project = 'Python Fedora Module'
-copyright = '2008, Toshio Kuratomi'
+project = fedora.release.NAME
+copyright = fedora.release.COPYRIGHT
 
 # The default replacements for |version| and |release|, also used in various
 # other places throughout the built documents.
@@ -42,7 +45,7 @@ copyright = '2008, Toshio Kuratomi'
 # The short X.Y version.
 version = '0.3'
 # The full version, including alpha/beta/rc tags.
-release = '0.3.0.0.alpha'
+release = fedora.release.VERSION
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -91,7 +94,7 @@ html_style = 'default.css'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['.static']
+html_static_path = ['static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -120,7 +123,7 @@ html_index = 'index.html'
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
 # base URL from which the finished HTML is served.
-html_use_opensearch = 'http://fedorahosted.org/packagedb'
+html_use_opensearch = fedora.release.URL
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'Sphinxdoc'
