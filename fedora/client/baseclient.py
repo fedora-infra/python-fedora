@@ -18,7 +18,11 @@
 # Red Hat Author(s): Luke Macken <lmacken@redhat.com>
 #                    Toshio Kuratomi <tkuratom@redhat.com>
 #
-'''Command line client for a user to interact with a Fedora Service.'''
+'''Command line client for a user to interact with a Fedora Service.
+
+.. moduleauthor:: Luke Macken <lmacken@redhat.com>
+.. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
+'''
 
 import os
 import stat

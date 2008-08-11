@@ -16,6 +16,8 @@
 
 """
 This module provides a client interface for bodhi.
+
+.. moduleauthor:: Luke Macken <lmacken@redhat.com>
 """
 
 import koji
@@ -41,21 +43,20 @@ class BodhiClient(BaseClient):
     def __init__(self, base_url='https://admin.fedoraproject.org/bodhi/',
                  useragent='Fedora Bodhi Client/%s' % __version__,
                  *args, **kwargs):
-        """ The BodhiClient constructor.
+        """The BodhiClient constructor.
 
-        Arguments:
-        :base_url: Base of every URL used to contact the server.  Defaults to
-            the Fedora Bodhi instance.
-        :useragent: useragent string to use.  If not given, default to
-            "Fedora BaseClient/VERSION"
-        :username: username for establishing authenticated connections
-        :password: password to use with authenticated connections
-        :session_cookie: *Deprecated*  Use session_id instead.
+        :kwarg base_url: Base of every URL used to contact the server.
+            Defaults to the Fedora Bodhi instance.
+        :kwarg useragent: useragent string to use.  If not given, default to
+            "Fedora Boshi Client/VERSION"
+        :kwarg username: username for establishing authenticated connections
+        :kwarg password: password to use with authenticated connections
+        :kwarg session_cookie: *Deprecated*  Use session_id instead.
             User's session_cookie to connect to the server
-        :session_id: user's session_id to connect to the server
-        :cache_session: if set to True, cache the user's session cookie on the
-            filesystem between runs.
-        :debug: If True, log debug information
+        :kwarg session_id: user's session_id to connect to the server
+        :kwarg cache_session: if set to True, cache the user's session cookie
+            on the filesystem between runs.
+        :kwarg debug: If True, log debug information
 
         """
         super(BodhiClient, self).__init__(base_url, useragent=useragent,
@@ -151,9 +152,8 @@ class BodhiClient(BaseClient):
     def request(self, update, request):
         """ Request an update state change.
 
-        Arguments:
-        :update: The title of the update
-        :request: The request (``testing``, ``stable``, ``obsolete``)
+        :arg update: The title of the update
+        :arg request: The request (``testing``, ``stable``, ``obsolete``)
 
         """
         return self.send_request('request', auth=True, req_params={
@@ -164,10 +164,9 @@ class BodhiClient(BaseClient):
     def comment(self, update, comment, karma=0):
         """ Add a comment to an update.
 
-        Arguments:
-        :update: The title of the update comment on.
-        :comment: The text of the comment.
-        :karma: The karma of this comment (-1, 0, 1)
+        :arg update: The title of the update comment on.
+        :arg comment: The text of the comment.
+        :kwarg karma: The karma of this comment (-1, 0, 1)
 
         """
         return self.send_request('comment', auth=True, req_params={
@@ -179,8 +178,7 @@ class BodhiClient(BaseClient):
     def delete(self, update):
         """ Delete an update.
 
-        Arguments
-        :update: The title of the update to delete
+        :arg update: The title of the update to delete
 
         """
         return self.send_request('delete', auth=True,
@@ -224,7 +222,8 @@ class BodhiClient(BaseClient):
     def latest_builds(self, package):
         """ Get a list of the latest builds for this package.
 
-        Returns a dictionary of the release dist tag to the latest build.
+        :arg package: package name to find builds for.
+        :Returns: a dictionary of the release dist tag to the latest build.
         """
         return self.send_request('latest_builds',
                                  req_params={'package': package})
@@ -240,8 +239,7 @@ class BodhiClient(BaseClient):
     def push_updates(self, updates):
         """ Push a list of updates.
 
-        Arguments
-        :updates: A list of update titles to ``push``.
+        :arg updates: A list of update titles to ``push``.
 
         """
         return self.send_request('admin/mash', auth=True,
@@ -250,8 +248,7 @@ class BodhiClient(BaseClient):
     def parse_file(self, input_file):
         """ Parse an update template file.
 
-        Arguments
-        :input_file: The filename of the update template.
+        :arg input_file: The filename of the update template.
 
         Returns an array of dictionaries of parsed update values which
         can be directly passed to the ``save`` method.
@@ -272,9 +269,9 @@ class BodhiClient(BaseClient):
                 'suggest_reboot': 'False',
                 }
             config = ConfigParser(defaults)
-            f = open(input_file)
-            config.readfp(f)
-            f.close()
+            template_file = open(input_file)
+            config.readfp(template_file)
+            template_file.close()
             updates = []
             for section in config.sections():
                 update = {}
@@ -296,9 +293,8 @@ class BodhiClient(BaseClient):
     def update_str(self, update, minimal=False):
         """ Return a string representation of a given update dictionary.
 
-        Arguments
-        :update: An update dictionary, acquired by the ``list`` method.
-        :minimal: Return a minimal one-line representation of the update.
+        :arg update: An update dictionary, acquired by the ``list`` method.
+        :kwarg minimal: Return a minimal one-line representation of the update.
 
         """
         if isinstance(update, basestring):

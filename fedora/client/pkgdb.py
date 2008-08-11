@@ -17,7 +17,10 @@
 #
 # Author(s): Toshio Kuratomi <tkuratom@redhat.com>
 #
-'''Module to provide a library interface to the package database.'''
+'''Module to provide a library interface to the package database.
+
+.. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
+'''
 
 ### FIXME: Functionality to merge:
 # cvs-int's CVSROOT/admin/pkgdb-client

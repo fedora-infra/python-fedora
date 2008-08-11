@@ -18,7 +18,11 @@
 # Red Hat Author(s): Luke Macken <lmacken@redhat.com>
 #                    Toshio Kuratomi <tkuratom@redhat.com>
 #
-'''Implement a class that sets up simple communication to a Fedora Service.'''
+'''Implement a class that sets up simple communication to a Fedora Service.
+
+.. moduleauthor:: Luke Macken <lmacken@redhat.com>
+.. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
+'''
 
 import Cookie
 import re
