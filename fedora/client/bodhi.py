@@ -116,15 +116,12 @@ class BodhiClient(BaseClient):
         ***FIXME*** Docstring arguments do not match method arguments
 
         Arguments:
-        :builds: A list of koji builds for this update.  Any new builds will
-            be created, and any removed builds will be removed from the update
-            specified by ``edited``.
-        :release: The release that this update is for.
+        :release: The release that you wish to query updates for.
+        :status: The update status (``pending``, ``testing``, ``stable``, ``obsolete``)
         :type_: The type of this update: ``security``, ``bugfix``,
             ``enhancement``, and ``newpackage``.
-        :bugs: A list of Red Hat Bugzilla ID's associated with this update.
-        :notes: Details as to why this update exists.
-        :request: Request for this update to change state, either to
+        :bugs: A list of Red Hat Bugzilla ID's
+        :request: An update request to query for
             ``testing``, ``stable``, ``unpush``, ``obsolete`` or None.
         :mine: If True, only query the users updates.
         :package: A package name or a name-version-release.
