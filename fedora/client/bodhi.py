@@ -113,19 +113,17 @@ class BodhiClient(BaseClient):
               request=None, mine=None, package=None, limit=10):
         """ Query bodhi for a list of updates.
 
-        ***FIXME*** Docstring arguments do not match method arguments
-
-        Arguments:
-        :release: The release that you wish to query updates for.
-        :status: The update status (``pending``, ``testing``, ``stable``, ``obsolete``)
-        :type_: The type of this update: ``security``, ``bugfix``,
+        :kwarg release: The release that you wish to query updates for.
+        :kwarg status: The update status (``pending``, ``testing``, ``stable``,
+            ``obsolete``)
+        :kwarg type_: The type of this update: ``security``, ``bugfix``,
             ``enhancement``, and ``newpackage``.
-        :bugs: A list of Red Hat Bugzilla ID's
-        :request: An update request to query for
+        :kwarg bugs: A list of Red Hat Bugzilla ID's
+        :kwarg request: An update request to query for
             ``testing``, ``stable``, ``unpush``, ``obsolete`` or None.
-        :mine: If True, only query the users updates.
-        :package: A package name or a name-version-release.
-        :limit: The maximum number of updates to display.
+        :kwarg mine: If True, only query the users updates.  Default: False.
+        :kwarg package: A package name or a name-version-release.
+        :kwarg limit: The maximum number of updates to display.  Default: 10.
 
         """
         params = {
