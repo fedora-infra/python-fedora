@@ -3,14 +3,21 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 6 Aug 2008
+:Date: 22 Aug 2008
 :Version: 0.3.x
 
 0.3.5
 -----
+* Fix client.AccountSystem.person_by_username() to not traceback when given an
+  unknown username.
 * Deprecate cookie auth in favor of session_id auth (but maintain compatibility)
 * Internally, use session_id instead of cookie.
 * Change the session file from ~/.fedora_session to ~/.fedora/.fedora_session
+* Switch from using setuptools to build the package to paver_.
+* Generate html documentation using sphinx_.
+
+.. _paver:: http://www.blueskyonmars.com/projects/paver/
+.. _sphix:: http://sphinx.pocoo.org/
 
 0.3.4
 -----

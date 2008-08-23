@@ -205,8 +205,9 @@ class AccountSystem(BaseClient):
         params = {'username': username}
         request = self.send_request('json/person_by_username', auth = True,
                 req_params = params)
-        person = request['person']
+
         if request['success']:
+            person = request['person']
             if person['id'] in self.__bugzilla_email:
                 person['bugzilla_email'] = self.__bugzilla_email[person['id']]
             else:
