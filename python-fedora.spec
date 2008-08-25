@@ -50,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/*
 
 %changelog
+* Mon Aug 25 2008 Luke Macken <lmacken@redhat.com> - 0.3.5-1
+- New upstream release
+
 * Mon Jul 28 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.4-1
 - Small fix to proxyclient.send_request() for sequence types.
 
