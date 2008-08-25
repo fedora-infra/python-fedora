@@ -24,8 +24,6 @@ This plugin provides integration with the Fedora Account
 System using JSON calls.
 '''
 
-import Cookie
-
 from cherrypy import response
 from turbogears import config, identity
 
@@ -63,16 +61,15 @@ class JsonFasIdentity(BaseClient):
         if visit_key:
             # Set the cookie to the user's tg_visit key before requesting
             # authentication.  That way we link the two together.
-            session_cookie = Cookie.SimpleCookie()
-            session_cookie[self.cookie_name] = visit_key
+            session_id = visit_key
         else:
-            session_cookie = None
+            session_id = None
 
         debug = config.get('jsonfas.debug', False)
         super(JsonFasIdentity, self).__init__(self.fas_url,
                 useragent=self.useragent, debug=debug,
                 username=username, password=password,
-                session_cookie=session_cookie, cache_session=self.cache_session)
+                session_id=session_id, cache_session=self.cache_session)
 
         if self.debug:
             import inspect
@@ -92,11 +89,11 @@ class JsonFasIdentity(BaseClient):
         keep the visit_key in sync.
         '''
         log.debug('entering jsonfas send_request')
-        if self.session_cookie[self.cookie_name].value != self.visit_key:
+        if self.session_id != self.visit_key:
             # When the visit_key changes (because the old key had expired or
             # been deleted from the db) change the visit_key in our variables
             # and the session cookie to be sent back to the client.
-            self.visit_key = self.session_cookie[self.cookie_name].value
+            self.visit_key = self.session_id
             response.simple_cookie[self.cookie_name] = self.visit_key
         log.debug('leaving jsonfas send_request')
         return super(JsonFasIdentity, self).send_request(method, req_params,

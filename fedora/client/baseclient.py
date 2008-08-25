@@ -18,13 +18,18 @@
 # Red Hat Author(s): Luke Macken <lmacken@redhat.com>
 #                    Toshio Kuratomi <tkuratom@redhat.com>
 #
-'''Command line client for a user to interact with a Fedora Service.'''
+'''Command line client for a user to interact with a Fedora Service.
+
+.. moduleauthor:: Luke Macken <lmacken@redhat.com>
+.. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
+'''
 
 import os
 import stat
 from os import path
 import logging
 import cPickle as pickle
+import Cookie
 import warnings
 
 from fedora import __version__
@@ -32,7 +37,8 @@ from fedora import _
 
 log = logging.getLogger(__name__)
 
-SESSION_FILE = path.join(path.expanduser('~'), '.fedora_session')
+SESSION_DIR = path.join(path.expanduser('~'), '.fedora')
+SESSION_FILE = path.join(SESSION_DIR, '.fedora_session')
 
 from fedora.client import AuthError, ProxyClient
 
@@ -41,37 +47,47 @@ class BaseClient(ProxyClient):
         A command-line client to interact with Fedora TurboGears Apps.
     '''
     def __init__(self, base_url, useragent=None, debug=False, username=None,
-            password=None, session_cookie=None, cache_session=True):
+            password=None, session_cookie=None, session_id=None,
+            session_name='tg-visit', cache_session=True):
         '''
-        Arguments:
-        :base_url: Base of every URL used to contact the server
+        :arg base_url: Base of every URL used to contact the server
 
-        Keyword Arguments:
-        :useragent: useragent string to use.  If not given, default to
+        :kwarg useragent: Useragent string to use.  If not given, default to
             "Fedora BaseClient/VERSION"
-        :debug: If True, log debug information
-        :username: username for establishing authenticated connections
-        :password: password to use with authenticated connections
-        :session_cookie: user's session_cookie to connect to the server
-        :cache_session: if set to true, cache the user's session cookie on the
-            filesystem between runs.
+        :kwarg session_name: name of the cookie to use with session handling
+        :kwarg debug: If True, log debug information
+        :kwarg username: Username for establishing authenticated connections
+        :kwarg password: Password to use with authenticated connections
+        :kwarg session_cookie: *Deprecated* Use session_id instead.  If both
+            session_id and session_cookie is given, only session_id will be
+            used.  User's session_cookie to connect to the server.
+        :kwarg session_id: id of the user's session
+        :kwarg cache_session: If set to true, cache the user's session data on
+            the filesystem between runs
         '''
         self.useragent = useragent or 'Fedora BaseClient/%(version)s' % {
                 'version': __version__}
         super(BaseClient, self).__init__(base_url, useragent=self.useragent,
+                session_name=session_name, session_as_cookie=False,
                 debug=debug)
 
         self.username = username
         self.password = password
         self.cache_session = cache_session
-        self._session_cookie = None
-        if session_cookie:
-            self.session_cookie = session_cookie
+        self._session_id = None
+        if session_id:
+            self.session_id = session_id
+        elif session_cookie:
+            warnings.warn(_("session_cookie is deprecated, use session_id"
+                    " instead"), DeprecationWarning, stacklevel=2)
+            session_id = session_cookie.get(self.session_name, '')
+            if session_id:
+                self.session_id = session_id.value
 
-    def __load_cookies(self):
-        '''load cookie data from a file.
+    def __load_ids(self):
+        '''load id data from a file.
 
-        Returns: the complete mapping of users to session cookies.
+        :Returns: Complete mapping of users to session ids
         '''
         saved_session = {}
         if path.isfile(SESSION_FILE):
@@ -85,12 +101,19 @@ class BaseClient(ProxyClient):
 
         return saved_session
 
-    def __save_cookies(self, save):
-        '''Save the cached cookies file.
+    def __save_ids(self, save):
+        '''Save the cached ids file.
 
-        Arguments:
-        :save: The dict of usernames to cookies to save.
+        :arg save: The dict of usernames to ids to save.
         '''
+        # Make sure the directory exists
+        if not path.isdir(SESSION_DIR):
+            try:
+                os.mkdir(SESSION_DIR, 0755)
+            except OSError, e:
+                log.warning(_('Unable to create %(dir)s: %(error)s') %
+                    {'dir': SESSION_DIR, 'error': str(e)})
+
         try:
             session_file = file(SESSION_FILE, 'w')
             os.chmod(SESSION_FILE, stat.S_IRUSR | stat.S_IWUSR)
@@ -103,42 +126,50 @@ class BaseClient(ProxyClient):
             log.warning(_('Unable to write to session file %(session)s:' \
                     ' %(error)s') % {'session': SESSION_FILE, 'error': str(e)})
 
-    def _get_session_cookie(self):
-        '''Attempt to retrieve the session cookie from the filesystem.'''
-        if self._session_cookie:
-            return self._session_cookie
+    def _get_session_id(self):
+        '''Attempt to retrieve the session id from the filesystem.
+
+        Note: this method will cache the session_id in memory rather than fetch
+        the id from the filesystem each time.
+
+        :Returns: session_id
+        '''
+        if self._session_id:
+            return self._session_id
         if not self.username:
-            self._session_cookie = ''
+            self._session_id = ''
         else:
-            saved_sessions = self.__load_cookies()
-            self._session_cookie = saved_sessions.get(self.username, '')
-        if not self._session_cookie:
+            saved_sessions = self.__load_ids()
+            self._session_id = saved_sessions.get(self.username, '')
+        if isinstance(self._session_id, Cookie.SimpleCookie):
+            self._session_id = ''
+
+        if not self._session_id:
             log.debug(_('No session cached for "%s"') % self.username)
 
-        return self._session_cookie
+        return self._session_id
 
-    def _set_session_cookie(self, session_cookie):
-        '''Store our pickled session cookie.
+    def _set_session_id(self, session_id):
+        '''Store our pickled session id.
 
-        Arguments:
-        :session_cookie: cookie to set our internal cookie to
+        :arg session_id: id to set our internal id to
 
         This method loads our existing session file and modifies our
-        current user's cookie.  This allows us to retain cookies for
+        current user's id.  This allows us to retain ids for
         multiple users.
         '''
         # Start with the previous users
         if self.cache_session and self.username:
-            save = self.__load_cookies()
-            save[self.username] = session_cookie
-            # Save the cookies to the filesystem
-            self.__save_cookies(save)
-        self._session_cookie = session_cookie
+            save = self.__load_ids()
+            save[self.username] = session_id
+            # Save the ids to the filesystem
+            self.__save_ids(save)
+        self._session_id = session_id
 
-    def _del_session_cookie(self):
-        '''Delete the session cookie from the filesystem.'''
+    def _del_session_id(self):
+        '''Delete the session id from the filesystem.'''
         # Start with the previous users
-        save = self.__load_cookies()
+        save = self.__load_ids()
         try:
             del save[self.username]
         except KeyError:
@@ -146,12 +177,61 @@ class BaseClient(ProxyClient):
             # session file.
             pass
         else:
-            # Save the cookies to the filesystem
-            self.__save_cookies(save)
-        self._session_cookie = None
+            # Save the ids to the filesystem
+            self.__save_ids(save)
+        self._session_id = None
+
+    session_id = property(_get_session_id, _set_session_id, 
+            _del_session_id, '''The session_id.
+
+        The session id is saved in a file in case it is needed in consecutive
+        runs of BaseClient.
+        ''')
+
+    def _get_session_cookie(self):
+        '''**Deprecated** Use session_id instead.
+
+        Attempt to retrieve the session cookie from the filesystem.
+
+        :Returns: user's session cookie
+        '''
+        warnings.warn(_("session_cookie is deprecated, use session_id"
+            " instead"), DeprecationWarning, stacklevel=2)
+        session_id = self.session_id
+        if not session_id:
+            return ''
+        cookie = Cookie.SimpleCookie()
+        cookie[self.session_name] = session_id
+        return cookie
+
+    def _set_session_cookie(self, session_cookie):
+        '''**Deprecated** Use session_id instead.
+        Store our pickled session cookie.
+
+        :arg session_cookie: cookie to set our internal cookie to
+
+        This method loads our existing session file and modifies our
+        current user's cookie.  This allows us to retain cookies for
+        multiple users.
+        '''
+        warnings.warn(_("session_cookie is deprecated, use session_id"
+            " instead"), DeprecationWarning, stacklevel=2)
+        session_id = session_cookie.get(self.session_name, '')
+        if session_id:
+            session_id = session_id.value
+        self.session_id = session_id
+
+    def _del_session_cookie(self):
+        '''**Deprecated** Use session_id instead.
+
+        Delete the session cookie from the filesystem.
+        '''
+        warnings.warn(_("session_cookie is deprecated, use session_id"
+            " instead"), DeprecationWarning, stacklevel=2)
+        del(self.session_id)
 
     session_cookie = property(_get_session_cookie, _set_session_cookie, 
-            _del_session_cookie, '''The session_cookie.
+            _del_session_cookie, '''*Deprecated* The session_cookie.
 
         The session cookie is saved in a file in case it is needed in
         consecutive runs of BaseClient.
@@ -166,7 +246,7 @@ class BaseClient(ProxyClient):
             # We don't need to fail for an auth error as we're getting rid of
             # our authentication tokens here.
             pass
-        del(self.session_cookie)
+        del(self.session_id)
 
     def send_request(self, method, req_params=None, auth=False, **kwargs):
         '''Make an HTTP request to a server method.
@@ -175,11 +255,12 @@ class BaseClient(ProxyClient):
         auth is True, then the request is made with an authenticated session
         cookie.
 
-        Arguments:
-        :method: Method to call on the server.  It's a url fragment that comes
-            after the base_url set in __init__().
-        :req_params: Extra parameters to send to the server.
-        :auth: If True perform auth to the server, else do not.
+        :arg method: Method to call on the server.  It's a url fragment that
+            comes after the base_url set in __init__().
+        :kwarg req_params: Extra parameters to send to the server.
+        :kwarg auth: If True perform auth to the server, else do not.
+        :returns: The data from the server
+        :rtype: DictContainer
         '''
         # Check for deprecated arguments.  This section can go once we hit 0.4
         if len(kwargs) >= 1:
@@ -203,7 +284,7 @@ class BaseClient(ProxyClient):
                     stacklevel=2)
             req_params = kwargs['input']
 
-        auth_params = {'cookie': self.session_cookie}
+        auth_params = {'session_id': self.session_id}
         if auth == True:
             # We need something to do auth.  Check user/pass
             if self.username and self.password:
@@ -211,12 +292,12 @@ class BaseClient(ProxyClient):
                 auth_params['username'] = self.username
                 auth_params['password'] = self.password
             else:
-                # No?  Check for session_cookie
-                if not self.session_cookie:
+                # No?  Check for session_id
+                if not self.session_id:
                     # Not enough information to auth
                     raise AuthError, 'Auth was requested but no way to' \
                             ' perform auth was given.  Please set username' \
-                            ' and password or session_cookie before calling' \
+                            ' and password or session_id before calling' \
                             ' this function with auth=True'
 
         # Remove empty params
@@ -225,10 +306,10 @@ class BaseClient(ProxyClient):
                 if not value]
         # pylint: enable-msg=W0104
 
-        session_cookie, data = super(BaseClient, self).send_request(method,
+        session_id, data = super(BaseClient, self).send_request(method,
                 req_params = req_params, auth_params = auth_params)
-        # In case the server returned a new session cookie to us
-        if self.session_cookie != session_cookie:
-            self.session_cookie = session_cookie
+        # In case the server returned a new session id to us
+        if self.session_id != session_id:
+            self.session_id = session_id
 
         return data

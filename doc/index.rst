@@ -9,6 +9,7 @@ Python Fedora Module Documentation
 
    client
    service
+   api
 
 ==================
 Indices and tables
