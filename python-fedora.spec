@@ -12,7 +12,7 @@ Source0:        https://fedorahosted.org/releases/p/y/%{name}/%{name}-%{version}
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
-BuildRequires:  python-devel python-setuptools-devel
+BuildRequires:  python-devel python-setuptools-devel python-paver
 Requires:       python-simplejson
 Requires:       python-bugzilla
 Requires:       python-feedparser
@@ -32,12 +32,12 @@ TurboGears Applications such as Bodhi, PackageDB, MirrorManager, and FAS2.
 %setup -q
 
 %build
-%{__python} setup.py build
+paver build
 
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__python} setup.py install --skip-build --root $RPM_BUILD_ROOT
+paver install --skip-build --root $RPM_BUILD_ROOT
 
  
 %clean
