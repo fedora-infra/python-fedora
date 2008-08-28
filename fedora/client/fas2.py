@@ -20,6 +20,9 @@
 #
 '''
 Provide a client module for talking to the Fedora Account System.
+
+.. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
+.. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
 import urllib
 
@@ -53,17 +56,18 @@ class AccountSystem(BaseClient):
             *args, **kwargs):
         '''Create the AccountSystem client object.
 
-        Keyword Arguments:
-        :base_url: Base of every URL used to contact the server.  Defalts to
-            the Fedora PackageDB instance.
-        :useragent: useragent string to use.  If not given, default to
-            "Fedora BaseClient/VERSION"
-        :debug: If True, log debug information
-        :username: username for establishing authenticated connections
-        :password: password to use with authenticated connections
-        :session_cookie: user's session_cookie to connect to the server
-        :cache_session: if set to true, cache the user's session cookie on the
-            filesystem between runs.
+        :kwargs base_url: Base of every URL used to contact the server.
+            Defalts to the Fedora Project instance.
+        :kwargs useragent: useragent string to use.  If not given, default to
+            "Fedora Account System Client/VERSION"
+        :kwargs debug: If True, log debug information
+        :kwargs username: username for establishing authenticated connections
+        :kwargs password: password to use with authenticated connections
+        :kwargs session_cookie: **Deprecated** Use session_id instead.
+            User's session_cookie to connect to the server
+        :kwargs session_id: user's session_id to connect to the server
+        :kwargs cache_session: if set to true, cache the user's session cookie
+            on the filesystem between runs.
         '''
         if 'useragent' not in kwargs:
             kwargs['useragent'] = 'Fedora Account System Client/%s' \
@@ -72,7 +76,8 @@ class AccountSystem(BaseClient):
         # We need a single proxy for the class to verify username/passwords
         # against.
         if not self.proxy:
-            self.proxy = ProxyClient(base_url, self.useragent, self.debug)
+            self.proxy = ProxyClient(base_url, useragent=self.useragent,
+                    session_as_cookie=False, debug=self.debug)
 
         # Preseed a list of FAS accounts with bugzilla addresses
         # This allows us to specify a different email for bugzilla than is
@@ -167,8 +172,8 @@ class AccountSystem(BaseClient):
         The people are all approved in the group.  Unapproved people are not
         shown.  The format of data is::
 
-        [{'username': 'person1', 'role_type': 'user'},
-        {'username': 'person2', 'role_type': 'sponsor'}]
+            \[{'username': 'person1', 'role_type': 'user'},
+            \{'username': 'person2', 'role_type': 'sponsor'}]
 
         role_type can be one of 'user', 'sponsor', or 'administrator'.
         '''
@@ -202,8 +207,9 @@ class AccountSystem(BaseClient):
         params = {'username': username}
         request = self.send_request('json/person_by_username', auth = True,
                 req_params = params)
-        person = request['person']
+
         if request['success']:
+            person = request['person']
             if person['id'] in self.__bugzilla_email:
                 person['bugzilla_email'] = self.__bugzilla_email[person['id']]
             else:
@@ -255,11 +261,9 @@ class AccountSystem(BaseClient):
     def people_by_groupname(self, groupname):
         '''Return a list of persons for the given groupname.
 
-        Arguments:
-        :groupname: Name of the group to look up
-
-        Returns: A list of person objects from the group.  If the
-        group contains no entries, then an empty list is returned.
+        :arg groupname: Name of the group to look up
+        :Returns: A list of person objects from the group.  If the group
+            contains no entries, then an empty list is returned.
         '''
         people = self.people_by_id()
         group = dict(self.group_by_name(groupname))
@@ -272,12 +276,11 @@ class AccountSystem(BaseClient):
     def get_config(self, username, application, attribute):
         '''Return the config entry for the key values.
 
-        Arguments:
-        :username: Username of the person
-        :application: Application for which the config is set
-        :attribute: Attribute key to lookup
-
-        Returns: The unicode string that describes the value.  If no entry
+        :arg username: Username of the person
+        :arg application: Application for which the config is set
+        :arg attribute: Attribute key to lookup
+        :Raises: AppError if the server returns an exception
+        :Returns: The unicode string that describes the value.  If no entry
             matched the username, application, and attribute then None is
             returned.
         '''
@@ -297,14 +300,12 @@ class AccountSystem(BaseClient):
         Note: authentication on the server will prevent anyone but the user
         or a fas admin from viewing or changing their configs.
 
-        Arguments:
-        :username: Username of the person
-        :application: Application for which the config is set
-        :pattern: A pattern to select values for.  This accepts * as a
+        :arg username: Username of the person
+        :arg application: Application for which the config is set
+        :kwarg pattern: A pattern to select values for.  This accepts * as a
             wildcard character. Default='*'
-
-        Returns:
-        A dict mapping ``attribute`` to ``value``.
+        :Raises AppError: if the server returns an exception
+        :Returns: A dict mapping ``attribute`` to ``value``.
         '''
         request = self.send_request('config/list/%s/%s/%s' %
                 (username, application, pattern), auth=True)
@@ -319,11 +320,11 @@ class AccountSystem(BaseClient):
         Note: authentication on the server will prevent anyone but the user
         or a fas admin from viewing or changing their configs.
 
-        Arguments:
-        :username: Username of the person
-        :application: Application for which the config is set
-        :attribute: The name of the config key that we're setting
-        :value: The value to set this to
+        :arg username: Username of the person
+        :arg application: Application for which the config is set
+        :arg attribute: The name of the config key that we're setting
+        :arg value: The value to set this to
+        :Raises AppError: if the server returns an exception
         '''
         request = self.send_request('config/set/%s/%s/%s' %
                 (username, application, attribute),
@@ -349,11 +350,9 @@ class AccountSystem(BaseClient):
     def verify_password(self, username, password):
         '''Return whether the username and password pair are valid.
 
-        Arguments:
-        :username: username to try authenticating
-        :password: password for the user
-
-        Returns: True if the username/password are valid.  False otherwise.
+        :arg username: username to try authenticating
+        :arg password: password for the user
+        :Returns: True if the username/password are valid.  False otherwise.
         '''
         try:
             # This will attempt to authenticate to the account system and

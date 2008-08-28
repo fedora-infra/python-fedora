@@ -16,20 +16,21 @@
 
 """
 This module provides a client interface for bodhi.
+
+.. moduleauthor:: Luke Macken <lmacken@redhat.com>
 """
 
-import re
 import koji
 import logging
 
 from yum import YumBase
 from textwrap import wrap
 from os.path import join, expanduser, exists
-from ConfigParser import ConfigParser
+from iniparse.compat import ConfigParser
 
 from fedora.client import BaseClient, FedoraClientError
 
-__version__ = '0.5.0'
+__version__ = '0.5.1'
 log = logging.getLogger(__name__)
 
 
@@ -42,61 +43,64 @@ class BodhiClient(BaseClient):
     def __init__(self, base_url='https://admin.fedoraproject.org/bodhi/',
                  useragent='Fedora Bodhi Client/%s' % __version__,
                  *args, **kwargs):
-        """ The BodhiClient constructor.
+        """The BodhiClient constructor.
 
-        Arguments:
-        :base_url: Base of every URL used to contact the server.  Defaults to
-            the Fedora Bodhi instance.
-        :useragent: useragent string to use.  If not given, default to
-            "Fedora BaseClient/VERSION"
-        :username: username for establishing authenticated connections
-        :password: password to use with authenticated connections
-        :session_cookie: user's session_cookie to connect to the server
-        :cache_session: if set to True, cache the user's session cookie on the
-            filesystem between runs.
-        :debug: If True, log debug information
+        :kwarg base_url: Base of every URL used to contact the server.
+            Defaults to the Fedora Bodhi instance.
+        :kwarg useragent: useragent string to use.  If not given, default to
+            "Fedora Boshi Client/VERSION"
+        :kwarg username: username for establishing authenticated connections
+        :kwarg password: password to use with authenticated connections
+        :kwarg session_cookie: *Deprecated*  Use session_id instead.
+            User's session_cookie to connect to the server
+        :kwarg session_id: user's session_id to connect to the server
+        :kwarg cache_session: if set to True, cache the user's session cookie
+            on the filesystem between runs.
+        :kwarg debug: If True, log debug information
 
         """
         super(BodhiClient, self).__init__(base_url, useragent=useragent,
                                           *args, **kwargs)
 
-    def save(self, builds, release, type_, bugs, notes, request='testing',
-             suggest_reboot=False, inheritance=False, autokarma=True,
-             stable_karma=3, unstable_karma=-3, edited=''):
+    def save(self, builds='', type_='', bugs='', notes='', request='testing',
+             close_bugs=True, suggest_reboot=False, inheritance=False,
+             autokarma=True, stable_karma=3, unstable_karma=-3, edited=''):
         """ Save an update.
 
         This entails either creating a new update, or editing an existing one.
         To edit an existing update, you must specify the update title in
         the ``edited`` keyword argument.
 
-        Arguments:
-        :builds: A list of koji builds for this update.
-        :release: The release that this update is for.
-        :type_: The type of this update: ``security``, ``bugfix``,
+        :kwarg builds: A list of koji builds for this update.
+        :kwarg type\_: The type of this update: ``security``, ``bugfix``,
             ``enhancement``, and ``newpackage``.
-        :bugs: A list of Red Hat Bugzilla ID's associated with this update.
-        :notes: Details as to why this update exists.
-        :request: Request for this update to change state, either to
+        :kwarg bugs: A list of Red Hat Bugzilla ID's associated with this
+            update.
+        :kwarg notes: Details as to why this update exists.
+        :kwarg request: Request for this update to change state, either to
             ``testing``, ``stable``, ``unpush``, ``obsolete`` or None.
-        :suggest_reboot: Suggest that the user reboot after update.
-        :inheritance: Follow koji build inheritance, which may result in this
-            update being pushed out to additional releases.
-        :autokarma: Allow bodhi to automatically change the state of this
+        :kwarg close_bugs: Close bugs when update is stable
+        :kwarg suggest_reboot: Suggest that the user reboot after update.
+        :kwarg inheritance: Follow koji build inheritance, which may result in
+            this update being pushed out to additional releases.
+        :kwarg autokarma: Allow bodhi to automatically change the state of this
             update based on the ``karma`` from user feedback.  It will
             push your update to ``stable`` once it reaches the ``stable_karma``
             and unpush your update when reaching ``unstable_karma``.
-        :stable_karma: The upper threshold for marking an update as ``stable``.
-        :unstable_karma: The lower threshold for unpushing an update.
-        :edited: The update title of the existing update that we are editing.
+        :kwarg stable_karma: The upper threshold for marking an update as
+            ``stable``.
+        :kwarg unstable_karma: The lower threshold for unpushing an update.
+        :kwarg edited: The update title of the existing update that we are
+            editing.
 
         """
         return self.send_request('save', auth=True, req_params={
                 'suggest_reboot': suggest_reboot,
+                'close_bugs': close_bugs,
                 'unstable_karma': unstable_karma,
                 'stable_karma': stable_karma,
                 'inheritance': inheritance,
                 'autokarma': autokarma,
-                'release': release.upper(),
                 'request': request,
                 'builds': builds,
                 'edited': edited,
@@ -109,20 +113,17 @@ class BodhiClient(BaseClient):
               request=None, mine=None, package=None, limit=10):
         """ Query bodhi for a list of updates.
 
-        Arguments:
-        :builds: A list of koji builds for this update.  Any new builds will
-            be created, and any removed builds will be removed from the update
-            specified by ``edited``.
-        :release: The release that this update is for.
-        :type_: The type of this update: ``security``, ``bugfix``,
+        :kwarg release: The release that you wish to query updates for.
+        :kwarg status: The update status (``pending``, ``testing``, ``stable``,
+            ``obsolete``)
+        :kwarg type_: The type of this update: ``security``, ``bugfix``,
             ``enhancement``, and ``newpackage``.
-        :bugs: A list of Red Hat Bugzilla ID's associated with this update.
-        :notes: Details as to why this update exists.
-        :request: Request for this update to change state, either to
+        :kwarg bugs: A list of Red Hat Bugzilla ID's
+        :kwarg request: An update request to query for
             ``testing``, ``stable``, ``unpush``, ``obsolete`` or None.
-        :mine: If True, only query the users updates.
-        :package: A package name or a name-version-release.
-        :limit: The maximum number of updates to display.
+        :kwarg mine: If True, only query the users updates.  Default: False.
+        :kwarg package: A package name or a name-version-release.
+        :kwarg limit: The maximum number of updates to display.  Default: 10.
 
         """
         params = {
@@ -146,9 +147,8 @@ class BodhiClient(BaseClient):
     def request(self, update, request):
         """ Request an update state change.
 
-        Arguments:
-        :update: The title of the update
-        :request: The request (``testing``, ``stable``, ``obsolete``)
+        :arg update: The title of the update
+        :arg request: The request (``testing``, ``stable``, ``obsolete``)
 
         """
         return self.send_request('request', auth=True, req_params={
@@ -159,10 +159,9 @@ class BodhiClient(BaseClient):
     def comment(self, update, comment, karma=0):
         """ Add a comment to an update.
 
-        Arguments:
-        :update: The title of the update comment on.
-        :comment: The text of the comment.
-        :karma: The karma of this comment (-1, 0, 1)
+        :arg update: The title of the update comment on.
+        :arg comment: The text of the comment.
+        :kwarg karma: The karma of this comment (-1, 0, 1)
 
         """
         return self.send_request('comment', auth=True, req_params={
@@ -174,8 +173,7 @@ class BodhiClient(BaseClient):
     def delete(self, update):
         """ Delete an update.
 
-        Arguments
-        :update: The title of the update to delete
+        :arg update: The title of the update to delete
 
         """
         return self.send_request('delete', auth=True,
@@ -219,7 +217,8 @@ class BodhiClient(BaseClient):
     def latest_builds(self, package):
         """ Get a list of the latest builds for this package.
 
-        Returns a dictionary of the release dist tag to the latest build.
+        :arg package: package name to find builds for.
+        :Returns: a dictionary of the release dist tag to the latest build.
         """
         return self.send_request('latest_builds',
                                  req_params={'package': package})
@@ -235,8 +234,7 @@ class BodhiClient(BaseClient):
     def push_updates(self, updates):
         """ Push a list of updates.
 
-        Arguments
-        :updates: A list of update titles to ``push``.
+        :arg updates: A list of update titles to ``push``.
 
         """
         return self.send_request('admin/mash', auth=True,
@@ -245,60 +243,53 @@ class BodhiClient(BaseClient):
     def parse_file(self, input_file):
         """ Parse an update template file.
 
-        Arguments
-        :input_file: The filename of the update template.
+        :arg input_file: The filename of the update template.
 
-        Returns a dictionary of parsed update values that can be directly
-        passed to the ``save`` method.
+        Returns an array of dictionaries of parsed update values which
+        can be directly passed to the ``save`` method.
 
         """
-        regex = re.compile(r'^(BUG|bug|TYPE|type|REQUEST|request)=(.*$)')
-        types = {'S': 'security', 'B': 'bugfix', 'E': 'enhancement'}
-        requests = {'T': 'testing', 'S': 'stable'}
-        notes = []
-        bugs = []
-        type_ = None
-        request = None
         log.info("Reading from %s " % input_file)
         input_file = expanduser(input_file)
         if exists(input_file):
-            f = open(input_file)
-            lines = f.readlines()
-            f.close()
-            for line in lines:
-                if line[0] == ':' or line[0] == '#':
-                    continue
-                src = regex.search(line)
-                if src:
-                    cmd, para = tuple(src.groups())
-                    cmd = cmd.upper()
-                    if cmd == 'BUG':
-                        para = [p for p in para.split(' ')]
-                        bugs.extend(para)
-                    elif cmd == 'TYPE':
-                        type_ = types[para.upper()]
-                    elif cmd == 'REQUEST':
-                        request = requests[para.upper()]
-                else: # The remaining data is considered to be the notes
-                    notes.append(line.strip())
-        if notes:
-            notes = "\r\n".join(notes)
-        if bugs:
-            bugs = ','.join(bugs)
-        log.debug("Type : %s" % type_)
-        log.debug("Request: %s" % request)
-        log.debug('Bugs:\n%s' % bugs)
-        log.debug('Notes:\n%s' % notes)
-        parsed = dict(type_=type_, request=request, bugs=bugs, notes=notes)
-        [parsed.__delitem__(key) for key, value in parsed.items() if not value]
-        return parsed
+            defaults = {
+                'type': 'bugfix',
+                'request': 'testing',
+                'notes': '',
+                'bugs': '',
+                'close_bugs': 'True',
+                'autokarma': 'True',
+                'stable_karma': 3,
+                'unstable_karma': -3,
+                'suggest_reboot': 'False',
+                }
+            config = ConfigParser(defaults)
+            template_file = open(input_file)
+            config.readfp(template_file)
+            template_file.close()
+            updates = []
+            for section in config.sections():
+                update = {}
+                update['builds'] = section
+                update['type_'] = config.get(section, 'type')
+                update['request'] = config.get(section, 'request')
+                update['bugs'] = config.get(section, 'bugs')
+                update['close_bugs'] = config.getboolean(section, 'close_bugs')
+                update['notes'] = config.get(section, 'notes')
+                update['autokarma'] = config.getboolean(section, 'autokarma')
+                update['stable_karma'] = config.getint(section, 'stable_karma')
+                update['unstable_karma'] = config.getint(section,
+                                                         'unstable_karma')
+                update['suggest_reboot'] = config.getboolean(section,
+                                                             'suggest_reboot')
+                updates.append(update)
+        return updates
 
     def update_str(self, update, minimal=False):
         """ Return a string representation of a given update dictionary.
 
-        Arguments
-        :update: An update dictionary, acquired by the ``list`` method.
-        :minimal: Return a minimal one-line representation of the update.
+        :arg update: An update dictionary, acquired by the ``list`` method.
+        :kwarg minimal: Return a minimal one-line representation of the update.
 
         """
         if isinstance(update, basestring):
