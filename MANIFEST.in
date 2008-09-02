@@ -3,3 +3,4 @@ include *.spec
 include COPYING AUTHORS ChangeLog NEWS
 include doc/*.rst
 include po/*
+include pavement.py
