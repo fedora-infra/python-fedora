@@ -108,12 +108,12 @@ class PackageDB(BaseClient):
         try:
             pkgInfo = self.get_package_info(pkg, master)
         except AppError, e:
-            for arg in xrange(len(e.args)):
-                if e.args[arg] == e.message:
+            for i, arg in enumerate(e.args):
+                if arg == e.message:
                     e.message = _('%(pkg)s has no %(branch)s branch; cannot'
                         ' clone from it.  Error: %(msg)s') % {'pkg': pkg,
-                            'branch': master, 'msg': e.message}
-                    e.args[arg] = e.message
+                            'branch': master, 'msg': arg}
+                    e.args[i] = arg
                     break
             raise
         pkgdbStatus = pkgInfo['statusMap']
