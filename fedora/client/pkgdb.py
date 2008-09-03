@@ -26,8 +26,8 @@
 
 import simplejson
 
-from fedora import __version__
-from fedora.client import BaseClient, FedoraClientError
+from fedora import __version__, _
+from fedora.client import BaseClient, FedoraClientError, AppError
 
 COLLECTIONMAP = {'F': 'Fedora',
     'FC': 'Fedora',
@@ -58,7 +58,7 @@ class PackageDB(BaseClient):
     '''Provide an easy to use interface to the PackageDB.'''
     def __init__(self, base_url='https://admin.fedoraproject.org/pkgdb/',
             *args, **kwargs):
-        '''Create the PackageDBClient.
+        '''Create the PackageDB client.
 
         :kwarg base_url: Base of every URL used to contact the server.
             Defaults to the Fedora PackageDB instance.
@@ -75,38 +75,39 @@ class PackageDB(BaseClient):
         '''
         if 'useragent' not in kwargs:
             kwargs['useragent'] = 'Fedora PackageDB Client/%s' % __version__
-        super(PackageDBClient, self).__init__(base_url, *args, **kwargs)
+        super(PackageDB, self).__init__(base_url, *args, **kwargs)
 
-    def get_package_info(self, pkgName, branch=None):
+    def get_package_info(self, pkg_name, branch=None):
         '''Get information about the package.
 
-        :arg pkgName: Name of the package
+        :arg pkg_name: Name of the package
         :kwarg branch: If given, restrict information returned to this branch
             Allowed branches are listed in `COLLECTIONMAP`
         '''
         data = None
         if branch:
-            collection, ver = canonical_branch_name(branch)
+            collection, ver = self.canonical_branch_name(branch)
             data = {'collectionName': collection, 'collectionVersion': ver}
-        pkgInfo = self.send_request('/packages/name/%s' % pkgName,
+        pkg_info = self.send_request('/packages/name/%s' % pkg_name,
                 req_params=data)
 
-        if 'status' in pkgInfo and not pkgInfo['status']:
-            raise AppError(name='PackageDBError', message=pkgInfo['message'])
-        return pkgInfo
+        if 'status' in pkg_info and not pkg_info['status']:
+            raise AppError(name='PackageDBError', message=pkg_info['message'])
+        return pkg_info
 
-    def clone_branch(self, pkg, master, owner, description, branches, ccList, coMaintList, groups):
+    def clone_branch(self, pkg, master, owner, description, branches, cc_list,
+            comaintainers, groups):
         '''Set a branch's permissions from a pre-existing branch.
         '''
 
-        if groups or coMaintList or ccList or description or owner:
+        if groups or comaintainers or cc_list or description or owner:
             # Set the updated information on the master branch first
-            self.add_edit_packages(pkg, owner, description, [master], ccList,
-                    coMaintList, groups)
+            self.add_edit_package(pkg, owner, description, [master], cc_list,
+                    comaintainers, groups)
 
         # Get information on the master branch
         try:
-            pkgInfo = self.get_package_info(pkg, master)
+            pkg_info = self.get_package_info(pkg, master)
         except AppError, e:
             for i, arg in enumerate(e.args):
                 if arg == e.message:
@@ -116,40 +117,41 @@ class PackageDB(BaseClient):
                     e.args[i] = arg
                     break
             raise
-        pkgdbStatus = pkgInfo['statusMap']
-        pkgInfo = pkgInfo['packageListings'][0]
+        status_map = pkg_info['statusMap']
+        pkg_info = pkg_info['packageListings'][0]
 
         # Make sure the master branch is not in the list of branches to change
         try:
             del branches[branches.index(master)]
-        except ValueError, e:
-            # Exception means it wasn't there to begin with
+        except ValueError: # pylint: disable-msg=W0704
+            # Exception means it wasn't there to begin with (W0704)
             pass
 
-        # Change groupList into the format the server is expecting
-        groupList = {}
-        for group in pkgInfo['groups']:
-            if group['aclOrder']['commit'] and \
-                    pkgdbStatus[str(group['aclOrder']['commit']['statuscode'])] == 'Approved':
-                groupList[group['name']] = True
+        # Change group_list into the format the server is expecting
+        group_list = {}
+        for group in pkg_info['groups']:
+            if group['aclOrder']['commit'] and status_map[str(
+                    group['aclOrder']['commit']['statuscode'])] == 'Approved':
+                group_list[group['name']] = True
             else:
-                groupList[group['name']] = False
+                group_list[group['name']] = False
 
         # Set all the branches to have the new branch information
         self.add_edit_package(pkg,
-                pkgInfo['owneruser'],
-                None, branches, None, None, groupList)
+                pkg_info['owneruser'],
+                None, branches, None, None, group_list)
 
         # All acls that we want to end up on the new branch
-        aclChanges = {}
+        acl_changes = {}
         for branch in branches:
-            aclChanges[branch] = {}
-            for person in pkgInfo['people']:
-                personAcls = {}
-                aclChanges[branch][person['userid']] = personAcls
+            acl_changes[branch] = {}
+            for person in pkg_info['people']:
+                person_acls = {}
+                acl_changes[branch][person['userid']] = person_acls
                 for acl in person['aclOrder']:
                     if person['aclOrder'][acl]:
-                        personAcls[acl] = pkgdbStatus[str(person['aclOrder'][acl]['statuscode'])]
+                        person_acls[acl] = status_map[str(
+                            person['aclOrder'][acl]['statuscode'])]
 
         #
         # Scan through each branch to remove acls that are set but need to be
@@ -157,61 +159,70 @@ class PackageDB(BaseClient):
         #
 
         # Get updated package info
-        branchIds = {} # PackageListingIds
-        allPkgInfo = self.get_package_info(pkg)
-        for pkgListing in allPkgInfo['packageListings']:
-            if pkgListing['collection']['branchname'] in branches:
+        branch_ids = {} # PackageListingIds
+        all_pkg_info = self.get_package_info(pkg)
+        for pkg_listing in all_pkg_info['packageListings']:
+            if pkg_listing['collection']['branchname'] in branches:
                 # Branch we're interested in
-                branch = pkgListing['collection']['branchname']
-                branchIds[branch] = pkgListing['id']
-                ### We are here
-                for person in pkgListing['people']:
+                branch = pkg_listing['collection']['branchname']
+                branch_ids[branch] = pkg_listing['id']
+                for person in pkg_listing['people']:
                     try:
-                        personAcls = aclChanges[branch][person['userid']]
+                        person_acls = acl_changes[branch][person['userid']]
                     except KeyError:
                         # person should not have an acl in the cloned entry
-                        personAcls = {}
-                        aclChanges[branch][person['userid']] = personAcls
-                        # If a person's  acls weren't Obsolete before, make them so now.
+                        person_acls = {}
+                        acl_changes[branch][person['userid']] = person_acls
+                        # If a person's acls weren't Obsolete before, make
+                        # them so now.
                         for acl in person['aclOrder']:
-                            if person['aclOrder'][acl] and pkgdbStatus[str(person['aclOrder'][acl]['statuscode'])] != 'Obsolete':
-                                personAcls[acl] = 'Obsolete'
+                            if person['aclOrder'][acl] and status_map[str(
+                                person['aclOrder'][acl]['statuscode'])] != \
+                                        'Obsolete':
+                                person_acls[acl] = 'Obsolete'
                     else:
                         for acl in person['aclOrder']:
                             if not person['aclOrder'][acl]:
                                 # Was unspecified before and...
-                                if acl not in personAcls or not personAcls[acl] or personAcls[acl] ==  'Obsolete':
-                                    # Unspecified or obsolete now, no need to set it to Obsolete
+                                if acl not in person_acls or \
+                                        not person_acls[acl] or \
+                                        person_acls[acl] ==  'Obsolete':
+                                    # Unspecified or obsolete now, no need to
+                                    # set it to Obsolete
                                     try:
-                                        del personAcls[acl]
-                                    except KeyError:
-                                        # Already unset
+                                        del person_acls[acl]
+                                    except KeyError: # pylint: disable-msg=W0704
+                                        # Already unset, no need to do
+                                        # anything (W0704)
                                         pass
                                 # Otherwise we need to set it
-                                pass
-                            elif acl not in personAcls:
-                                # Was not obsolete before, need to Obsolete this acl now
-                                personAcls[acl] = 'Obsolete'
+                            elif acl not in person_acls:
+                                # Was not obsolete before, need to Obsolete
+                                # this acl now
+                                person_acls[acl] = 'Obsolete'
                             else:
-                                # If the status is already correct, no need to set it again
-                                statuscode = str(person['aclOrder'][acl]['statuscode'])
-                                if pkgdbStatus.has_key(statuscode) and pkgdbStatus[statuscode] == personAcls[acl]:
-                                    del personAcls[acl]
+                                # If the status is already correct, no need to
+                                # set it again
+                                statuscode = str(
+                                        person['aclOrder'][acl]['statuscode'])
+                                if statuscode in status_map and \
+                                        status_map[statuscode] == \
+                                        person_acls[acl]:
+                                    del person_acls[acl]
                                 # Otherwise we need to set it
-                                pass
 
-        del allPkgInfo
+        del all_pkg_info
 
         # Actually set acl information now
         # acl information needs to be set separately as the compat interface
-        # add_edit_packages is using can't handle the complexity
-        for branch in aclChanges:
-            for person in aclChanges[branch]:
-                for acl in aclChanges[branch][person]:
-                    data = {'pkgid': branchIds[branch],
+        # add_edit_package is using can't handle the complexity
+        for branch in acl_changes:
+            for person in acl_changes[branch]:
+                for acl in acl_changes[branch][person]:
+                    data = {'pkgid': branch_ids[branch],
                             'personid': person,
                             'new_acl': acl,
-                            'statusname': aclChanges[branch][person][acl]}
+                            'statusname': acl_changes[branch][person][acl]}
                     response = self.send_request(
                             '/packages/dispatcher/set_acl_status',
                             auth=True, req_params=data)
@@ -224,13 +235,14 @@ class PackageDB(BaseClient):
                                             'pkg': data['pkgid'],
                                             'msg': response['message']})
 
-    def add_edit_package(self, pkg, owner, description, branches, ccList, coMaintList, groups):
+    def add_edit_package(self, pkg, owner, description, branches, cc_list,
+            comaintainers, groups):
         '''Add a new package to the database.
         '''
         # Check if the package exists
         try:
-            pkgInfo = self.get_package_info(pkg)
-        except:
+            self.get_package_info(pkg)
+        except AppError:
             # Package doesn't exist yet.  See if we have the information to
             # create it
             if owner:
@@ -260,10 +272,10 @@ class PackageDB(BaseClient):
             data['owner'] = owner
         if description:
             data['summary'] = description
-        if ccList:
-            data['ccList'] = simplejson.dumps(ccList)
-        if coMaintList:
-            data['comaintList'] = simplejson.dumps(coMaintList)
+        if cc_list:
+            data['ccList'] = simplejson.dumps(cc_list)
+        if comaintainers:
+            data['comaintList'] = simplejson.dumps(comaintainers)
 
         # Parse the groups information
         if groups:
@@ -273,7 +285,7 @@ class PackageDB(BaseClient):
         if branches:
             data['collections'] = {}
         for branch in branches:
-            collection, version = canonical_branch_name(branch)
+            collection, version = self.canonical_branch_name(branch)
             # Create branch
             try:
                 data['collections'][collection].append(version)
@@ -291,7 +303,7 @@ class PackageDB(BaseClient):
                 ' all information for %(pkg)s: %(msg)s') % {'pkg': pkg,
                     'msg': response['message']})
 
-    def canonical_branch_name(branch):
+    def canonical_branch_name(self, branch):
         '''Change a branch abbreviation into a name and version.
 
         Example:
