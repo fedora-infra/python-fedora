@@ -85,7 +85,8 @@ class PackageDB(BaseClient):
         # Get information on the master branch
         pkgInfo = self.get_package_info(pkg, master)
         if pkgInfo.has_key('message'):
-            raise PackageDBError, '%s has no %s branch; cannot clone from it' % (pkg, master)
+            raise PackageDBError, _('%(pkg)s has no %(branch)s branch; cannot'
+                    ' clone from it') % {'pkg': pkg, 'branch': master}
         pkgdbStatus = pkgInfo['statusMap']
         pkgInfo = pkgInfo['packageListings'][0]
 
@@ -182,9 +183,12 @@ class PackageDB(BaseClient):
                             'personid': person,
                             'new_acl': acl,
                             'statusname': aclChanges[branch][person][acl]}
-                    response = self.send_request( '/packages/dispatcher/set_acl_status', auth=True, req_params=data)
+                    response = self.send_request('/packages/dispatcher/set_acl_status', auth=True, req_params=data)
                     if response.has_key('status') and not response['status']:
-                        raise PackageDBError, 'PackageDB returned an error while setting acls for %s on %s' % (data['personid'], data['pkgid'],)
+                        raise PackageDBError, _('PackageDB returned an error'
+                                ' while setting acls for %(person)s on'
+                                ' %(pkg)s') % {'person': data['personid'],
+                                                'pkg': data['pkgid']}
 
     def add_edit_package(self, pkg, owner, description, branches, ccList, coMaintList, groups):
         '''Add a new package to the database.
@@ -204,11 +208,15 @@ class PackageDB(BaseClient):
                 # Fedora devel
                 response = self.send_request('/packages/dispatcher/add_package', auth=True, req_params=data)
                 if response.has_key('message'):
-                    raise PackageDBError, 'Package Database returned an error creating %s: %s' % (pkg, response['message'])
+                    raise PackageDBError, _('PackageDB returned an error'
+                            ' creating %(pkg)s: %(msg)s') % {'pkg': pkg,
+                                    'msg': response['message'])
                 owner = None
                 description = None
             else:
-                raise PackageDBError, 'Package %s does not exist and we do not have enough information to create it.' % pkg
+                raise PackageDBError, _('Package %(pkg)s does not exist and we'
+                        ' do not have enough information to create it.') % \
+                                {'pkg': pkg}
 
         # Change the branches, owners, or anything else that needs changing
         data = {}
@@ -242,7 +250,8 @@ class PackageDB(BaseClient):
         # Request the changes
         response = self.send_request('/packages/dispatcher/edit_package/%s' % pkg, auth=True, req_params=data)
         if not response['status']:
-            raise PackageDBError('Unable to save all information for %s: %s' % (pkg, response['message']))
+            raise PackageDBError(_('Unable to save all information for'
+                ' %(pkg)s: %(msg)s') % {'pkg': pkg, 'msg': response['message']})
 
     def canonical_branch_name(branch):
         '''Change a branch abbreviation into a name and version.
@@ -262,8 +271,10 @@ class PackageDB(BaseClient):
         try:
             collection = COLLECTIONMAP[collection]
         except KeyError:
-            raise KeyError, 'Collection abbreviation %s is unknown.  Use F, FC, EL, or OLPC' % collection
-        
+            raise KeyError, _('Collection abbreviation %(collection)s is'
+                    ' unknown.  Use F, FC, EL, or OLPC') % \
+                            {'collection': collection}
+
         return collection, version
 
 
