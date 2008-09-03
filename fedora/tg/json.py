@@ -41,10 +41,10 @@ class SABase(object):
     '''Base class for SQLAlchemy mapped objects.
 
     This base class makes sure we have a __json__() method on each SQLAlchemy
-    mapped object that knows how to::
+    mapped object that knows how to:
 
-    1) return json for the object.
-    2) Can selectively add tables pulled in from the table to the data we're
+    1) Return json for the object.
+    2) Selectively add tables pulled in from the table to the data we're
        returning.
     '''
     # pylint: disable-msg=R0903
@@ -57,17 +57,19 @@ class SABase(object):
         use of this by setting json_props in the controller.
 
         Example controller::
-          john = model.Person.get_by(name='John')
-          # Person has a property, addresses, linking it to an Address class.
-          # Address has a property, phone_nums, linking it to a Phone class.
-          john.json_props = {'Person': ['addresses'],
+
+            john = model.Person.get_by(name='John')
+            # Person has a property, addresses, linking it to an Address class.
+            # Address has a property, phone_nums, linking it to a Phone class.
+            john.json_props = {'Person': ['addresses'],
                   'Address': ['phone_nums']}
-          return dict(person=john)
+            return dict(person=john)
 
         json_props is a dict that maps class names to lists of properties you
         want to output.  This allows you to selectively pick properties you
         are interested in for one class but not another.  You are responsible
         for avoiding loops.  ie: *don't* do this::
+
             john.json_props = {'Person': ['addresses'], 'Address': ['people']}
         '''
         props = {}
@@ -113,6 +115,10 @@ def jsonify_sa_select_results(obj):
     The one special thing is that we bind the special json_props into each
     descendent.  This allows us to specify a json_props on the toplevel
     query result and it will pass to all of its children.
+
+    :arg obj: sqlalchemy Query object to jsonify
+    :Returns: list representation of the Query with each element in it given
+        a json_props attributes
     '''
     if 'json_props' in obj.__dict__:
         for element in obj:
@@ -132,6 +138,9 @@ def jsonify_salist(obj):
     The one special thing is that we bind the special json_props into each
     descendent.  This allows us to specify a json_props on the toplevel
     query result and it will pass to all of its children.
+
+    :arg obj: One of the sqlalchemy list types to jsonify
+    :Returns: list of jsonified elements
     '''
     if 'json_props' in obj.__dict__:
         for element in obj:
@@ -147,6 +156,9 @@ def jsonify_saresult(obj):
     The one special thing is that we bind the special json_props into each
     descendent.  This allows us to specify a json_props on the toplevel
     query result and it will pass to all of its children.
+
+    :arg obj: sqlalchemy ResultProxy to jsonify
+    :Returns: list of jsonified elements
     '''
     if 'json_props' in obj.__dict__:
         for element in obj:
@@ -155,5 +167,11 @@ def jsonify_saresult(obj):
 
 @jsonify.when('''(isinstance(obj, set))''')
 def jsonify_set(obj):
-    '''Transform a set into a list.'''
+    '''Transform a set into a list.
+
+    simplejson doesn't handle sets natively so transform a set into a list.
+
+    :arg obj: set to jsonify
+    :Returns: list representation of the set
+    '''
     return list(obj)
