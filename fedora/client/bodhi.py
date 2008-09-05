@@ -20,10 +20,8 @@ This module provides a client interface for bodhi.
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 """
 
-import koji
 import logging
 
-from yum import YumBase
 from textwrap import wrap
 from os.path import join, expanduser, exists
 from iniparse.compat import ConfigParser
@@ -200,6 +198,7 @@ class BodhiClient(BaseClient):
         have installed that you have yet to test and provide feedback for.
 
         """
+        from yum import YumBase
         yum = YumBase()
         yum.doConfigSetup(init_plugins=False)
         fedora = file('/etc/fedora-release').readlines()[0].split()[2]
@@ -360,6 +359,7 @@ class BodhiClient(BaseClient):
 
     def __koji_session(self):
         """ Return an authenticated koji session """
+        import koji
         config = ConfigParser()
         if exists(join(expanduser('~'), '.koji', 'config')):
             config.readfp(open(join(expanduser('~'), '.koji', 'config')))
