@@ -26,7 +26,6 @@ import logging
 
 from textwrap import wrap
 from os.path import join, expanduser, exists
-from iniparse.compat import ConfigParser
 
 from fedora.client import BaseClient, FedoraClientError
 
@@ -250,6 +249,7 @@ class BodhiClient(BaseClient):
         can be directly passed to the ``save`` method.
 
         """
+        from iniparse.compat import ConfigParser
         log.info("Reading from %s " % input_file)
         input_file = expanduser(input_file)
         if exists(input_file):
@@ -362,6 +362,7 @@ class BodhiClient(BaseClient):
     def __koji_session(self):
         """ Return an authenticated koji session """
         import koji
+        from iniparse.compat import ConfigParser
         config = ConfigParser()
         if exists(join(expanduser('~'), '.koji', 'config')):
             config.readfp(open(join(expanduser('~'), '.koji', 'config')))
