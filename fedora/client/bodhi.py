@@ -11,13 +11,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #
-# Copyright 2007  Red Hat, Inc
+# Copyright 2007-2008  Red Hat, Inc
 # Authors: Luke Macken <lmacken@redhat.com>
+#          Toshio Kuratomi <tkuratom@redhat.com>
 
 """
 This module provides a client interface for bodhi.
 
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
+.. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 """
 
 import logging
@@ -38,7 +40,7 @@ class BodhiClientException(FedoraClientError):
 
 class BodhiClient(BaseClient):
 
-    def __init__(self, base_url='https://admin.fedoraproject.org/bodhi/',
+    def __init__(self, base_url='https://admin.fedoraproject.org/updates/',
                  useragent='Fedora Bodhi Client/%s' % __version__,
                  *args, **kwargs):
         """The BodhiClient constructor.
