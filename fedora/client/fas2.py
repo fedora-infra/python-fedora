@@ -163,7 +163,7 @@ class AccountSystem(BaseClient):
         if request['success']:
             return request['group']
         else:
-            return dict()
+            raise AppError('FAS server unable to retrieve group %s' % groupname)
 
     def group_members(self, groupname):
         '''Return a list of people approved for a group.
