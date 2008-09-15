@@ -28,7 +28,7 @@ import urllib
 
 from fedora.client import DictContainer, BaseClient, ProxyClient, \
         AuthError, AppError, FedoraServiceError, FedoraClientError
-from fedora import __version__
+from fedora import __version__, _
 
 ### FIXME: To merge:
 # /usr/bin/fasClient from fas
