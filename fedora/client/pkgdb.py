@@ -105,7 +105,7 @@ class PackageDB(BaseClient):
         return pkg_info
 
     def clone_branch(self, pkg, master, branches, owner=None, description=None,
-            branches=None, cc_list=None, comaintainers=None, groups=None):
+            cc_list=None, comaintainers=None, groups=None):
         '''Set a branch's permissions from a pre-existing branch.
 
         :arg pkg: Name of the package to branch
