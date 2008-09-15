@@ -1,3 +1,150 @@
+== 0.3.6 ==
+
+2008-09-15  Toshio Kuratomi <badger@Clingman> - r331
+* Update for 0.3.6
+
+2008-09-15  Toshio Kuratomi <badger@Clingman> - r330
+Fix syntax error introduced when changing branches to a keyword arg.
+
+2008-09-15  Toshio Kuratomi <badger@Clingman> - r329
+Merge from stable.
+
+2008-09-15  Toshio Kuratomi <badger@Clingman> - r328
+import _() for localization of error messages.
+
+2008-09-15  Toshio Kuratomi <badger@Clingman> - r327
+* Finish documenting pkgdb.py
+* Update add_edit_package() to have keyword arguments.
+
+2008-09-11  Toshio Kuratomi <badger@Clingman> - r326
+fedora/client/fas2.py: Fix raise of AppError.
+
+2008-09-10  Toshio Kuratomi <badger@Clingman> - r325
+Raise an AppError in group_by_name() when the server returns an error
+condition.
+
+2008-09-05  Toshio Kuratomi <badger@Clingman> - r324
+Move iniparser into the methods as well.
+
+2008-09-05  Toshio Kuratomi <badger@Clingman> - r323
+Case of :raises: and :returns: matters.
+
+2008-09-05  Toshio Kuratomi <badger@Clingman> - r322
+Update bodhi URL, add Toshio as an author, update Copyright year.
+
+2008-09-05  Toshio Kuratomi <badger@Clingman> - r321
+Delay import of yum and koji so we don't need to have a strict dependence on
+them.
+
+2008-09-05  Toshio Kuratomi <badger@Clingman> - r320
+* fedora/client/__init__.py: Fix a typo.
+
+2008-09-03  Toshio Kuratomi <badger@Clingman> - r319
+Clean up pylint warnings.  This also changes some of the public variable
+names.  We need to do this now, before the API is public.
+
+2008-09-03  Toshio Kuratomi <badger@Clingman> - r318
+Use enumerate() instead of xrange() -- better python
+
+2008-09-03  Toshio Kuratomi <badger@Clingman> - r317
+Correct some syntax errors in my pkgdb client changes.
+
+2008-09-03  Toshio Kuratomi <badger@Clingman> - r316
+Add json and util modules to documentation generated on api.html.
+
+2008-09-03  Toshio Kuratomi <badger@Clingman> - r315
+* Check return from send_request() for errors and raise AppError if so.
+* Add PackageDBError to __init__
+
+2008-09-03  Toshio Kuratomi <badger@Clingman> - r314
+Mark all strings for i18n
+
+2008-09-03  Toshio Kuratomi <badger@Clingman> - r313
+Merge client.pkgdb from Mike Watters.
+
+== 0.3.5 ==
+
+2008-09-02  Toshio Kuratomi <badger@Clingman> - r312
+* Changes from Luke
+
+2008-08-23  Toshio Kuratomi <badger@Clingman> - r311
+Add Michael DeHaan to the bugzilla email list.
+
+2008-08-22  Toshio Kuratomi <badger@Clingman> - r310
+Fix for fas2.py so that we don't traceback on unknonw username.
+
+2008-08-11  Toshio Kuratomi <badger@Clingman> - r309
+Update query() to use sphinx param format.
+
+2008-08-11  Luke Macken <lmacken@redhat.com> - r308
+[bodhi] Fix the query module's docstring
+
+2008-08-11  Toshio Kuratomi <badger@Clingman> - r307
+Enhance some docstrings:
+* Add moduleauthor to all files.
+* Move most bodhi docstrings to the sphinxparam format.
+
+2008-08-09  Toshio Kuratomi <badger@Clingman> - r306
+Minor docstring fix.
+
+2008-08-09  Toshio Kuratomi <badger@Clingman> - r305
+Docstring fixes so sphinx can read and format the parameter lists.
+
+2008-08-09  Toshio Kuratomi <badger@Clingman> - r304
+* Fix for exceptions showing as classes.
+* Separate ProxyClient/BaseClient from other clients.
+
+2008-08-09  Toshio Kuratomi <badger@Clingman> - r303
+* Fix to work with the uninstalled library for generating docs, etc.
+* PyLint task.
+
+2008-08-09  Toshio Kuratomi <badger@Clingman> - r302
+Merge update to BodhiClient from lmacken.
+
+2008-08-09  Toshio Kuratomi <badger@Clingman> - r301
+Fix a few docstrings to be valid to the restructured text parser.
+
+2008-08-09  Toshio Kuratomi <badger@Clingman> - r300
+Cosmetic change to password obscuring output.
+
+2008-08-09  Toshio Kuratomi <badger@Clingman> - r299
+First cut at api docs.  This won't be how it's presented forever but I need
+to whip up something simple so I can get the docstrings working.
+
+2008-08-09  Toshio Kuratomi <badger@Clingman> - r298
+Modify the sphinx conf to use values from the modules release.
+
+2008-08-09  Toshio Kuratomi <badger@Clingman> - r297
+remove the sphinx Makefile as paver knows the steps to take.
+
+2008-08-09  Toshio Kuratomi <badger@Clingman> - r296
+Move from using setup.py/setuptools to manage builds to paver.
+
+2008-08-06  Toshio Kuratomi <badger@Clingman> - r295
+* Take the value attribute of the morsels so we get the string from cookies.
+* __load_cookies() => __load_ids().
+
+2008-08-06  Toshio Kuratomi <badger@Clingman> - r294
+Fix a couple syntax errors and update NEWS file.
+
+2008-08-06  Toshio Kuratomi <badger@Clingman> - r293
+* Deprecate cookie auth in favor of authentication via session_id (the value
+  inside of the cookie)
+* Save session_id to the session file instead of session_cookie
+* Session file is now at ~/.fedora/.fedora_session
+* Internally, handle all session information as a session_id (the value of the
+  tg-visit cookie)
+* Maintain compatibility with 0.3.0 while implementing auth parameters for
+  session_id.
+
+== 0.3.4 ==
+
+2008-07-28  Toshio Kuratomi <badger@Clingman> - r292
+Correct tag for last version in ChangeLog.
+
+2008-07-28  Toshio Kuratomi <badger@Clingman> - r291
+* Update ChangeLog again for release.
+
 2008-07-28  Toshio Kuratomi <badger@Clingman> - r290
 Add people_by_groupname() to NEWS and Paul Frields to AUTHORS.
 
