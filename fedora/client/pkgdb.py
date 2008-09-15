@@ -22,6 +22,9 @@
 
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 .. moduleauthor:: Mike Watters <valholla@fedoraproject.org>
+
+.. data:: COLLECTIONMAP
+    Maps short names to Collections.  For instance, FC => Fedora
 '''
 
 import simplejson
@@ -65,13 +68,16 @@ class PackageDB(BaseClient):
         :kwarg useragent: useragent string to use.  If not given, default to
             "Fedora PackageDB Client/VERSION"
         :kwarg debug: If True, log debug information
+        :type debug: bool
         :kwarg username: username for establishing authenticated connections
         :kwarg password: password to use with authenticated connections
         :kwarg session_id: user's session_id to connect to the server
+        :type session_id: string
         :kwarg session_cookie: **Deprecated** use session_id instead.
             user's session_cookie to connect to the server
-        :kwarg cache_session: if set to true, cache the user's session cookie
+        :kwarg cache_session: if set to True, cache the user's session cookie
             on the filesystem between runs.
+        :type kwarg: bool
         '''
         if 'useragent' not in kwargs:
             kwargs['useragent'] = 'Fedora PackageDB Client/%s' % __version__
@@ -82,7 +88,10 @@ class PackageDB(BaseClient):
 
         :arg pkg_name: Name of the package
         :kwarg branch: If given, restrict information returned to this branch
-            Allowed branches are listed in `COLLECTIONMAP`
+            Allowed branches are listed in :data:`COLLECTIONMAP`
+        :raises AppError: If the server returns an exceptiom
+        :returns: Package ownership information
+        :rtype: fedora.client.DictContainer
         '''
         data = None
         if branch:
@@ -95,9 +104,30 @@ class PackageDB(BaseClient):
             raise AppError(name='PackageDBError', message=pkg_info['message'])
         return pkg_info
 
-    def clone_branch(self, pkg, master, owner, description, branches, cc_list,
-            comaintainers, groups):
+    def clone_branch(self, pkg, master, branches, owner=None, description=None,
+            branches=None, cc_list=None, comaintainers=None, groups=None):
         '''Set a branch's permissions from a pre-existing branch.
+
+        :arg pkg: Name of the package to branch
+        :arg master: Short branch name to clone from.  Allowed branch names
+            are listed in :data:`COLLECTIONMAP`
+        :arg branches: List or tuple of branches to clone to.  Allowed branch
+            names are listed in :data:`COLLECTIONMAP`
+        :kwarg owner: If set, make this person the owner of both branches
+        :kwarg description: If set, make this the description of both branches
+        :kwarg cc_list: If set, list or tuple of usernames to watch the
+            package.
+        :kwarg comaintainers: If set, list or tuple of usernames to comaintain
+            the package.
+        :kwarg groups: If set, list or tuple of group names that can commit to
+            the package.
+        :raises AppError: If the server returns an exceptiom
+
+        Note: This method is going to be changing in the near future.  We
+        want to split the functionality up so this method is strictly about
+        cloning one branch to another.  The optional elements that change
+        attributes of the master branch prior to cloning should be done as a
+        separate call to :meth:`add_edit_branch` first.
         '''
 
         if groups or comaintainers or cc_list or description or owner:
@@ -235,9 +265,31 @@ class PackageDB(BaseClient):
                                             'pkg': data['pkgid'],
                                             'msg': response['message']})
 
-    def add_edit_package(self, pkg, owner, description, branches, cc_list,
-            comaintainers, groups):
-        '''Add a new package to the database.
+    def add_edit_package(self, pkg, owner=None, description=None,
+            branches=None, cc_list=None, comaintainers=None, groups=None):
+        '''Add or edit a package to the database.
+
+        :arg pkg: Name of the package to edit
+        :kwarg owner: If set, make this person the owner of both branches
+        :kwarg description: If set, make this the description of both branches
+        :kwarg cc_list: If set, list or tuple of usernames to watch the
+            package.
+        :kwarg comaintainers: If set, list or tuple of usernames to comaintain
+            the package.
+        :kwarg groups: If set, list or tuple of group names that can commit to
+            the package.
+        :raises AppError: If the server returns an error
+
+        This method takes information about a package and either edits the
+        package to reflect the changes to information or adds the package to
+        the database.
+
+        Note: This method will be going away in favor of methods that do
+        smaller chunks of work:
+            1) A method to add a new package
+            2) A method to add a new branch
+            3) A method to edit an existing package
+            4) A method to edit and existing branch
         '''
         # Check if the package exists
         try:
@@ -306,6 +358,10 @@ class PackageDB(BaseClient):
     def canonical_branch_name(self, branch):
         '''Change a branch abbreviation into a name and version.
 
+        :arg branch: branch abbreviation
+        :rtype: tuple
+        :returns: tuple of branch name and branch version.
+
         Example:
         >>> name, version = canonical_branch_name('FC-6')
         >>> name
@@ -331,16 +387,14 @@ class PackageDB(BaseClient):
     def get_owners(self, package, collection=None, collection_ver=None):
         '''Retrieve the ownership information for a package.
 
-        URL: Same information as /packages/name/%s
-
         :arg package: Name of the package to retrieve package information about.
         :kwarg collection: Limit the returned information to this collection
             ('Fedora', 'Fedora EPEL', Fedora OLPC', etc)
         :kwarg collection_ver: If collection is specified, further limit to this
             version of the collection.
-
+        :raises AppError: If the server returns an error
+        :rtype: DictContainer
         :return: dict of ownership information for the package
-        :rtype: dict of ownership information for the package
         '''
         method = '/packages/name/%s' % package
         if collection:
