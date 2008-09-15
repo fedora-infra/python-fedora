@@ -1,5 +1,17 @@
 == 0.3.6 ==
 
+2008-09-15  Toshio Kuratomi <badger@Clingman> - r335
+Include conf.py and static files needed to build docs.
+
+2008-09-15  Toshio Kuratomi <badger@Clingman> - r334
+Install the html docs.
+
+2008-09-15  Toshio Kuratomi <badger@Clingman> - r333
+Bump version in spec file as well.
+
+2008-09-15  Toshio Kuratomi <badger@Clingman> - r332
+Update ChangeLog for release.
+
 2008-09-15  Toshio Kuratomi <badger@Clingman> - r331
 * Update for 0.3.6
 
