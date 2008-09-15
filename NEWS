@@ -6,6 +6,14 @@ NEWS
 :Date: 22 Aug 2008
 :Version: 0.3.x
 
+0.3.6
+-----
+* fedora.client.pkgdb merge with pkgdb-client from Mike Watters and Toshio
+  Kuratomi.
+* Generate documentation for json and util modules.
+* Delay import of koji, yum,and iniparse in the bodhi client libraries so
+  they're not strict dependencies for now.
+
 0.3.5
 -----
 * Fix client.AccountSystem.person_by_username() to not traceback when given an

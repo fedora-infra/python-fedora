@@ -1,6 +1,7 @@
 include *.sql
 include *.spec
 include COPYING AUTHORS ChangeLog NEWS
-include doc/*.rst
+include doc/*
+include doc/static/*
 include po/*
 include pavement.py

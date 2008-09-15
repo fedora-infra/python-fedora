@@ -69,3 +69,28 @@ Package Database
 -------
 Service
 -------
+
+Transforming SQLAlchemy Objects into JSON
+=========================================
+.. automodule:: fedora.tg.json
+    :members: jsonify_sa_select_results, jsonify_salist, jsonify_saresult,
+        jsonify_set
+    :undoc-members:
+
+.. autoclass:: fedora.tg.json.SABase
+    :members: __json__
+    :undoc-members:
+
+TurboGears Helpers
+==================
+.. automodule:: fedora.tg.util
+    :members:
+    :undoc-members:
+
+.. automodule:: fedora.tg.identity
+    :members:
+    :undoc-members:
+
+.. automodule:: fedora.tg.visit
+    :members:
+    :undoc-members:

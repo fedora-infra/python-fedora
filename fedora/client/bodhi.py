@@ -11,22 +11,21 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #
-# Copyright 2007  Red Hat, Inc
+# Copyright 2007-2008  Red Hat, Inc
 # Authors: Luke Macken <lmacken@redhat.com>
+#          Toshio Kuratomi <tkuratom@redhat.com>
 
 """
 This module provides a client interface for bodhi.
 
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
+.. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 """
 
-import koji
 import logging
 
-from yum import YumBase
 from textwrap import wrap
 from os.path import join, expanduser, exists
-from iniparse.compat import ConfigParser
 
 from fedora.client import BaseClient, FedoraClientError
 
@@ -40,7 +39,7 @@ class BodhiClientException(FedoraClientError):
 
 class BodhiClient(BaseClient):
 
-    def __init__(self, base_url='https://admin.fedoraproject.org/bodhi/',
+    def __init__(self, base_url='https://admin.fedoraproject.org/updates/',
                  useragent='Fedora Bodhi Client/%s' % __version__,
                  *args, **kwargs):
         """The BodhiClient constructor.
@@ -200,6 +199,7 @@ class BodhiClient(BaseClient):
         have installed that you have yet to test and provide feedback for.
 
         """
+        from yum import YumBase
         yum = YumBase()
         yum.doConfigSetup(init_plugins=False)
         fedora = file('/etc/fedora-release').readlines()[0].split()[2]
@@ -249,6 +249,7 @@ class BodhiClient(BaseClient):
         can be directly passed to the ``save`` method.
 
         """
+        from iniparse.compat import ConfigParser
         log.info("Reading from %s " % input_file)
         input_file = expanduser(input_file)
         if exists(input_file):
@@ -360,6 +361,8 @@ class BodhiClient(BaseClient):
 
     def __koji_session(self):
         """ Return an authenticated koji session """
+        import koji
+        from iniparse.compat import ConfigParser
         config = ConfigParser()
         if exists(join(expanduser('~'), '.koji', 'config')):
             config.readfp(open(join(expanduser('~'), '.koji', 'config')))

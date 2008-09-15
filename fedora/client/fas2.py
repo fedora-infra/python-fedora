@@ -28,7 +28,7 @@ import urllib
 
 from fedora.client import DictContainer, BaseClient, ProxyClient, \
         AuthError, AppError, FedoraServiceError, FedoraClientError
-from fedora import __version__
+from fedora import __version__, _
 
 ### FIXME: To merge:
 # /usr/bin/fasClient from fas
@@ -118,7 +118,7 @@ class AccountSystem(BaseClient):
                 100058: 'sheltren@fedoraproject.org',
                 # Roozbeh Pournader: roozbeh@farsiweb.info
                 100350: 'roozbeh@gmail.com',
-                #Michael DeHaan: michael.dehaan@gmail.com
+                # Michael DeHaan: michael.dehaan@gmail.com
                 100603: 'mdehaan@redhat.com',
                 }
         # A few people have an email account that is used in owners.list but
@@ -163,7 +163,8 @@ class AccountSystem(BaseClient):
         if request['success']:
             return request['group']
         else:
-            return dict()
+            raise AppError(message=_('FAS server unable to retrieve group %s')
+                    % groupname, name='FASError')
 
     def group_members(self, groupname):
         '''Return a list of people approved for a group.
@@ -262,7 +263,7 @@ class AccountSystem(BaseClient):
         '''Return a list of persons for the given groupname.
 
         :arg groupname: Name of the group to look up
-        :Returns: A list of person objects from the group.  If the group
+        :returns: A list of person objects from the group.  If the group
             contains no entries, then an empty list is returned.
         '''
         people = self.people_by_id()
@@ -279,8 +280,8 @@ class AccountSystem(BaseClient):
         :arg username: Username of the person
         :arg application: Application for which the config is set
         :arg attribute: Attribute key to lookup
-        :Raises: AppError if the server returns an exception
-        :Returns: The unicode string that describes the value.  If no entry
+        :raises AppError: if the server returns an exception
+        :returns: The unicode string that describes the value.  If no entry
             matched the username, application, and attribute then None is
             returned.
         '''
@@ -304,8 +305,8 @@ class AccountSystem(BaseClient):
         :arg application: Application for which the config is set
         :kwarg pattern: A pattern to select values for.  This accepts * as a
             wildcard character. Default='*'
-        :Raises AppError: if the server returns an exception
-        :Returns: A dict mapping ``attribute`` to ``value``.
+        :raises AppError: if the server returns an exception
+        :returns: A dict mapping ``attribute`` to ``value``.
         '''
         request = self.send_request('config/list/%s/%s/%s' %
                 (username, application, pattern), auth=True)
@@ -324,7 +325,7 @@ class AccountSystem(BaseClient):
         :arg application: Application for which the config is set
         :arg attribute: The name of the config key that we're setting
         :arg value: The value to set this to
-        :Raises AppError: if the server returns an exception
+        :raises AppError: if the server returns an exception
         '''
         request = self.send_request('config/set/%s/%s/%s' %
                 (username, application, attribute),
@@ -352,7 +353,7 @@ class AccountSystem(BaseClient):
 
         :arg username: username to try authenticating
         :arg password: password for the user
-        :Returns: True if the username/password are valid.  False otherwise.
+        :returns: True if the username/password are valid.  False otherwise.
         '''
         try:
             # This will attempt to authenticate to the account system and

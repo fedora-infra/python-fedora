@@ -25,7 +25,7 @@ import cherrypy
 from turbogears import flash
 
 def request_format():
-    '''Return the output format that was reqeusted
+    '''Return the output format that was requested.
     '''
     format = cherrypy.request.params.get('tg_format', '').lower()
     if not format:
@@ -50,6 +50,7 @@ def jsonify_validation_errors():
             errors = fedora.tg.util.jsonify_validation_errors()
             if errors:
                 return errors
+            [...]
 
         @expose(allow_json=True)
         @error_handler(enter_number)
@@ -57,9 +58,10 @@ def jsonify_validation_errors():
         def save(self, number):
             return dict(success=True)
 
-    Returns: None if there are no validation errors or json isn't requested,
+    :Returns: None if there are no validation errors or json isn't requested,
         otherwise returns a dictionary with the error that's suitable for
-        return from the controller.
+        return from the controller.  The error message is set in tg_flash
+        regardless.
     '''
     # Check for validation errors
     errors = getattr(cherrypy.request, 'validation_errors', None)

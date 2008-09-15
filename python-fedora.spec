@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.3.5
+Version:        0.3.6
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -17,7 +17,10 @@ Requires:       python-simplejson
 Requires:       python-bugzilla
 Requires:       python-feedparser
 Requires:       python-sqlalchemy
-Requires:       koji
+# These are now optional dependencies.  Some bodhi methods will not work if
+# they aren't installed but they aren't needed for most functionality of the
+# module.
+#Requires:       koji python-iniparse yum
 Provides:       python-fedora-infrastructure = %{version}-%{release}
 Obsoletes:      python-fedora-infrastructure < %{version}-%{release}
 
@@ -33,13 +36,13 @@ TurboGears Applications such as Bodhi, PackageDB, MirrorManager, and FAS2.
 
 %build
 paver build
-
+paver html
 
 %install
 rm -rf $RPM_BUILD_ROOT
 paver install --skip-build --root $RPM_BUILD_ROOT
+mv build-doc/html doc/
 
- 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -50,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/*
 
 %changelog
+* Mon Sep 15 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.6-1
+- New upstream.  No longer deps on koji.
+
 * Mon Aug 25 2008 Luke Macken <lmacken@redhat.com> - 0.3.5-1
 - New upstream release
 
