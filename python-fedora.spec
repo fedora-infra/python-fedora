@@ -17,7 +17,10 @@ Requires:       python-simplejson
 Requires:       python-bugzilla
 Requires:       python-feedparser
 Requires:       python-sqlalchemy
-Requires:       koji
+# These are now optional dependencies.  Some bodhi methods will not work if
+# they aren't installed but they aren't needed for most functionality of the
+# module.
+#Requires:       koji python-iniparse yum
 Provides:       python-fedora-infrastructure = %{version}-%{release}
 Obsoletes:      python-fedora-infrastructure < %{version}-%{release}
 
@@ -50,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/*
 
 %changelog
+* Mon Sep 15 2008 Toshio Kuratomi - 0.3.6-1
+- New upstream.  No longer deps on koji.
+
 * Mon Aug 25 2008 Luke Macken <lmacken@redhat.com> - 0.3.5-1
 - New upstream release
 
