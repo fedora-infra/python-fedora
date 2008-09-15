@@ -41,6 +41,7 @@ paver html
 %install
 rm -rf $RPM_BUILD_ROOT
 paver install --skip-build --root $RPM_BUILD_ROOT
+mv build-doc/html doc/
 
 %clean
 rm -rf $RPM_BUILD_ROOT
