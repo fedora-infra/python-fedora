@@ -3,5 +3,7 @@ include *.spec
 include COPYING AUTHORS ChangeLog NEWS
 include doc/*
 include doc/static/*
-include po/*
+include po/*.pot
+include po/*/*/*.po
+include po/*/*/*.mo
 include pavement.py

@@ -128,3 +128,95 @@ There is a module to make writing a client for our TurboGears services very
 easy.  Please see the `client documentation`_ for more details
 
 .. _`client documentation`: doc/client.rst
+
+------------
+Translations
+------------
+
+The strings in python-fedora has mainly error messages.  These are translated
+so we should make sure that translators are able to translate them when
+necessary.  You will need babel and setuptools to run these commands::
+  yum install babel setuptools
+
+Updating the POT File
+=====================
+
+When you make changes that change the translatable strings in the package, you
+should update the POT file.  Use the following paver command to do that::
+  paver extract_messages -o po/python-fedora.pot
+
+Updating the PO Files
+=====================
+
+You should merge the new translatable strings into the PO files at the same
+time.  Until we build a single paver command for this, we want to do this::
+  for i in po/* ; do
+    if [ -d $i ] ; then
+      paver update_catalog -i po/python-fedora.pot -l `basename $i` -d po
+    fi
+  done
+
+Creating a new PO File
+======================
+
+If you are working on a translation for the first time, you'll need to create
+the PO file.  Run this paver command substituting LOCALE with the locale you
+wish to translate for::
+  paver init_catalog -i po/python-fedora.pot -l LOCALE -d po
+
+That will initialize a new PO file from the current POT file.  The PO will be
+located in po/LOCALE/LC-MESSAGES/messages.po
+
+Compiling Message Catalogs
+==========================
+
+Message catalogs can be compiled for testing and should always be compiled
+just prior to release.  Do this with the following paver command::
+  paver compile_catalog -d po
+
+*Important* The paver install target needs to be enhanced to install the
+message catalogs.
+
+-------
+Release
+-------
+
+We want to get to the place where a release can be made via a paver target.
+Currently, this is more involved.
+
+1) Merge everything into the python-fedora-stable branch.  Push the changes to
+   the server.  Eventually this should be the last manual step.  Everything
+   else should be automated::
+
+     bzr merge [from feature branches]
+     bzr commit
+     bzr push bzr+ssh://bzr.fedorahosted.org/bzr/python-fedora/python-fedora-stable
+
+2) Go to a temporary directory and checkout a copy of stable::
+     bzr checkout --lightweight bzr+ssh://bzr.fedorahosted.org/bzr/python-fedora/python-fedora-stable
+
+3) Go to that directory and run::
+     paver sdist
+
+4) copy the dist/python-fedora-VERSION.tar.gz and python-fedora.spec files to
+   where you build Fedora RPMS.  Do a test build::
+     cp dist/python-fedora-*.tar.gz python-fedora.spec /srv/cvs/python-fedora/devel/
+     pushd /srv/cvs/python-fedora/devel
+     make mockbuild
+
+5) Make sure the build completes.  Run rpmlint on the results.  Install and
+   test the new packages::
+     rpmlint *rpm
+     sudo rpm -Uvh *noarch.rpm
+     [test]
+
+6) When satisfied that the build works, tag the repository::
+     popd
+     bzr tag VERSION
+     bzr push bzr+ssh://bzr.fedorahosted.org/bzr/python-fedora/python-fedora-stable
+
+7) Upload the tarball to fedorahosted.  Note: The directory is slightly
+   different if you're not a fedorahosted admin::
+     scp dist/python-fedora*tar.gz fedorahosted.org:/srv/web/releases/p/y/python-fedora/
+
+8) Finish building and pushing packages for Fedora.
