@@ -83,7 +83,7 @@ class ProxyClient(object):
         if session_as_cookie:
             warnings.warn(_("Returning cookies from send_request() is"
                 " deprecated and will be removed in 0.4.  Please port your"
-                " code to use a sesison_id instead by calling the ProxyClient"
+                " code to use a session_id instead by calling the ProxyClient"
                 " constructor with session_as_cookie=False"),
                 DeprecationWarning, stacklevel=2)
         log.debug('proxyclient.__init__:exited')
