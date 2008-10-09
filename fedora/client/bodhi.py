@@ -109,7 +109,7 @@ class BodhiClient(BaseClient):
                 })
 
     def query(self, release=None, status=None, type_=None, bugs=None,
-              request=None, mine=None, package=None, limit=10):
+              request=None, mine=None, package=None, username=None, limit=10):
         """ Query bodhi for a list of updates.
 
         :kwarg release: The release that you wish to query updates for.
@@ -127,6 +127,7 @@ class BodhiClient(BaseClient):
         """
         params = {
                 'tg_paginate_limit': limit,
+                'username': username,
                 'release': release,
                 'package': package,
                 'request': request,
