@@ -104,7 +104,7 @@ class PackageDB(BaseClient):
             raise AppError(name='PackageDBError', message=pkg_info['message'])
         return pkg_info
 
-    def clone_branch(self, pkg, branches, master):
+    def clone_branch(self, pkg, branches, master, email_log=True):
         '''Set a branch's permissions from a pre-existing branch.
 
         :arg pkg: Name of the package to branch
@@ -112,11 +112,15 @@ class PackageDB(BaseClient):
             names are listed in :data:`COLLECTIONMAP`
         :arg master: Short branch name to clone from.  Allowed branch names
             are listed in :data:`COLLECTIONMAP`
+        :kwarg email_log: If False, do not email a copy of the log.
         :raises AppError: If the server returns an exceptiom
 
         '''
         for branch in branches:
-            response = self.send_request('/packages/dispatcher/clone_branch/%s/%s/%s' % (pkg, branch, master), auth=True)
+            params = {'email_log': email_log}
+            response = self.send_request('/packages/dispatcher/clone_branch/'
+                    '%s/%s/%s' % (pkg, branch, master), auth=True,
+                    req_params=params)
             if 'exc' in response:
                 raise AppError(name=response['exc'], message=_(
                     'PackageDB returned an error while cloning %(pkg)s from'
