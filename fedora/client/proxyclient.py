@@ -256,7 +256,9 @@ class ProxyClient(object):
                     ' processing %s: %s' % (url, str(e))
 
         if 'exc' in data:
-            raise AppError(name = data['exc'], message = data['tg_flash'])
+            name = data.pop('exc')
+            messsage = data.pop('tg_flash')
+            raise AppError(name=name, message=message, extras=data)
 
         log.debug('proxyclient.send_request: exited')
         return new_session, DictContainer(data)
