@@ -67,15 +67,20 @@ which you can catch in order to prompt for a new username and password::
 
     from fedora.client import BaseClient, AuthError
     import getpass
+    MAX_RETRIES = 5
     client = BaseClient('https://admin.fedoraproject.org/pkgdb',
             username='foo', password='bar')
     # Note this is simplistic.  It only prompts once for another password.
     # Your application may want to loop through this several times.
-    try:
-        collectionData = client.send_request('/collections', auth=True)
-    except AuthError, e:
-        client.password = getpass.getpass('Retype password for %s: ' % username)
-        collectionData = client.send_request('/collections', auth=True)
+    while (count < MAX_RETRIES):
+        try:
+            collectionData = client.send_request('/collections', auth=True)
+        except AuthError, e:
+            client.password = getpass.getpass('Retype password for %s: ' % username)
+        else:
+            # data retrieved or we had an error unrelated to username/password
+            break
+        count = count + 1
 
 .. warning::
     Note that although you can set the ``username`` and ``password`` as shown
@@ -84,7 +89,7 @@ which you can catch in order to prompt for a new username and password::
     same BaseClient_.  In those cases, you can accidentally overwrite the
     ``username`` and ``password`` between two requests.  To avoid this, make
     sure you instantiate a separate BaseClient_ for every thread of control or
-    for every request you handle.
+    for every request you handle or use `ProxyClient` instead.
 
 The ``useragent`` parameter is useful for identifying in log files that
 your script is calling the server rather than another.  The default value is

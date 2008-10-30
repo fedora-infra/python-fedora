@@ -195,6 +195,15 @@ When used in conjunction with JSON, ``exc=EXCEPTIONNAME``, and BaseClient_,
 identify what went wrong or display to the user.  It's equivalent to the
 message you would normally give when raising an exception.
 
+Authentication Errors
+~~~~~~~~~~~~~~~~~~~~~
+Errors in authentication are a special case.  Instead of returning an error
+with ``exc='AuthError'`` set, the server should return with ``response.status =
+403``.  `BaseClient`_ will see the 403 and raise an `AuthError`.
+
+This is the signal for the client to ask the user for new credentials (usually
+a new username and password).
+
 ------------------------------------------------
 Performing Different Actions when Returning JSON
 ------------------------------------------------
