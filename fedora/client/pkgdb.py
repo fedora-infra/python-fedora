@@ -127,6 +127,24 @@ class PackageDB(BaseClient):
                     ' %(master)s for branch %(branch)s' %
                     {'pkg': pkg, 'master': master, 'branch': branch}))
 
+    def mass_branch(self, branch):
+        '''Branch all unblocked packages for a new release.
+
+        Mass branching always works against the devel branch.
+        :arg branch: Branch name to create branches for.  Names are listed in
+            :data:`COLLECTIONMAP`
+        :raises AppError: If the server returns an exceptiom.  The 'extras'
+            attribute will contain a list of unbranched packages if some of the
+            packages were branched
+        '''
+        response = self.send_request('/admin/mass_branch/%s' % branch,
+                auth=True)
+        if 'exc' in response:
+            if 'unbranched' not in response:
+                response['unbranched'] = None
+            raise AppError(name=response['exc'], message=response['tg_flash'],
+                    extras=response['unbranched'])
+
     def add_edit_package(self, pkg, owner=None, description=None,
             branches=None, cc_list=None, comaintainers=None, groups=None):
         '''Add or edit a package to the database.
