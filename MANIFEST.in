@@ -1,8 +1,6 @@
-include *.sql
 include *.spec
 include COPYING AUTHORS ChangeLog NEWS
-include doc/*
-include doc/static/*
+recursive-include doc *
 include po/*.pot
 include po/*/*/*.po
 include po/*/*/*.mo

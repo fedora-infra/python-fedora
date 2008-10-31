@@ -62,7 +62,7 @@ Bodhi
 Package Database
 ----------------
 
-.. autoclass:: fedora.client.PackageDBClient
+.. autoclass:: fedora.client.PackageDB
     :members:
     :undoc-members:
 
