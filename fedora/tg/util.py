@@ -23,6 +23,9 @@
 '''
 import cherrypy
 from turbogears import flash
+from decorator import decorator
+
+__all__ = [request_format, jsonify_validation_errors, json_or_redirect]
 
 def request_format():
     '''Return the output format that was requested.
@@ -82,3 +85,43 @@ def jsonify_validation_errors():
         # A fix has been applied for TG-1.0.4.5
         return dict(exc='Invalid', tg_template='json')
     return None
+
+def json_or_redirect(forward_url):
+    '''If json is wanted, return a dict, otherwise redirect.
+
+    :arg forward_url: If json was not requested, redirect to this URL after.
+
+    This is a decorator to use with a method that returns json by default.
+    If json is requested, then it will return the dict from the method.  If
+    json is not requested, it will redirect to the given URL.  The method that
+    is decorated should be constructed so that it calls turbogears.flash()
+    with a message that will be displayed on the forward_url page.
+
+    Use it like this::
+
+        import turbogears
+
+        @json_or_redirect('http://localhost/calc/')
+        @expose(allow_json=True)
+        def divide(self, dividend, divisor):
+            try:
+                answer = dividend * 1.0 / divisor
+            except ZeroDivisionError:
+                turbogears.flash('Division by zero not allowed')
+                return dict(exc='ZeroDivisionError')
+            turbogears.flash('The quotient is %s' % answer)
+            return dict(quotient=answer)
+
+    In the example, we return either an exception or an answer, using
+    turbogears.flash() to tell people of the result in either case.  If json
+    data is requested, the user will get back a json string with the proper
+    information.  If html is requested, we will be redirected to
+    'http://localhost/calc/' where the flashed message will be displayed.
+    '''
+    def call(func, *args, **kw):
+        if request_format() == 'json':
+            return func(*args, **kw)
+        else:
+            func(*args, **kw)
+            raise redirect(forward_url)
+    return decorator(call)
