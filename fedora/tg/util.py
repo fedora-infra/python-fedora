@@ -22,7 +22,7 @@
 '''Miscellaneous functions of use on the server.
 '''
 import cherrypy
-from turbogears import flash
+from turbogears import flash, redirect
 from decorator import decorator
 
 def request_format():
