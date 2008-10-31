@@ -25,8 +25,6 @@ import cherrypy
 from turbogears import flash
 from decorator import decorator
 
-__all__ = [request_format, jsonify_validation_errors, json_or_redirect]
-
 def request_format():
     '''Return the output format that was requested.
     '''
@@ -125,3 +123,5 @@ def json_or_redirect(forward_url):
             func(*args, **kw)
             raise redirect(forward_url)
     return decorator(call)
+
+__all__ = [request_format, jsonify_validation_errors, json_or_redirect]
