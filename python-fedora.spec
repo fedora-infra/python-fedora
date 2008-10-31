@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.3.6
+Version:        0.3.7
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -12,11 +12,15 @@ Source0:        https://fedorahosted.org/releases/p/y/%{name}/%{name}-%{version}
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
-BuildRequires:  python-devel python-setuptools-devel python-paver
+BuildRequires:  python-devel
+BuildRequires:  python-setuptools-devel
+BuildRequires:  python-paver
+BuildRequires:  python-sphinx
 Requires:       python-simplejson
 Requires:       python-bugzilla
 Requires:       python-feedparser
 Requires:       python-sqlalchemy
+Requires:       python-decorator
 # These are now optional dependencies.  Some bodhi methods will not work if
 # they aren't installed but they aren't needed for most functionality of the
 # module.
@@ -53,6 +57,12 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/*
 
 %changelog
+* Thu Oct 30 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.7-1
+- New upstream has more complete pkgdb integration.
+
+* Mon Sep 15 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.6-2
+- Add python-sphinx to the buildrequires.
+
 * Mon Sep 15 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.6-1
 - New upstream.  No longer deps on koji.
 
