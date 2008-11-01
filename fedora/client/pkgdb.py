@@ -137,13 +137,9 @@ class PackageDB(BaseClient):
             attribute will contain a list of unbranched packages if some of the
             packages were branched
         '''
-        response = self.send_request('/admin/mass_branch/%s' % branch,
+        response = self.send_request('/collections/mass_branch/%s' % branch,
                 auth=True)
-        if 'exc' in response:
-            if 'unbranched' not in response:
-                response['unbranched'] = None
-            raise AppError(name=response['exc'], message=response['tg_flash'],
-                    extras=response['unbranched'])
+        return response
 
     def add_edit_package(self, pkg, owner=None, description=None,
             branches=None, cc_list=None, comaintainers=None, groups=None):
