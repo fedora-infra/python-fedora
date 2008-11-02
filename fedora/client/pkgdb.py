@@ -243,15 +243,14 @@ class PackageDB(BaseClient):
             version = 'devel'
         else:
             collection, version = branch.split('-')
-        try:
-            collection = COLLECTIONMAP[collection]
-        except KeyError:
-            raise PackageDBError, _('Collection abbreviation %(collection)s is'
-                    ' unknown.  Use F, FC, EL, or OLPC') % \
-                            {'collection': collection}
+            try:
+                collection = COLLECTIONMAP[collection]
+            except KeyError:
+                raise PackageDBError(_('Collection abbreviation'
+                        ' %(collection)s is unknown.  Use F, FC, EL, or OLPC')
+                        % {'collection': collection})
 
         return collection, version
-
 
     def get_owners(self, package, collection=None, collection_ver=None):
         '''Retrieve the ownership information for a package.
