@@ -257,7 +257,7 @@ class ProxyClient(object):
 
         if 'exc' in data:
             name = data.pop('exc')
-            messsage = data.pop('tg_flash')
+            message = data.pop('tg_flash')
             raise AppError(name=name, message=message, extras=data)
 
         log.debug('proxyclient.send_request: exited')
