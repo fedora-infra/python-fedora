@@ -83,10 +83,10 @@ class PackageDB(BaseClient):
             kwargs['useragent'] = 'Fedora PackageDB Client/%s' % __version__
         super(PackageDB, self).__init__(base_url, *args, **kwargs)
 
-    def get_package_info(self, pkg_name, branch=None):
+    def get_package_info(self, pkg, branch=None):
         '''Get information about the package.
 
-        :arg pkg_name: Name of the package
+        :arg pkg: Name of the package
         :kwarg branch: If given, restrict information returned to this branch
             Allowed branches are listed in :data:`COLLECTIONMAP`
         :raises AppError: If the server returns an exceptiom
@@ -97,35 +97,29 @@ class PackageDB(BaseClient):
         if branch:
             collection, ver = self.canonical_branch_name(branch)
             data = {'collectionName': collection, 'collectionVersion': ver}
-        pkg_info = self.send_request('/packages/name/%s' % pkg_name,
+        pkg_info = self.send_request('/packages/name/%s' % pkg,
                 req_params=data)
 
         if 'status' in pkg_info and not pkg_info['status']:
             raise AppError(name='PackageDBError', message=pkg_info['message'])
         return pkg_info
 
-    def clone_branch(self, pkg, branches, master, email_log=True):
+    def clone_branch(self, pkg, branch, master, email_log=True):
         '''Set a branch's permissions from a pre-existing branch.
 
         :arg pkg: Name of the package to branch
-        :arg branches: List or tuple of branches to clone to.  Allowed branch
-            names are listed in :data:`COLLECTIONMAP`
+        :arg branch: Branch to clone to.  Allowed branch names are listed in
+            :data:`COLLECTIONMAP`
         :arg master: Short branch name to clone from.  Allowed branch names
             are listed in :data:`COLLECTIONMAP`
         :kwarg email_log: If False, do not email a copy of the log.
         :raises AppError: If the server returns an exceptiom
 
         '''
-        for branch in branches:
-            params = {'email_log': email_log}
-            response = self.send_request('/packages/dispatcher/clone_branch/'
-                    '%s/%s/%s' % (pkg, branch, master), auth=True,
-                    req_params=params)
-            if 'exc' in response:
-                raise AppError(name=response['exc'], message=_(
-                    'PackageDB returned an error while cloning %(pkg)s from'
-                    ' %(master)s for branch %(branch)s' %
-                    {'pkg': pkg, 'master': master, 'branch': branch}))
+        params = {'email_log': email_log}
+        return self.send_request('/packages/dispatcher/clone_branch/'
+                '%s/%s/%s' % (pkg, branch, master), auth=True,
+                req_params=params)
 
     def mass_branch(self, branch):
         '''Branch all unblocked packages for a new release.
@@ -137,9 +131,8 @@ class PackageDB(BaseClient):
             attribute will contain a list of unbranched packages if some of the
             packages were branched
         '''
-        response = self.send_request('/collections/mass_branch/%s' % branch,
+        return self.send_request('/collections/mass_branch/%s' % branch,
                 auth=True)
-        return response
 
     def add_edit_package(self, pkg, owner=None, description=None,
             branches=None, cc_list=None, comaintainers=None, groups=None):
