@@ -6,6 +6,16 @@ NEWS
 :Date: 22 Aug 2008
 :Version: 0.3.x
 
+0.3.7
+-----
+* Update to bugzilla email addresses.
+* Add documentation for working with translations.
+* add username argument for BodhiClient.
+* Update PackageDB.clone_branch() command for new server method.
+* Allow exceptions passed back by the server to contain extra information.
+* New fedora.tg.util.json_or_redirect() decorator that allows server methods to
+  either return a dict per normal or redirect to another URL.
+
 0.3.6
 -----
 * fedora.client.pkgdb merge with pkgdb-client from Mike Watters and Toshio

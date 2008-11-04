@@ -1,172 +1,169 @@
 # Translations template for python-fedora.
-# Copyright (C) 2007 ORGANIZATION
+# Copyright (C) 2008 ORGANIZATION
 # This file is distributed under the same license as the python-fedora
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2007.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2008.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: python-fedora 0.2.90.22\n"
+"Project-Id-Version: python-fedora 0.3.6\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2007-12-21 18:01-0700\n"
+"POT-Creation-Date: 2008-09-16 17:38-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9\n"
+"Generated-By: Babel 0.9.2\n"
 
-#: fedora/accounts/fas.py:92
-msgid "Authentication config fedora-db-access is not available"
+#: fedora/release.py:9
+msgid "Python modules for interacting with Fedora services"
 msgstr ""
 
-#: fedora/accounts/fas.py:247
-#, python-format
-msgid "Username/password mismatch for %(username)s"
+#: fedora/release.py:10
+msgid ""
+"\n"
+"The Fedora Project runs many different services.  These services help us "
+"to\n"
+"package software, develop new programs, and generally put together the "
+"distro.\n"
+"This package contains software that helps us do that.\n"
 msgstr ""
 
-#: fedora/accounts/fas.py:269 fedora/accounts/fas.py:296
-#, python-format
-msgid "No such user: %(username)s"
+#: fedora/accounts/fas2.py:8
+msgid ""
+"fedora.accounts.fas2 has moved to fedora.client.fas2.  This location will"
+" disappear in 0.4"
 msgstr ""
 
-#: fedora/accounts/fas.py:412
-msgid "No user set"
+#: fedora/client/baseclient.py:81 fedora/client/baseclient.py:198
+#: fedora/client/baseclient.py:217 fedora/client/baseclient.py:229
+msgid "session_cookie is deprecated, use session_id instead"
 msgstr ""
 
-#: fedora/accounts/fas.py:511
-#, python-format
-msgid "No such user %(user)s"
-msgstr ""
-
-#: fedora/accounts/fas.py:539
-#, python-format
-msgid "No such group: %(group)s"
-msgstr ""
-
-#: fedora/accounts/fasLDAP.py:46
-msgid "Authentication config file fedora-db-access is not available"
-msgstr ""
-
-#: fedora/accounts/fasLDAP.py:256
-#, python-format
-msgid "User not in group %(group)s"
-msgstr ""
-
-#: fedora/accounts/fasLDAP.py:263
-#, python-format
-msgid "Could Not delete %(username)s from %(group)s"
-msgstr ""
-
-#: fedora/accounts/fasLDAP.py:275
-msgid "Already in that group"
-msgstr ""
-
-#: fedora/accounts/fasLDAP.py:279
-#, python-format
-msgid "Group \"%(group)s\" does not exist"
-msgstr ""
-
-#: fedora/accounts/fasLDAP.py:445 fedora/accounts/fasLDAP.py:459
-msgid "User is not approved"
-msgstr ""
-
-#: fedora/accounts/fasLDAP.py:447
-msgid "User cannot be upgraded beyond administrator"
-msgstr ""
-
-#: fedora/accounts/fasLDAP.py:461
-msgid "User cannot be downgraded below user, did you mean remove?"
-msgstr ""
-
-#: fedora/accounts/util.py:79
-#, python-format
-msgid "Authentication source \"%(db)s\" not configured"
-msgstr ""
-
-#: fedora/tg/client.py:86
-msgid "username must be set"
-msgstr ""
-
-#: fedora/tg/client.py:88
-msgid "password must be set"
-msgstr ""
-
-#: fedora/tg/client.py:101
-msgid "Invalid username/password"
-msgstr ""
-
-#: fedora/tg/client.py:108
-#, python-format
-msgid "Unable to login to server: %(message)s"
-msgstr ""
-
-#: fedora/tg/client.py:116
-msgid "Unable to login to the server.  Server did not send back a cookie"
-msgstr ""
-
-#: fedora/tg/client.py:153
-#, python-format
-msgid "Loaded session %(cookie)s"
-msgstr ""
-
-#: fedora/tg/client.py:156
+#: fedora/client/baseclient.py:98
 #, python-format
 msgid "Unable to load session from %(file)s"
 msgstr ""
 
-#: fedora/tg/client.py:159
-msgid "Session is for a different user"
+#: fedora/client/baseclient.py:114
+#, python-format
+msgid "Unable to create %(dir)s: %(error)s"
 msgstr ""
 
-#: fedora/tg/client.py:173
+#: fedora/client/baseclient.py:126
+#, python-format
+msgid "Unable to write to session file %(session)s: %(error)s"
+msgstr ""
+
+#: fedora/client/baseclient.py:148
+#, python-format
+msgid "No session cached for \"%s\""
+msgstr ""
+
+#: fedora/client/baseclient.py:282
+msgid "send_request(input) is deprecated.  Use send_request(req_params) instead"
+msgstr ""
+
+#: fedora/client/fas2.py:166
+#, python-format
+msgid "FAS server unable to retrieve group %s"
+msgstr ""
+
+#: fedora/client/pkgdb.py:144
+#, python-format
+msgid "%(pkg)s has no %(branch)s branch; cannot clone from it.  Error: %(msg)s"
+msgstr ""
+
+#: fedora/client/pkgdb.py:261
+#, python-format
+msgid ""
+"PackageDB returned an error while setting acls for %(person)s on %(pkg)s:"
+" %(msg)s"
+msgstr ""
+
+#: fedora/client/pkgdb.py:312
+#, python-format
+msgid "PackageDB returned an error creating %(pkg)s: %(msg)s"
+msgstr ""
+
+#: fedora/client/pkgdb.py:317
+#, python-format
+msgid ""
+"Package %(pkg)s does not exist and we do not have enough information to "
+"create it."
+msgstr ""
+
+#: fedora/client/pkgdb.py:354
+#, python-format
+msgid "Unable to save all information for %(pkg)s: %(msg)s"
+msgstr ""
+
+#: fedora/client/pkgdb.py:380
+#, python-format
+msgid "Collection abbreviation %(collection)s is unknown.  Use F, FC, EL, or OLPC"
+msgstr ""
+
+#: fedora/client/proxyclient.py:84
+msgid ""
+"Returning cookies from send_request() is deprecated and will be removed "
+"in 0.4.  Please port your code to use a sesison_id instead by calling the"
+" ProxyClient constructor with session_as_cookie=False"
+msgstr ""
+
+#: fedora/client/proxyclient.py:166
+msgid ""
+"Giving a cookie to send_request() to authenticate is deprecated and will "
+"be removed in 0.4. Please port your code to use session_id instead."
+msgstr ""
+
+#: fedora/client/proxyclient.py:175
+msgid "username and password must both be set in auth_params"
+msgstr ""
+
+#: fedora/client/proxyclient.py:178
+msgid ""
+"No known authentication methods specified: set \"cookie\" in auth_params "
+"or set both username and password in auth_params"
+msgstr ""
+
+#: fedora/client/proxyclient.py:215
 #, python-format
 msgid "Creating request %(url)s"
 msgstr ""
 
-#: fedora/tg/client.py:193
+#: fedora/client/proxyclient.py:216
 #, python-format
-msgid "Unable to log into server: %(error)s"
+msgid "Headers: %(header)s"
 msgstr ""
 
-#: fedora/tg/client.py:216
+#: fedora/client/proxyclient.py:220
 #, python-format
-msgid "Unable to log into server: %(message)s"
+msgid "Data: %(data)s"
 msgstr ""
 
-#: fedora/tg/identity/safas2provider.py:123
-#: fedora/tg/identity/safasprovider.py:137
+#: fedora/client/proxyclient.py:228
 #, python-format
-msgid "Loading: %(visitmod)s"
+msgid ""
+"Unable to log into server.  Invalid authentication tokens.  Send new "
+"username and password:  %(error)s"
 msgstr ""
 
-#: fedora/tg/identity/safas2provider.py:138
-#: fedora/tg/identity/safasprovider.py:165
-#, python-format
-msgid "Passwords do not match for user: %(user)s"
+#: fedora/tg/client.py:8
+msgid ""
+"fedora.tg.client has moved to fedora.client.  This location will "
+"disappear in 0.4"
 msgstr ""
 
-#: fedora/tg/identity/safas2provider.py:142
-#: fedora/tg/identity/safasprovider.py:169
+#: fedora/tg/identity/jsonfasprovider.py:222
 #, python-format
-msgid "Login successful for %(user)s"
+msgid "Error logging in %(user)s: %(error)s"
 msgstr ""
 
-#: fedora/tg/identity/safas2provider.py:167
+#: fedora/tg/visit/jsonfasvisit.py:87
 #, python-format
-msgid "AccountSystem threw an exception: %(err)s"
-msgstr ""
-
-#: fedora/tg/identity/safasprovider.py:161
-#: fedora/tg/identity/safasprovider.py:174
-#, python-format
-msgid "Error %(err)s for %(user)s"
-msgstr ""
-
-#: fedora/tg/identity/safasprovider.py:201
-#, python-format
-msgid "AccountSystem threw an exception: %(err)s for %(user)s"
+msgid "updating visit (%s)"
 msgstr ""
 

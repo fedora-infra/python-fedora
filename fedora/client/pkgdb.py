@@ -83,10 +83,10 @@ class PackageDB(BaseClient):
             kwargs['useragent'] = 'Fedora PackageDB Client/%s' % __version__
         super(PackageDB, self).__init__(base_url, *args, **kwargs)
 
-    def get_package_info(self, pkg_name, branch=None):
+    def get_package_info(self, pkg, branch=None):
         '''Get information about the package.
 
-        :arg pkg_name: Name of the package
+        :arg pkg: Name of the package
         :kwarg branch: If given, restrict information returned to this branch
             Allowed branches are listed in :data:`COLLECTIONMAP`
         :raises AppError: If the server returns an exceptiom
@@ -97,173 +97,42 @@ class PackageDB(BaseClient):
         if branch:
             collection, ver = self.canonical_branch_name(branch)
             data = {'collectionName': collection, 'collectionVersion': ver}
-        pkg_info = self.send_request('/packages/name/%s' % pkg_name,
+        pkg_info = self.send_request('/packages/name/%s' % pkg,
                 req_params=data)
 
         if 'status' in pkg_info and not pkg_info['status']:
             raise AppError(name='PackageDBError', message=pkg_info['message'])
         return pkg_info
 
-    def clone_branch(self, pkg, master, branches, owner=None, description=None,
-            cc_list=None, comaintainers=None, groups=None):
+    def clone_branch(self, pkg, branch, master, email_log=True):
         '''Set a branch's permissions from a pre-existing branch.
 
         :arg pkg: Name of the package to branch
+        :arg branch: Branch to clone to.  Allowed branch names are listed in
+            :data:`COLLECTIONMAP`
         :arg master: Short branch name to clone from.  Allowed branch names
             are listed in :data:`COLLECTIONMAP`
-        :arg branches: List or tuple of branches to clone to.  Allowed branch
-            names are listed in :data:`COLLECTIONMAP`
-        :kwarg owner: If set, make this person the owner of both branches
-        :kwarg description: If set, make this the description of both branches
-        :kwarg cc_list: If set, list or tuple of usernames to watch the
-            package.
-        :kwarg comaintainers: If set, list or tuple of usernames to comaintain
-            the package.
-        :kwarg groups: If set, list or tuple of group names that can commit to
-            the package.
+        :kwarg email_log: If False, do not email a copy of the log.
         :raises AppError: If the server returns an exceptiom
 
-        Note: This method is going to be changing in the near future.  We
-        want to split the functionality up so this method is strictly about
-        cloning one branch to another.  The optional elements that change
-        attributes of the master branch prior to cloning should be done as a
-        separate call to :meth:`add_edit_branch` first.
         '''
+        params = {'email_log': email_log}
+        return self.send_request('/packages/dispatcher/clone_branch/'
+                '%s/%s/%s' % (pkg, branch, master), auth=True,
+                req_params=params)
 
-        if groups or comaintainers or cc_list or description or owner:
-            # Set the updated information on the master branch first
-            self.add_edit_package(pkg, owner, description, [master], cc_list,
-                    comaintainers, groups)
+    def mass_branch(self, branch):
+        '''Branch all unblocked packages for a new release.
 
-        # Get information on the master branch
-        try:
-            pkg_info = self.get_package_info(pkg, master)
-        except AppError, e:
-            for i, arg in enumerate(e.args):
-                if arg == e.message:
-                    e.message = _('%(pkg)s has no %(branch)s branch; cannot'
-                        ' clone from it.  Error: %(msg)s') % {'pkg': pkg,
-                            'branch': master, 'msg': arg}
-                    e.args[i] = arg
-                    break
-            raise
-        status_map = pkg_info['statusMap']
-        pkg_info = pkg_info['packageListings'][0]
-
-        # Make sure the master branch is not in the list of branches to change
-        try:
-            del branches[branches.index(master)]
-        except ValueError: # pylint: disable-msg=W0704
-            # Exception means it wasn't there to begin with (W0704)
-            pass
-
-        # Change group_list into the format the server is expecting
-        group_list = {}
-        for group in pkg_info['groups']:
-            if group['aclOrder']['commit'] and status_map[str(
-                    group['aclOrder']['commit']['statuscode'])] == 'Approved':
-                group_list[group['name']] = True
-            else:
-                group_list[group['name']] = False
-
-        # Set all the branches to have the new branch information
-        self.add_edit_package(pkg,
-                pkg_info['owneruser'],
-                None, branches, None, None, group_list)
-
-        # All acls that we want to end up on the new branch
-        acl_changes = {}
-        for branch in branches:
-            acl_changes[branch] = {}
-            for person in pkg_info['people']:
-                person_acls = {}
-                acl_changes[branch][person['userid']] = person_acls
-                for acl in person['aclOrder']:
-                    if person['aclOrder'][acl]:
-                        person_acls[acl] = status_map[str(
-                            person['aclOrder'][acl]['statuscode'])]
-
-        #
-        # Scan through each branch to remove acls that are set but need to be
-        # removed and to not set acls that already correct in the pkgdb
-        #
-
-        # Get updated package info
-        branch_ids = {} # PackageListingIds
-        all_pkg_info = self.get_package_info(pkg)
-        for pkg_listing in all_pkg_info['packageListings']:
-            if pkg_listing['collection']['branchname'] in branches:
-                # Branch we're interested in
-                branch = pkg_listing['collection']['branchname']
-                branch_ids[branch] = pkg_listing['id']
-                for person in pkg_listing['people']:
-                    try:
-                        person_acls = acl_changes[branch][person['userid']]
-                    except KeyError:
-                        # person should not have an acl in the cloned entry
-                        person_acls = {}
-                        acl_changes[branch][person['userid']] = person_acls
-                        # If a person's acls weren't Obsolete before, make
-                        # them so now.
-                        for acl in person['aclOrder']:
-                            if person['aclOrder'][acl] and status_map[str(
-                                person['aclOrder'][acl]['statuscode'])] != \
-                                        'Obsolete':
-                                person_acls[acl] = 'Obsolete'
-                    else:
-                        for acl in person['aclOrder']:
-                            if not person['aclOrder'][acl]:
-                                # Was unspecified before and...
-                                if acl not in person_acls or \
-                                        not person_acls[acl] or \
-                                        person_acls[acl] ==  'Obsolete':
-                                    # Unspecified or obsolete now, no need to
-                                    # set it to Obsolete
-                                    try:
-                                        del person_acls[acl]
-                                    except KeyError: # pylint: disable-msg=W0704
-                                        # Already unset, no need to do
-                                        # anything (W0704)
-                                        pass
-                                # Otherwise we need to set it
-                            elif acl not in person_acls:
-                                # Was not obsolete before, need to Obsolete
-                                # this acl now
-                                person_acls[acl] = 'Obsolete'
-                            else:
-                                # If the status is already correct, no need to
-                                # set it again
-                                statuscode = str(
-                                        person['aclOrder'][acl]['statuscode'])
-                                if statuscode in status_map and \
-                                        status_map[statuscode] == \
-                                        person_acls[acl]:
-                                    del person_acls[acl]
-                                # Otherwise we need to set it
-
-        del all_pkg_info
-
-        # Actually set acl information now
-        # acl information needs to be set separately as the compat interface
-        # add_edit_package is using can't handle the complexity
-        for branch in acl_changes:
-            for person in acl_changes[branch]:
-                for acl in acl_changes[branch][person]:
-                    data = {'pkgid': branch_ids[branch],
-                            'personid': person,
-                            'new_acl': acl,
-                            'statusname': acl_changes[branch][person][acl]}
-                    response = self.send_request(
-                            '/packages/dispatcher/set_acl_status',
-                            auth=True, req_params=data)
-                    if 'status' in response and not response['status']:
-                        raise AppError(name='PackageDBError',
-                                messsage =_('PackageDB returned an error'
-                                ' while setting acls for %(person)s on'
-                                ' %(pkg)s: %(msg)s') % \
-                                        {'person': data['personid'],
-                                            'pkg': data['pkgid'],
-                                            'msg': response['message']})
+        Mass branching always works against the devel branch.
+        :arg branch: Branch name to create branches for.  Names are listed in
+            :data:`COLLECTIONMAP`
+        :raises AppError: If the server returns an exceptiom.  The 'extras'
+            attribute will contain a list of unbranched packages if some of the
+            packages were branched
+        '''
+        return self.send_request('/collections/mass_branch/%s' % branch,
+                auth=True)
 
     def add_edit_package(self, pkg, owner=None, description=None,
             branches=None, cc_list=None, comaintainers=None, groups=None):
@@ -374,15 +243,14 @@ class PackageDB(BaseClient):
             version = 'devel'
         else:
             collection, version = branch.split('-')
-        try:
-            collection = COLLECTIONMAP[collection]
-        except KeyError:
-            raise PackageDBError, _('Collection abbreviation %(collection)s is'
-                    ' unknown.  Use F, FC, EL, or OLPC') % \
-                            {'collection': collection}
+            try:
+                collection = COLLECTIONMAP[collection]
+            except KeyError:
+                raise PackageDBError(_('Collection abbreviation'
+                        ' %(collection)s is unknown.  Use F, FC, EL, or OLPC')
+                        % {'collection': collection})
 
         return collection, version
-
 
     def get_owners(self, package, collection=None, collection_ver=None):
         '''Retrieve the ownership information for a package.
