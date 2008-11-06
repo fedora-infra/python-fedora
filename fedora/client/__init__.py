@@ -50,7 +50,6 @@ class AuthError(FedoraServiceError):
 class AppError(FedoraServiceError):
     '''Error condition that the server is passing back to the client.'''
     def __init__(self, name, message, extras=None):
-        super(AppError, self).__init__(name, message)
         self.name = name
         self.message = message
         self.extras = extras
