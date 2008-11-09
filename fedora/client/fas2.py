@@ -377,3 +377,41 @@ class AccountSystem(BaseClient):
         except:
             raise
         return True
+
+    ### fasClient Special Methods ###
+
+    def group_data(self):
+        '''Return the administrators/sponsors/users and group type for all groups.
+
+        :raises AppError: if the query failed on the server
+        :returns: A dict mapping group names to the group type and a the
+            usernames of the administrator, sponsors, and users of the group.
+        '''
+        try:
+            request = self.send_request('json/fas_client/group_data', auth=True)
+            if request['success']:
+                return request['data']
+            else:
+                raise AppError(message=_('FAS server unable to retrieve group members'), name='FASError')
+        except FedoraServiceError:
+            raise
+
+    def user_data(self):
+        '''Return user data for all users in FAS
+
+        Note: If the user is not authorized to see password hashes,
+        '*' is returned for the hash.
+
+        :raises AppError: if the query failed on the server
+        :returns: A dict mapping usernames to a password hash, SSH
+            public key, email address, and status.
+        '''
+        try:
+            request = self.send_request('json/fas_client/user_data', auth=True)
+            if request['success']:
+                return request['data']
+            else:
+                raise AppError(message=_('FAS server unable to retrieve user information'), name='FASError')
+        except FedoraServiceError:
+            raise
+
