@@ -21,6 +21,7 @@ Requires:       python-bugzilla
 Requires:       python-feedparser
 Requires:       python-sqlalchemy
 Requires:       python-decorator
+Requires:       python-pycurl
 # These are now optional dependencies.  Some bodhi methods will not work if
 # they aren't installed but they aren't needed for most functionality of the
 # module.
