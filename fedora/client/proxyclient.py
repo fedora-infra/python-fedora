@@ -249,7 +249,10 @@ class ProxyClient(object):
         request.perform()
 
         # Check for auth failures
-        if request.getinfo(pycurl.HTTP_CODE) == 403:
+        # Note: old TG apps returned 403 Forbidden on authentication failures.
+        # Updated apps return 401 Unauthorized
+        # We need to accept both until all apps are updated to return 401.
+        if request.getinfo(pycurl.HTTP_CODE) in (401, 403):
             # Wrong username or password
             log.debug(_('Authentication failed logging in'))
             raise AuthError, _('Unable to log into server.  Invalid'
