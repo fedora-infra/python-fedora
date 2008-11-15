@@ -181,7 +181,7 @@ class BaseClient(ProxyClient):
             self.__save_ids(save)
         self._session_id = None
 
-    session_id = property(_get_session_id, _set_session_id, 
+    session_id = property(_get_session_id, _set_session_id,
             _del_session_id, '''The session_id.
 
         The session id is saved in a file in case it is needed in consecutive

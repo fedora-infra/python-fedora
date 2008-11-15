@@ -3,8 +3,13 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 22 Aug 2008
+:Date: 15 Nov 2008
 :Version: 0.3.x
+
+0.3.8
+-----
+* Port the client module to use pycurl instead of urllib2.  This prepares the
+  way for SSL authentication and fixes a problem with https proxying.
 
 0.3.7
 -----

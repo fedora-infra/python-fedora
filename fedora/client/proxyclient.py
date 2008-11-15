@@ -27,7 +27,7 @@
 import Cookie
 import re
 import urllib
-import urllib2
+import pycurl
 import logging
 import simplejson
 import warnings
@@ -38,6 +38,21 @@ from fedora import _
 from fedora.client import AuthError, ServerError, AppError, DictContainer
 
 log = logging.getLogger(__name__)
+
+class _PyCurlData(object):
+    def __init__(self):
+        self._data = []
+
+    def _write_data(self, buf):
+        self._data.append(buf)
+
+    def _read_data(self):
+        return ''.join(self._data)
+
+    def _clear_data(self):
+        self._data = []
+
+    data = property(_read_data, _write_data)
 
 class ProxyClient(object):
     # pylint: disable-msg=R0903
@@ -155,26 +170,26 @@ class ProxyClient(object):
         '''
         log.debug('proxyclient.send_request: entered')
         # Check whether we need to authenticate for this request
-        session_cookie = None
+        session_id = None
         username = None
         password = None
         if auth_params:
             if 'session_id' in auth_params:
-                session_cookie = Cookie.SimpleCookie()
-                session_cookie[self.session_name] = auth_params['session_id']
+                session_id = auth_params['session_id']
             elif 'cookie' in auth_params:
                 warnings.warn(_("Giving a cookie to send_request() to"
                 " authenticate is deprecated and will be removed in 0.4."
                 " Please port your code to use session_id instead."),
                 DeprecationWarning, stacklevel=2)
-                session_cookie = auth_params['cookie']
+                session_id = auth_params['cookie'].output(attrs=[],
+                        header='').strip()
             if 'username' in auth_params and 'password' in auth_params:
                 username = auth_params['username']
                 password = auth_params['password']
             elif 'username' in auth_params or 'password' in auth_params:
                 raise AuthError, _('username and password must both be set in'
                         ' auth_params')
-            if not (session_cookie or username):
+            if not (session_id or username):
                 raise AuthError, _('No known authentication methods specified:'
                         ' set "cookie" in auth_params or set both username and'
                         ' password in auth_params')
@@ -188,12 +203,26 @@ class ProxyClient(object):
         # manner.
         url = urljoin(self.base_url, urllib.quote(method) + '?tg_format=json')
 
-        response = None # the JSON that we get back from the server
+        response = _PyCurlData() # The data we get back from the server
         data = None     # decoded JSON via simplejson.load()
 
-        req = urllib2.Request(url)
-        req.add_header('User-agent', self.useragent)
-        req.add_header('Accept', 'text/javascript')
+        request = pycurl.Curl()
+        request.setopt(pycurl.URL, url)
+        # Boilerplate so pycurl processes cookies
+        request.setopt(pycurl.COOKIEFILE, '/dev/null')
+        # Associate with the response to accumulate data
+        request.setopt(pycurl.WRITEFUNCTION, response._write_data)
+        # Set standard headers
+        headers = ['User-agent: %s' % self.useragent,
+                'Accept: text/javascript']
+        request.setopt(pycurl.HTTPHEADER, headers)
+
+        # If we have a session_id, send it
+        if session_id:
+            # Anytime the session_id exists, send it so that visit tracking
+            # works.  Will also authenticate us if there's a need.
+            request.setopt(pycurl.COOKIE, '%s=%s;' % (self.session_name,
+                session_id))
 
         complete_params = {}
         if req_params:
@@ -203,51 +232,47 @@ class ProxyClient(object):
             # apache.
             complete_params.update({'user_name': username,
                     'password': password, 'login': 'Login'})
+        req_data = None
         if complete_params:
-            req.add_data(urllib.urlencode(complete_params, doseq=True))
+            req_data = urllib.urlencode(complete_params, doseq=True)
+            request.setopt(pycurl.POSTFIELDS, req_data)
 
-        if session_cookie:
-            # Anytime the cookie exists, send it so that visit tracking works.
-            # Will also authenticate us if there's a need.
-            req.add_header('Cookie', session_cookie.output(attrs=[],
-                header='').strip())
-
-        log.debug(_('Creating request %(url)s') % {'url': req.get_full_url()})
-        log.debug(_('Headers: %(header)s') % {'header': req.headers})
-        if self.debug and req.data:
+        # If debug, give people our debug info
+        log.debug(_('Creating request %(url)s') % {'url': url})
+        log.debug(_('Headers: %(header)s') % {'header': headers})
+        if self.debug and req_data:
             debug_data = re.sub(r'(&?)password[^&]+(&?)',
-                    '\g<1>password=xxxxxxx\g<2>', req.data)
+                    '\g<1>password=xxxxxxx\g<2>', req_data)
             log.debug(_('Data: %(data)s') % {'data': debug_data})
 
-        try:
-            response = urllib2.urlopen(req)
-        except urllib2.HTTPError, e:
-            if e.msg == 'Forbidden':
-                # Wrong username or password
-                log.debug(e)
-                raise AuthError, _('Unable to log into server.  Invalid'
-                        ' authentication tokens.  Send new username and'
-                        ' password:  %(error)s') % {'error': str(e)}
-            else:
-                raise
+        # run the request
+        request.perform()
+
+        # Check for auth failures
+        if request.getinfo(pycurl.HTTP_CODE) == 403:
+            # Wrong username or password
+            log.debug(_('Authentication failed logging in'))
+            raise AuthError, _('Unable to log into server.  Invalid'
+                    ' authentication tokens.  Send new username and password')
+        else:
+            pass
+            ### FIXME: Any other failed status codes should get raised here.
+            # But we need to decide on an exception since pycurl doesn't raise
+            # one automatically.
 
         # In case the server returned a new session cookie to us
-        new_session_cookie = Cookie.SimpleCookie()
-        try:
-            new_session_cookie.load(response.headers['set-cookie'])
-        except (KeyError, AttributeError): # pylint: disable-msg=W0704
-            # It's okay if the server didn't send a new cookie
-            pass
-        if self.session_as_cookie:
-            new_session = new_session_cookie
-        else:
-            # Retrieve the session id from the cookie
-            new_session = new_session_cookie.get(self.session_name, '')
-            if new_session:
-                new_session = new_session.value
+        new_session = ''
+        cookies = request.getinfo(pycurl.INFO_COOKIELIST)
+        for cookie in cookies:
+            host, isdomain, path, secure, expires, name, value  = \
+                    cookie.split('\t')
+            if name == self.session_name:
+                new_session = value
+                break
 
         # Read the response
-        json_string = response.read()
+        json_string = response.data
+
         try:
             data = simplejson.loads(json_string)
         except ValueError, e:
@@ -260,5 +285,12 @@ class ProxyClient(object):
             message = data.pop('tg_flash')
             raise AppError(name=name, message=message, extras=data)
 
+        # If we need to return a cookie for deprecated code, convert it here
+        if self.session_as_cookie:
+            cookie = Cookie.SimpleCookie()
+            cookie[self.session_name] = new_session
+            new_session = cookie
+
+        request.close()
         log.debug('proxyclient.send_request: exited')
         return new_session, DictContainer(data)
