@@ -252,16 +252,18 @@ class ProxyClient(object):
         # Note: old TG apps returned 403 Forbidden on authentication failures.
         # Updated apps return 401 Unauthorized
         # We need to accept both until all apps are updated to return 401.
-        if request.getinfo(pycurl.HTTP_CODE) in (401, 403):
+        http_status = request.getinfo(pycurl.HTTP_CODE)
+        if http_status in (401, 403):
             # Wrong username or password
             log.debug(_('Authentication failed logging in'))
             raise AuthError, _('Unable to log into server.  Invalid'
                     ' authentication tokens.  Send new username and password')
-        else:
-            pass
-            ### FIXME: Any other failed status codes should get raised here.
-            # But we need to decide on an exception since pycurl doesn't raise
-            # one automatically.
+        elif http_status >= 400:
+            try:
+                msg = httplib.response[http_status]
+            except KeyError:
+                msg = 'Unknown HTTP Server Response'
+            raise ServerError(url, http_status, msg)
 
         # In case the server returned a new session cookie to us
         new_session = ''
@@ -280,8 +282,8 @@ class ProxyClient(object):
             data = simplejson.loads(json_string)
         except ValueError, e:
             # The response wasn't JSON data
-            raise ServerError, 'Error returned from simplejson while' \
-                    ' processing %s: %s' % (url, str(e))
+            raise ServerError(url, http_status, 'Error returned from'
+                    ' simplejson while processing %s: %s' % (url, str(e))
 
         if 'exc' in data:
             name = data.pop('exc')
