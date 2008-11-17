@@ -283,7 +283,7 @@ class ProxyClient(object):
         except ValueError, e:
             # The response wasn't JSON data
             raise ServerError(url, http_status, 'Error returned from'
-                    ' simplejson while processing %s: %s' % (url, str(e))
+                    ' simplejson while processing %s: %s' % (url, str(e)))
 
         if 'exc' in data:
             name = data.pop('exc')
