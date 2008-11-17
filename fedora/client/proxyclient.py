@@ -27,6 +27,7 @@
 import Cookie
 import re
 import urllib
+import httplib
 import pycurl
 import logging
 import simplejson
@@ -260,7 +261,7 @@ class ProxyClient(object):
                     ' authentication tokens.  Send new username and password')
         elif http_status >= 400:
             try:
-                msg = httplib.response[http_status]
+                msg = httplib.responses[http_status]
             except KeyError:
                 msg = 'Unknown HTTP Server Response'
             raise ServerError(url, http_status, msg)
