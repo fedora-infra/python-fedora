@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.3.7
+Version:        0.3.8
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -58,6 +58,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/*
 
 %changelog
+* Thu Nov 20 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.8-1
+- New upstream with pycurl client backend, more fas methods, and bodhi bugfix.
+
 * Thu Oct 30 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.7-1
 - New upstream has more complete pkgdb integration.
 
