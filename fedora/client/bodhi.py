@@ -213,7 +213,9 @@ class BodhiClient(BaseClient):
                                          epoch=None,
                                          arch=None)
             if len(pkgs):
-                yield self.query(package=[build['nvr']])
+                update_list = self.query(package=[build['nvr']])['updates']
+                for update in update_list:
+                    yield update
 
     def latest_builds(self, package):
         """ Get a list of the latest builds for this package.

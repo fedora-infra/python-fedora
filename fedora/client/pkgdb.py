@@ -24,6 +24,7 @@
 .. moduleauthor:: Mike Watters <valholla@fedoraproject.org>
 
 .. data:: COLLECTIONMAP
+
     Maps short names to Collections.  For instance, FC => Fedora
 '''
 
@@ -125,6 +126,7 @@ class PackageDB(BaseClient):
         '''Branch all unblocked packages for a new release.
 
         Mass branching always works against the devel branch.
+
         :arg branch: Branch name to create branches for.  Names are listed in
             :data:`COLLECTIONMAP`
         :raises AppError: If the server returns an exceptiom.  The 'extras'
@@ -155,10 +157,11 @@ class PackageDB(BaseClient):
 
         Note: This method will be going away in favor of methods that do
         smaller chunks of work:
-            1) A method to add a new package
-            2) A method to add a new branch
-            3) A method to edit an existing package
-            4) A method to edit and existing branch
+
+        1) A method to add a new package
+        2) A method to add a new branch
+        3) A method to edit an existing package
+        4) A method to edit and existing branch
         '''
         # Check if the package exists
         try:

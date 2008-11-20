@@ -3,8 +3,22 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 22 Aug 2008
+:Date: 20 Nov 2008
 :Version: 0.3.x
+
+0.3.8
+-----
+* Port the client module to use pycurl instead of urllib2.  This prepares the
+  way for SSL authentication and fixes a problem with https proxying.
+* Fix bug in BodhiClient.testable()
+* Update proxyclient to accept either 403 or 401 as http status codes raising
+  AuthErrors.
+* New client.fas2.AccountSystem methods to make fasClient more efficient:
+  - group_data(): returns mapping group names to group type and the userids of
+    the administrator, sponsors, and users of the group.
+  - user_data(): returns mapping of userids to a username, password hash,
+    SSH pub key, email address, and status.
+* Fix AppError exception on python-2.4
 
 0.3.7
 -----

@@ -41,7 +41,10 @@ class FedoraServiceError(Exception):
 
 class ServerError(FedoraServiceError):
     '''Unable to talk to the server properly.'''
-    pass
+    def __init__(self, url, status, msg):
+        self.filename = url
+        self.code = status
+        self.msg = msg
 
 class AuthError(FedoraServiceError):
     '''Error during authentication.  For instance, invalid password.'''
@@ -50,7 +53,6 @@ class AuthError(FedoraServiceError):
 class AppError(FedoraServiceError):
     '''Error condition that the server is passing back to the client.'''
     def __init__(self, name, message, extras=None):
-        super(AppError, self).__init__(name, message)
         self.name = name
         self.message = message
         self.extras = extras
