@@ -1,3 +1,47 @@
+2008-11-20  Toshio Kuratomi <toshio@fedoraproject.org> - r374
+Update NEWS and bump release number.
+
+2008-11-20  Toshio Kuratomi <toshio@fedoraproject.org> - r373
+Yield individual updates instead of whole BaseClient.send_request() responses.
+
+2008-11-17  Toshio Kuratomi <toshio@fedoraproject.org> - r372
+Fix httplib stuff for exceptions.
+
+2008-11-17  Luke Macken <lmacken@x300> - r371
+Fix a typo
+
+2008-11-16  Toshio Kuratomi <toshio@fedoraproject.org> - r370
+Throw ServerError when an error code is returned from the HTTP Server.
+
+2008-11-15  Toshio Kuratomi <toshio@fedoraproject.org> - r369
+Update proxyclient to accept either 403 or 401 as needing a new
+username/password.
+
+2008-11-15  Toshio Kuratomi <toshio@fedoraproject.org> - r368
+* Require pycurl
+
+2008-11-15  Toshio Kuratomi <toshio@fedoraproject.org> - r367
+New fas methods from ricky.
+
+2008-11-15  Toshio Kuratomi <toshio@fedoraproject.org> - r366
+* Port from urllib2 to pycurl.
+* Change internals of send_request() to save a session_id instead of a Cookie.
+
+2008-11-15  Toshio Kuratomi <toshio@fedoraproject.org> - r365
+Add license note.
+
+2008-11-06  Toshio Kuratomi <toshio@fedoraproject.org> - r364
+Fix AppError on python-2.4
+
+2008-11-05  Toshio Kuratomi <toshio@fedoraproject.org> - r363
+Update with a bugzilla email for romal.
+
+2008-11-04  Toshio Kuratomi <toshio@fedoraproject.org> - r362
+Fix some docstrings forsphinx errors.
+
+2008-11-04  Toshio Kuratomi <toshio@fedoraproject.org> - r361
+Update log for 0.3.7 release.
+
 2008-11-04  Toshio Kuratomi <toshio@fedoraproject.org> - r360
 Update version for 0.3.7 release.
 
