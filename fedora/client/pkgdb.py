@@ -143,6 +143,7 @@ class PackageDB(BaseClient):
         :arg pkg: Name of the package to edit
         :kwarg owner: If set, make this person the owner of both branches
         :kwarg description: If set, make this the description of both branches
+        :kwarg branches: List of branches to operate on
         :kwarg cc_list: If set, list or tuple of usernames to watch the
             package.
         :kwarg comaintainers: If set, list or tuple of usernames to comaintain
@@ -208,16 +209,16 @@ class PackageDB(BaseClient):
         # Parse the Branch abbreviations into collections
         if branches:
             data['collections'] = {}
-        for branch in branches:
-            collection, version = self.canonical_branch_name(branch)
-            # Create branch
-            try:
-                data['collections'][collection].append(version)
-            except KeyError:
-                data['collections'][collection] = [version]
+            for branch in branches:
+                collection, version = self.canonical_branch_name(branch)
+                # Create branch
+                try:
+                    data['collections'][collection].append(version)
+                except KeyError:
+                    data['collections'][collection] = [version]
 
-        # Transform the collections dict into JSON.
-        data['collections'] = simplejson.dumps(data['collections'])
+            # Transform the collections dict into JSON.
+            data['collections'] = simplejson.dumps(data['collections'])
 
         # Request the changes
         response = self.send_request('/packages/dispatcher/edit_package/%s'
