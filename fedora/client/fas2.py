@@ -258,6 +258,7 @@ class AccountSystem(BaseClient):
         :kwarg fields: Limit the data returned to a specific list of fields.
             The default is to retrieve all fields.
             Valid fields are:
+
                 * username
                 * certificate_serial
                 * locale
@@ -285,6 +286,7 @@ class AccountSystem(BaseClient):
                 * human_name
                 * last_seen
                 * bugzilla_email
+
             Note that for most users who access this data, many of these
             fields will be set to None due to security or privacy settings.
         :returns: a dict relating the key value to the fields.

@@ -25,22 +25,34 @@ fedora.client is used to interact with Fedora Services.
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
-
 '''
+
 class FedoraClientError(Exception):
     '''Base Exception for problems which originate within the Clients.
 
-    Problems returned via the Services should be returned via a
+    This should be the base class for any exceptions that the Client generates
+    generate.  For instance, if the client performs validation before passing
+    the data on to the Fedora Service.
+
+    Problems returned while talking to the Services should be returned via a
     `FedoraServiceError` instead.
     '''
     pass
 
 class FedoraServiceError(Exception):
-    '''Base Exception for any problem talking with the Service.'''
+    '''Base Exception for any problem talking with the Service.
+
+    When the Client gets an error talking to the server, an exception of this
+    type is raised.  This can be anything in the networking layer up to an
+    error returned from the server itself.
+    '''
     pass
 
 class ServerError(FedoraServiceError):
-    '''Unable to talk to the server properly.'''
+    '''Unable to talk to the server properly.
+
+    This includes network errors and 500 response codes.
+    '''
     def __init__(self, url, status, msg):
         self.filename = url
         self.code = status

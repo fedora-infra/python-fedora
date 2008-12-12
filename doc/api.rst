@@ -84,7 +84,7 @@ Transforming SQLAlchemy Objects into JSON
 TurboGears Helpers
 ==================
 .. automodule:: fedora.tg.util
-    :members:
+    :members: request_format, jsonify_validation_errors, json_or_redirect
     :undoc-members:
 
 .. automodule:: fedora.tg.identity
