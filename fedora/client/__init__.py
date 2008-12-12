@@ -14,10 +14,6 @@
 # incorporated in the source code or documentation are not subject to the GNU
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
-#
-# Red Hat Author(s): Luke Macken <lmacken@redhat.com>
-#                    Toshio Kuratomi <tkuratom@redhat.com>
-#
 
 '''
 fedora.client is used to interact with Fedora Services.
