@@ -149,9 +149,6 @@ from fedora.client.pkgdb import PackageDB, PackageDBError
 from fedora.client.bodhi import BodhiClient, BodhiClientException
 # pylint: enable-msg=W0611
 
-import sys
-sys.modules['fedora.client.ProxyClient'] = ProxyClient
-sys.modules['fedora.client.AccountSystem'] = AccountSystem
 __all__ = ('FedoraServiceError', 'ServerError', 'AuthError', 'AppError',
         'FedoraClientError', 'DictContainer',
         'FASError', 'CLAError', 'BodhiClientException', 'PackageDBError',
