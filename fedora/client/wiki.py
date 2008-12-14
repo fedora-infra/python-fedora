@@ -11,19 +11,17 @@
 # the full text of the license.
 
 """
-Fedora Wiki Client
+A Wiki Client
 """
 
 from datetime import datetime, timedelta
 from collections import defaultdict
-
 from fedora.client import BaseClient
 
-class FedoraWiki(BaseClient):
+class Wiki(BaseClient):
 
-    def __init__(self, *args, **kw):
-        super(FedoraWiki, self).__init__('http://fedoraproject.org/w/',
-                                         *args, **kw)
+    def __init__(self, base_url='http://fedoraproject.org/w/', *args, **kw):
+        super(Wiki, self).__init__(base_url, *args, **kw)
 
     def get_recent_changes(self, now, then, limit=500):
         """ Get recent wiki changes from `now` until `then` """
@@ -85,13 +83,14 @@ class FedoraWiki(BaseClient):
                                 reverse=True)[:show]:
             print ' %-50s %d' % (('%s' % page).ljust(50, '.'), num)
 
+
 if __name__ == '__main__':
     #from getpass import getpass
     #username = raw_input('Username: ')
     #password = getpass()
-    wiki = FedoraWiki()
+    wiki = Wiki()
     #cookie = wiki.login(username=username, password=password)
     #print "login response =", cookie
-    #wiki = FedoraWiki(username=username, session_id=cookie['login']['lgtoken'],
-    #                  session_name='fpo-mediawiki_en_Token')
+    #wiki = Wiki(username=username, session_id=cookie['login']['lgtoken'],
+    #            session_name='fpo-mediawiki_en_Token')
     wiki.print_recent_changes()
