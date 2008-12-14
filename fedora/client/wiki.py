@@ -39,6 +39,19 @@ class FedoraWiki(BaseClient):
             raise Exception(data['error']['info'])
         return data
 
+    def login(self, username, password):
+        data = self.send_request('api.php', req_params={
+                'action': 'login',
+                'format': 'json',
+                'lgname': username,
+                'lgpassword': password,
+                })
+        if 'lgtoken' not in data.get('login', {}):
+            raise Exception('Login failed: %s' % data)
+        #self.session_id = data['login']['lgtoken']
+        #self.username = data['login']['lgusername']
+        return data
+
     def print_recent_changes(self, days=7, show=10):
         now = datetime.utcnow()
         then = now - timedelta(days=days)
@@ -50,6 +63,7 @@ class FedoraWiki(BaseClient):
             print "Warning: Number of changes reaches the API return limit."
             print "You will not get the complete list of changes unless "
             print "you run this script using a 'bot' account."
+
 
         users = defaultdict(list) # {username: [change,]}
         pages = defaultdict(int)  # {pagename: # of edits}
@@ -72,5 +86,12 @@ class FedoraWiki(BaseClient):
             print ' %-50s %d' % (('%s' % page).ljust(50, '.'), num)
 
 if __name__ == '__main__':
+    #from getpass import getpass
+    #username = raw_input('Username: ')
+    #password = getpass()
     wiki = FedoraWiki()
+    #cookie = wiki.login(username=username, password=password)
+    #print "login response =", cookie
+    #wiki = FedoraWiki(username=username, session_id=cookie['login']['lgtoken'],
+    #                  session_name='fpo-mediawiki_en_Token')
     wiki.print_recent_changes()
