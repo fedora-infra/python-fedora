@@ -143,10 +143,11 @@ from fedora.client.baseclient import BaseClient
 from fedora.client.fas2 import AccountSystem, FASError, CLAError
 from fedora.client.pkgdb import PackageDB, PackageDBError
 from fedora.client.bodhi import BodhiClient, BodhiClientException
+from fedora.client.wiki import FedoraWiki
 # pylint: enable-msg=W0611
 
 __all__ = ('FedoraServiceError', 'ServerError', 'AuthError', 'AppError',
         'FedoraClientError', 'DictContainer',
         'FASError', 'CLAError', 'BodhiClientException', 'PackageDBError',
         'ProxyClient', 'BaseClient', 'AccountSystem', 'PackageDB',
-        'BodhiClient')
+        'BodhiClient', 'FedoraWiki')
