@@ -35,7 +35,7 @@ class Wiki(BaseClient):
                 })
         if 'error' in data:
             raise Exception(data['error']['info'])
-        return data
+        return data['query']['recentchanges']
 
     def login(self, username, password):
         data = self.send_request('api.php', req_params={
@@ -54,8 +54,8 @@ class Wiki(BaseClient):
         now = datetime.utcnow()
         then = now - timedelta(days=days)
         print "From %s to %s" % (then, now)
-        data = self.get_recent_changes(now=now, then=then)
-        num_changes = len(data['query']['recentchanges'])
+        changes = self.get_recent_changes(now=now, then=then)
+        num_changes = len(changes)
         print "%d wiki changes in the past week" % num_changes
         if num_changes == 500:
             print "Warning: Number of changes reaches the API return limit."
@@ -66,7 +66,7 @@ class Wiki(BaseClient):
         users = defaultdict(list) # {username: [change,]}
         pages = defaultdict(int)  # {pagename: # of edits}
 
-        for change in data['query']['recentchanges']:
+        for change in changes:
             users[change['user']].append(change['title'])
             pages[change['title']] += 1
 
