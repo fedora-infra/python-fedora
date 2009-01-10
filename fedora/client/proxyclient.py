@@ -33,6 +33,13 @@ import logging
 import simplejson
 import warnings
 from urlparse import urljoin
+
+try:
+    from hashlib import sha1 as sha_constructor
+except ImportError:
+    import sha
+    from sha import new as sha_constructor
+
 from fedora import __version__
 from fedora import _
 
@@ -229,14 +236,17 @@ class ProxyClient(object):
             request.setopt(pycurl.COOKIE, '%s=%s;' % (self.session_name,
                 session_id))
 
-        complete_params = {}
-        if req_params:
-            complete_params = req_params
+        complete_params = req_params or {}
+        if session_id:
+            # Add the csrf protection token
+            token = sha_constructor(session_id)
+            complete_params.update({'_csrf_token': token.hexdigest()})
         if username and password:
             # Adding this to the request data prevents it from being logged by
             # apache.
             complete_params.update({'user_name': username,
                     'password': password, 'login': 'Login'})
+
         req_data = None
         if complete_params:
             req_data = urllib.urlencode(complete_params, doseq=True)
