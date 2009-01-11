@@ -43,9 +43,9 @@ class BaseClient(ProxyClient):
     '''
         A client for interacting with web services.
     '''
-    def __init__(self, base_url, useragent=None, debug=False, username=None,
-            password=None, session_cookie=None, session_id=None,
-            session_name='tg-visit', cache_session=True):
+    def __init__(self, base_url, useragent=None, debug=False, insecure=False,
+            username=None, password=None, session_cookie=None,
+            session_id=None, session_name='tg-visit', cache_session=True):
         '''
         :arg base_url: Base of every URL used to contact the server
 
@@ -53,6 +53,11 @@ class BaseClient(ProxyClient):
             "Fedora BaseClient/VERSION"
         :kwarg session_name: name of the cookie to use with session handling
         :kwarg debug: If True, log debug information
+        :kwarg insecure: If True, do not check server certificates against
+            their CA's.  This means that man-in-the-middle attacks are
+            possible against the `BaseClient`. You might turn this option on
+            for testing against a local version of a server with a self-signed
+            certificate but it should be off in production.
         :kwarg username: Username for establishing authenticated connections
         :kwarg password: Password to use with authenticated connections
         :kwarg session_cookie: *Deprecated* Use session_id instead.  If both
@@ -66,7 +71,7 @@ class BaseClient(ProxyClient):
                 'version': __version__}
         super(BaseClient, self).__init__(base_url, useragent=self.useragent,
                 session_name=session_name, session_as_cookie=False,
-                debug=debug)
+                debug=debug, insecure=insecure)
 
         self.username = username
         self.password = password
