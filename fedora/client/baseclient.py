@@ -87,14 +87,16 @@ class BaseClient(ProxyClient):
         :Returns: Complete mapping of users to session ids
         '''
         saved_session = {}
+        session_file = None
         if path.isfile(SESSION_FILE):
-            session_file = file(SESSION_FILE, 'r')
             try:
+                session_file = file(SESSION_FILE, 'r')
                 saved_session = pickle.load(session_file)
-            except EOFError:
+            except IOError, EOFError:
                 log.info(_('Unable to load session from %(file)s') % \
                         {'file': SESSION_FILE})
-            session_file.close()
+            if session_file:
+                session_file.close()
 
         return saved_session
 
