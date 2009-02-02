@@ -21,9 +21,93 @@
 #
 '''Miscellaneous functions of use on the server.
 '''
+from itertools import chain
+import urlparse
+import cgi
+import urllib
+
 import cherrypy
-from turbogears import flash, redirect
+from cherrypy import request
+import turbogears
+from turbogears import flash, redirect, config, identity
+import turbogears.util as tg_util
+from turbogears.controllers import check_app_root
 from decorator import decorator
+
+def url(tgpath, tgparams=None, **kw):
+    """Computes URLs.
+
+    This is a replacement for turbogears.controllers.url (aka tg.url in the
+    template).  In addition to the functionality that tg.url() provides, it
+    adds csrf token handling.
+
+    :arg tgpath:  a list or a string. If the path is absolute (starts
+        with a "/"), the server.webpath, SCRIPT_NAME and the approot of the
+        application are prepended to the path. In order for the approot to be
+        detected properly, the root object should extend
+        controllers.RootController.
+
+    :kwarg tgparams:
+    :kwarg *: Query parameters for the URL can be passed in as a dictionary in
+        the second argument *or* as keyword parameters.  Values which are a
+        list or a tuple are used to create multiple key-value pairs.
+    :returns: The changed path
+    """
+    if not isinstance(tgpath, basestring):
+        tgpath = '/'.join(list(tgpath))
+    if tgpath.startswith('/'):
+        webpath = (config.get('server.webpath') or '').rstrip('/')
+        if tg_util.request_available():
+            check_app_root()
+            tgpath = request.app_root + tgpath
+            try:
+                webpath += request.wsgi_environ['SCRIPT_NAME'].rstrip('/')
+            except (AttributeError, KeyError):
+                pass
+        tgpath = webpath + tgpath
+    if tgparams is None:
+        tgparams = kw
+    else:
+        try:
+            tgparams = tgparams.copy()
+            tgparams.update(kw)
+        except AttributeError:
+            raise TypeError('url() expects a dictionary for query parameters')
+    args = []
+    # Add the _csrf_token
+    query_params = tgparams.iteritems()
+    try:
+        if identity.current.csrf_token:
+            query_params = chain(query_params,
+                    [('_csrf_token', identity.current.csrf_token)])
+    except identity.exceptions.RequestRequiredException:
+        # If we are outside of a request (called from non-controller methods/
+        # templates) just don't set the _csrf_token.
+        pass
+
+    # Check for query params in the current url
+    scheme, netloc, path, params, query_s, fragment = urlparse.urlparse(tgpath)
+    if query_s:
+        query_params = chain((p for p in cgi.parse_qsl(query_s) if p[0] !=
+            '_csrf_token'), query_params)
+
+    for key, value in query_params:
+        if value is None:
+            continue
+        if isinstance(value, (list, tuple)):
+            pairs = [(key, v) for v in value]
+        else:
+            pairs = [(key, value)]
+        for k, v in pairs:
+            if v is None:
+                continue
+            if isinstance(v, unicode):
+                v = v.encode('utf8')
+            args.append((k, str(v)))
+    query_string = urllib.urlencode(args, True)
+    tgpath = urlparse.urlunparse((scheme, netloc, path, params, query_string,
+            fragment))
+    return tgpath
 
 def request_format():
     '''Return the output format that was requested.
@@ -124,4 +208,28 @@ def json_or_redirect(forward_url):
             raise redirect(forward_url)
     return decorator(call)
 
-__all__ = [request_format, jsonify_validation_errors, json_or_redirect]
+def enable_csrf():
+    '''A startup function to setup csrf handling.
+
+    This should be run at application startup.
+    Code like the following in the start-APP script or the method in
+    commands.py that starts it::
+        from turbogears import startup
+        from fedora.tg.util import enable_csrf
+        startup.call_on_startup.append(enable_csrf)
+
+    If we can get the csrf protections into upstream TurboGears, we might be
+    able to remove this in the future.
+    '''
+    # Override the turbogears.url funciton with our own
+    turbogears.url = url
+    turbogears.controllers.url = url
+
+    # Ignore the _csrf_token parameter
+    ignore = config.get('tg.ignore_parameters', [])
+    if '_csrf_token' not in ignore:
+        ignore.append('_csrf_token')
+        config.update({'tg.ignore_parameters': ignore})
+
+__all__ = [enable_csrf, jsonify_validation_errors, json_or_redirect,
+        request_format, url]
