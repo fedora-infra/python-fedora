@@ -208,10 +208,11 @@ class JsonFasIdentityProvider(object):
 
         Must return either None if the credentials weren't valid or an object
         with the following properties:
-            user_name: original user name
-            user: a provider dependant object (TG_User or similar)
-            groups: a set of group IDs
-            permissions: a set of permission IDs
+
+        :user_name: original user name
+        :user: a provider dependant object (TG_User or similar)
+        :groups: a set of group IDs
+        :permissions: a set of permission IDs
         '''
         # pylint: disable-msg=R0201
         # TG identity providers have this method so we can't get rid of it.
@@ -234,13 +235,11 @@ class JsonFasIdentityProvider(object):
         against an external source (i.e. PAM, LDAP, Windows domain, etc),
         subclass SqlAlchemyIdentityProvider, and override this method.
 
-        Arguments:
-        :user: User information.  Not used.
-        :user_name: Given username.
-        :password: Given, plaintext password.
-
-        Returns: True if the password matches the username.  Otherwise False.
-          Can return False for problems within the Account System as well.
+        :arg user: User information.  Not used.
+        :arg user_name: Given username.
+        :arg password: Given, plaintext password.
+        :returns: True if the password matches the username.  Otherwise False.
+            Can return False for problems within the Account System as well.
         '''
         # pylint: disable-msg=W0613,R0201
         # TG identity providers take user_name in case an external provider
@@ -251,14 +250,14 @@ class JsonFasIdentityProvider(object):
     def load_identity(self, visit_key):
         '''Lookup the principal represented by visit_key.
 
-        Arguments:
-        :visit_key: The session key for whom we're looking up an identity.
+        :arg visit_key: The session key for whom we're looking up an identity.
 
         Must return an object with the following properties:
-            user_name: original user name
-            user: a provider dependant object (TG_User or similar)
-            groups: a set of group IDs
-            permissions: a set of permission IDs
+
+        :user_name: original user name
+        :user: a provider dependant object (TG_User or similar)
+        :groups: a set of group IDs
+        :permissions: a set of permission IDs
         '''
         # pylint: disable-msg=R0201
         # TG identity providers have this method so we can't get rid of it.
@@ -267,10 +266,11 @@ class JsonFasIdentityProvider(object):
     def anonymous_identity(self):
         '''
         Must return an object with the following properties:
-            user_name: original user name
-            user: a provider dependant object (TG_User or similar)
-            groups: a set of group IDs
-            permissions: a set of permission IDs
+
+        :user_name: original user name
+        :user: a provider dependant object (TG_User or similar)
+        :groups: a set of group IDs
+        :permissions: a set of permission IDs
         '''
         # pylint: disable-msg=R0201
         # TG identity providers have this method so we can't get rid of it.

@@ -46,9 +46,8 @@ def url(tgpath, tgparams=None, **kw):
         application are prepended to the path. In order for the approot to be
         detected properly, the root object should extend
         controllers.RootController.
-
-    :kwarg tgparams:
-    :kwarg *: Query parameters for the URL can be passed in as a dictionary in
+    :kwarg tgparams: See param:``kw``
+    :kwarg kw: Query parameters for the URL can be passed in as a dictionary in
         the second argument *or* as keyword parameters.  Values which are a
         list or a tuple are used to create multiple key-value pairs.
     :returns: The changed path
@@ -108,6 +107,30 @@ def url(tgpath, tgparams=None, **kw):
     tgpath = urlparse.urlunparse((scheme, netloc, path, params, query_string,
             fragment))
     return tgpath
+
+def enable_csrf():
+    '''A startup function to setup csrf handling.
+
+    This should be run at application startup.
+    Code like the following in the start-APP script or the method in
+    commands.py that starts it::
+
+        from turbogears import startup
+        from fedora.tg.util import enable_csrf
+        startup.call_on_startup.append(enable_csrf)
+
+    If we can get the csrf protections into upstream TurboGears, we might be
+    able to remove this in the future.
+    '''
+    # Override the turbogears.url funciton with our own
+    turbogears.url = url
+    turbogears.controllers.url = url
+
+    # Ignore the _csrf_token parameter
+    ignore = config.get('tg.ignore_parameters', [])
+    if '_csrf_token' not in ignore:
+        ignore.append('_csrf_token')
+        config.update({'tg.ignore_parameters': ignore})
 
 def request_format():
     '''Return the output format that was requested.
@@ -207,29 +230,6 @@ def json_or_redirect(forward_url):
             func(*args, **kw)
             raise redirect(forward_url)
     return decorator(call)
-
-def enable_csrf():
-    '''A startup function to setup csrf handling.
-
-    This should be run at application startup.
-    Code like the following in the start-APP script or the method in
-    commands.py that starts it::
-        from turbogears import startup
-        from fedora.tg.util import enable_csrf
-        startup.call_on_startup.append(enable_csrf)
-
-    If we can get the csrf protections into upstream TurboGears, we might be
-    able to remove this in the future.
-    '''
-    # Override the turbogears.url funciton with our own
-    turbogears.url = url
-    turbogears.controllers.url = url
-
-    # Ignore the _csrf_token parameter
-    ignore = config.get('tg.ignore_parameters', [])
-    if '_csrf_token' not in ignore:
-        ignore.append('_csrf_token')
-        config.update({'tg.ignore_parameters': ignore})
 
 __all__ = [enable_csrf, jsonify_validation_errors, json_or_redirect,
         request_format, url]
