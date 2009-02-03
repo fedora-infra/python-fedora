@@ -9,6 +9,9 @@ NEWS
 0.3.9
 -----
 * Minor fix for traceback when the session file is unreadable.
+* Added CSRF protection functionality to the server.  Enable CSRF protection
+  on a server by running fedora.tg.util.enable_csrf() at startup.
+* Update client code to use CSRF tokens when needed.
 
 0.3.8
 -----
