@@ -3,8 +3,12 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 20 Nov 2008
+:Date: 22 Jan 2009
 :Version: 0.3.x
+
+0.3.9
+-----
+* Minor fix for traceback when the session file is unreadable.
 
 0.3.8
 -----
