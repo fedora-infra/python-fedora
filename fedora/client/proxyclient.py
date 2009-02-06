@@ -37,7 +37,6 @@ from urlparse import urljoin
 try:
     from hashlib import sha1 as sha_constructor
 except ImportError:
-    import sha
     from sha import new as sha_constructor
 
 from fedora import __version__
@@ -51,7 +50,7 @@ class _PyCurlData(object):
     def __init__(self):
         self._data = []
 
-    def _write_data(self, buf):
+    def write_data(self, buf):
         self._data.append(buf)
 
     def _read_data(self):
@@ -60,7 +59,7 @@ class _PyCurlData(object):
     def _clear_data(self):
         self._data = []
 
-    data = property(_read_data, _write_data)
+    data = property(_read_data, write_data, _clear_data)
 
 class ProxyClient(object):
     # pylint: disable-msg=R0903
@@ -225,7 +224,7 @@ class ProxyClient(object):
         # Boilerplate so pycurl processes cookies
         request.setopt(pycurl.COOKIEFILE, '/dev/null')
         # Associate with the response to accumulate data
-        request.setopt(pycurl.WRITEFUNCTION, response._write_data)
+        request.setopt(pycurl.WRITEFUNCTION, response.write_data)
         # Follow redirect
         request.setopt(pycurl.FOLLOWLOCATION, True)
         request.setopt(pycurl.MAXREDIRS, 5)
@@ -247,15 +246,6 @@ class ProxyClient(object):
                 session_id))
 
         complete_params = req_params or {}
-        ### FIXME: Have to add the _csrf_token to the allowed tg_args
-        # In the servers, we have to allow the _csrf_token to be added.
-        # This means that we need to call
-        #   turbogears.add_tg_args(func, ['_csrf_token'])
-        # The best place for this is probably in the @expose decorator as we
-        # have no way of knowing which URLs need the token and which do not.
-        # that function adds to _tg_args().  Another way might be to find out
-        # how user_name, password, and login are added to that set and use
-        # that.
         if session_id:
             # Add the csrf protection token
             token = sha_constructor(session_id)

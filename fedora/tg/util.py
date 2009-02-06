@@ -37,9 +37,10 @@ import turbogears
 from turbogears import flash, redirect, config, identity
 import turbogears.util as tg_util
 from turbogears.controllers import check_app_root
+from turbogears.identity.exceptions import RequestRequiredException
 from decorator import decorator
 
-def url(tgpath, tgparams=None, **kw):
+def url(tgpath, tgparams=None, **kwargs):
     """Computes URLs.
 
     This is a replacement for :func:`turbogears.controllers.url` (aka
@@ -51,8 +52,8 @@ def url(tgpath, tgparams=None, **kw):
         the approot of the application are prepended to the path. In order for
         the approot to be detected properly, the root object should extend
         :class:`turbogears.controllers.RootController`.
-    :kwarg tgparams: See param: ``kw``
-    :kwarg kw: Query parameters for the URL can be passed in as a dictionary
+    :kwarg tgparams: See param: ``kwargs``
+    :kwarg kwargs: Query parameters for the URL can be passed in as a dictionary
         in the second argument *or* as keyword parameters.  Values which are a
         list or a tuple are used to create multiple key-value pairs.
     :returns: The changed path
@@ -69,15 +70,17 @@ def url(tgpath, tgparams=None, **kw):
             tgpath = request.app_root + tgpath
             try:
                 webpath += request.wsgi_environ['SCRIPT_NAME'].rstrip('/')
-            except (AttributeError, KeyError):
+            except (AttributeError, KeyError): # pylint: disable-msg=W0704
+                # :W0704: Lack of wsgi environ is fine... we still have
+                # server.webpath
                 pass
         tgpath = webpath + tgpath
     if tgparams is None:
-        tgparams = kw
+        tgparams = kwargs
     else:
         try:
             tgparams = tgparams.copy()
-            tgparams.update(kw)
+            tgparams.update(kwargs)
         except AttributeError:
             raise TypeError('url() expects a dictionary for query parameters')
     args = []
@@ -87,9 +90,9 @@ def url(tgpath, tgparams=None, **kw):
         if identity.current.csrf_token:
             query_params = chain(query_params,
                     [('_csrf_token', identity.current.csrf_token)])
-    except identity.exceptions.RequestRequiredException:
-        # If we are outside of a request (called from non-controller methods/
-        # templates) just don't set the _csrf_token.
+    except RequestRequiredException: # pylint: disable-msg=W0704
+        # :W0704: If we are outside of a request (called from non-controller
+        # methods/ templates) just don't set the _csrf_token.
         pass
 
     # Check for query params in the current url
@@ -105,12 +108,12 @@ def url(tgpath, tgparams=None, **kw):
             pairs = [(key, v) for v in value]
         else:
             pairs = [(key, value)]
-        for k, v in pairs:
-            if v is None:
+        for key, value in pairs:
+            if value is None:
                 continue
-            if isinstance(v, unicode):
-                v = v.encode('utf8')
-            args.append((k, str(v)))
+            if isinstance(value, unicode):
+                value = value.encode('utf8')
+            args.append((key, str(value)))
     query_string = urllib.urlencode(args, True)
     tgpath = urlparse.urlunparse((scheme, netloc, path, params, query_string,
             fragment))

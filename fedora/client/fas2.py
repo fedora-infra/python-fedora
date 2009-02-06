@@ -504,7 +504,8 @@ class AccountSystem(BaseClient):
             if request['success']:
                 return request['data']
             else:
-                raise AppError(message=_('FAS server unable to retrieve group members'), name='FASError')
+                raise AppError(message=_('FAS server unable to retrieve group'
+                    ' members'), name='FASError')
         except FedoraServiceError:
             raise
 

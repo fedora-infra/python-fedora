@@ -97,7 +97,7 @@ class BaseClient(ProxyClient):
             try:
                 session_file = file(SESSION_FILE, 'r')
                 saved_session = pickle.load(session_file)
-            except IOError, EOFError:
+            except (IOError, EOFError):
                 log.info(_('Unable to load session from %(file)s') % \
                         {'file': SESSION_FILE})
             if session_file:
