@@ -1,5 +1,5 @@
 =============
-fedora.client
+Fedora Client
 =============
 :Authors: Toshio Kuratomi
           Luke Macken
@@ -14,27 +14,29 @@ encountered.
 .. _`Fedora Service`: service.html
 .. _Exception: Exceptions_
 
-.. contents::
+.. toctree::
 
 ----------
 BaseClient
 ----------
 
-The BaseClient_ class is the basis of all your interactions with the server.
-It is flexible enough to be used as is for talking with a service but is
-really meant to be subclassed and have methods written for it that do the
-things you specifically need to interact with the `Fedora Service`_ you care
-about.  Authors of a `Fedora Service`_ are encouraged to provide their own
-subclasses of BaseClient_ that make it easier for other people to use a
-particular Service out of the box.
+The :class:`~fedora.client.BaseClient` class is the basis of all your
+interactions with the server.  It is flexible enough to be used as is for
+talking with a service but is really meant to be subclassed and have methods
+written for it that do the things you specifically need to interact with the
+`Fedora Service`_ you care about.  Authors of a `Fedora Service`_ are
+encouraged to provide their own subclasses of
+:class:`~fedora.client.BaseClient` that make it easier for other people to use
+a particular Service out of the box.
 
 Using Standalone
 ================
 
-If you don't want to subclass, you can use BaseClient_ as a utility class to
-talk to any `Fedora Service`_.  There's three steps to this.  First you import
-the BaseClient_ and Exceptions_ from the ``fedora.client`` module.  Then you
-create a new BaseClient_ with the URL that points to the root of the
+If you don't want to subclass, you can use :class:`~fedora.client.BaseClient`
+as a utility class to talk to any `Fedora Service`_.  There's three steps to
+this.  First you import the :class:`~fedora.client.BaseClient` and Exceptions_
+from the ``fedora.client`` module.  Then you create a new
+:class:`~fedora.client.BaseClient` with the URL that points to the root of the
 `Fedora Service`_ you're interacting with.  Finally, you retrieve data from a
 method on the server.  Here's some code that illustrates the process::
 
@@ -59,11 +61,12 @@ as the base of all requests.  There are several more optional parameters that
 can be helpful.
 
 If you need to make an authenticated request you can specify the username and
-password to use when you construct your BaseClient_ using the ``username``
-and ``password`` keyword arguments.  If you do not use these, authenticated
-requests will try to connect via a cookie that was saved from previous runs of
-BaseClient_.  If that fails as well, BaseClient_ will throw an Exception_
-which you can catch in order to prompt for a new username and password::
+password to use when you construct your :class:`~fedora.client.BaseClient`
+using the ``username`` and ``password`` keyword arguments.  If you do not use
+these, authenticated requests will try to connect via a cookie that was saved
+from previous runs of :class:`~fedora.client.BaseClient`.  If that fails as
+well, :class:`~fedora.client.BaseClient` will throw an Exception_ which you
+can catch in order to prompt for a new username and password::
 
     from fedora.client import BaseClient, AuthError
     import getpass
@@ -86,22 +89,24 @@ which you can catch in order to prompt for a new username and password::
     Note that although you can set the ``username`` and ``password`` as shown
     above you do have to be careful in cases where your application is
     multithreaded or simply processes requests for more than one user with the
-    same BaseClient_.  In those cases, you can accidentally overwrite the
-    ``username`` and ``password`` between two requests.  To avoid this, make
-    sure you instantiate a separate BaseClient_ for every thread of control or
-    for every request you handle or use `ProxyClient` instead.
+    same :class:`~fedora.client.BaseClient`.  In those cases, you can
+    accidentally overwrite the ``username`` and ``password`` between two
+    requests.  To avoid this, make sure you instantiate a separate
+    :class:`~fedora.client.BaseClient` for every thread of control or for
+    every request you handle or use `ProxyClient` instead.
 
-The ``useragent`` parameter is useful for identifying in log files that
-your script is calling the server rather than another.  The default value is
-``Fedora BaseClient/VERSION`` where VERSION is the version of the BaseClient_
-module.  If you want to override this just give another string to this::
+The ``useragent`` parameter is useful for identifying in log files that your
+script is calling the server rather than another.  The default value is
+``Fedora BaseClient/VERSION`` where VERSION is the version of the
+:class:`~fedora.client.BaseClient` module.  If you want to override this just
+give another string to this::
 
     client = BaseClient('https://admin.fedoraproject.org/pkgdb',
             useragent='Package Database Client/1.0')
 
 The ``debug`` parameter turns on a little extra output when running the
 program.  Set it to true if you're having trouble and want to figure out what
-is happening inside of the BaseClient_ code.
+is happening inside of the :class:`~fedora.client.BaseClient` code.
 
 send_request()
 ~~~~~~~~~~~~~~
@@ -133,8 +138,8 @@ An example::
             req_params={'collectionVersion': '9', 'collectionName': 'Fedora'})
 
 In this particular example, knowing how the server works, ``/packages/name/``
-defines the method that the server is going to invoke.  ``python-fedora``
-is a positional parameter for the name of the package we're looking up.
+defines the method that the server is going to invoke.  ``python-fedora`` is a
+positional parameter for the name of the package we're looking up.
 ``auth=False`` means that we'll try to look at this method without having to
 authenticate.  The ``req_params`` sends two additional keyword arguments:
 ``collectionName`` which specifies whether to filter on a single distro or
@@ -142,17 +147,18 @@ include Fedora, Fedora EPEL, Fedora OLPC, and Red Hat Linux in the output and
 ``collectionVersion`` which specifies which version of the distribution to
 output for.
 
-The URL constructed by BaseClient_ to the server could be expressed as[#]_::
+The URL constructed by :class:`~fedora.client.BaseClient` to the server could
+be expressed as[#]_::
 
     https://admin.fedoraproject.org/pkgdb/package/name/python-fedora/?collectionName=Fedora&collectionVersion=9
 
 In previous releases of python-fedora, there would be one further query
 parameter:  ``tg_format=json``.  That parameter instructed the server to
 return the information as JSON data instead of HTML.  Although this is usually
-still supported in the server, BaseClient_ has deprecated this method.
-Servers should be configured  to use an ``Accept`` header to get this
-information instead.  See the `JSON output`_ section of the `Fedora Service`_
-documentation for more information about the server side.
+still supported in the server, :class:`~fedora.client.BaseClient` has
+deprecated this method.  Servers should be configured  to use an ``Accept``
+header to get this information instead.  See the `JSON output`_ section of the
+`Fedora Service`_ documentation for more information about the server side.
 
 .. _`TurboGears`: http://www.turbogears.org/
 .. _`JSON output`: service.html#selecting-json-output
@@ -164,10 +170,11 @@ Subclassing
 ===========
 
 Building a client using subclassing builds on the information you've already
-seen inside of BaseClient_.  You might want to use this if you want to provide
-a module for third parties to access a particular `Fedora Service`_.  A
-subclass can provide a set of standard methods for calling the server instead
-of forcing the user to remember the URLs used to access the server directly.
+seen inside of :class:`~fedora.client.BaseClient`.  You might want to use this
+if you want to provide a module for third parties to access a particular
+`Fedora Service`_.  A subclass can provide a set of standard methods for
+calling the server instead of forcing the user to remember the URLs used to
+access the server directly.
 
 Here's an example that turns the previous calls into the basis of a python API
 to the `Fedora Package Database`_::
@@ -226,15 +233,15 @@ client API for the `Fedora Account System`_
 Handling Errors
 ---------------
 
-BaseClient_ will throw a variety of errors that can be caught to tell you what
-kind of error was generated.
+:class:`~fedora.client.BaseClient` will throw a variety of errors that can be
+caught to tell you what kind of error was generated.
 
 Exceptions
 ==========
 
-:``FedoraServiceError``: The base of all exceptions raised by BaseClient_.
-    If your code needs to catch any of the listed errors then you can catch
-    that to do so.
+:``FedoraServiceError``: The base of all exceptions raised by
+    :class:`~fedora.client.BaseClient`.  If your code needs to catch any of the
+    listed errors then you can catch that to do so.
 
 :``ServerError``: Raised if there's a problem communicating with the service.
     For instance, if we receive an HTML response instead of JSON.
@@ -245,9 +252,10 @@ Exceptions
 
 :``AppError``: If there is a `server side error`_ when processing a request,
     the `Fedora Service`_ can alert the client of this by setting certain
-    flags in the response.  BaseClient_  will see these flags and raise an
-    AppError.  The name of the error will be stored in AppError's ``name``
-    field.  The error's message will be stored in ``message``.
+    flags in the response.  :class:`~fedora.client.BaseClient`  will see these
+    flags and raise an AppError.  The name of the error will be stored in
+    AppError's ``name`` field.  The error's message will be stored in
+    ``message``.
 
 .. _`server side error`: service.html#Error Handling
 
