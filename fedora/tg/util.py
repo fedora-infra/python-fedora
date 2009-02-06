@@ -19,7 +19,12 @@
 # Author(s): Toshio Kuratomi <tkuratom@redhat.com>
 #             Ricky Zhou <ricky@fedoraproject.org>
 #
-'''Miscellaneous functions of use on the server.
+'''
+Miscellaneous functions of use on a TurboGears Server
+
+
+.. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
+.. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 '''
 from itertools import chain
 import urlparse
@@ -37,20 +42,23 @@ from decorator import decorator
 def url(tgpath, tgparams=None, **kw):
     """Computes URLs.
 
-    This is a replacement for turbogears.controllers.url (aka tg.url in the
-    template).  In addition to the functionality that tg.url() provides, it
-    adds csrf token handling.
+    This is a replacement for :func:`turbogears.controllers.url` (aka
+    :func:`tg.url` in the template).  In addition to the functionality that
+    :func:`tg.url` provides, it adds a token to prevent :term:`CSRF` attacks.
 
     :arg tgpath:  a list or a string. If the path is absolute (starts
-        with a "/"), the server.webpath, SCRIPT_NAME and the approot of the
-        application are prepended to the path. In order for the approot to be
-        detected properly, the root object should extend
-        controllers.RootController.
-    :kwarg tgparams: See param:``kw``
-    :kwarg kw: Query parameters for the URL can be passed in as a dictionary in
-        the second argument *or* as keyword parameters.  Values which are a
+        with a "/"), the :attr:`server.webpath`, :envvar:`SCRIPT_NAME` and
+        the approot of the application are prepended to the path. In order for
+        the approot to be detected properly, the root object should extend
+        :class:`turbogears.controllers.RootController`.
+    :kwarg tgparams: See param: ``kw``
+    :kwarg kw: Query parameters for the URL can be passed in as a dictionary
+        in the second argument *or* as keyword parameters.  Values which are a
         list or a tuple are used to create multiple key-value pairs.
     :returns: The changed path
+
+    .. versionadded:: 0.3.9
+       Modified from turbogears.controllers.url for :ref:`CSRF-Protection`
     """
     if not isinstance(tgpath, basestring):
         tgpath = '/'.join(list(tgpath))
@@ -109,18 +117,20 @@ def url(tgpath, tgparams=None, **kw):
     return tgpath
 
 def enable_csrf():
-    '''A startup function to setup csrf handling.
+    '''A startup function to setup :ref:`CSRF-Protection`.
 
-    This should be run at application startup.
-    Code like the following in the start-APP script or the method in
-    commands.py that starts it::
+    This should be run at application startup.  Code like the following in the
+    start-APP script or the method in :file:`commands.py` that starts it::
 
         from turbogears import startup
         from fedora.tg.util import enable_csrf
         startup.call_on_startup.append(enable_csrf)
 
-    If we can get the csrf protections into upstream TurboGears, we might be
-    able to remove this in the future.
+    If we can get the :ref:`CSRF-Protection` into upstream :term:`TurboGears`,
+    we might be able to remove this in the future.
+
+    .. versionadded:: 0.3.9
+       Added to enable :ref:`CSRF-Protection`
     '''
     # Override the turbogears.url funciton with our own
     turbogears.url = url
@@ -133,7 +143,16 @@ def enable_csrf():
         config.update({'tg.ignore_parameters': ignore})
 
 def request_format():
-    '''Return the output format that was requested.
+    '''Return the output format that was requested by the user.
+
+    The user is able to specify a specific output format using either the
+    ``Accept:`` HTTP header or the ``tg_format`` query parameter.  This
+    function checks both of those to determine what format the reply should
+    be in.
+
+    :rtype: string
+    :returns: The requested format.  If none was specified, 'default' is
+        returned
     '''
     format = cherrypy.request.params.get('tg_format', '').lower()
     if not format:
@@ -141,15 +160,15 @@ def request_format():
     return format
 
 def jsonify_validation_errors():
-    '''Return an error for json if validation failed.
+    '''Return an error for :term:`JSON` if validation failed.
 
     This function checks for two things:
 
-    1) We're expected to return json data.
+    1) We're expected to return :term:`JSON` data.
     2) There were errors in the validation process.
 
     If both of those are true, this function constructs a response that
-    will return the validation error messages as json data.
+    will return the validation error messages as :term:`JSON` data.
 
     All controller methods that are error_handlers need to use this::
 
@@ -166,10 +185,11 @@ def jsonify_validation_errors():
         def save(self, number):
             return dict(success=True)
 
-    :Returns: None if there are no validation errors or json isn't requested,
-        otherwise returns a dictionary with the error that's suitable for
+    :rtype: None or dict
+    :Returns: None if there are no validation errors or :term:`JSON` isn't
+        requested, otherwise a dictionary with the error that's suitable for
         return from the controller.  The error message is set in tg_flash
-        regardless.
+        whether :term:`JSON` was requested or not.
     '''
     # Check for validation errors
     errors = getattr(cherrypy.request, 'validation_errors', None)
@@ -192,15 +212,14 @@ def jsonify_validation_errors():
     return None
 
 def json_or_redirect(forward_url):
-    '''If json is wanted, return a dict, otherwise redirect.
+    '''If :term:`JSON` is requested, return a dict, otherwise redirect.
 
-    :arg forward_url: If json was not requested, redirect to this URL after.
-
-    This is a decorator to use with a method that returns json by default.
-    If json is requested, then it will return the dict from the method.  If
-    json is not requested, it will redirect to the given URL.  The method that
-    is decorated should be constructed so that it calls turbogears.flash()
-    with a message that will be displayed on the forward_url page.
+    This is a decorator to use with a method that returns :term:`JSON` by
+    default.  If :term:`JSON` is requested, then it will return the dict from
+    the method.  If :term:`JSON` is not requested, it will redirect to the
+    given URL.  The method that is decorated should be constructed so that it
+    calls turbogears.flash() with a message that will be displayed on the
+    forward_url page.
 
     Use it like this::
 
@@ -218,10 +237,17 @@ def json_or_redirect(forward_url):
             return dict(quotient=answer)
 
     In the example, we return either an exception or an answer, using
-    turbogears.flash() to tell people of the result in either case.  If json
-    data is requested, the user will get back a json string with the proper
-    information.  If html is requested, we will be redirected to
-    'http://localhost/calc/' where the flashed message will be displayed.
+    turbogears.flash() to tell people of the result in either case.  If
+    :term:`JSON` data is requested, the user will get back a :term:`JSON`
+    string with the proper information.  If html is requested, we will be
+    redirected to 'http://localhost/calc/' where the flashed message will be
+    displayed.
+
+    :arg forward_url: If :term:`JSON` was not requested, redirect to this URL
+        after.
+
+    .. versionadded:: 0.3.7
+       To make writing methods that use validation easier
     '''
     def call(func, *args, **kw):
         if request_format() == 'json':
