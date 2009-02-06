@@ -18,6 +18,7 @@
 '''
 fedora.client is used to interact with Fedora Services.
 
+
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>

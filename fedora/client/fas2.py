@@ -197,6 +197,8 @@ class AccountSystem(BaseClient):
             \{'username': 'person2', 'role_type': 'sponsor'}]
 
         role_type can be one of 'user', 'sponsor', or 'administrator'.
+
+        .. versionadded:: 0.3.2
         '''
         request = self.send_request('/group/dump/%s' %
                 urllib.quote(groupname), auth=True)
@@ -489,11 +491,13 @@ class AccountSystem(BaseClient):
     ### fasClient Special Methods ###
 
     def group_data(self):
-        '''Return the administrators/sponsors/users and group type for all groups.
+        '''Return administrators/sponsors/users and group type for all groups
 
         :raises AppError: if the query failed on the server
         :returns: A dict mapping group names to the group type and the
             user IDs of the administrator, sponsors, and users of the group.
+
+        .. versionadded:: 0.3.8
         '''
         try:
             request = self.send_request('json/fas_client/group_data', auth=True)
@@ -513,13 +517,16 @@ class AccountSystem(BaseClient):
         :raises AppError: if the query failed on the server
         :returns: A dict mapping user IDs to a username, password hash,
             SSH public key, email address, and status.
+
+        .. versionadded:: 0.3.8
         '''
         try:
             request = self.send_request('json/fas_client/user_data', auth=True)
             if request['success']:
                 return request['data']
             else:
-                raise AppError(message=_('FAS server unable to retrieve user information'), name='FASError')
+                raise AppError(message=_('FAS server unable to retrieve user'
+                    ' information'), name='FASError')
         except FedoraServiceError:
             raise
 

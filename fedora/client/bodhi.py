@@ -18,6 +18,7 @@
 """
 This module provides a client interface for bodhi.
 
+
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 """
@@ -56,7 +57,6 @@ class BodhiClient(BaseClient):
         :kwarg cache_session: if set to True, cache the user's session cookie
             on the filesystem between runs.
         :kwarg debug: If True, log debug information
-
         """
         super(BodhiClient, self).__init__(base_url, useragent=useragent,
                                           *args, **kwargs)
@@ -123,7 +123,6 @@ class BodhiClient(BaseClient):
         :kwarg mine: If True, only query the users updates.  Default: False.
         :kwarg package: A package name or a name-version-release.
         :kwarg limit: The maximum number of updates to display.  Default: 10.
-
         """
         params = {
                 'tg_paginate_limit': limit,
@@ -221,7 +220,9 @@ class BodhiClient(BaseClient):
         """ Get a list of the latest builds for this package.
 
         :arg package: package name to find builds for.
-        :Returns: a dictionary of the release dist tag to the latest build.
+        :returns: a dictionary of the release dist tag to the latest build.
+
+        .. versionadded:: 0.3.2
         """
         return self.send_request('latest_builds',
                                  req_params={'package': package})
