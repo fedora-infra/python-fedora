@@ -478,7 +478,7 @@ class AccountSystem(BaseClient):
         try:
             # This will attempt to authenticate to the account system and
             # raise an AuthError if the password and username don't match. 
-            self.proxy.send_request('/',
+            self.proxy.send_request('/home',
                     auth_params={'username': username, 'password': password})
         except AuthError:
             return False
