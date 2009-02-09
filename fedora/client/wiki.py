@@ -15,7 +15,6 @@ A Wiki Client
 """
 
 from datetime import datetime, timedelta
-from collections import defaultdict
 from fedora.client import BaseClient
 
 class Wiki(BaseClient):
@@ -62,13 +61,11 @@ class Wiki(BaseClient):
             print "You will not get the complete list of changes unless "
             print "you run this script using a 'bot' account."
 
-
-        users = defaultdict(list) # {username: [change,]}
-        pages = defaultdict(int)  # {pagename: # of edits}
-
+        users = {}
+        pages = {}
         for change in changes:
-            users[change['user']].append(change['title'])
-            pages[change['title']] += 1
+            users.setdefault(change['user'], []).append(change['title'])
+            pages[change['title']] = pages.setdefault(change['title'], 0) + 1
 
         print '\n== Most active wiki users =='
         for user, changes in sorted(users.items(),
