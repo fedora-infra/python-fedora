@@ -3,12 +3,17 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 22 Jan 2009
+:Date: 8 Feb 2009
 :Version: 0.3.x
 
 0.3.9
 -----
 * Minor fix for traceback when the session file is unreadable.
+* Fix so that ProxyClient follows redirects.
+* Fix a bug where fas2.py::AccountSystem::verify_password() always returns
+  True.
+* Add task to publish documentation to the website.  Publish documentation to
+  the website at: https://fedorahosted.org/releases/p/y/python-fedora/doc/
 
 0.3.8
 -----
