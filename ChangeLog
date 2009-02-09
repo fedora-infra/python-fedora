@@ -1,3 +1,21 @@
+2009-02-09  Toshio Kuratomi <toshio@fedoraproject.org> - r399
+Updates for 0.3.9.1 release.
+
+2009-02-09  Toshio Kuratomi <toshio@fedoraproject.org> - r398
+Standard GPLv2 license header.
+
+2009-02-09  Toshio Kuratomi <toshio@fedoraproject.org> - r397
+Fix for python-2.4 ocmpat.  Convert from defaultdict to dict().setdefault()
+
+2009-02-08  Toshio Kuratomi <toshio@fedoraproject.org> - r396
+New task to publish the tarball.
+
+2009-02-08  Toshio Kuratomi <toshio@fedoraproject.org> - r395
+Merge with fedora spec file.
+
+2009-02-08  Toshio Kuratomi <toshio@fedoraproject.org> - r394
+Update ChangeLog for 0.3.9
+
 2009-02-08  Toshio Kuratomi <toshio@fedoraproject.org> - r393
 Bump release for 0.3.9.
 
