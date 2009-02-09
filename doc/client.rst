@@ -1,5 +1,5 @@
 =============
-fedora.client
+Fedora Client
 =============
 :Authors: Toshio Kuratomi
           Luke Macken
