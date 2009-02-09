@@ -61,6 +61,9 @@ rm -rf $RPM_BUILD_ROOT
 * Sun Feb 8 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.9-1
 - New upstream with important bugfixes.
 
+* Sat Nov 29 2008 Ignacio Vazquez-Abrams <ivazqueznet+rpm@gmail.com> - 0.3.8-2
+- Rebuild for Python 2.6
+
 * Thu Nov 20 2008 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.8-1
 - New upstream with pycurl client backend, more fas methods, and bodhi bugfix.
 
