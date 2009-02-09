@@ -1,6 +1,7 @@
 from paver.defaults import *
 
 import sys, os
+import glob
 import paver.doctools
 import paver.runtime
 
@@ -45,8 +46,18 @@ options(
         ),
     pylint=Bunch(
         module=['fedora']
-        )
+        ),
+    publish=Bunch(
+        doc_location='fedorahosted.org:/srv/web/releases/p/y/python-fedora/doc/',
+        ),
     )
+
+@task
+@needs(['html'])
+def publish_doc():
+    options.order('files', add_rest=True)
+    command = 'rsync -av build-doc/html/ %s' % (options.doc_location,)
+    dry(command, paver.runtime.sh, [command])
 
 #
 # Generic Tasks

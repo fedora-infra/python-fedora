@@ -14,11 +14,8 @@
 # incorporated in the source code or documentation are not subject to the GNU
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
-#
-# Red Hat Author(s): Luke Macken <lmacken@redhat.com>
-#                    Toshio Kuratomi <tkuratom@redhat.com>
-#
-'''Command line client for a user to interact with a Fedora Service.
+
+'''A base client for interacting with web services.
 
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
@@ -44,7 +41,7 @@ from fedora.client import AuthError, ProxyClient
 
 class BaseClient(ProxyClient):
     '''
-        A command-line client to interact with Fedora TurboGears Apps.
+        A client for interacting with web services.
     '''
     def __init__(self, base_url, useragent=None, debug=False, username=None,
             password=None, session_cookie=None, session_id=None,
@@ -90,14 +87,16 @@ class BaseClient(ProxyClient):
         :Returns: Complete mapping of users to session ids
         '''
         saved_session = {}
+        session_file = None
         if path.isfile(SESSION_FILE):
-            session_file = file(SESSION_FILE, 'r')
             try:
+                session_file = file(SESSION_FILE, 'r')
                 saved_session = pickle.load(session_file)
-            except EOFError:
+            except IOError, EOFError:
                 log.info(_('Unable to load session from %(file)s') % \
                         {'file': SESSION_FILE})
-            session_file.close()
+            if session_file:
+                session_file.close()
 
         return saved_session
 

@@ -213,6 +213,10 @@ class ProxyClient(object):
         request.setopt(pycurl.COOKIEFILE, '/dev/null')
         # Associate with the response to accumulate data
         request.setopt(pycurl.WRITEFUNCTION, response._write_data)
+        # Follow redirect
+        request.setopt(pycurl.FOLLOWLOCATION, True)
+        request.setopt(pycurl.MAXREDIRS, 5)
+
         # Set standard headers
         headers = ['User-agent: %s' % self.useragent,
                 'Accept: text/javascript']

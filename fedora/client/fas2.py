@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2008  Ricky Zhou, Red Hat, Inc. All rights reserved.
+# Copyright © 2008-2009  Ricky Zhou, Red Hat, Inc. All rights reserved.
 #
 # This copyrighted material is made available to anyone wishing to use, modify,
 # copy, or redistribute it subject to the terms and conditions of the GNU
@@ -25,6 +25,7 @@ Provide a client module for talking to the Fedora Account System.
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
 import urllib
+import warnings
 
 from fedora.client import DictContainer, BaseClient, ProxyClient, \
         AuthError, AppError, FedoraServiceError, FedoraClientError
@@ -42,6 +43,13 @@ class FASError(FedoraClientError):
 class CLAError(FASError):
     '''CLA Error'''
     pass
+
+USERFIELDS = ['username', 'certificate_serial', 'locale', 'creation',
+        'telephone', 'status_change', 'id', 'password_changed', 'privacy',
+        'comments', 'latitude', 'email', 'status', 'gpg_keyid',
+        'internal_comments', 'postal_address', 'unverified_email', 'ssh_key',
+        'passwordtoken', 'ircnick', 'password', 'emailtoken', 'longitude',
+        'facsimile', 'human_name', 'last_seen', 'bugzilla_email', ]
 
 class AccountSystem(BaseClient):
     '''An object for querying the Fedora Account System.
@@ -240,12 +248,112 @@ class AccountSystem(BaseClient):
             people[int(person_id)] = username
         return people
 
-    def people_by_id(self):
+    def people_by_key(self, key=u'username', search=u'*', fields=None):
+        '''Return a dict of people
+
+        :kwarg key: Key by this field.  Valid values are 'id', 'username', or
+            'email'.  Default is 'username'
+        :kwarg search: Pattern to match usernames against.  Defaults to the
+            '*' wildcard which matches everyone.
+        :kwarg fields: Limit the data returned to a specific list of fields.
+            The default is to retrieve all fields.
+            Valid fields are:
+
+                * username
+                * certificate_serial
+                * locale
+                * creation
+                * telephone
+                * status_change
+                * id
+                * password_changed
+                * privacy
+                * comments
+                * latitude
+                * email
+                * status
+                * gpg_keyid
+                * internal_comments
+                * postal_address
+                * unverified_email
+                * ssh_key
+                * passwordtoken
+                * ircnick
+                * password
+                * emailtoken
+                * longitude
+                * facsimile
+                * human_name
+                * last_seen
+                * bugzilla_email
+
+            Note that for most users who access this data, many of these
+            fields will be set to None due to security or privacy settings.
+        :returns: a dict relating the key value to the fields.
         '''
+        # Make sure we have a valid key value
+        if key not in ('id', 'username', 'email'):
+            raise KeyError(_('key must be one of "id", "username", or "email"'))
+
+        if fields:
+            fields = list(fields)
+            for field in fields:
+                if field not in USERFIELDS:
+                    raise KeyError(_('%(field)s is not a valid field to filter')
+                            % {'field': field})
+        else:
+            fields = USERFIELDS
+
+        # Make sure we retrieve the key value
+        unrequested_fields = []
+        if key not in fields:
+            unrequested_fields.append(key)
+            fields.append(key)
+        if 'bugzilla_email' in fields:
+            # Need id and email for the bugzilla information
+            if 'id' not in fields:
+                unrequested_fields.append('id')
+                fields.append('id')
+            if 'email' not in fields:
+                unrequested_fields.append('email')
+                fields.append('email')
+
+        request = self.send_request('/user/list', req_params={'search': search,
+            'fields': [f for f in fields if f != 'bugzilla_email']}, auth=True)
+
+        people = DictContainer()
+        for person in request['people']:
+            # Retrieve bugzilla_email from our list if necessary
+            if 'bugzilla_email' in fields:
+                if person['id'] in self.__bugzilla_email:
+                    person['bugzilla_email'] = \
+                            self.__bugzilla_email[person['id']]
+                else:
+                    person['bugzilla_email'] = person['email']
+
+            person_key = person[key]
+            # Remove any fields that weren't requested by the user
+            if unrequested_fields:
+                for field in unrequested_fields:
+                    del person[field]
+
+            # Add the person record to the people dict
+            people[person_key] = person
+
+        return people
+
+    def people_by_id(self):
+        '''*Deprecated* Use people_by() instead.
+
         Returns a dict relating user IDs to human_name, email, username,
         and bugzilla email
         '''
-        ### FIXME: This should be implemented on the server as a single call
+        warnings.warn(_("people_by_id() is deperecated and will be removed in"
+            " 0.4.  Please port your code to use people_by_key(key='id',"
+            " fields=['human_name', 'email', 'username', 'bugzilla_email'])"
+            " instead"),
+            DeprecationWarning, stacklevel=2)
+
         request = self.send_request('/json/user_id', auth=True)
         user_to_id = {}
         people = DictContainer()
@@ -370,7 +478,7 @@ class AccountSystem(BaseClient):
         try:
             # This will attempt to authenticate to the account system and
             # raise an AuthError if the password and username don't match. 
-            self.proxy.send_request('/',
+            self.proxy.send_request('/home',
                     auth_params={'username': username, 'password': password})
         except AuthError:
             return False

@@ -14,10 +14,6 @@
 # incorporated in the source code or documentation are not subject to the GNU
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
-#
-# Red Hat Author(s): Luke Macken <lmacken@redhat.com>
-#                    Toshio Kuratomi <tkuratom@redhat.com>
-#
 
 '''
 fedora.client is used to interact with Fedora Services.
@@ -25,22 +21,34 @@ fedora.client is used to interact with Fedora Services.
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
-
 '''
+
 class FedoraClientError(Exception):
     '''Base Exception for problems which originate within the Clients.
 
-    Problems returned via the Services should be returned via a
+    This should be the base class for any exceptions that the Client generates
+    generate.  For instance, if the client performs validation before passing
+    the data on to the Fedora Service.
+
+    Problems returned while talking to the Services should be returned via a
     `FedoraServiceError` instead.
     '''
     pass
 
 class FedoraServiceError(Exception):
-    '''Base Exception for any problem talking with the Service.'''
+    '''Base Exception for any problem talking with the Service.
+
+    When the Client gets an error talking to the server, an exception of this
+    type is raised.  This can be anything in the networking layer up to an
+    error returned from the server itself.
+    '''
     pass
 
 class ServerError(FedoraServiceError):
-    '''Unable to talk to the server properly.'''
+    '''Unable to talk to the server properly.
+
+    This includes network errors and 500 response codes.
+    '''
     def __init__(self, url, status, msg):
         self.filename = url
         self.code = status
@@ -135,13 +143,11 @@ from fedora.client.baseclient import BaseClient
 from fedora.client.fas2 import AccountSystem, FASError, CLAError
 from fedora.client.pkgdb import PackageDB, PackageDBError
 from fedora.client.bodhi import BodhiClient, BodhiClientException
+from fedora.client.wiki import Wiki
 # pylint: enable-msg=W0611
 
-import sys
-sys.modules['fedora.client.ProxyClient'] = ProxyClient
-sys.modules['fedora.client.AccountSystem'] = AccountSystem
 __all__ = ('FedoraServiceError', 'ServerError', 'AuthError', 'AppError',
         'FedoraClientError', 'DictContainer',
         'FASError', 'CLAError', 'BodhiClientException', 'PackageDBError',
         'ProxyClient', 'BaseClient', 'AccountSystem', 'PackageDB',
-        'BodhiClient')
+        'BodhiClient', 'Wiki')
