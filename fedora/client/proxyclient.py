@@ -266,7 +266,7 @@ class ProxyClient(object):
         elif http_status >= 400:
             try:
                 msg = httplib.responses[http_status]
-            except KeyError:
+            except (KeyError, AttributeError):
                 msg = 'Unknown HTTP Server Response'
             raise ServerError(url, http_status, msg)
 
