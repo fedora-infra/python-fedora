@@ -226,6 +226,7 @@ class ProxyClient(object):
             # Don't check that the server certificate is valid
             # This flag should really only be set for debugging
             request.setopt(pycurl.SSL_VERIFYPEER, False)
+            request.setopt(pycurl.SSL_VERIFYHOST, False)
 
         # Set standard headers
         headers = ['User-agent: %s' % self.useragent,
