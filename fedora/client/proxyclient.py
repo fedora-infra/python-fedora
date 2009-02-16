@@ -67,7 +67,7 @@ class ProxyClient(object):
     Service, then look into using BaseClient instead.
     '''
     def __init__(self, base_url, useragent=None, session_name='tg-visit',
-            session_as_cookie=True, debug=False):
+            session_as_cookie=True, debug=False, insecure=False):
         '''Create a client configured for a particular service.
 
         :arg base_url: Base of every URL used to contact the server
@@ -80,6 +80,11 @@ class ProxyClient(object):
             to maintain compatibility for the 0.3 branch.  In 0.4, code will
             have to deal with session_id's instead of cookies.
         :kwarg debug: If True, log debug information
+        :kwarg insecure: If True, do not check server certificates against
+            their CA's.  This means that man-in-the-middle attacks are
+            possible against the `BaseClient`. You might turn this option on
+            for testing against a local version of a server with a self-signed
+            certificate but it should be off in production.
         '''
         # Setup our logger
         self._log_handler = logging.StreamHandler()
@@ -102,6 +107,7 @@ class ProxyClient(object):
                 " code to use a session_id instead by calling the ProxyClient"
                 " constructor with session_as_cookie=False"),
                 DeprecationWarning, stacklevel=2)
+        self.insecure = insecure
         log.debug('proxyclient.__init__:exited')
 
     def __get_debug(self):
@@ -216,6 +222,10 @@ class ProxyClient(object):
         # Follow redirect
         request.setopt(pycurl.FOLLOWLOCATION, True)
         request.setopt(pycurl.MAXREDIRS, 5)
+        if self.insecure:
+            # Don't check that the server certificate is valid
+            # This flag should really only be set for debugging
+            request.setopt(pycurl.SSL_VERIFYPEER, False)
 
         # Set standard headers
         headers = ['User-agent: %s' % self.useragent,
