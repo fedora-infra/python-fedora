@@ -348,7 +348,7 @@ class AccountSystem(BaseClient):
         Returns a dict relating user IDs to human_name, email, username,
         and bugzilla email
         '''
-        warnings.warn(_("people_by_id() is deperecated and will be removed in"
+        warnings.warn(_("people_by_id() is deprecated and will be removed in"
             " 0.4.  Please port your code to use people_by_key(key='id',"
             " fields=['human_name', 'email', 'username', 'bugzilla_email'])"
             " instead"),
