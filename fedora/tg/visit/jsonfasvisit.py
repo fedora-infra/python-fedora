@@ -11,7 +11,7 @@ from fedora.client import ProxyClient
 from fedora import _, __version__
 
 import logging
-log = logging.getLogger("turbogears.identity.savisit")
+log = logging.getLogger("turbogears.identity.jsonfasvisit")
 
 class JsonFasVisitManager(BaseVisitManager):
     '''
