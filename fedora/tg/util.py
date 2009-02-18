@@ -26,10 +26,12 @@ Miscellaneous functions of use on a TurboGears Server
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 '''
+import os
 from itertools import chain
 import urlparse
 import cgi
 import urllib
+import pkg_resources
 
 import cherrypy
 from cherrypy import request
@@ -39,6 +41,20 @@ import turbogears.util as tg_util
 from turbogears.controllers import check_app_root
 from turbogears.identity.exceptions import RequestRequiredException
 from decorator import decorator
+
+def fedora_template(template, template_type='genshi'):
+    '''Function to return the path to a template.
+
+    :arg template: filename of the template itself.  Ex: login.html
+    :kwarg template_type: template language we need the template written in
+        Defaults to 'genshi'
+    :returns: filesystem path to the template
+    '''
+    return pkg_resources.resource_filename('fedora', os.path.join('tg',
+        'templates', template_type, template))
+
+def add_custom_stdvars(new_vars):
+    return new_vars.update({'fedora_template': fedora_template})
 
 def url(tgpath, tgparams=None, **kwargs):
     """Computes URLs.
@@ -144,6 +160,9 @@ def enable_csrf():
     if '_csrf_token' not in ignore:
         ignore.append('_csrf_token')
         config.update({'tg.ignore_parameters': ignore})
+
+    # Add a function to the template tg stdvars that looks up a template.
+    turbogears.view.variable_providers.append(add_custom_stdvars)
 
 def request_format():
     '''Return the output format that was requested by the user.
