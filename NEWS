@@ -6,19 +6,40 @@ NEWS
 :Date: 18 Feb 2009
 :Version: 0.3.x
 
+------
 0.3.10
 ------
+
+CSRF
+====
+CSRF is a vulnerability that can allow malicious web sites to execute server
+methods on behalf of an authenticated user.  This update has some methods to
+help deal with that:
+
 * Added helpers for enabling CSRF protection to services.  For information on
   adding support to your app, read doc/CSRF.rst or the html version:
   https://fedorahosted.org/releases/p/y/python-fedora/doc/CSRF.html
 * Update client code to use CSRF tokens when needed.
-* Add parameter to client classes to allow not checking server certificates.
-  This is only intended for use when running test servers with bad certs.
 
+Other Feature Changes
+=====================
+* Undeprecate AccountSystem.people_by_id() for now -- we need a fas server
+  update before we can use people_by_key().
+* Correct loggers to show messages originate from jsonfasprovider and
+  jsonfasvisit.
+* Add parameter to client classes to allow not checking server certificates.
+  This is **only** intended for use when running test servers with bad certs.
+
+Bugfixes
+========
+* python-2.4 compatibility fix when an http error is received in ProxyClient
+
+-------
 0.3.9.1
 -------
 * Fix to the mediawiki client for python-2.4 compatibility.
 
+-----
 0.3.9
 -----
 * Minor fix for traceback when the session file is unreadable.
@@ -28,6 +49,7 @@ NEWS
 * Add task to publish documentation to the website.  Publish documentation to
   the website at: https://fedorahosted.org/releases/p/y/python-fedora/doc/
 
+-----
 0.3.8
 -----
 * Port the client module to use pycurl instead of urllib2.  This prepares the
@@ -42,6 +64,7 @@ NEWS
     SSH pub key, email address, and status.
 * Fix AppError exception on python-2.4
 
+-----
 0.3.7
 -----
 * Update to bugzilla email addresses.
@@ -52,6 +75,7 @@ NEWS
 * New fedora.tg.util.json_or_redirect() decorator that allows server methods to
   either return a dict per normal or redirect to another URL.
 
+-----
 0.3.6
 -----
 * fedora.client.pkgdb merge with pkgdb-client from Mike Watters and Toshio
@@ -60,6 +84,7 @@ NEWS
 * Delay import of koji, yum,and iniparse in the bodhi client libraries so
   they're not strict dependencies for now.
 
+-----
 0.3.5
 -----
 * Fix client.AccountSystem.person_by_username() to not traceback when given an
@@ -74,11 +99,13 @@ NEWS
 .. _paver:: http://www.blueskyonmars.com/projects/paver/
 .. _sphix:: http://sphinx.pocoo.org/
 
+-----
 0.3.4
 -----
 * Fix to proxyclient allow sending sequence types via send_request().
 * New fedora.client.fas2.AccountSystem method people_by_groupname()
 
+-----
 0.3.3
 -----
 * Allow json_props in SABase to follow class inheritance.
@@ -86,6 +113,7 @@ NEWS
   that was using it has been ported to use json_props instead.
 * Misc bugfixes with the jsonfas provider.
 
+-----
 0.3.2
 -----
 * Bodhi API parameter 'type' renamed to 'type_'
@@ -97,6 +125,7 @@ NEWS
 * Added all clients to the base of the fedora.client module
 * Various other bugfixes
 
+-----
 0.3.1
 -----
 * Fix an unported portion of the jsonfasvisit manager.
@@ -105,6 +134,7 @@ NEWS
 * Make sure we don't log a user's password.
 * Bugfixes in the bodhi update template parsing code
 
+---
 0.3
 ---
 * New fedora.client.bodhi API
