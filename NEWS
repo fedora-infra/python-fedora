@@ -3,15 +3,18 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 22 Jan 2009
+:Date: 18 Feb 2009
 :Version: 0.3.x
 
 0.3.9
 -----
-* Minor fix for traceback when the session file is unreadable.
-* Added CSRF protection functionality to the server.  Enable CSRF protection
-  on a server by running fedora.tg.util.enable_csrf() at startup.
+* Added helpers for enabling CSRF protection to services.  For information on
+  adding support to your app, read doc/CSRF.rst or the html version:
+  https://fedorahosted.org/releases/p/y/python-fedora/doc/CSRF.html
 * Update client code to use CSRF tokens when needed.
+* Minor fix for traceback when the session file is unreadable.
+* Add parameter to client classes to allow not checking server certificates.
+  This is only intended for use when running test servers with bad certs.
 
 0.3.8
 -----
