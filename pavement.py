@@ -4,6 +4,7 @@ import sys, os
 import glob
 import paver.doctools
 import paver.runtime
+import paver.path
 
 from setuptools import find_packages
 
@@ -49,15 +50,29 @@ options(
         ),
     publish=Bunch(
         doc_location='fedorahosted.org:/srv/web/releases/p/y/python-fedora/doc/',
+        tarball_location='fedorahosted.org:/srv/web/releases/p/y/python-fedora/'
         ),
     )
 
 @task
 @needs(['html'])
 def publish_doc():
-    options.order('files', add_rest=True)
+    options.order('publish', add_rest=True)
     command = 'rsync -av build-doc/html/ %s' % (options.doc_location,)
     dry(command, paver.runtime.sh, [command])
+
+@task
+@needs(['sdist'])
+def publish_tarball():
+    options.order('publish', add_rest=True)
+    tarname = '%s-%s.tar.gz' % (options.name, options.version)
+    command = 'scp dist/%s %s' % (tarname, options.tarball_location)
+    dry(command, paver.runtime.sh, [command])
+
+@task
+@needs(['publish_doc', 'publish_tarball'])
+def publish():
+    pass
 
 #
 # Generic Tasks

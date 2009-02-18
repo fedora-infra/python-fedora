@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2008  Ricky Zhou, Red Hat, Inc. All rights reserved.
+# Copyright © 2008-2009  Ricky Zhou, Red Hat, Inc. All rights reserved.
 #
 # This copyrighted material is made available to anyone wishing to use, modify,
 # copy, or redistribute it subject to the terms and conditions of the GNU
@@ -345,16 +345,18 @@ class AccountSystem(BaseClient):
         return people
 
     def people_by_id(self):
-        '''*Deprecated* Use people_by() instead.
-
+        # Note: The FAS server must be upgraded before people_by_key() will
+        # work
+        #'''*Deprecated* Use people_by_key() instead.
+        '''
         Returns a dict relating user IDs to human_name, email, username,
         and bugzilla email
         '''
-        warnings.warn(_("people_by_id() is deperecated and will be removed in"
-            " 0.4.  Please port your code to use people_by_key(key='id',"
-            " fields=['human_name', 'email', 'username', 'bugzilla_email'])"
-            " instead"),
-            DeprecationWarning, stacklevel=2)
+        #warnings.warn(_("people_by_id() is deprecated and will be removed in"
+        #    " 0.4.  Please port your code to use people_by_key(key='id',"
+        #    " fields=['human_name', 'email', 'username', 'bugzilla_email'])"
+        #    " instead"),
+        #    DeprecationWarning, stacklevel=2)
 
         request = self.send_request('/json/user_id', auth=True)
         user_to_id = {}
@@ -480,7 +482,7 @@ class AccountSystem(BaseClient):
         try:
             # This will attempt to authenticate to the account system and
             # raise an AuthError if the password and username don't match. 
-            self.proxy.send_request('/',
+            self.proxy.send_request('/home',
                     auth_params={'username': username, 'password': password})
         except AuthError:
             return False

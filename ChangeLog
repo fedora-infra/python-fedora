@@ -1,3 +1,89 @@
+2009-02-09  Toshio Kuratomi <toshio@fedoraproject.org> - r399
+Updates for 0.3.9.1 release.
+
+2009-02-09  Toshio Kuratomi <toshio@fedoraproject.org> - r398
+Standard GPLv2 license header.
+
+2009-02-09  Toshio Kuratomi <toshio@fedoraproject.org> - r397
+Fix for python-2.4 ocmpat.  Convert from defaultdict to dict().setdefault()
+
+2009-02-08  Toshio Kuratomi <toshio@fedoraproject.org> - r396
+New task to publish the tarball.
+
+2009-02-08  Toshio Kuratomi <toshio@fedoraproject.org> - r395
+Merge with fedora spec file.
+
+2009-02-08  Toshio Kuratomi <toshio@fedoraproject.org> - r394
+Update ChangeLog for 0.3.9
+
+2009-02-08  Toshio Kuratomi <toshio@fedoraproject.org> - r393
+Bump release for 0.3.9.
+
+2009-02-08  Toshio Kuratomi <toshio@fedoraproject.org> - r392
+Update copyright date.
+
+2009-02-08  Toshio Kuratomi <toshio@fedoraproject.org> - r391
+Update NEWS for a new bugfix release.
+
+2009-02-08  Toshio Kuratomi <toshio@fedoraproject.org> - r390
+* Fix a bug where fas2.py::AccountSystem::verify_password() always returns
+  True.
+
+2009-01-22  Toshio Kuratomi <toshio@fedoraproject.org> - r389
+Minor bugfix for when the session file is unreadable.
+
+2008-12-14  Toshio Kuratomi <toshio@fedoraproject.org> - r388
+Add a task to publish the documentation to the website.
+
+2008-12-14  Luke Macken <lmacken@x300> - r387
+Simplify the Wiki.get_recent_changes API.
+
+2008-12-14  Luke Macken <lmacken@x300> - r386
+Rename FedoraWiki to just Wiki, since it should work with any MediaWiki instance
+
+2008-12-14  Luke Macken <lmacken@x300> - r385
+Make our docstrings a bit more generic, since the scope of the BaseClient
+has widened.  Also, remove duplicate author information.
+
+2008-12-13  Luke Macken <lmacken@x300> - r384
+Add an initial FedoraWiki.login method.
+
+It does not work yet, but it's a start.  We can easily inject the session
+cookie (which may or may not be named properly), but I'm thinking that we need
+to also inject the username cookie in there as well.  If so, we will need to
+add support for injecting arbitrary cookies into the ProxyClient.
+
+2008-12-13  Luke Macken <lmacken@x300> - r383
+Pull in the FedoraWiki in top level fedora.client module
+
+2008-12-13  Luke Macken <lmacken@x300> - r382
+Add an initial fedora.client.wiki module.
+
+2008-12-12  Luke Macken <lmacken@x300> - r381
+Remove duplicate module author information
+
+2008-12-12  Toshio Kuratomi <toshio@fedoraproject.org> - r380
+Remove sys.modules changing code... This was apparently some debugging code
+committed by mistake.
+
+2008-12-12  Toshio Kuratomi <toshio@fedoraproject.org> - r379
+Documentation fixups so sphinx works again.
+
+2008-12-03  Toshio Kuratomi <toshio@fedoraproject.org> - r378
+New function people_by_key() that makes use of updated fas method /user/list to
+return information about all people in one request.  Needs a new fas server.
+
+Deprecate people_by_id() since this function can do that job.
+
+2008-11-26  Toshio Kuratomi <toshio@fedoraproject.org> - r377
+Set collections in add_edit_packages only if branches are given.
+
+2008-11-25  Toshio Kuratomi <toshio@fedoraproject.org> - r376
+Follow redirects
+
+2008-11-20  Toshio Kuratomi <toshio@fedoraproject.org> - r375
+Update ChangeLog for 0.3.8. release.
+
 2008-11-20  Toshio Kuratomi <toshio@fedoraproject.org> - r374
 Update NEWS and bump release number.
 
