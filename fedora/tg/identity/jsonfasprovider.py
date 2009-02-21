@@ -138,7 +138,7 @@ class JsonFasIdentity(BaseClient):
                 self.logout()
                 return None
             global fas
-            ### FIXME: Need to retrieve the user differently
+            # Retrieve the user information differently when using ssl
             try:
                 person = fas.person_by_username(self.username, auth=True)
             except Exception, e:
