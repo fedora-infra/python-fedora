@@ -86,8 +86,8 @@
   <li py:if="tg.identity.anonymous and tg.identity.only_token"
     id="login-toolitem" class="toolitem">
     ${_('CSRF protected')}
-    <form action="${tg.url(tg.request.browser_url)}" method="GET">
-      <input type="submit" value="${_('Verify Login')}" class="button" />
+    <form action="${tg.url(tg.request.path_info)}" method="POST">
+      <input type="submit" name="csrf_login" value="${_('Verify Login')}" class="button" />
     </form>
   </li>
 </py:match>
