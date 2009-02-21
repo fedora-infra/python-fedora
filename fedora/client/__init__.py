@@ -55,6 +55,9 @@ class ServerError(FedoraServiceError):
         self.code = status
         self.msg = msg
 
+    def __str__(self):
+        return 'ServerError(%s, %s, %s)' % (self.filename, self.code, self.msg)
+
 class AuthError(FedoraServiceError):
     '''Error during authentication.  For instance, invalid password.'''
     pass
@@ -65,6 +68,10 @@ class AppError(FedoraServiceError):
         self.name = name
         self.message = message
         self.extras = extras
+
+    def __str__(self):
+        return 'AppError(%s, %s, extras=%s)' % (self.name, self.message,
+                self.extras)
 
 class DictContainer(dict):
     '''dict whose members can be accessed via attribute lookup.
