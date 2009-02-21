@@ -21,6 +21,7 @@ class JsonFasVisitManager(BaseVisitManager):
     fas = None
 
     def __init__(self, timeout):
+        self.log = log
         self.debug = config.get('jsonfas.debug', False)
         if not self.fas:
             self.fas = ProxyClient(self.fas_url, session_as_cookie=False,
@@ -28,7 +29,7 @@ class JsonFasVisitManager(BaseVisitManager):
                     session_name=config.get('visit.cookie.name', 'tg-visit'),
                     useragent='JsonFasVisitManager/%s' % __version__)
         BaseVisitManager.__init__(self, timeout)
-        log.debug('JsonFasVisitManager.__init__: exit')
+        self.log.debug('JsonFasVisitManager.__init__: exit')
 
     def create_model(self):
         '''
@@ -42,14 +43,14 @@ class JsonFasVisitManager(BaseVisitManager):
         '''
         Return a new Visit object with the given key.
         '''
-        log.debug('JsonFasVisitManager.new_visit_with_key: enter')
+        self.log.debug('JsonFasVisitManager.new_visit_with_key: enter')
         # Hit any URL in fas2 with the visit_key set.  That will call the
         # new_visit method in fas2
         # We only need to get the session cookie from this request
         request_data = self.fas.send_request('',
                 auth_params={'session_id': visit_key})
         session_id = request_data[0]
-        log.debug('JsonFasVisitManager.new_visit_with_key: exit')
+        self.log.debug('JsonFasVisitManager.new_visit_with_key: exit')
         return Visit(session_id, True)
 
     def visit_for_key(self, visit_key):
@@ -57,7 +58,7 @@ class JsonFasVisitManager(BaseVisitManager):
         Return the visit for this key or None if the visit doesn't exist or has
         expired.
         '''
-        log.debug('JsonFasVisitManager.visit_for_key: enter')
+        self.log.debug('JsonFasVisitManager.visit_for_key: enter')
         # Hit any URL in fas2 with the visit_key set.  That will call the
         # new_visit method in fas2
         # We only need to get the session cookie from this request
@@ -73,7 +74,7 @@ class JsonFasVisitManager(BaseVisitManager):
         #     return None
         # # Hitting FAS has already updated the visit.
         # return Visit(visit_key, False)
-        log.debug('JsonFasVisitManager.visit_for_key: exit')
+        self.log.debug('JsonFasVisitManager.visit_for_key: exit')
         if visit_key != session_id:
             return Visit(session_id, True)
         else:
@@ -81,9 +82,9 @@ class JsonFasVisitManager(BaseVisitManager):
 
     def update_queued_visits(self, queue):
         '''Update the visit information on the server'''
-        log.debug('JsonFasVisitManager.update_queued_visits: enter')
+        self.log.debug('JsonFasVisitManager.update_queued_visits: enter')
         # Hit any URL in fas with each visit_key to update the sessions
         for visit_key in queue:
-            log.info(_('updating visit (%s)'), visit_key)
+            self.log.info(_('updating visit (%s)'), visit_key)
             self.fas.send_request('', auth_params={'session_id': visit_key})
-        log.debug('JsonFasVisitManager.update_queued_visits: exit')
+        self.log.debug('JsonFasVisitManager.update_queued_visits: exit')

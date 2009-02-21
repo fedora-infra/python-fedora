@@ -68,10 +68,19 @@ class JsonFasIdentity(BaseClient):
     cache_session = False
 
     def __init__(self, visit_key=None, user=None, username=None, password=None, using_ssl=False):
+        # The reason we have both _retrieved_user and _user is this:
+        # _user is set if both the user is authenticated and a csrf_token is
+        # present.
+        # _retrieved_user actually caches the user info from the server.
+        # Sometimes we have to determine if a user is only lacking a token,
+        # then retrieved_user comes in handy.
+        self._retrieved_user = None
+        self.log = log
         self.visit_key = visit_key
         session_id = visit_key
         if user:
             self._user = user
+            self._user_retrieved = user
             self._groups = frozenset(
                     [g['name'] for g in user['approved_memberships']]
                     )
@@ -85,12 +94,12 @@ class JsonFasIdentity(BaseClient):
         if self.debug:
             import inspect
             caller = inspect.getouterframes(inspect.currentframe())[1][3]
-            log.debug('JsonFasIdentity.__init__ caller: %s' % caller)
+            self.log.debug('JsonFasIdentity.__init__ caller: %s' % caller)
 
         cherrypy.response.simple_cookie[self.cookie_name] = visit_key
 
         self.login(using_ssl)
-        log.debug('Leaving JsonFasIdentity.__init__')
+        self.log.debug('Leaving JsonFasIdentity.__init__')
 
     def send_request(self, method, req_params=None, auth=False):
         '''Make an HTTP Request to a server method.
@@ -98,14 +107,14 @@ class JsonFasIdentity(BaseClient):
         We need to override the send_request provided by ``BaseClient`` to
         keep the visit_key in sync.
         '''
-        log.debug('entering jsonfas send_request')
+        self.log.debug('entering jsonfas send_request')
         if self.session_id != self.visit_key:
             # When the visit_key changes (because the old key had expired or
             # been deleted from the db) change the visit_key in our variables
             # and the session cookie to be sent back to the client.
             self.visit_key = self.session_id
             cherrypy.response.simple_cookie[self.cookie_name] = self.visit_key
-        log.debug('leaving jsonfas send_request')
+        self.log.debug('leaving jsonfas send_request')
         return super(JsonFasIdentity, self).send_request(method, req_params,
                 auth)
 
@@ -114,12 +123,13 @@ class JsonFasIdentity(BaseClient):
 
         :returns: a user or None
         '''
-
         if self.debug:
             import inspect
             caller = inspect.getouterframes(inspect.currentframe())[2][3]
-            log.debug('JSONFASPROVIDER.send_request caller: %s' % caller)
+            self.log.debug('JSONFASPROVIDER.send_request caller: %s' % caller)
 
+        if self._retrieved_user:
+            return self._retrieved_user
         # I hope this is a safe place to double-check the SSL variables.
         # TODO: Double check my logic with this - is it unnecessary to
         # check that the username matches up?
@@ -134,22 +144,22 @@ class JsonFasIdentity(BaseClient):
             except Exception, e:
                 # Any errors have to result in no user being set.  The rest of the
                 # framework doesn't know what to do otherwise.
-                log.warning('jsonfasprovider, ssl, returned errors from send_request: %s' % e)
+                self.log.warning('jsonfasprovider, ssl, returned errors from send_request: %s' % e)
                 person = None
-            return person or None
+            self._retrieved_user = person or None
+            return self._retrieved_user
         # pylint: disable-msg=W0702
         try:
             data = self.send_request('user/view', auth=True)
         except Exception, e:
             # Any errors have to result in no user being set.  The rest of the
             # framework doesn't know what to do otherwise.
-            log.warning('jsonfasprovider returned errors from send_request: %s' % e)
+            self.log.warning('jsonfasprovider returned errors from send_request: %s' % e)
             return None
         # pylint: enable-msg=W0702
 
-        if not data['person']:
-            return None
-        return data['person']
+        self._retrieved_user = data['person'] or None
+        return self._retrieved_user
 
     def _get_user(self):
         '''Get user instance for this identity.'''
@@ -160,12 +170,12 @@ class JsonFasIdentity(BaseClient):
             if (not '_csrf_token' in cherrypy.request.params or
                     cherrypy.request.params['_csrf_token'] !=
                     hash_constructor(self.visit_key).hexdigest()):
-                log.info("Bad _csrf_token")
+                self.log.info("Bad _csrf_token")
                 if '_csrf_token' in cherrypy.request.params:
-                    log.info("visit: %s token: %s" % (self.visit_key,
+                    self.log.info("visit: %s token: %s" % (self.visit_key,
                         cherrypy.request.params['_csrf_token']))
                 else:
-                    log.info('No _csrf_token present')
+                    self.log.info('No _csrf_token present')
                 cherrypy.request.fas_identity_failure_reason = 'bad_csrf'
                 self._user = None
 
@@ -196,7 +206,7 @@ class JsonFasIdentity(BaseClient):
         if self.debug:
             import inspect
             caller = inspect.getouterframes(inspect.currentframe())[1][3]
-            log.debug('JsonFasProvider._get_user_name caller: %s' % caller)
+            self.log.debug('JsonFasProvider._get_user_name caller: %s' % caller)
 
         if not self.user:
             return None
@@ -354,7 +364,7 @@ class JsonFasIdentityProvider(object):
             user = JsonFasIdentity(visit_key, username=user_name,
                     password=password, using_ssl=using_ssl)
         except FedoraServiceError, e:
-            log.warning(_('Error logging in %(user)s: %(error)s') % {
+            self.log.warning(_('Error logging in %(user)s: %(error)s') % {
                 'user': user_name, 'error': e})
             return None
 

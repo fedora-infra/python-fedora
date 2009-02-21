@@ -58,6 +58,7 @@ class BodhiClient(BaseClient):
             on the filesystem between runs.
         :kwarg debug: If True, log debug information
         """
+        self.log = log
         super(BodhiClient, self).__init__(base_url, useragent=useragent,
                                           *args, **kwargs)
 
@@ -254,7 +255,7 @@ class BodhiClient(BaseClient):
 
         """
         from iniparse.compat import ConfigParser
-        log.info("Reading from %s " % input_file)
+        self.log.info("Reading from %s " % input_file)
         input_file = expanduser(input_file)
         if exists(input_file):
             defaults = {
