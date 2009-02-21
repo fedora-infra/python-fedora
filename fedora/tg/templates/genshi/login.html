@@ -3,16 +3,21 @@
   xmlns:py="http://genshi.edgewall.org/"
   xmlns:xi="http://www.w3.org/2001/XInclude">
 
-<div py:def="login_form" id="login-box">
+<py:match path="loginform" once="true">
+  <div id="login-box">
   <h2>${_('Login')}</h2>
   <p>${message}</p>
   <form py:if="not tg.identity.only_token"
     action="${tg.url(previous_url)}" method="post">
-    <div class="field"><label for="user_name">${_('User Name:')}</label> <input type="text" id="user_name" name="user_name" /></div>
-    <div class="field"><label for="password">${_('Password:')}</label> <input type="password" id="password" name="password" /></div>
+    <div class="field"><label for="user_name">${_('User Name:')}</label>
+      <input type="text" id="user_name" name="user_name" />
+    </div>
+    <div class="field"><label for="password">${_('Password:')}</label>
+      <input type="password" id="password" name="password" />
+    </div>
     <div class="field">
       <input type="submit" name="login" value="${_('Login')}" />
-      ${hidden_vals()}
+      <hiddenvals />
     </div>
   </form>
   <form py:if="tg.identity.only_token"
@@ -25,20 +30,65 @@
     you are a person rather than just the web browser forwarding your
     authentication cookies on behalf of a malicious website.''')}</p>
     <input type="submit" name="csrf_login" value="I am a human" />
-    ${hidden_vals()}
+    <hiddenvals />
   </form>
   <ul>
     <li><a href="${tg.url(tg.config('fas.url', 'https://admin.fedoraproject.org/accounts').rstrip('/') + '/accounts/user/resetpass')}">${_('Forgot Password?')}</a></li>
     <li><a href="${tg.url(tg.config('fas.url', 'https://admin.fedoraproject.org/accounts').rstrip('/') + '/user/new')}">${_('Sign Up')}</a></li>
   </ul>
-</div>
-
-<div py:def="hidden_vals">
-  <input py:if="forward_url" type="hidden" name="forward_url" value="${tg.url(forward_url)}" />
-  <div py:for="name,values in original_parameters.items()" py:strip="1">
-    <input py:for="value in isinstance(values, list) and values or [values]" py:if="name != '_csrf_token'"
-      type="hidden" name="${name}" value="${value}"/>
   </div>
-</div>
+</py:match>
 
+<py:match path="hiddenvals" once="true">
+  <input py:if="forward_url" type="hidden" name="forward_url"
+    value="${tg.url(forward_url)}" />
+  <div py:for="name,values in original_parameters.items()" py:strip="1">
+    <input py:for="value in isinstance(values, list) and values or [values]"
+      py:if="name != '_csrf_token'" type="hidden" name="${name}"
+      value="${value}"/>
+  </div>
+</py:match>
+
+<py:match path="logintoolitem" once="true">
+  <li py:if="not tg.identity.anonymous" class="toolitem">
+    ${_('Welcome')}
+    <div py:choose="str(select('a/@href'))" py:strip="True">
+      <span py:when="''" py:choose="" py:strip="True">
+        <span py:when="hasattr(tg.identity.user, 'display_name')"
+          py:replace="tg.identity.user.display_name" />
+        <span py:when="hasattr(tg.identity.user, 'human_name')"
+          py:replace="tg.identity.user.human_name" />
+        <span py:otherwise="" py:replace="tg.identity.user_name" />
+      </span>
+      <a py:otherwise="" href="${select('a/@href')}" py:choose=""
+        py:strip="True">
+        <span py:when="hasattr(tg.identity.user, 'display_name')"
+          py:replace="tg.identity.user.display_name" />
+        <span py:when="hasattr(tg.identity.user, 'human_name')"
+          py:replace="tg.identity.user.human_name" />
+        <span py:otherwise=""
+          py:replace="tg.identity.user_name" />
+      </a>
+    </div>
+  </li>
+  <li py:if="not tg.identity.anonymous" id="login-toolitem" class="toolitem">
+    <form action="${tg.url('/logout')}" method="GET">
+      <input type="submit" value="${_('Logout')}" class="button" />
+    </form>
+  </li>
+  <li py:if="tg.identity.anonymous and not tg.identity.only_token"
+    id="login-toolitem" class="toolitem">
+    ${_('You are not logged in')}
+    <form action="${tg.url('/login')}" method="GET">
+      <input type="submit" value="${_('Login')}" class="button" />
+    </form>
+  </li>
+  <li py:if="tg.identity.anonymous and tg.identity.only_token"
+    id="login-toolitem" class="toolitem">
+    ${_('CSRF protected')}
+    <form action="${tg.url(tg.request.browser_url)}" method="GET">
+      <input type="submit" value="${_('Verify Login')}" class="button" />
+    </form>
+  </li>
+</py:match>
 </html>
