@@ -80,7 +80,7 @@ def login(forward_url=None, *args, **kwargs):
         forward_url=forward_url, previous_url=request.path_info,
         original_parameters=request.params)
 
-def logout(self, url=None):
+def logout(url=None):
     '''Logout from the server.
 
     To use this, replace your current login controller method with::
