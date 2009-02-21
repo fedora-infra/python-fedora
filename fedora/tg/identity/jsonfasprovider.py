@@ -165,19 +165,24 @@ class JsonFasIdentity(BaseClient):
         '''Get user instance for this identity.'''
         visit = self.visit_key
         if not visit:
+            # No visit, no user
             self._user = None
         else:
-            if (not '_csrf_token' in cherrypy.request.params or
-                    cherrypy.request.params['_csrf_token'] !=
-                    hash_constructor(self.visit_key).hexdigest()):
-                self.log.info("Bad _csrf_token")
-                if '_csrf_token' in cherrypy.request.params:
-                    self.log.info("visit: %s token: %s" % (self.visit_key,
-                        cherrypy.request.params['_csrf_token']))
-                else:
-                    self.log.info('No _csrf_token present')
-                cherrypy.request.fas_identity_failure_reason = 'bad_csrf'
-                self._user = None
+            if not len(set(a for a in cherrypy.request.original_params if a
+                    in ('user_name', 'password', 'login'))) == 3:
+                # Unless we were given the user_name and password to login on
+                # this request, a CSRF token is required
+                if (not '_csrf_token' in cherrypy.request.params or
+                        cherrypy.request.params['_csrf_token'] !=
+                        hash_constructor(self.visit_key).hexdigest()):
+                    self.log.info("Bad _csrf_token")
+                    if '_csrf_token' in cherrypy.request.params:
+                        self.log.info("visit: %s token: %s" % (self.visit_key,
+                            cherrypy.request.params['_csrf_token']))
+                    else:
+                        self.log.info('No _csrf_token present')
+                    cherrypy.request.fas_identity_failure_reason = 'bad_csrf'
+                    self._user = None
 
         # pylint: disable-msg=W0704
             try:
