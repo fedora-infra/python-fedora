@@ -34,7 +34,15 @@ def login(forward_url=None, *args, **kwargs):
     This shows a small login box to type in your username and password
     from the Fedora Account System.
 
-    To use this, you want to have your application set up like this
+    To use this, replace your current login controller method with::
+
+        import fedora.controllers.login as fc_login
+
+        @expose(template='yourapp.yourlogintemplate', allow_json=True)
+        def login(self, forward_url=None, *args, **kwargs):
+            login_dict = fc_login(forward_url, args, kwargs)
+            # Add anything to the return dict that you need for your app
+            return login_dict
 
     :kwarg: forward_url: The url to send to once authentication succeeds
     '''
@@ -72,9 +80,21 @@ def login(forward_url=None, *args, **kwargs):
         forward_url=forward_url, previous_url=request.path_info,
         original_parameters=request.params)
 
-@expose(allow_json=True)
 def logout(self, url=None):
-    '''Logout from the server.'''
+    '''Logout from the server.
+
+    To use this, replace your current login controller method with::
+
+        import fedora.controllers.logout as fc_logout
+
+        @expose(allow_json=True)
+        def logout(self):
+            return fc_logout()
+
+    :kwarg url: If provided, when the user logs out, they will always be taken
+        to this url.  This defaults to taking the user to the URL they were
+        at when they clicked logout.
+    '''
     identity.current.logout()
     flash(_('You have successfully logged out.'))
     if request_format() == 'json':
