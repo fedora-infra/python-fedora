@@ -13,7 +13,6 @@ that :class:`~fedora.client.BaseClient` is able to understand.  This document
 defines things that a web application must currently do for
 :class:`~fedora.client.BaseClient` to understand it.
 
-.. toctree::
 
 .. fedora.tg:
 
@@ -21,8 +20,7 @@ defines things that a web application must currently do for
 TurboGears and fedora.tg
 ------------------------
 
-.. module:: fedora.tg
-   :synopsis: Functions and classes to help build a Fedora Service.
+.. automodule:: fedora.tg
 
 All current Fedora Services are written in :term:`TurboGears`.  Examples in
 this document will be for that framework.  However, other frameworks can be

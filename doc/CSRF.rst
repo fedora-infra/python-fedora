@@ -5,11 +5,10 @@ CSRF Protection
 ===============
 
 :Authors: Toshio Kuratomi
-:Date: 02 February 2009
+:Date: 21 February 2009
 :For Version: 0.3.x
 
-.. currentmodule::
-   fedora.tg.util
+.. currentmodule:: fedora.tg.util
 
 :term:`CSRF`, Cross-Site Request Forgery is a technique where a malicious
 website can gain access to a Fedora Service by hijacking a currently open
@@ -21,9 +20,8 @@ requests require JavaScript to construct the form that is sent to the
 vulnerable server.
 
 .. note::
-
-   If you just want to implement this in :ref:`Fedora-Service`, skip to the
-   `Summary of Changes Per App`_ section
+    If you just want to implement this in :ref:`Fedora-Services`, skip to the
+    `Summary of Changes Per App`_ section
 
 --------------
 How CSRF Works
@@ -82,7 +80,6 @@ previous request.  We store the token value in a GET or POST parameter named
 user clicks another link.
 
 .. note::
-
    We hash the ``tg-visit`` session to make the token because we sometimes
    send the token as a parameter in GET requests so it will show up in the
    servers http logs.
@@ -143,27 +140,25 @@ Embedding the :term:`CSRF` token into the URLs that the user can click on is
 the other half of this problem.  :mod:`fedora.tg.util` provides two functions
 to make this easier.
 
-.. autofunction::
-   url
+.. autofunction:: url
 
 This function does everything :func:`tg.url` does in the templates.  In
 addition it makes sure that ``_csrf_token`` is appended to the URL.
 
-.. autofunction::
-   enable_csrf
+.. autofunction:: enable_csrf
 
 This function sets config values to allow ``_csrf_token`` to be passed to any
-any URL on the server and makes :func:`turbogears.url` point to our
-:func:`url` function.  Once this is run, the :func:`tg.url` function you use
-in the templates will make any links that use with it contain the :term:`CSRF`
+URL on the server and makes :func:`turbogears.url` point to our :func:`url`
+function.  Once this is run, the :func:`tg.url` function you use in the
+templates will make any links that use with it contain the :term:`CSRF`
 protecting token.
 
 Intra-Application Links
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 We support single sign-on among the web applications we've written for Fedora.
-In order to continue to do this With this :term:`CSRF` protection scheme we
-have to add the ``_csrf_token`` parameter to links between
+In order for this to continue working with this :term:`CSRF` protection scheme
+we have to add the ``_csrf_token`` parameter to links between
 :ref:`Fedora-Services`.  Linking from the PackageDB to Bodhi, for instance,
 needs to have the hash appended to the URL for Bodhi.  Our :func:`url`
 function is capable of generating these by passing the full URL into the
@@ -181,26 +176,118 @@ function like this::
 Logging In
 ----------
 
-Each app's :meth:`login` page needs to be modified in several ways.
+Each app's :meth:`login` controller method and templates need to be modified
+in several ways.
 
-The ``forward_url`` and ``previous_url`` parameters that are passed in hidden
-form elements need to be run through :func:`tg.url` in order to get the
-``_csrf_token`` added.  The page needs to be updated to allow "Click through
-validation" when a user has a valid :var:`tg-visit` but does not have a
-``_csrf_token``.  These can be enabled by using the login form from
-:mod:`fedora.tg.templates.login`
+.. _CSRF-Login-Template:
 
-FIXME: More information and examples here.
+Templates
+~~~~~~~~~
 
-Using AJAX and SSL certificate authentication with the login methods there is
-one further problem.  Using SSL certificates (rather than username and
-password, which is sufficient), we can login using a two step process of going
-to the login page and retrieving the token from there.  However, as we request
-json data from the login method, we need to make that token available in the
-data returned from json.  This can be 
+For the templates, python-fedora provides a set of standard templates that can
+be used to add the token.
 
-If you aren't doing anything out of the ordinary in your login method, you can
-use :func:`fedora.tg.controllers.login` to enable both of these.
+.. automodule:: fedora.tg.templates.genshi
+
+Using the <loginform> template will give you a login form that automatically
+does several things for you.
+
+1. The ``forward_url`` and ``previous_url`` parameters that are passed in
+   hidden form elements will be run through :func:`tg.url` in order to get the
+   ``_csrf_token`` added.
+2. The page will allow "Click through validation" of a user when they have a
+   valid ``tg-visit`` but do not have a ``_csrf_token``.
+
+Here's a complete login.html from the pkgdb to show what this could look
+like::
+
+  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:py="http://genshi.edgewall.org/"
+        xmlns:xi="http://www.w3.org/2001/XInclude">
+    <xi:include href="master.html" />
+    <xi:include href="${tg.fedora_template('login.html')}" />
+
+    <head>
+      <meta content="text/html; charset=UTF-8"
+      http-equiv="content-type" py:replace="''"/>
+      <title>Login to the PackageDB</title>
+    </head>
+
+    <body>
+      <loginform>${message}</loginform>
+    </body>
+  </html>
+
+You should notice that this looks like a typical genshi_ template in your
+project with two new features.  The ``<loginform>`` tag in the body that's
+defined in :mod:`fedora.tg.templates.genshi` is used in the body to pull in
+the login formand the ``<xi:include>`` of :file:`login.html`
+uses :func:`tg.fedora_template` to load the template from python-fedora.
+This function resides in :mod:`fedora.tg.util` and is added to the
+``tg`` template variable when :func:`~fedora.tg.util.enable_csrf` is
+called at startup.  It does the following:
+
+.. currentmodule:: fedora.tg.util
+
+.. autofunction:: fedora_template
+
+.. _genshi: http://genshi.edgewall.org
+.. _`genshi match template`: http://genshi.edgewall.org/wiki/Documentation/0.5.x/xml-templates.html#py:match
+
+The second match template in :file:`login.html` is to help you modify the
+login and logout links that appear at the top of a typical application's page.
+This is an optional change that lets the links display a click-through login
+link in addition to the usual login and logout.  To use this, you would follow
+the example to add a ``toolbar`` with the ``<logintoolitem>`` into your master
+template.  Here's some snippets from a :file:`master.html` to illustrate::
+
+  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:py="http://genshi.edgewall.org/"
+        xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  [...]
+    <body py:match="body" py:attrs="select('@*')">
+  [...]
+      <div id="head">
+        <h1><a href="http://fedoraproject.org/index.html">Fedora</a></h1>
+        <ul class="toolbar" id="#main-toolbar">
+          <logintoolitem href="${tg.url('/users/info')}" />
+        </ul>
+      </div>
+  [...]
+    </body>
+    <xi:include href="${tg.fedora_template('login.html')}" />
+  </html>
+
+.. warning::
+    Note that the ``<xi:include>`` of :file:`login.html` happens after the
+    ``<body>`` tag?  It is important to do that because the ``<body>`` tag in
+    :file:`master.html` is a match template just like ``<logintoolitem>``.  In
+    genshi_, the order in which match templates are defined is significant.
+
+If you need to look at these templates to modify them yourself (perhaps to
+port them to a different templating language) you can find them in
+:file:`fedora/tg/templates/genshi/login.html` in the source tarball.
+
+.. _CSRF-controller-methods:
+
+Controllers
+~~~~~~~~~~~
+
+Calling :ref:`Fedora-Services` from JavaScript poses one further problem.
+Sometimes the user will not have a current :term:`CSRF` token and will need to
+log in.  When this is done with a username and password there's no
+problem because the username and password are sufficient to prove the user is
+in control of the browser.  However, when using an SSL Certificate, we need
+the browser to log in and then use the new :term:`CSRF` token to show the user
+is in control.  Since JavaScript calls are most likely going to request the
+information as JSON, we need to provide the token in the dict returned from
+:meth:`login`.  You can either modify your :meth:`login` method to do that or
+use the one provided in :func:`fedora.tg.controllers.login`.
 
 .. note::
 
@@ -209,51 +296,19 @@ use :func:`fedora.tg.controllers.login` to enable both of these.
    Infrastructure is the main sticking point to turning this on.
 
 .. note::
-   The `Fedora Account System <https://admin.fedoraproject.org/accounts/>`_ has a slightly different login() method.  This is because it has to handle account expiration, mandatory password resets, and other things tied to the status of an account.  Other Fedora Services rely on FAS to do this instead of us.
+   The `Fedora Account System <https://admin.fedoraproject.org/accounts/>`_
+   has a slightly different login() method.  This is because it has to handle
+   account expiration, mandatory password resets, and other things tied to the
+   status of an account.  Other Fedora Services rely on FAS to do this instead
+   of having to handle it themselves.
 
-certificate authentication
-For SSL authentication, with AJAX methods, a two step process is needed.  Step
-one is for the user to 
-the body of the response.  This way when we use SSL auth in an AJAX method,
-the AJAX call will be able to retrieve the token and use it in subsequent
-calls to the app.
+.. automodule:: fedora.tg.controllers
+    :members:
 
-Without this, username/password auth will still work (since username/password
-is sufficient to tell that it wasn't the browser acting alone) but SSL
-Certificate Authentication will not.
 
-The login() page (or another URL) will have to be modified to distinguish the
-lack of csrf_token but presence of tg-visit and return a click-through page in
-that case.
+AJAX
+====
 
-WebUI
-=====
-
-The WebUI must make sure that it sends back the token with every
-call.  For AJAX calls, this can be abstracted into the JavaScript BaseClient.
-For standard links on a page (for instance, the link in FAS to get a new
-certificate), or GET requests in FAS, it makes more sense for the server to
-make the links.
-
-So static resources like links should have the token appended to the URL as a
-query parameter.  The easiest way for us to do this is to override the
-tg.url() method to add the necessary query parameter to the end of the URL::
-
-  <a href="${tg.url('/packages/dispatcher/do_action')}">
-
-becomes::
-
-  <a href="https://admin.fedoraproject.org/pkgdb/packages/dispatcher/do_action?_csrf_token=0123456789ABCDEF">
-
-Static forms could be done with a hidden field but it's probably easier to
-override the method attribute::
-
-  <form action="POST" method="${tg.url('/packages/dispatcher/do_action')}">
-
-becomes::
-
-  <form action="POST"
-    method="https://admin.fedoraproject.org/pkgdb/packages/dispatcher/do_action?_csrf_token=admin0123456789ABCDE">
 
 AJAX calls should all be made through an API method.  The API method can take
 care of adding the token to the data returned to the server.  The server will
@@ -280,33 +335,6 @@ page has access to it.  Here's a sample of doing that from the pkgdb::
 The fedora.dojo.BaseClient.start_request() method is one example of an API
 method we can use this way.
 
-python-fedora
-=============
-
-send_request() in :class:`~fedora.client.ProxyClient` can be adapted to send
-the session key to the server.  Note that we shouldn't have to ever revert to
-sending username and password once to get the session key because username +
-password is sufficient.  The session_key addition is only necessary when we
-only have the session key and not a password.
-
-When we implement SSL certificate authentication in python-fedora we will have
-a problem here.  Without a valid session_id we still need to have the user's
-password in order to authenticate.  With the user's password we have no need to
-use SSL certificate auth.  It is possible for us to not expire the _csrf_token
-parameter in which case we can simply create a fake _csrf_token and tg-visit to
-send with SSL certificate auth.  However, this makes browser-based
-Authentication weaker.  Barring browser bugs, it should still be safe since the
-web browser should just send the cookie that is stored for the domain, not
-allow the malicious page to change it.
-
-
-== Notes ==
-
-Adding the token information to links on the application page is a tad messy
-as it means that copying and pasting a link will include the _csrf_token.  If
-we used JavaScript instead of static URLs this could be avoided but we'd have
-to figure out how to modify the page templates for this.
-
 Summary of Changes Per App
 --------------------------
 
@@ -314,8 +342,6 @@ This section is a work in progress.  As I implement this for a few apps I'll
 add the changes that web application authors need to implement in order to be
 protected against :term:`CSRF`.  When that is done, this paragraph will be
 removed.
-
-These have been implemented:
 
  * On startup, run :func:`~fedora.tg.util.enable_csrf`.  Code like this will
    do it::
@@ -325,33 +351,33 @@ These have been implemented:
     startup.call_on_startup.append(enable_csrf)
 
  * Links to other :ref:`Fedora-Services` in the templates must be run through
-   the :func:`tg.url` method.
+   the :func:`tg.url` method so that the :term:`CSRF` token can be appended.
 
- * You must use an updated login template.  One that works is checked into the
-   fas repository, :term:`CSRF` branch.  I'm working out whether we'll place a
-   copy into python-fedora or have some other way of using it.
+ * You must use an updated login template.  Using the one provided in
+   python-fedora is possible by changing your login template as shown in the
+   :ref:`CSRF-login-template` section.
 
- * Optional: update the master template that show the Login/Logout Link to
-   have a "Verify Login" button (better name?)  If the user clicks it
-   redirects to the current page with the :term:`CSRF` token.  This is
-   controlled with a check of tg.identity.only_token.This is also in the fas
-   repository, :term:`CSRF` branch and we're working out how to give everyone
-   access to this.
+ * Optional: update the master template that shows the Login/Logout Link to
+   have a "Verify Login" button.  You can add one to a toolbar in your
+   application following the instructions in the :ref:`CSRF-login-template`
+   section.
 
-These have not been implemented:
-
- * Use an updated identity provider from python-fedora.  At this time, the plan
-   is to have a minimum version of python-fedora that provides the necessary
-   functionality.  We could also define a new version of the
-   :mod:`~fedora.tg.identity.jsonfasprovider`  if necessary.
+ * Use an updated identity provider from python-fedora.  At this time, you
+   need python-fedora 0.3.10 or later which has a
+   :mod:`~fedora.tg.identity.jsonfasprovider`.that provides :term:`CSRF`
+   protection.
 
  * Get the :term:`CSRF` token into your forms and URLs.  The recommended way
-   to do this is to override the ``tg.url()`` method in your forms with the
-   one provided in :func:`~fedora.tg.util.url`.
+   to do this is to use :func:`tg.url` in your forms for URLs that are local
+   to the app or are for :ref:`Fedora-Services`.
 
-2) Change the login template to the one in fas
-3) Check your :func:`login` method to make sure you are setting ``forward_url
-   = request.path_info``, not ``request.path``
-5) AJAX calls need to be enhanced to append the CSRF token to the data.  This
+ * Update your :meth:`login` method to make sure you're setting
+   ``forward_url = request.path_info`` rather than ``request.path``.  One easy
+   way to do this is to use the :meth:`~fedora.tg.controllers.login` and
+   :meth:`~fedora.tg.controllers.logout` as documented in
+   :ref:`CSRF-controller-methods`
+
+**This one still needs to be implemented**
+ * AJAX calls need to be enhanced to append the CSRF token to the data.  This
    is best done using a JavaScript function for this like the
    fedora.dojo.BaseClient library.
