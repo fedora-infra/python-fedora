@@ -74,7 +74,7 @@ def url(tgpath, tgparams=None, **kwargs):
         list or a tuple are used to create multiple key-value pairs.
     :returns: The changed path
 
-    .. versionadded:: 0.3.9
+    .. versionadded:: 0.3.10
        Modified from turbogears.controllers.url for :ref:`CSRF-Protection`
     """
     if not isinstance(tgpath, basestring):
@@ -148,7 +148,7 @@ def enable_csrf():
     If we can get the :ref:`CSRF-Protection` into upstream :term:`TurboGears`,
     we might be able to remove this in the future.
 
-    .. versionadded:: 0.3.9
+    .. versionadded:: 0.3.10
        Added to enable :ref:`CSRF-Protection`
     '''
     # Override the turbogears.url funciton with our own
