@@ -220,7 +220,9 @@ class JsonFasIdentity(BaseClient):
 
     ### TG: Same as TG-1.0.8
     def _get_user_id(self):
-        '''Get user id of this identity.'''
+        '''
+        Get user id of this identity.
+        '''
         if not self.user:
             return None
         return self.user.user_id
@@ -228,7 +230,9 @@ class JsonFasIdentity(BaseClient):
 
     ### TG: Same as TG-1.0.8
     def _get_anonymous(self):
-        '''Return true if not logged in.'''
+        '''
+        Return True if not logged in.
+    '''
         return not self.user
     anonymous = property(_get_anonymous)
 
@@ -255,8 +259,8 @@ class JsonFasIdentity(BaseClient):
         '''Return the user's display name.
 
         .. warning::
-
-            Not a TG standard attribute
+            This is not a TG standard attribute.  Don't use this if you want
+            to be compatible with other identity providers.
         '''
         if not self.user:
             return None
@@ -345,12 +349,11 @@ class JsonFasIdentityProvider(object):
         Must return either None if the credentials weren't valid or an object
         with the following properties:
 
-        :user_name: original user name
-        :user: a provider dependant object (TG_User or similar)
-        :groups: a set of group IDs
-        :permissions: a set of permission IDs
+            :user_name: original user name
+            :user: a provider dependant object (TG_User or similar)
+            :groups: a set of group IDs
+            :permissions: a set of permission IDs
 
-        Arguments:
         :arg user_name: user_name we're authenticating.  If None, we'll try
             to lookup a username from SSL variables
         :arg password: password to authenticate user_name with
