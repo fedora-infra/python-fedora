@@ -96,11 +96,15 @@ class BugzillaWidget(Widget):
     def __init__(self, email, widget_id=None):
         self.widget_id = widget_id
         bugzilla = Bugzilla(url='https://bugzilla.redhat.com/xmlrpc.cgi')
+        # pylint: disable-msg=E1101
+        # :E1101: Bugzilla class monkey patches itself with methods like
+        # query.
         self.bugs = bugzilla.query({
             'product'           : 'Fedora',
             'email1'            : email,
             'emailassigned_to1' : True
         })[:5]
+        # pylint: enable-msg=E1101
 
     def __json__(self):
         return {'id': self.widget_id, 'bugs': self.bugs}

@@ -2,7 +2,11 @@
 API Documentation
 =================
 
-.. contents:
+This API Documentation is currently a catch-all.  We're going to merge the API
+docs into the hand created docs as we have time to integrate them.
+
+.. toctree::
+   :maxdepth: 2
 
 ------
 Client
@@ -83,14 +87,10 @@ Transforming SQLAlchemy Objects into JSON
 
 TurboGears Helpers
 ==================
-.. automodule:: fedora.tg.util
-    :members: request_format, jsonify_validation_errors, json_or_redirect
+.. automodule:: fedora.tg.identity.jsonfasprovider
+    :members: JsonFasIdentity, JsonFasIdentityProvider
     :undoc-members:
 
-.. automodule:: fedora.tg.identity
-    :members:
-    :undoc-members:
-
-.. automodule:: fedora.tg.visit
-    :members:
+.. automodule:: fedora.tg.visit.jsonfasvisit
+    :members: JsonFasVisitManager
     :undoc-members:

@@ -11,10 +11,13 @@ Python Fedora Module Documentation
    service
    api
 
+   glossary
+
 ==================
 Indices and tables
 ==================
 
+* :ref:`glossary`
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`

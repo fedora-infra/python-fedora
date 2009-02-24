@@ -123,7 +123,7 @@ html_index = 'index.html'
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
 # base URL from which the finished HTML is served.
-html_use_opensearch = fedora.release.URL
+html_use_opensearch = fedora.release.DOWNLOAD_URL + 'doc/'
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'Sphinxdoc'

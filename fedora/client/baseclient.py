@@ -67,6 +67,7 @@ class BaseClient(ProxyClient):
         :kwarg cache_session: If set to true, cache the user's session data on
             the filesystem between runs
         '''
+        self.log = log
         self.useragent = useragent or 'Fedora BaseClient/%(version)s' % {
                 'version': __version__}
         super(BaseClient, self).__init__(base_url, useragent=self.useragent,
@@ -97,8 +98,8 @@ class BaseClient(ProxyClient):
             try:
                 session_file = file(SESSION_FILE, 'r')
                 saved_session = pickle.load(session_file)
-            except IOError, EOFError:
-                log.info(_('Unable to load session from %(file)s') % \
+            except (IOError, EOFError):
+                self.log.info(_('Unable to load session from %(file)s') % \
                         {'file': SESSION_FILE})
             if session_file:
                 session_file.close()
@@ -115,7 +116,7 @@ class BaseClient(ProxyClient):
             try:
                 os.mkdir(SESSION_DIR, 0755)
             except OSError, e:
-                log.warning(_('Unable to create %(dir)s: %(error)s') %
+                self.log.warning(_('Unable to create %(dir)s: %(error)s') %
                     {'dir': SESSION_DIR, 'error': str(e)})
 
         try:
@@ -127,7 +128,7 @@ class BaseClient(ProxyClient):
             # If we can't save the file, issue a warning but go on.  The
             # session just keeps you from having to type your password over
             # and over.
-            log.warning(_('Unable to write to session file %(session)s:' \
+            self.log.warning(_('Unable to write to session file %(session)s:' \
                     ' %(error)s') % {'session': SESSION_FILE, 'error': str(e)})
 
     def _get_session_id(self):
@@ -149,7 +150,7 @@ class BaseClient(ProxyClient):
             self._session_id = ''
 
         if not self._session_id:
-            log.debug(_('No session cached for "%s"') % self.username)
+            self.log.debug(_('No session cached for "%s"') % self.username)
 
         return self._session_id
 
