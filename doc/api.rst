@@ -13,20 +13,9 @@ Client
 ------
 
 .. automodule:: fedora.client
-    :members:
-    :undoc-members:
-
-.. autoexception:: fedora.client.FASError
-    :members:
-    :undoc-members:
-
-.. autoexception:: fedora.client.CLAError
-    :members:
-    :undoc-members:
-
-.. autoexception:: fedora.client.BodhiClientException
-    :members:
-    :undoc-members:
+    :members: FedoraServiceError, ServerError, AuthError, AppError,
+        FedoraClientError, FASError, CLAError, BodhiClientException,
+        PackageDBError, DictContainer
 
 Generic Clients
 ===============
@@ -49,24 +38,10 @@ ProxyClient
 Clients for Specific Services
 =============================
 
-Fedora Account System
-----------------------
+Wiki
+----
 
-.. autoclass:: fedora.client.AccountSystem
-    :members:
-    :undoc-members:
-
-Bodhi
------
-
-.. autoclass:: fedora.client.BodhiClient
-    :members:
-    :undoc-members:
-
-Package Database
-----------------
-
-.. autoclass:: fedora.client.PackageDB
+.. autoclass:: fedora.client.Wiki
     :members:
     :undoc-members:
 
@@ -83,14 +58,4 @@ Transforming SQLAlchemy Objects into JSON
 
 .. autoclass:: fedora.tg.json.SABase
     :members: __json__
-    :undoc-members:
-
-TurboGears Helpers
-==================
-.. automodule:: fedora.tg.identity.jsonfasprovider
-    :members: JsonFasIdentity, JsonFasIdentityProvider
-    :undoc-members:
-
-.. automodule:: fedora.tg.visit.jsonfasvisit
-    :members: JsonFasVisitManager
     :undoc-members:

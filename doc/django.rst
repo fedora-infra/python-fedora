@@ -20,7 +20,7 @@ a user is authenticated.
 Integrating into a Django Project
 =================================
 
-Add the following lines to the project's ``settings.py``:
+Add the following lines to the project's :file:`settings.py`::
 
     AUTHENTICATION_BACKENDS = (
         'fedora.django.auth.backends.FasBackend',
@@ -29,7 +29,7 @@ Add the following lines to the project's ``settings.py``:
     FAS_USERNAME = '<username>'
     FAS_PASSWORD = '<password>'
     FAS_USERAGENT = '<user agent>'
-    
+
 Add ``fedora.django.auth`` to ``INSTALLED_APPS``.
 
 .. warning::
