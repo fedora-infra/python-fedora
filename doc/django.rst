@@ -29,6 +29,9 @@ Add the following lines to the project's ``settings.py``:
     FAS_USERNAME = '<username>'
     FAS_PASSWORD = '<password>'
     FAS_USERAGENT = '<user agent>'
+
+Additionally, set ``FAS_GENERICEMAIL`` to ``False`` in order to use the
+email address specified in FAS instead of <username>``@fedoraproject.org``.
     
 Add ``fedora.django.auth`` to ``INSTALLED_APPS``.
 

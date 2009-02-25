@@ -43,6 +43,8 @@ class FasUserManager(authmodels.UserManager):
         u.set_unusable_password()
         u.is_active = user['status'] == 'active'
 #        u.is_superuser = 
+        if getattr(settings, 'FAS_GENERICEMAIL', True):
+            u.email = u._get_email()
         u.save()
         for group in user['approved_memberships']:
             g = _new_group(group)
@@ -54,7 +56,10 @@ class FasUser(authmodels.User):
     def _get_name(self):
         userinfo = connection.person_by_id(self.id)
         return userinfo['human_name']
-        
+
+    def _get_email(self):
+        return '%s@fedoraproject.org' % self.username
+
     name = property(_get_name)
 
     objects = FasUserManager()
