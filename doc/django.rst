@@ -29,9 +29,15 @@ Add the following lines to the project's :file:`settings.py`::
     FAS_USERNAME = '<username>'
     FAS_PASSWORD = '<password>'
     FAS_USERAGENT = '<user agent>'
+    FAS_ADMINS = ( ... )
 
 ``FAS_ADMINS`` is a tuple of usernames that you want to have superuser
 rights in the Django project.
+
+Add ``fedora.django.auth.middleware.FasMiddleware`` to the
+``MIDDLEWARE_CLASSES`` tuple, between 
+``django.contrib.sessions.middleware.SessionMiddleware`` and
+``django.contrib.auth.middleware.AuthenticationMiddleware``.
 
 Additionally, set ``FAS_GENERICEMAIL`` to ``False`` in order to use the
 email address specified in FAS instead of <username>``@fedoraproject.org``.
@@ -42,7 +48,3 @@ Add ``fedora.django.auth`` to ``INSTALLED_APPS``.
     The ``User.first_name`` and ``User.last_name`` attributes are always
     empty since FAS does not have any equivalents. The ``name``
     read-only property results in a round trip to the FAS server.
-
-In order to transparently activate experimental FAS single sign-on, add 
-``fedora.django.auth.middleware.FasMiddleware`` to ``MIDDLEWARE_CLASSES``
-in ``settings.py``.

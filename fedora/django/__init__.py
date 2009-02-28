@@ -24,15 +24,16 @@ from django.conf import settings
 
 connection = None
 
-def _connect(session_id=None):
+def _connect(username=None, password=None, session_id=None):
     global connection
     if session_id:
         connection = AccountSystem(session_id=session_id,
-            useragent=settings.FAS_USERAGENT)
+            useragent=settings.FAS_USERAGENT, cache_session=False)
     else:
-        connection = AccountSystem(username=settings.FAS_USERNAME,
-            password=settings.FAS_PASSWORD,
-            useragent=settings.FAS_USERAGENT)
+        connection = AccountSystem(username=(username or
+            settings.FAS_USERNAME), password=(password or
+            settings.FAS_PASSWORD), useragent=settings.FAS_USERAGENT,
+            cache_session=False)
 
 if not connection:
     _connect()

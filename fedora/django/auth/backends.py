@@ -18,19 +18,36 @@
 '''
 .. moduleauthor:: Ignacio Vazquez-Abrams <ivazquez@fedoraproject.org>
 '''
-from fedora.django import connection
+from fedora.client import AuthError
+import fedora.django
 from fedora.django.auth.models import FasUser
 
-from django.db.models.signals import post_syncdb
+from django.db.models.signals import AnonymousUser
 
-class FasBackend:
-    def authenticate(self, username=None, password=None):
-        if connection.verify_password(username, password):
-            userinfo = connection.person_by_username(username)
-            user = FasUser.objects.user_from_fas(userinfo)
+class FasBackend(ModelBackend):
+    def authenticate(self, username=None, password=None,
+        session_id=None):
+        try:
+            if session_id:
+                fedora.django._connect(session_id=session_id)
+                userinfo = fedora.django.connection.send_request(
+                    'user/view', auth=True)
+                user = FasUser.objects.user_from_fas(userinfo['person'])
+            else:
+                fedora.django._connect(username=username, password=password)
+                if fedora.django.connection.verify_password(username, password):
+                    userinfo = fedora.django.connection.person_by_username(username)
+                    user = FasUser.objects.user_from_fas(userinfo)
+                else:
+                    return None
             if user.is_active:
                 return user
+        except AuthError:
+            return None
 
     def get_user(self, userid):
-        userinfo = connection.person_by_id(userid)
-        return FasUser.objects.user_from_fas(userinfo)
+        try:
+            userinfo = fedora.django.connection.person_by_id(userid)
+            return FasUser.objects.user_from_fas(userinfo)
+        except AuthError:
+            return AnonymousUser()

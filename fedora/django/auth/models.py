@@ -23,6 +23,7 @@ from fedora.django import connection
 import django.contrib.auth.models as authmodels
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 # Map FAS user elements to model attributes
 _fasmap = {
@@ -45,7 +46,7 @@ def _syncdb_handler(sender, **kwargs):
     if kwargs['verbosity'] > 0:
         print 'Loading FAS groups...'
     gl = connection.send_request('group/list',
-        req_params={'tg_format': 'json'})
+        req_params={'tg_format': 'json'}, auth=True)
     groups = gl['groups']
     for group in groups:
         _new_group(group)
@@ -62,8 +63,10 @@ class FasUserManager(authmodels.UserManager):
         u = FasUser(**d)
         u.set_unusable_password()
         u.is_active = user['status'] == 'active'
-        u.is_superuser = (user['username'] in
+        admin = (user['username'] in
             getattr(settings, 'FAS_ADMINS', ()))
+        u.is_staff = admin
+        u.is_superuser = admin
         if getattr(settings, 'FAS_GENERICEMAIL', True):
             u.email = u._get_email()
         u.save()

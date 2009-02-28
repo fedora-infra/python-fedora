@@ -20,28 +20,29 @@
 '''
 from fedora.client import AuthError
 import fedora.django
-from fedora.django.models import FasUser
-from django.contrib.auth import login, logout
+from fedora.django.auth.models import FasUser
+from django.contrib.auth import authenticate,login, logout
 from django.contrib.auth.models import AnonymousUser
 
 class FasMiddleware(object):
     def process_request(self, request):
-        tgvisit = request.COOKIES.get('tg-visit', None)
+#        tgvisit = request.COOKIES.get('tg-visit', None)
+        tgvisit = request.session.get('tg-visit', None)
         if tgvisit:
-            fedora.django._connect(tgvisit)
-            try:
-                userinfo = fedora.django.connection.send_request(
-                    'user/view')
-                user = FasUser.objects.user_from_fas(userinfo)
-                login(request, user)
-            except AuthError:
-                logout(request)
-                fedora.django._connect()
+            user=authenticate(session_id=tgvisit)
+            if user:
+                try:
+                    login(request, user)
+                except AuthError:
+                    logout(request)
+                    fedora.django._connect()
 
     def process_response(self, request, response):
         if isinstance(request.user, AnonymousUser):
-            response.set_cookie(key='tg-visit', value=('', max_age=0)
+#            response.set_cookie(key='tg-visit', value='', max_age=0)
+            del response.session['tg-visit']
         else:
-            fedora.django._connect()
-            response.set_cookie(key='tg-visit', value=(
-                fedora.django.connection.session_id, max_age=0)
+            request.session['tg-visit'] = fedora.django.connection.session_id
+#            response.set_cookie(key='tg-visit',
+#                value=fedora.django.connection.session_id, max_age=0)
+        return response
