@@ -42,3 +42,7 @@ Add ``fedora.django.auth`` to ``INSTALLED_APPS``.
     The ``User.first_name`` and ``User.last_name`` attributes are always
     empty since FAS does not have any equivalents. The ``name``
     read-only property results in a round trip to the FAS server.
+
+In order to transparently activate experimental FAS single sign-on, add 
+``fedora.django.auth.middleware.FasMiddleware`` to ``MIDDLEWARE_CLASSES``
+in ``settings.py``.
