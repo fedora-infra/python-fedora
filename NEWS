@@ -29,6 +29,7 @@ Other Feature Changes
   jsonfasvisit.
 * Add parameter to client classes to allow not checking server certificates.
   This is **only** intended for use when running test servers with bad certs.
+* Add DJango Authentication provider.
 
 Bugfixes
 ========
