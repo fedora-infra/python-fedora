@@ -264,7 +264,7 @@ template.  Here's some snippets from a :file:`master.html` to illustrate::
   </html>
 
 .. warning::
-    Note that the ``<xi:include>`` of :file:`login.html` happens after the
+    Notice that the ``<xi:include>`` of :file:`login.html` happens after the
     ``<body>`` tag?  It is important to do that because the ``<body>`` tag in
     :file:`master.html` is a match template just like ``<logintoolitem>``.  In
     genshi_, the order in which match templates are defined is significant.
@@ -305,35 +305,50 @@ use the one provided in :func:`fedora.tg.controllers.login`.
 .. automodule:: fedora.tg.controllers
     :members:
 
-
 AJAX
 ====
 
+Making JavaScript calls requires that we can get the token and add it to the
+URLs we request.  Since JavaScript doesn't have a standard library of crypto
+functions we provide the token by setting it via a template so we do not have
+to calculate it on the client.  This has the added bonus of propagating a
+correct token even if we change the hash function later.  Making use of the
+token can then be done in ad hoc JavaScript code but is better handled via a
+dedicated JavaScript method like the :class:`fedora.dojo.BaseClient`.
 
-AJAX calls should all be made through an API method.  The API method can take
-care of adding the token to the data returned to the server.  The server will
-add the hash of the tg-visit cookie to identity.current.token so that it's
-available to the template.  It is highly recommended that the master template
-for the web app make this variable available to the JavaScript so that every
-page has access to it.  Here's a sample of doing that from the pkgdb::
+Template
+--------
 
-    <script type="text/javascript" py:if="not tg.identity.anonymous">
-      tg = {userid: "${tg.identity.user.id}",
-        username: "${tg.identity.user.username}",
-        display_name: "${tg.identity.user.human_name}",
-        token: "${tg.identity.token}",
-        anonymous: false
-      };
-    </script>
+.. automodule:: fedora.tg.templates.genshi.jsglobals
+
+.. warning::
+    Just like :file:`login.html`, the ``<xi:include>`` tag needs to come after
+    the ``<body>`` tag since they're both match templates.
+
+
+JavaScript
+----------
+
+The :class:`fedora.dojo.BaseClient` class has been modified to send and update
+the csrf token that is provided by fedora.identity.token.  It is highly
+recommended that you use this library or another like it to make all calls to
+the server.  This keeps you from having to deal with adding the :term:`CSRF`
+token to every call yourself.
+
+Here's a small bit of sample code::
+
+    <script type="text/javascript" src="/js/dojo/dojo.js"></script>
     <script type="text/javascript">
-      if (typeof(tg) == 'undefined') {
-        tg = {anonymous: true};
-      }
-      tg.baseurl = "${tg.url('/')}".slice(0, -1);
-    </script>
+        dojo.require('fedora.dojo.BaseClient');
+        dojo.addOnLoad(function() {
+            pkgdb = new fedora.dojo.BaseClient(fedora.baseurl, {
+                username: '', password:''});
+            pkg_data = pkgdb.start_request('/packages/name/python',
+                {req_params: {collectionName: 'Fedora',
+                        collectionVersion: 'devel'}});
 
-The fedora.dojo.BaseClient.start_request() method is one example of an API
-method we can use this way.
+        });
+    </script>
 
 Summary of Changes Per App
 --------------------------
@@ -380,4 +395,6 @@ removed.
 **This one still needs to be implemented**
  * AJAX calls need to be enhanced to append the CSRF token to the data.  This
    is best done using a JavaScript function for this like the
-   fedora.dojo.BaseClient library.
+   :class:`fedora.dojo.BaseClient` library.
+ * Add the token and other identity information so JavaScript can get at it.
+   Use <jsglobals>

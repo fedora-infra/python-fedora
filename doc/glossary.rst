@@ -23,6 +23,14 @@ Glossary
 
         .. seealso:: :ref:`CSRF-Protection`
 
+    Dojo
+        Dojo is a JavaScript toolkit that aims to be a standard library for
+        JavaScript.  It provides a small core library with useful functions
+        and an expanded set of scripts that can be added that provide widgets
+        and other features.
+
+        .. seealso:: http://www.dojotoolkit.org
+
     double submit
         A strategy to foil :term:`CSRF` attacks.  This strategy involves
         sending the value of the authentication cookie (or something derivable
