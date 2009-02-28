@@ -21,7 +21,7 @@
 from fedora.client import AuthError
 import fedora.django
 from fedora.django.auth.models import FasUser
-from django.contrib.auth import authenticate,login, logout
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import AnonymousUser
 
 class FasMiddleware(object):
@@ -29,7 +29,7 @@ class FasMiddleware(object):
 #        tgvisit = request.COOKIES.get('tg-visit', None)
         tgvisit = request.session.get('tg-visit', None)
         if tgvisit:
-            user=authenticate(session_id=tgvisit)
+            user = authenticate(session_id=tgvisit)
             if user:
                 try:
                     login(request, user)

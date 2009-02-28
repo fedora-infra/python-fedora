@@ -23,6 +23,7 @@ import fedora.django
 from fedora.django.auth.models import FasUser
 
 from django.db.models.signals import AnonymousUser
+from django.contrib.auth.backends import ModelBackend
 
 class FasBackend(ModelBackend):
     def authenticate(self, username=None, password=None,
