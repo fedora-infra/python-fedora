@@ -62,7 +62,8 @@ class FasUserManager(authmodels.UserManager):
         u = FasUser(**d)
         u.set_unusable_password()
         u.is_active = user['status'] == 'active'
-#        u.is_superuser = 
+        u.is_superuser = (user['username'] in
+            getattr(settings, 'FAS_ADMINS', ()))
         if getattr(settings, 'FAS_GENERICEMAIL', True):
             u.email = u._get_email()
         u.save()

@@ -30,6 +30,9 @@ Add the following lines to the project's :file:`settings.py`::
     FAS_PASSWORD = '<password>'
     FAS_USERAGENT = '<user agent>'
 
+``FAS_ADMINS`` is a tuple of usernames that you want to have superuser
+rights in the Django project.
+
 Additionally, set ``FAS_GENERICEMAIL`` to ``False`` in order to use the
 email address specified in FAS instead of <username>``@fedoraproject.org``.
 
