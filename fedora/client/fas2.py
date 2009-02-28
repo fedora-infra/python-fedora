@@ -140,8 +140,6 @@ class AccountSystem(BaseClient):
                 109464: 'cassmodiah@fedoraproject.org',
                 # Robert M. Albrecht: romal@gmx.de
                 101475: 'mail@romal.de',
-                # Joseph Smidt: josephsmidt@gmail.com
-                121946: 'jsmidt@fedoraproject.org',
                 # David Nielsen: gnomeuser@gmail.com
                 100506: 'dnielsen@fedoraproject.org ',
                 }
