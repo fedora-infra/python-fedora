@@ -12,6 +12,7 @@ Services and clients that talk to the services.
    existing
    service
    auth
+   javascript
    api
 
    glossary

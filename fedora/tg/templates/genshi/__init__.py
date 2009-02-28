@@ -43,4 +43,39 @@ Typical usage looks like this::
     <ul class="toolbar" id="#main-toolbar">
       <logintoolitem href="${tg.url('/users/info')}" />
     </ul>
+
+---------------------
+:mod:`jsglobals.html`
+---------------------
+.. module:: jsglobals.html
+    :synopsis: Templates related to logging in and out.
+.. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
+.. versionadded:: 0.3.10
+
+
+Include this using::
+    <xi:include href="${tg.fedora_template('jsglobals.html')}" />
+
+.. function:: jsglobals()
+
+A match template to add global variables to a page.  Typically, you'd include
+this in your :file:`master.html` template and let it be added to every other
+page from there.  This adds the following variables in the fedora namespace for other scripts to access:
+
+    :fedora.baseurl: URL fragment to prepend to any calls to the application.
+        In a :term:`TurboGears` application, this is the scheme, host, and
+        server.webpath.  Example: https://admin.fedoraproject.org/pkgdb/
+    :fedora.identity.anonymous: If ``true``, there will be no other variables
+        in the `fedora.identity` namespace.  If ``false``, these variables are
+        defined:
+    :fedora.identity.userid: Numeric, unique identifier for the user
+    :fedora.identity.username: Publically visible unique identifier for the
+        user
+    :fedora.identity.display_name: Common human name for the user
+    :fedora.identity.token: csrf token for this user's session to be added to
+        urls that query the server.
+
+Typical usage would be::
+
+    <jsglobals />
 '''
