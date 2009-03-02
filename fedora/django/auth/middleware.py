@@ -40,7 +40,11 @@ class FasMiddleware(object):
     def process_response(self, request, response):
         if isinstance(request.user, AnonymousUser):
 #            response.set_cookie(key='tg-visit', value='', max_age=0)
-            del response.session['tg-visit']
+            try:
+                del request.session['tg-visit']
+            except KeyError:
+                # Just need to get rid of tg-visit if it exists
+                pass
         else:
             request.session['tg-visit'] = fedora.django.connection.session_id
 #            response.set_cookie(key='tg-visit',

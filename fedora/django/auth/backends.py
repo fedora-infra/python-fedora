@@ -22,7 +22,7 @@ from fedora.client import AuthError
 import fedora.django
 from fedora.django.auth.models import FasUser
 
-from django.db.models.signals import AnonymousUser
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.backends import ModelBackend
 
 class FasBackend(ModelBackend):
