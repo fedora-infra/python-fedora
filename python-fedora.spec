@@ -1,7 +1,7 @@
 %{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.3.9.91
+Version:        0.3.9.92
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -58,6 +58,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python_sitelib}/*
 
 %changelog
+* Sun Mar 1 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.9.92-1
+- Prerelease of python-fedora with CSRF fixes.
+
 * Mon Feb 9 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.9.1-1
 - Fix for python-2.4 compatibility
 
