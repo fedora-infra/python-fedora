@@ -350,6 +350,7 @@ Here's a small bit of sample code::
         });
     </script>
 
+--------------------------
 Summary of Changes Per App
 --------------------------
 
