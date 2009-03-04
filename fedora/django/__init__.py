@@ -18,22 +18,24 @@
 '''
 .. moduleauthor:: Ignacio Vazquez-Abrams <ivazquez@fedoraproject.org>
 '''
-from fedora.client import AccountSystem
+import threading
+
+from fedora.client import ProxyClient
 
 from django.conf import settings
 
 connection = None
 
-def _connect(username=None, password=None, session_id=None):
-    global connection
-    if session_id:
-        connection = AccountSystem(session_id=session_id,
-            useragent=settings.FAS_USERAGENT, cache_session=False)
-    else:
-        connection = AccountSystem(username=(username or
-            settings.FAS_USERNAME), password=(password or
-            settings.FAS_PASSWORD), useragent=settings.FAS_USERAGENT,
-            cache_session=False)
-
 if not connection:
-    _connect()
+    connection = ProxyClient(settings.FAS_URL, settings.FAS_USERAGENT,
+        session_as_cookie=False)
+
+def person_by_id(userid):
+    if not hasattr(local, 'session_id'):
+        return None
+    sid, userinfo = connection.send_request('json/person_by_id',
+        req_params={'id': userid},
+        auth_params={'session_id': local.session_id})
+    return userinfo
+
+local = threading.local()
