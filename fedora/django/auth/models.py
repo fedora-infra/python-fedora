@@ -49,8 +49,8 @@ def _syncdb_handler(sender, **kwargs):
         print _('Loading FAS groups...')
     try:
         gl = connection.send_request('group/list', 
-            auth_params={'username': FAS_USERNAME,
-            'password': FAS_PASSWORD})
+            auth_params={'username': settings.FAS_USERNAME,
+            'password': settings.FAS_PASSWORD})
     except AuthError:
         if verbosity > 0:
             print _('Unable to load FAS groups. Did you set '
