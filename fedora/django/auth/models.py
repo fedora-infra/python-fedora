@@ -18,6 +18,7 @@
 '''
 .. moduleauthor:: Ignacio Vazquez-Abrams <ivazquez@fedoraproject.org>
 '''
+from fedora.client import AuthError
 from fedora.django import connection, person_by_id
 
 import django.contrib.auth.models as authmodels
