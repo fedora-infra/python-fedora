@@ -3,7 +3,7 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 18 Feb 2009
+:Date: 6 Mar 2009
 :Version: 0.3.x
 
 ------
@@ -23,13 +23,13 @@ help deal with that:
 
 Other Feature Changes
 =====================
+* Add Django Authentication provider.
 * Undeprecate AccountSystem.people_by_id() for now -- we need a fas server
   update before we can use people_by_key().
 * Correct loggers to show messages originate from jsonfasprovider and
   jsonfasvisit.
 * Add parameter to client classes to allow not checking server certificates.
   This is **only** intended for use when running test servers with bad certs.
-* Add Django Authentication provider.
 
 Bugfixes
 ========
