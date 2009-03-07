@@ -1,4 +1,4 @@
-%{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
 Version:        0.3.10
@@ -44,13 +44,12 @@ paver build
 paver html
 
 %install
-rm -rf $RPM_BUILD_ROOT
-paver install --skip-build --root $RPM_BUILD_ROOT
+rm -rf %{buildroot}
+paver install --skip-build --root %{buildroot}
 mv build-doc/html doc/
 
 %clean
-rm -rf $RPM_BUILD_ROOT
-
+rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
@@ -63,6 +62,9 @@ rm -rf $RPM_BUILD_ROOT
 
 * Mon Feb 9 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.9.1-1
 - Fix for python-2.4 compatibility
+
+* Thu Feb 26 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.3.9-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
 
 * Sun Feb 8 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.9-1
 - New upstream with important bugfixes.
