@@ -60,9 +60,6 @@ rm -rf %{buildroot}
 * Fri Mar 6 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.10-1
 - CSRF fixes and django authentication provider.
 
-* Mon Feb 9 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.9.1-1
-- Fix for python-2.4 compatibility
-
 * Thu Feb 26 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.3.9-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
 
