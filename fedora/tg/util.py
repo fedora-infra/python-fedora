@@ -259,7 +259,7 @@ def json_or_redirect(forward_url):
             return dict(quotient=answer)
 
     In the example, we return either an exception or an answer, using
-    turbogears.flash() to tell people of the result in either case.  If
+    :func:`turbogears.flash` to tell people of the result in either case.  If
     :term:`JSON` data is requested, the user will get back a :term:`JSON`
     string with the proper information.  If html is requested, we will be
     redirected to 'http://localhost/calc/' where the flashed message will be
