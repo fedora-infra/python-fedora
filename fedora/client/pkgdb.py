@@ -23,6 +23,9 @@
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 .. moduleauthor:: Mike Watters <valholla@fedoraproject.org>
 
+.. versionadded:: 0.3.6
+   Merge from CLI pkgdb-client
+
 .. data:: COLLECTIONMAP
 
     Maps short names to Collections.  For instance, FC => Fedora

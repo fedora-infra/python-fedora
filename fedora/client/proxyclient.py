@@ -33,6 +33,12 @@ import logging
 import simplejson
 import warnings
 from urlparse import urljoin
+
+try:
+    from hashlib import sha1 as sha_constructor
+except ImportError:
+    from sha import new as sha_constructor
+
 from fedora import __version__
 from fedora import _
 
@@ -44,7 +50,7 @@ class _PyCurlData(object):
     def __init__(self):
         self._data = []
 
-    def _write_data(self, buf):
+    def write_data(self, buf):
         self._data.append(buf)
 
     def _read_data(self):
@@ -53,7 +59,7 @@ class _PyCurlData(object):
     def _clear_data(self):
         self._data = []
 
-    data = property(_read_data, _write_data)
+    data = property(_read_data, write_data, _clear_data)
 
 class ProxyClient(object):
     # pylint: disable-msg=R0903
@@ -66,8 +72,10 @@ class ProxyClient(object):
     If you want something that can manage one user's connection to a Fedora
     Service, then look into using BaseClient instead.
     '''
+    log = log
+
     def __init__(self, base_url, useragent=None, session_name='tg-visit',
-            session_as_cookie=True, debug=False):
+            session_as_cookie=True, debug=False, insecure=False):
         '''Create a client configured for a particular service.
 
         :arg base_url: Base of every URL used to contact the server
@@ -80,15 +88,20 @@ class ProxyClient(object):
             to maintain compatibility for the 0.3 branch.  In 0.4, code will
             have to deal with session_id's instead of cookies.
         :kwarg debug: If True, log debug information
+        :kwarg insecure: If True, do not check server certificates against
+            their CA's.  This means that man-in-the-middle attacks are
+            possible against the `BaseClient`. You might turn this option on
+            for testing against a local version of a server with a self-signed
+            certificate but it should be off in production.
         '''
         # Setup our logger
         self._log_handler = logging.StreamHandler()
         self.debug = debug
         format = logging.Formatter("%(message)s")
         self._log_handler.setFormatter(format)
-        log.addHandler(self._log_handler)
+        self.log.addHandler(self._log_handler)
 
-        log.debug('proxyclient.__init__:entered')
+        self.log.debug('proxyclient.__init__:entered')
         if base_url[-1] != '/':
             base_url = base_url +'/'
         self.base_url = base_url
@@ -102,7 +115,8 @@ class ProxyClient(object):
                 " code to use a session_id instead by calling the ProxyClient"
                 " constructor with session_as_cookie=False"),
                 DeprecationWarning, stacklevel=2)
-        log.debug('proxyclient.__init__:exited')
+        self.insecure = insecure
+        self.log.debug('proxyclient.__init__:exited')
 
     def __get_debug(self):
         '''Return whether we have debug logging turned on.
@@ -120,10 +134,10 @@ class ProxyClient(object):
             off.
         '''
         if debug:
-            log.setLevel(logging.DEBUG)
+            self.log.setLevel(logging.DEBUG)
             self._log_handler.setLevel(logging.DEBUG)
         else:
-            log.setLevel(logging.ERROR)
+            self.log.setLevel(logging.ERROR)
             self._log_handler.setLevel(logging.INFO)
 
     debug = property(__get_debug, __set_debug, doc='''
@@ -169,7 +183,7 @@ class ProxyClient(object):
             of session_id and data instead.
         :rtype: tuple of session information and data from server
         '''
-        log.debug('proxyclient.send_request: entered')
+        self.log.debug('proxyclient.send_request: entered')
         # Check whether we need to authenticate for this request
         session_id = None
         username = None
@@ -212,10 +226,15 @@ class ProxyClient(object):
         # Boilerplate so pycurl processes cookies
         request.setopt(pycurl.COOKIEFILE, '/dev/null')
         # Associate with the response to accumulate data
-        request.setopt(pycurl.WRITEFUNCTION, response._write_data)
+        request.setopt(pycurl.WRITEFUNCTION, response.write_data)
         # Follow redirect
         request.setopt(pycurl.FOLLOWLOCATION, True)
         request.setopt(pycurl.MAXREDIRS, 5)
+        if self.insecure:
+            # Don't check that the server certificate is valid
+            # This flag should really only be set for debugging
+            request.setopt(pycurl.SSL_VERIFYPEER, False)
+            request.setopt(pycurl.SSL_VERIFYHOST, False)
 
         # Set standard headers
         headers = ['User-agent: %s' % self.useragent,
@@ -229,26 +248,29 @@ class ProxyClient(object):
             request.setopt(pycurl.COOKIE, '%s=%s;' % (self.session_name,
                 session_id))
 
-        complete_params = {}
-        if req_params:
-            complete_params = req_params
+        complete_params = req_params or {}
+        if session_id:
+            # Add the csrf protection token
+            token = sha_constructor(session_id)
+            complete_params.update({'_csrf_token': token.hexdigest()})
         if username and password:
             # Adding this to the request data prevents it from being logged by
             # apache.
             complete_params.update({'user_name': username,
                     'password': password, 'login': 'Login'})
+
         req_data = None
         if complete_params:
             req_data = urllib.urlencode(complete_params, doseq=True)
             request.setopt(pycurl.POSTFIELDS, req_data)
 
         # If debug, give people our debug info
-        log.debug(_('Creating request %(url)s') % {'url': url})
-        log.debug(_('Headers: %(header)s') % {'header': headers})
+        self.log.debug(_('Creating request %(url)s') % {'url': url})
+        self.log.debug(_('Headers: %(header)s') % {'header': headers})
         if self.debug and req_data:
             debug_data = re.sub(r'(&?)password[^&]+(&?)',
                     '\g<1>password=xxxxxxx\g<2>', req_data)
-            log.debug(_('Data: %(data)s') % {'data': debug_data})
+            self.log.debug(_('Data: %(data)s') % {'data': debug_data})
 
         # run the request
         request.perform()
@@ -260,13 +282,13 @@ class ProxyClient(object):
         http_status = request.getinfo(pycurl.HTTP_CODE)
         if http_status in (401, 403):
             # Wrong username or password
-            log.debug(_('Authentication failed logging in'))
+            self.log.debug(_('Authentication failed logging in'))
             raise AuthError, _('Unable to log into server.  Invalid'
                     ' authentication tokens.  Send new username and password')
         elif http_status >= 400:
             try:
                 msg = httplib.responses[http_status]
-            except KeyError:
+            except (KeyError, AttributeError):
                 msg = 'Unknown HTTP Server Response'
             raise ServerError(url, http_status, msg)
 
@@ -302,5 +324,5 @@ class ProxyClient(object):
             new_session = cookie
 
         request.close()
-        log.debug('proxyclient.send_request: exited')
+        self.log.debug('proxyclient.send_request: exited')
         return new_session, DictContainer(data)

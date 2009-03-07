@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:py="http://genshi.edgewall.org/"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  py:strip="True">
+  <py:match path="jsglobals" once="true">
+    <script type="text/javascript">
+      if (typeof(fedora) == 'undefined') {
+        fedora = {};
+      }
+      fedora.identity = {anonymous: true};
+      /* Remove token and trailing slash */
+      fedora.baseurl = "${tg.url('/')}".replace(/\/?(\?[^?]+)?$/, '');
+    </script>
+    <script type="text/javascript" py:if="not tg.identity.anonymous">
+      fedora.identity = {userid: "${tg.identity.user.id}",
+        username: "${tg.identity.user.username}",
+        display_name: "${tg.identity.user.human_name}",
+        token: "${tg.identity.csrf_token}",
+        anonymous: false
+      };
+    </script>
+  </py:match>
+</html>

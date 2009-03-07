@@ -44,12 +44,13 @@ class CLAError(FASError):
     '''CLA Error'''
     pass
 
-USERFIELDS = ['username', 'certificate_serial', 'locale', 'creation',
-        'telephone', 'status_change', 'id', 'password_changed', 'privacy',
-        'comments', 'latitude', 'email', 'status', 'gpg_keyid',
-        'internal_comments', 'postal_address', 'unverified_email', 'ssh_key',
-        'passwordtoken', 'ircnick', 'password', 'emailtoken', 'longitude',
-        'facsimile', 'human_name', 'last_seen', 'bugzilla_email', ]
+USERFIELDS = ['affiliation', 'bugzilla_email', 'certificate_serial',
+        'comments', 'country_code', 'creation', 'email', 'emailtoken',
+        'facsimile', 'gpg_keyid', 'human_name', 'id', 'internal_comments',
+        'ircnick', 'latitude', 'last_seen', 'longitude', 'password',
+        'password_changed', 'passwordtoken', 'postal_address', 'privacy',
+        'locale', 'ssh_key', 'status', 'status_change', 'telephone',
+        'unverified_email', 'timezone', 'username', ]
 
 class AccountSystem(BaseClient):
     '''An object for querying the Fedora Account System.
@@ -140,6 +141,8 @@ class AccountSystem(BaseClient):
                 109464: 'cassmodiah@fedoraproject.org',
                 # Robert M. Albrecht: romal@gmx.de
                 101475: 'mail@romal.de',
+                # David Nielsen: gnomeuser@gmail.com
+                100506: 'dnielsen@fedoraproject.org ',
                 }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email
@@ -197,6 +200,8 @@ class AccountSystem(BaseClient):
             \{'username': 'person2', 'role_type': 'sponsor'}]
 
         role_type can be one of 'user', 'sponsor', or 'administrator'.
+
+        .. versionadded:: 0.3.2
         '''
         request = self.send_request('/group/dump/%s' %
                 urllib.quote(groupname), auth=True)
@@ -343,16 +348,18 @@ class AccountSystem(BaseClient):
         return people
 
     def people_by_id(self):
-        '''*Deprecated* Use people_by() instead.
-
+        # Note: The FAS server must be upgraded before people_by_key() will
+        # work
+        #'''*Deprecated* Use people_by_key() instead.
+        '''
         Returns a dict relating user IDs to human_name, email, username,
         and bugzilla email
         '''
-        warnings.warn(_("people_by_id() is deperecated and will be removed in"
-            " 0.4.  Please port your code to use people_by_key(key='id',"
-            " fields=['human_name', 'email', 'username', 'bugzilla_email'])"
-            " instead"),
-            DeprecationWarning, stacklevel=2)
+        #warnings.warn(_("people_by_id() is deprecated and will be removed in"
+        #    " 0.4.  Please port your code to use people_by_key(key='id',"
+        #    " fields=['human_name', 'email', 'username', 'bugzilla_email'])"
+        #    " instead"),
+        #    DeprecationWarning, stacklevel=2)
 
         request = self.send_request('/json/user_id', auth=True)
         user_to_id = {}
@@ -489,18 +496,21 @@ class AccountSystem(BaseClient):
     ### fasClient Special Methods ###
 
     def group_data(self):
-        '''Return the administrators/sponsors/users and group type for all groups.
+        '''Return administrators/sponsors/users and group type for all groups
 
         :raises AppError: if the query failed on the server
         :returns: A dict mapping group names to the group type and the
             user IDs of the administrator, sponsors, and users of the group.
+
+        .. versionadded:: 0.3.8
         '''
         try:
             request = self.send_request('json/fas_client/group_data', auth=True)
             if request['success']:
                 return request['data']
             else:
-                raise AppError(message=_('FAS server unable to retrieve group members'), name='FASError')
+                raise AppError(message=_('FAS server unable to retrieve group'
+                    ' members'), name='FASError')
         except FedoraServiceError:
             raise
 
@@ -513,13 +523,16 @@ class AccountSystem(BaseClient):
         :raises AppError: if the query failed on the server
         :returns: A dict mapping user IDs to a username, password hash,
             SSH public key, email address, and status.
+
+        .. versionadded:: 0.3.8
         '''
         try:
             request = self.send_request('json/fas_client/user_data', auth=True)
             if request['success']:
                 return request['data']
             else:
-                raise AppError(message=_('FAS server unable to retrieve user information'), name='FASError')
+                raise AppError(message=_('FAS server unable to retrieve user'
+                    ' information'), name='FASError')
         except FedoraServiceError:
             raise
 

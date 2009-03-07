@@ -2,27 +2,20 @@
 API Documentation
 =================
 
-.. contents:
+This API Documentation is currently a catch-all.  We're going to merge the API
+docs into the hand created docs as we have time to integrate them.
+
+.. toctree::
+   :maxdepth: 2
 
 ------
 Client
 ------
 
 .. automodule:: fedora.client
-    :members:
-    :undoc-members:
-
-.. autoexception:: fedora.client.FASError
-    :members:
-    :undoc-members:
-
-.. autoexception:: fedora.client.CLAError
-    :members:
-    :undoc-members:
-
-.. autoexception:: fedora.client.BodhiClientException
-    :members:
-    :undoc-members:
+    :members: FedoraServiceError, ServerError, AuthError, AppError,
+        FedoraClientError, FASError, CLAError, BodhiClientException,
+        PackageDBError, DictContainer
 
 Generic Clients
 ===============
@@ -45,24 +38,10 @@ ProxyClient
 Clients for Specific Services
 =============================
 
-Fedora Account System
-----------------------
+Wiki
+----
 
-.. autoclass:: fedora.client.AccountSystem
-    :members:
-    :undoc-members:
-
-Bodhi
------
-
-.. autoclass:: fedora.client.BodhiClient
-    :members:
-    :undoc-members:
-
-Package Database
-----------------
-
-.. autoclass:: fedora.client.PackageDB
+.. autoclass:: fedora.client.Wiki
     :members:
     :undoc-members:
 
@@ -79,18 +58,4 @@ Transforming SQLAlchemy Objects into JSON
 
 .. autoclass:: fedora.tg.json.SABase
     :members: __json__
-    :undoc-members:
-
-TurboGears Helpers
-==================
-.. automodule:: fedora.tg.util
-    :members: request_format, jsonify_validation_errors, json_or_redirect
-    :undoc-members:
-
-.. automodule:: fedora.tg.identity
-    :members:
-    :undoc-members:
-
-.. automodule:: fedora.tg.visit
-    :members:
     :undoc-members:

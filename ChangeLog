@@ -1,3 +1,108 @@
+2009-03-06  Toshio Kuratomi <toshio@fedoraproject.org> - r432
+Update for 0.3.10 release.
+
+2009-03-06  Toshio Kuratomi <toshio@fedoraproject.org> - r431
+Merge update of the django auth provider from ivazquez.
+
+2009-03-06  Toshio Kuratomi <toshio@fedoraproject.org> - r430
+Minor docstring update.
+
+2009-03-06  Toshio Kuratomi <toshio@fedoraproject.org> - r429
+Remove tg.url call from forward_url.  This is already doneinside the controller
+(by redirect()).  If it's done here as well, we sometimes end up with
+server.webpath prepended twice.
+
+2009-03-06  Toshio Kuratomi <toshio@fedoraproject.org> - r428
+Add coutry_code to user fields.
+
+2009-03-06  Toshio Kuratomi <toshio@fedoraproject.org> - r427
+Remove an extra "accounts" from a URL.
+
+2009-03-04  Toshio Kuratomi <toshio@fedoraproject.org> - r426
+Fix a typo.
+
+2009-03-02  Toshio Kuratomi <toshio@fedoraproject.org> - r425
+Few fixes to the auth provider.
+
+2009-03-01  Toshio Kuratomi <toshio@fedoraproject.org> - r424
+Add the genshi template files to the build.
+
+2009-03-01  Toshio Kuratomi <toshio@fedoraproject.org> - r423
+Bump versions for another pre-release.
+
+2009-03-01  Toshio Kuratomi <toshio@fedoraproject.org> - r422
+Formatting change.
+
+2009-02-28  Toshio Kuratomi <toshio@fedoraproject.org> - r421
+Joseph Smidt has corrected his bugzilla email.
+
+2009-02-28  Toshio Kuratomi <toshio@fedoraproject.org> - r420
+Add a new bugzilla address for David Nielsen
+
+2009-02-27  Ignacio Vazquez-Abrams <ivazqueznet+bzr@gmail.com> - r419
+Minor style and bug fixes
+2009-02-27  Ignacio Vazquez-Abrams <ivazqueznet+bzr@gmail.com> - r418
+Much hard-won Django/FAS integration knowledge
+2009-02-27  Toshio Kuratomi <toshio@fedoraproject.org> - r417
+0.3.9.91 alpha release.
+
+2009-02-27  Toshio Kuratomi <toshio@fedoraproject.org> - r416
+CSRF updates.
+
+2009-02-27  Toshio Kuratomi <toshio@fedoraproject.org> - r415
+Add jsglobals template to get variables into javascript.
+
+2009-02-27  Ignacio Vazquez-Abrams <ivazqueznet+bzr@gmail.com> - r414
+Experimental FAS single sign-on for Django
+
+2009-02-27  Ignacio Vazquez-Abrams <ivazqueznet+bzr@gmail.com> - r413
+Add support for specifying Django superusers
+
+2009-02-26  Toshio Kuratomi <toshio@fedoraproject.org> - r412
+Add GPLv2 header to the Django files.
+
+2009-02-25  Toshio Kuratomi <toshio@fedoraproject.org> - r411
+Merge ivazquez's django changes.
+
+2009-02-25  Toshio Kuratomi <toshio@fedoraproject.org> - r410
+* Add Ignacio to AUTHORS
+* Move some client docs to new existing.rst file
+* Move identity provider docs to auth.rst
+* Link Django docs to auth.rst
+
+2009-02-23  Ignacio Vazquez-Abrams <ivazqueznet+bzr@gmail.com> - r409
+Preliminary Django FAS authentication support
+
+2009-02-23  Toshio Kuratomi <toshio@fedoraproject.org> - r408
+Merge the csrf-fix branch.
+
+2009-02-20  Toshio Kuratomi <toshio@fedoraproject.org> - r407
+Fix ServerError and AppError to return details about the cause of an error
+in a traceback.
+
+2009-02-18  Toshio Kuratomi <toshio@fedoraproject.org> - r406
+Add Joseph Smidt to bugzilla emails.
+
+2009-02-16  Toshio Kuratomi <toshio@fedoraproject.org> - r405
+And add one more piece of the insecure flag fix.
+
+2009-02-16  Toshio Kuratomi <toshio@fedoraproject.org> - r404
+Add an insecure flag.
+
+2009-02-16  Toshio Kuratomi <toshio@fedoraproject.org> - r403
+Fix ProxyClient to not throw an error on py2.4 when an http response code is
+unknown.
+
+2009-02-16  Toshio Kuratomi <toshio@fedoraproject.org> - r402
+Undeprecate AccountSystem.people_by_id() for now -- we need the fas server to
+be upgraded before we can use people_by_key().
+
+2009-02-16  Ricky Zhou <ricky@fedoraproject.org> - r401
+Apply jcollie's speling fix.
+
+2009-02-09  Toshio Kuratomi <toshio@fedoraproject.org> - r400
+Update ChangeLog for new release.
+
 2009-02-09  Toshio Kuratomi <toshio@fedoraproject.org> - r399
 Updates for 0.3.9.1 release.
 

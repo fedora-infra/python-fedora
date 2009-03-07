@@ -1,6 +1,7 @@
 include *.spec
 include COPYING AUTHORS ChangeLog NEWS
 recursive-include doc *
+include fedora/tg/templates/genshi/*.html
 include po/*.pot
 include po/*/*/*.po
 include po/*/*/*.mo
