@@ -19,8 +19,9 @@
 .. moduleauthor:: Ignacio Vazquez-Abrams <ivazquez@fedoraproject.org>
 '''
 from fedora.client import AuthError
-import fedora.django
+from fedora.django import local
 from fedora.django.auth.models import FasUser
+
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import AnonymousUser
 
@@ -35,18 +36,14 @@ class FasMiddleware(object):
                     login(request, user)
                 except AuthError:
                     logout(request)
-                    fedora.django._connect()
 
     def process_response(self, request, response):
         if isinstance(request.user, AnonymousUser):
 #            response.set_cookie(key='tg-visit', value='', max_age=0)
-            try:
+            if 'tg-visit' in request.session:
                 del request.session['tg-visit']
-            except KeyError:
-                # Just need to get rid of tg-visit if it exists
-                pass
         else:
-            request.session['tg-visit'] = fedora.django.connection.session_id
+            request.session['tg-visit'] = local.session_id
 #            response.set_cookie(key='tg-visit',
-#                value=fedora.django.connection.session_id, max_age=0)
+#                value=local.session_id, max_age=0)
         return response

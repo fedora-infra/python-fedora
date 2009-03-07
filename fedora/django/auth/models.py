@@ -18,7 +18,8 @@
 '''
 .. moduleauthor:: Ignacio Vazquez-Abrams <ivazquez@fedoraproject.org>
 '''
-from fedora.django import connection
+from fedora.client import AuthError
+from fedora.django import connection, person_by_id
 
 import django.contrib.auth.models as authmodels
 from django.db import models
@@ -43,13 +44,24 @@ def _new_group(group):
 
 def _syncdb_handler(sender, **kwargs):
     # Import FAS groups
-    if kwargs['verbosity'] > 0:
-        print 'Loading FAS groups...'
-    gl = connection.send_request('group/list',
-        req_params={'tg_format': 'json'}, auth=True)
-    groups = gl['groups']
-    for group in groups:
-        _new_group(group)
+    verbosity = kwargs.get('verbosity', 1)
+    if verbosity > 0:
+        print _('Loading FAS groups...')
+    try:
+        gl = connection.send_request('group/list', 
+            auth_params={'username': settings.FAS_USERNAME,
+            'password': settings.FAS_PASSWORD})
+    except AuthError:
+        if verbosity > 0:
+            print _('Unable to load FAS groups. Did you set '
+                'FAS_USERNAME and FAS_PASSWORD?')
+    else:
+        groups = gl['groups']
+        for group in groups:
+            _new_group(group)
+        if verbosity > 0:
+            print _("FAS groups loaded. Don't forget to unset "
+                'FAS_USERNAME and FAS_PASSWORD.')
 
 class FasUserManager(authmodels.UserManager):
     def user_from_fas(self, user):
@@ -78,7 +90,7 @@ class FasUserManager(authmodels.UserManager):
 
 class FasUser(authmodels.User):
     def _get_name(self):
-        userinfo = connection.person_by_id(self.id)
+        userinfo = person_by_id(self.id)
         return userinfo['human_name']
 
     def _get_email(self):
@@ -89,4 +101,4 @@ class FasUser(authmodels.User):
     objects = FasUserManager()
 
     def get_full_name(self):
-        return name.strip()
+        return self.name.strip()
