@@ -44,12 +44,13 @@ class CLAError(FASError):
     '''CLA Error'''
     pass
 
-USERFIELDS = ['username', 'certificate_serial', 'locale', 'creation',
-        'telephone', 'status_change', 'id', 'password_changed', 'privacy',
-        'comments', 'latitude', 'email', 'status', 'gpg_keyid',
-        'internal_comments', 'postal_address', 'unverified_email', 'ssh_key',
-        'passwordtoken', 'ircnick', 'password', 'emailtoken', 'longitude',
-        'facsimile', 'human_name', 'last_seen', 'bugzilla_email', ]
+USERFIELDS = ['affiliation', 'bugzilla_email', 'certificate_serial',
+        'comments', 'country_code', 'creation', 'email', 'emailtoken',
+        'facsimile', 'gpg_keyid', 'human_name', 'id', 'internal_comments',
+        'ircnick', 'latitude', 'last_seen', 'longitude', 'password',
+        'password_changed', 'passwordtoken', 'postal_address', 'privacy',
+        'locale', 'ssh_key', 'status', 'status_change', 'telephone',
+        'unverified_email', 'timezone', 'username', ]
 
 class AccountSystem(BaseClient):
     '''An object for querying the Fedora Account System.
