@@ -52,10 +52,14 @@ class FedoraHosted(object):
                     }
             self.projects[name]['feed'] = \
                     self.projects[name]['trac'] + \
-                    '/timeline?changeset=on&ticket=on&milestone=on&wiki=on&max=50&daysback=90&format=rss'
+                    'timeline?changeset=on&ticket=on&milestone=on&wiki=on' + \
+                    '&max=50&daysback=90&format=rss'
 
     def get_project(self, project):
         return self.projects.get(project)
+
+    def get_projects(self):
+        return self.projects
 
 
 if __name__ == '__main__':
