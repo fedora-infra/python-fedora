@@ -1,3 +1,32 @@
+2009-03-09  Toshio Kuratomi <toshio@fedoraproject.org> - r441
+Update pavement to have entry_points for both old and new jsonfasproviders
+
+2009-03-09  Toshio Kuratomi <toshio@fedoraproject.org> - r440
+Update ChangeLog for release.
+
+2009-03-09  Toshio Kuratomi <toshio@fedoraproject.org> - r439
+Remove hosted changes for now.  We need to work out some isues with this on a
+feature branch first.
+
+2009-03-09  Toshio Kuratomi <toshio@fedoraproject.org> - r438
+Merge from trunk
+
+2009-03-09  Toshio Kuratomi <toshio@fedoraproject.org> - r437
+Bump for new release.
+
+2009-03-09  Toshio Kuratomi <toshio@fedoraproject.org> - r436
+Re add the old jsonfaprovider so we can handle the transitional period while
+people are updating their code to be CSRF protected.
+
+2009-03-06  Toshio Kuratomi <toshio@fedoraproject.org> - r435
+sync with fedora spec.
+
+2009-03-06  Toshio Kuratomi <toshio@fedoraproject.org> - r434
+Change %define to %global; $RPM_BUILD_ROOT => %buildroot
+
+2009-03-06  Toshio Kuratomi <toshio@fedoraproject.org> - r433
+Update ChangeLog.
+
 2009-03-06  Toshio Kuratomi <toshio@fedoraproject.org> - r432
 Update for 0.3.10 release.
 
