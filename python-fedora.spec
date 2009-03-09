@@ -1,7 +1,7 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.3.10
+Version:        0.3.11
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -57,6 +57,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/*
 
 %changelog
+* Mon Mar 9 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.11-1
+- readd the old jsonfasproviders.
+
 * Fri Mar 6 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.10-1
 - CSRF fixes and django authentication provider.
 

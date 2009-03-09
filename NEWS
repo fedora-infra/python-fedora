@@ -3,8 +3,20 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 6 Mar 2009
+:Date: 9 Mar 2009
 :Version: 0.3.x
+
+------
+0.3.11
+------
+
+Re-add the old jsonfasprovider and jsonfasvisit plugins until we get everything
+ported over to CSRF protection.  To use the new providers, change your app.cfg::
+
+  -visit.manager="jsonfas"
+  -identity.provider="jsonfas"
+  +visit.manager="jsonfas2"
+  +identity.provider="jsonfas2"
 
 ------
 0.3.10
