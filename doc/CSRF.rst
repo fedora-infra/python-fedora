@@ -87,7 +87,7 @@ user clicks another link.
 Verifying the Token
 -------------------
 
-The :mod:`~fedora.tg.identity.jsonfasprovider` does the work of
+The :mod:`~fedora.tg.identity.jsonfasprovider1` does the work of
 verifying that ``_csrf_token`` has been set and that it is a valid hash of the
 ``tg-visit`` token belonging to the user.  The sequence of events to verify a
 user's identity follows this outline:
@@ -128,7 +128,7 @@ user's identity follows this outline:
 This work should mostly happen behind the scenes so the application programmer
 does not need to worry about this.
 
-.. seealso:: The :mod:`~fedora.tg.identity.jsonfasprovider`
+.. seealso:: The :mod:`~fedora.tg.identity.jsonfasprovider1`
    documentation has more information on methods that are provided by the
    identity provider in case you do need to tell what the authentication token
    is and whether it is missing.
@@ -380,8 +380,12 @@ removed.
 
  * Use an updated identity provider from python-fedora.  At this time, you
    need python-fedora 0.3.10 or later which has a
-   :mod:`~fedora.tg.identity.jsonfasprovider`.that provides :term:`CSRF`
-   protection.
+   :mod:`~fedora.tg.identity.jsonfasprovider2` and
+   :mod:`~fedora.tg.visit.jsonfasvisit2` that provide :term:`CSRF`
+   protection.  The original :mod:`~fedora.tg.identity.jsonfasprovider1` is
+   provided for applications that have not yet started using 
+   :func:`~fedora.tg.util.enable_csrf` so you have to make this change in your
+   configuration file (:file:`APPNAME/config/app.cfg`)
 
  * Get the :term:`CSRF` token into your forms and URLs.  The recommended way
    to do this is to use :func:`tg.url` in your forms for URLs that are local
@@ -393,9 +397,11 @@ removed.
    :meth:`~fedora.tg.controllers.logout` as documented in
    :ref:`CSRF-controller-methods`
 
+ * Add the token and other identity information so JavaScript can get at it.
+   Use the :mod:`~fedora.tg.templates.genshi.jsglobals` template to accomplish
+   this.
+
 **This one still needs to be implemented**
  * AJAX calls need to be enhanced to append the CSRF token to the data.  This
    is best done using a JavaScript function for this like the
    :class:`fedora.dojo.BaseClient` library.
- * Add the token and other identity information so JavaScript can get at it.
-   Use <jsglobals>
