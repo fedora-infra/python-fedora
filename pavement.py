@@ -40,7 +40,18 @@ options(
             'turbogears.visit.manager' : (
                 'jsonfas = fedora.tg.visit.jsonfasvisit1:JsonFasVisitManager [tg]',
                 'jsonfas2 = fedora.tg.visit.jsonfasvisit2:JsonFasVisitManager [tg]'),
-            }
+            },
+        classifiers = [
+            'Development Status :: 4 - Beta',
+            'Framework :: TurboGears',
+            'Framework :: Django',
+            'Intended Audience :: Developers',
+            'Intended Audience :: System Administrators',
+            'License :: OSI Approved :: GNU General Public License (GPL)',
+            'Programming Language :: Python :: 2.4',
+            'Topic :: Internet :: WWW/HTTP',
+            'Topic :: Software Development :: Libraries :: Python Modules',
+            ],
         ),
     sphinx=Bunch(
         docroot='.',
