@@ -11,15 +11,40 @@ operation.  Some web apps have :term:`single sign-on` capability with
 username and password so changing the password in :ref:`FAS` changes it
 everywhere.
 
-TurboGears Identity Provider
-============================
-.. automodule:: fedora.tg.identity.jsonfasprovider
+.. _jsonfas2:
+
+TurboGears Identity Provider 2
+==============================
+
+An identity provider with :term:`CSRF` protection.
+
+.. seealso:: :ref:`CSRF-Protection`
+
+.. automodule:: fedora.tg.identity.jsonfasprovider2
     :members: JsonFasIdentity, JsonFasIdentityProvider
     :undoc-members:
 
-.. automodule:: fedora.tg.visit.jsonfasvisit
+.. automodule:: fedora.tg.visit.jsonfasvisit2
     :members: JsonFasVisitManager
     :undoc-members:
+
+.. _jsonfas1:
+
+Turbogears Identity Provider 1
+==============================
+
+These methods are **deprecated** because they do not provide the :term:`CSRF`
+protection of :ref:`jsonfas2`.  Please use that identity provider instead.
+
+.. automodule:: fedora.tg.identity.jsonfasprovider1
+    :members: JsonFasIdentity, JsonFasIdentityProvider
+    :undoc-members:
+    :deprecated:
+
+.. automodule:: fedora.tg.visit.jsonfasvisit1
+    :members: JsonFasVisitManager
+    :undoc-members:
+    :deprecated:
 
 Django Authentication Backend
 =============================
