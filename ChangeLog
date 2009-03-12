@@ -1,3 +1,16 @@
+2009-03-12  Toshio Kuratomi <toshio@fedoraproject.org> - r446
+Update for new release.
+
+2009-03-12  Toshio Kuratomi <toshio@fedoraproject.org> - r445
+Docstring updates to eliminate sphinx errors
+2009-03-12  Ignacio Vazquez-Abrams <ivazqueznet+bzr@gmail.com> - r444
+Django fix for redirects
+2009-03-09  Toshio Kuratomi <toshio@fedoraproject.org> - r443
+Add trove classifiers for pypi.
+
+2009-03-09  Toshio Kuratomi <toshio@fedoraproject.org> - r442
+Update for release.
+
 2009-03-09  Toshio Kuratomi <toshio@fedoraproject.org> - r441
 Update pavement to have entry_points for both old and new jsonfasproviders
 
