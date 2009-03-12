@@ -15,13 +15,15 @@
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
 #
-# Author(s): Toshio Kuratomi <tkuratom@redhat.com>
-#            Ricky Zhou <ricky@fedoraproject.org>
 # Adapted from code in the TurboGears project licensed under the MIT license.
 
 '''
 This plugin provides authentication by integrating with the Fedora Account
 System using JSON calls.
+
+
+.. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
+.. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 '''
 
 import crypt

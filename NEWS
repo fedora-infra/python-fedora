@@ -3,8 +3,14 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 9 Mar 2009
+:Date: 12 Mar 2009
 :Version: 0.3.x
+
+--------
+0.3.11.1
+--------
+
+* Fix a bug with django auth and recirects
 
 ------
 0.3.11

@@ -14,14 +14,15 @@
 # incorporated in the source code or documentation are not subject to the GNU
 # General Public License and may only be used or replicated with the express
 # permission of Red Hat, Inc.
-#
-# Author(s): Toshio Kuratomi <tkuratom@redhat.com>
-#            Ricky Zhou <ricky@fedoraproject.org>
-#
 
-'''
-This plugin provides integration with the Fedora Account
-System using JSON calls.
+'''**Deprecated** Use jsonfasprovider2 instead a it provides CSRF protection.
+
+This plugin provides integration with the Fedora Account System using
+:term:`JSON` calls.
+
+
+.. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
+.. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 '''
 
 from cherrypy import response
@@ -44,7 +45,8 @@ except NameError:
     from sets import ImmutableSet as frozenset  # pylint: disable-msg=W0622
 
 class JsonFasIdentity(BaseClient):
-    '''Associate an identity with a person in the auth system.
+    '''
+    Associate an identity with a person in the auth system.
     '''
     cookie_name = config.get('visit.cookie.name', 'tg-visit')
     fas_url = config.get('fas.url', 'https://admin.fedoraproject.org/accounts/')
@@ -83,7 +85,8 @@ class JsonFasIdentity(BaseClient):
         log.debug('Leaving JsonFasIdentity.__init__')
 
     def send_request(self, method, req_params=None, auth=False):
-        '''Make an HTTP Request to a server method.
+        '''
+        Make an HTTP Request to a server method.
 
         We need to override the send_request provided by ``BaseClient`` to
         keep the visit_key in sync.
@@ -208,10 +211,11 @@ class JsonFasIdentityProvider(object):
 
         Must return either None if the credentials weren't valid or an object
         with the following properties:
-            user_name: original user name
-            user: a provider dependant object (TG_User or similar)
-            groups: a set of group IDs
-            permissions: a set of permission IDs
+
+            :user_name: original user name
+            :user: a provider dependant object (TG_User or similar)
+            :groups: a set of group IDs
+            :permissions: a set of permission IDs
         '''
         # pylint: disable-msg=R0201
         # TG identity providers have this method so we can't get rid of it.
@@ -234,13 +238,11 @@ class JsonFasIdentityProvider(object):
         against an external source (i.e. PAM, LDAP, Windows domain, etc),
         subclass SqlAlchemyIdentityProvider, and override this method.
 
-        Arguments:
-        :user: User information.  Not used.
-        :user_name: Given username.
-        :password: Given, plaintext password.
-
-        Returns: True if the password matches the username.  Otherwise False.
-          Can return False for problems within the Account System as well.
+        :arg user: User information.  Not used.
+        :arg user_name: Given username.
+        :arg password: Given, plaintext password.
+        :returns: True if the password matches the username.  Otherwise False.
+            Can return False for problems within the Account System as well.
         '''
         # pylint: disable-msg=W0613,R0201
         # TG identity providers take user_name in case an external provider
@@ -251,14 +253,13 @@ class JsonFasIdentityProvider(object):
     def load_identity(self, visit_key):
         '''Lookup the principal represented by visit_key.
 
-        Arguments:
-        :visit_key: The session key for whom we're looking up an identity.
+        :arg visit_key: The session key for whom we're looking up an identity.
+        :returns: an object with the following properties:
 
-        Must return an object with the following properties:
-            user_name: original user name
-            user: a provider dependant object (TG_User or similar)
-            groups: a set of group IDs
-            permissions: a set of permission IDs
+            :user_name: original user name
+            :user: a provider dependant object (TG_User or similar)
+            :groups: a set of group IDs
+            :permissions: a set of permission IDs
         '''
         # pylint: disable-msg=R0201
         # TG identity providers have this method so we can't get rid of it.
@@ -267,10 +268,11 @@ class JsonFasIdentityProvider(object):
     def anonymous_identity(self):
         '''
         Must return an object with the following properties:
-            user_name: original user name
-            user: a provider dependant object (TG_User or similar)
-            groups: a set of group IDs
-            permissions: a set of permission IDs
+
+            :user_name: original user name
+            :user: a provider dependant object (TG_User or similar)
+            :groups: a set of group IDs
+            :permissions: a set of permission IDs
         '''
         # pylint: disable-msg=R0201
         # TG identity providers have this method so we can't get rid of it.
