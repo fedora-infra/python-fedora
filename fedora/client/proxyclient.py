@@ -213,10 +213,7 @@ class ProxyClient(object):
         # will work with it.
         method = method.lstrip('/')
         # And join to make our url.
-        # Note: ?tg_format=json is going away in the future as the Accept
-        # header should serve the same purpose in a more framework neutral
-        # manner.
-        url = urljoin(self.base_url, urllib.quote(method) + '?tg_format=json')
+        url = urljoin(self.base_url, urllib.quote(method))
 
         response = _PyCurlData() # The data we get back from the server
         data = None     # decoded JSON via simplejson.load()
@@ -249,6 +246,10 @@ class ProxyClient(object):
                 session_id))
 
         complete_params = req_params or {}
+        # Note: tg_format=json is going away in the future as the Accept
+        # header should serve the same purpose in a more framework neutral
+        # manner.
+        complete_params['tg_format'] = 'json'
         if session_id:
             # Add the csrf protection token
             token = sha_constructor(session_id)
