@@ -46,7 +46,6 @@ def login(forward_url=None, *args, **kwargs):
 
     :kwarg: forward_url: The url to send to once authentication succeeds
     '''
-
     if forward_url:
         if isinstance(forward_url, list):
             forward_url = forward_url.pop(0)

@@ -170,8 +170,7 @@ class JsonFasIdentity(BaseClient):
             # No visit, no user
             self._user = None
         else:
-            if not len(set(a for a in cherrypy.request.original_params if a
-                    in ('user_name', 'password', 'login'))) == 3:
+            if not (self.username and self.password):
                 # Unless we were given the user_name and password to login on
                 # this request, a CSRF token is required
                 if (not '_csrf_token' in cherrypy.request.params or
