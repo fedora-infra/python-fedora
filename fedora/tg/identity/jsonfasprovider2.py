@@ -55,7 +55,9 @@ if config.get('identity.ssl', False):
     fas_user = config.get('fas.username', None)
     fas_password = config.get('fas.password', None)
     if not (fas_user and fas_password):
-        raise identity.IdentityConfigurationException(_('Cannot enable ssl certificate auth via identity.ssl without setting fas.usernamme and fas.password for authorization'))
+        raise identity.IdentityConfigurationException(
+                _('Cannot enable ssl certificate auth via identity.ssl without'
+                ' setting fas.usernamme and fas.password for authorization'))
     url = config.get('fas.url', None)
     if url:
         fas = AccountSystem(url, username=config.get('fas.username'), password=config.get('fas.password'))

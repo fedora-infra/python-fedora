@@ -42,6 +42,8 @@ from turbogears.controllers import check_app_root
 from turbogears.identity.exceptions import RequestRequiredException
 from decorator import decorator
 
+from fedora import _
+
 def fedora_template(template, template_type='genshi'):
     '''Function to return the path to a template.
 
@@ -50,6 +52,7 @@ def fedora_template(template, template_type='genshi'):
         Defaults to 'genshi'
     :returns: filesystem path to the template
     '''
+    # :E1101: pkg_resources does have
     return pkg_resources.resource_filename('fedora', os.path.join('tg',
         'templates', template_type, template))
 
@@ -57,7 +60,7 @@ def add_custom_stdvars(new_vars):
     return new_vars.update({'fedora_template': fedora_template})
 
 def url(tgpath, tgparams=None, **kwargs):
-    """Computes URLs.
+    '''Computes URLs.
 
     This is a replacement for :func:`turbogears.controllers.url` (aka
     :func:`tg.url` in the template).  In addition to the functionality that
@@ -76,7 +79,7 @@ def url(tgpath, tgparams=None, **kwargs):
 
     .. versionadded:: 0.3.10
        Modified from turbogears.controllers.url for :ref:`CSRF-Protection`
-    """
+    '''
     if not isinstance(tgpath, basestring):
         tgpath = '/'.join(list(tgpath))
     if tgpath.startswith('/'):
@@ -98,7 +101,8 @@ def url(tgpath, tgparams=None, **kwargs):
             tgparams = tgparams.copy()
             tgparams.update(kwargs)
         except AttributeError:
-            raise TypeError('url() expects a dictionary for query parameters')
+            raise TypeError(
+                    _('url() expects a dictionary for query parameters'))
     args = []
     # Add the _csrf_token
     query_params = tgparams.iteritems()

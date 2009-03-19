@@ -200,8 +200,8 @@ class BaseClient(ProxyClient):
 
         :Returns: user's session cookie
         '''
-        warnings.warn(_("session_cookie is deprecated, use session_id"
-            " instead"), DeprecationWarning, stacklevel=2)
+        warnings.warn(_('session_cookie is deprecated, use session_id'
+            ' instead'), DeprecationWarning, stacklevel=2)
         session_id = self.session_id
         if not session_id:
             return ''
@@ -219,8 +219,8 @@ class BaseClient(ProxyClient):
         current user's cookie.  This allows us to retain cookies for
         multiple users.
         '''
-        warnings.warn(_("session_cookie is deprecated, use session_id"
-            " instead"), DeprecationWarning, stacklevel=2)
+        warnings.warn(_('session_cookie is deprecated, use session_id'
+            ' instead'), DeprecationWarning, stacklevel=2)
         session_id = session_cookie.get(self.session_name, '')
         if session_id:
             session_id = session_id.value
@@ -231,12 +231,12 @@ class BaseClient(ProxyClient):
 
         Delete the session cookie from the filesystem.
         '''
-        warnings.warn(_("session_cookie is deprecated, use session_id"
-            " instead"), DeprecationWarning, stacklevel=2)
+        warnings.warn(_('session_cookie is deprecated, use session_id'
+            ' instead'), DeprecationWarning, stacklevel=2)
         del(self.session_id)
 
     session_cookie = property(_get_session_cookie, _set_session_cookie, 
-            _del_session_cookie, '''*Deprecated* The session_cookie.
+            _del_session_cookie, '''*Deprecated*, use session_id instead.
 
         The session cookie is saved in a file in case it is needed in
         consecutive runs of BaseClient.
@@ -272,20 +272,20 @@ class BaseClient(ProxyClient):
             for arg in kwargs:
                 # If we have extra args, raise an error
                 if arg != 'input':
-                    raise TypeError('send_request() got an unexpected'
-                            " keyword argument '%s'" % arg)
+                    raise TypeError(_('send_request() got an unexpected' \
+                            ' keyword argument "%s"') % arg)
             if req_params:
                 # We don't want to allow input if req_params was already given
-                raise TypeError('send_request() got an unexpected keyword'
-                        " argument 'input'")
+                raise TypeError(_('send_request() got an unexpected keyword' \
+                        ' argument "input"'))
             if len(kwargs) > 1:
                 # We shouldn't get here
-                raise TypeError('send_request() got an unexpected keyword'
-                        ' argument')
+                raise TypeError(_('send_request() got an unexpected keyword' \
+                        ' argument'))
 
             # Error checking over, set req_params to the value in input
-            warnings.warn(_("send_request(input) is deprecated.  Use"
-                    " send_request(req_params) instead"), DeprecationWarning,
+            warnings.warn(_('send_request(input) is deprecated.  Use' \
+                    ' send_request(req_params) instead'), DeprecationWarning,
                     stacklevel=2)
             req_params = kwargs['input']
 
@@ -300,10 +300,10 @@ class BaseClient(ProxyClient):
                 # No?  Check for session_id
                 if not self.session_id:
                     # Not enough information to auth
-                    raise AuthError, 'Auth was requested but no way to' \
+                    raise AuthError(_('Auth was requested but no way to' \
                             ' perform auth was given.  Please set username' \
                             ' and password or session_id before calling' \
-                            ' this function with auth=True'
+                            ' this function with auth=True'))
 
         # Remove empty params
         # pylint: disable-msg=W0104
