@@ -20,7 +20,6 @@
 '''
 from fedora.client import AuthError
 from fedora.django import local
-from fedora.django.auth.models import FasUser
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import AnonymousUser

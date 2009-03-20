@@ -20,7 +20,7 @@ Controller functions that are standard across Fedora Applications
 
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
-from turbogears import expose, flash
+from turbogears import flash
 from turbogears import identity, redirect
 from cherrypy import request, response
 

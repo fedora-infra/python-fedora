@@ -23,7 +23,6 @@ from fedora.django import connection, person_by_id
 from fedora import _
 
 import django.contrib.auth.models as authmodels
-from django.db import models
 from django.conf import settings
 
 # Map FAS user elements to model attributes

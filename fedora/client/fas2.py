@@ -346,18 +346,15 @@ class AccountSystem(BaseClient):
         return people
 
     def people_by_id(self):
-        # Note: The FAS server must be upgraded before people_by_key() will
-        # work
-        #'''*Deprecated* Use people_by_key() instead.
-        '''
+        '''*Deprecated* Use people_by_key() instead.
+
         Returns a dict relating user IDs to human_name, email, username,
         and bugzilla email
         '''
-        #warnings.warn(_("people_by_id() is deprecated and will be removed in"
-        #    " 0.4.  Please port your code to use people_by_key(key='id',"
-        #    " fields=['human_name', 'email', 'username', 'bugzilla_email'])"
-        #    " instead"),
-        #    DeprecationWarning, stacklevel=2)
+        warnings.warn(_("people_by_id() is deprecated and will be removed in"
+            " 0.4.  Please port your code to use people_by_key(key='id',"
+            " fields=['human_name', 'email', 'username', 'bugzilla_email'])"
+            " instead"), DeprecationWarning, stacklevel=2)
 
         request = self.send_request('/json/user_id', auth=True)
         user_to_id = {}

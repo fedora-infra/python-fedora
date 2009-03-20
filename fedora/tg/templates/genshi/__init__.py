@@ -60,7 +60,8 @@ Include this using::
 
 A match template to add global variables to a page.  Typically, you'd include
 this in your :file:`master.html` template and let it be added to every other
-page from there.  This adds the following variables in the fedora namespace for other scripts to access:
+page from there.  This adds the following variables in the fedora namespace
+for other scripts to access:
 
     :fedora.baseurl: URL fragment to prepend to any calls to the application.
         In a :term:`TurboGears` application, this is the scheme, host, and

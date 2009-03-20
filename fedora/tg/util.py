@@ -52,7 +52,8 @@ def fedora_template(template, template_type='genshi'):
         Defaults to 'genshi'
     :returns: filesystem path to the template
     '''
-    # :E1101: pkg_resources does have
+    # :E1101: pkg_resources does have resource_filename
+    # pylint: disable-msg=E1101
     return pkg_resources.resource_filename('fedora', os.path.join('tg',
         'templates', template_type, template))
 
