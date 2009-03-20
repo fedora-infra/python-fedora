@@ -7,9 +7,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: python-fedora 0.3.11.1\n"
+"Project-Id-Version: python-fedora 0.3.12\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2009-03-19 15:49-0700\n"
+"POT-Creation-Date: 2009-03-20 00:04-0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -110,11 +110,18 @@ msgstr ""
 msgid "%(field)s is not a valid field to filter"
 msgstr ""
 
-#: fedora/client/fas2.py:510
+#: fedora/client/fas2.py:354
+msgid ""
+"people_by_id() is deprecated and will be removed in 0.4.  Please port "
+"your code to use people_by_key(key='id', fields=['human_name', 'email', "
+"'username', 'bugzilla_email']) instead"
+msgstr ""
+
+#: fedora/client/fas2.py:507
 msgid "FAS server unable to retrieve group members"
 msgstr ""
 
-#: fedora/client/fas2.py:532
+#: fedora/client/fas2.py:529
 msgid "FAS server unable to retrieve user information"
 msgstr ""
 
@@ -247,15 +254,15 @@ msgid ""
 "== Most edited pages =="
 msgstr ""
 
-#: fedora/django/auth/models.py:49
+#: fedora/django/auth/models.py:48
 msgid "Loading FAS groups..."
 msgstr ""
 
-#: fedora/django/auth/models.py:56
+#: fedora/django/auth/models.py:55
 msgid "Unable to load FAS groups. Did you set FAS_USERNAME and FAS_PASSWORD?"
 msgstr ""
 
-#: fedora/django/auth/models.py:63
+#: fedora/django/auth/models.py:62
 msgid "FAS groups loaded. Don't forget to unset FAS_USERNAME and FAS_PASSWORD."
 msgstr ""
 
@@ -288,12 +295,12 @@ msgstr ""
 msgid "You have successfully logged out."
 msgstr ""
 
-#: fedora/tg/util.py:105
+#: fedora/tg/util.py:106
 msgid "url() expects a dictionary for query parameters"
 msgstr ""
 
 #: fedora/tg/identity/jsonfasprovider1.py:226
-#: fedora/tg/identity/jsonfasprovider2.py:378
+#: fedora/tg/identity/jsonfasprovider2.py:392
 #, python-format
 msgid "Error logging in %(user)s: %(error)s"
 msgstr ""
@@ -302,6 +309,83 @@ msgstr ""
 msgid ""
 "Cannot enable ssl certificate auth via identity.ssl without setting "
 "fas.usernamme and fas.password for authorization"
+msgstr ""
+
+#: fedora/tg/identity/jsonfasprovider2.py:155
+#, python-format
+msgid "jsonfasprovider, ssl, returned errors from send_request: %s"
+msgstr ""
+
+#: fedora/tg/identity/jsonfasprovider2.py:167
+#, python-format
+msgid "jsonfasprovider returned errors from send_request: %s"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:10
+msgid "Log In"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:14
+msgid "User Name:"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:17
+msgid "Password:"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:21
+#: fedora/tg/templates/genshi/login.html:84
+msgid "Login"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:28
+msgid "CSRF attacks"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:29
+msgid ""
+" are a means for a malicious website to make a request of another\n"
+"        web server as the user who contacted the malicious web site.  The"
+"\n"
+"        purpose of this page is to help protect your account and this "
+"server\n"
+"        from attacks from such malicious web sites.  By clicking below, "
+"you are\n"
+"        proving that you are a person rather than just the web browser\n"
+"        forwarding your authentication cookies on behalf of a malicious\n"
+"        website."
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:36
+msgid "I am a human"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:41
+msgid "Forgot Password?"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:42
+msgid "Sign Up"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:60
+msgid "Welcome"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:82
+msgid "You are not logged in"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:89
+msgid "CSRF protected"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:91
+msgid "Verify Login"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:97
+msgid "Logout"
 msgstr ""
 
 #: fedora/tg/visit/jsonfasvisit1.py:109 fedora/tg/visit/jsonfasvisit2.py:110
