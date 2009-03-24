@@ -131,12 +131,12 @@ if has_babel:
                     pass
                 else:
                     raise
-            if 'compile_catalog' in options:
-                defaults = options['compile_catalog']
+            if 'compile_catalog' in options.keys():
+                defaults = options.compile_catalog
             else:
                 defaults = Bunch(domain=options.domain,
                         directory=options.builddir)
-                options['compile_catalog'] = defaults
+                options.compile_catalog = defaults
 
             defaults.update({'input-file': po_file, 'locale': locale})
             ### FIXME: compile_catalog cannot handle --dry-run on its own
