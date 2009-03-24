@@ -122,19 +122,19 @@ if has_babel:
                 'LC_MESSAGES'))
 
             try:
-                build_dir.makedirs()
+                build_dir.makedirs(mode=0755)
             except OSError, e:
                 # paver < 1.0 raises if directory exists
                 if e.errno == 17:
                     pass
                 else:
                     raise
-            if 'compile_catalog' in paver.tasks.environment.options:
-                defaults = paver.tasks.environment.options['compile_catalog']
+            if 'compile_catalog' in options:
+                defaults = options['compile_catalog']
             else:
                 defaults = Bunch(domain=options.domain,
                         directory=options.builddir)
-                paver.tasks.environment.options['compile_catalog'] = defaults
+                options['compile_catalog'] = defaults
 
             defaults.update({'input-file': po_file, 'locale': locale})
             ### FIXME: compile_catalog cannot handle --dry-run on its own
@@ -148,7 +148,7 @@ def _install_catalogs(args):
     Note: To use this with non-default commandline arguments, you must use 
     '''
     # Rebuild message catalogs
-    if 'skip-build' not in args:
+    if 'skip_build' not in args:
         call_task('make_catalogs')
 
     options.order('i18n', add_rest=True)
@@ -174,7 +174,7 @@ def _install_catalogs(args):
                 install_locale = cat_dir.joinpath(os.path.join(
                         *locale_dir.splitall()[index + 1:]))
                 try:
-                    install_locale.makedirs()
+                    install_locale.makedirs(mode=0755)
                 except OSError, e:
                     # paver < 1.0 raises if directory exists
                     if e.errno == 17:
