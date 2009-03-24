@@ -16,6 +16,8 @@ BuildRequires:  python-devel
 BuildRequires:  python-setuptools-devel
 BuildRequires:  python-paver
 BuildRequires:  python-sphinx
+BuildRequires:  python-cherrypy2
+BuildRequires:  python-babel
 Requires:       python-simplejson
 Requires:       python-bugzilla
 Requires:       python-feedparser
