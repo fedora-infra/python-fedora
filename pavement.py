@@ -6,11 +6,13 @@ try:
     import paver.misctasks
     from paver import setuputils
     setuputils.install_distutils_tasks()
+    PAVER_VER = '1.0'
 except ImportError:
     # 0.8
     from paver.defaults import *
     from paver.runtime import path as paver_path
     from paver.runtime import sh as paver_sh
+    PAVER_VER = '0.8'
 
 import sys, os
 import glob
@@ -185,6 +187,7 @@ def _install_catalogs(args):
                 if install_locale.exists():
                     install_locale.remove()
                 catalog.copy(install_locale)
+                install_locale.chmod(0644)
 
 @task
 @cmdopts([('root=', None, 'Base root directory to install into'),
@@ -200,11 +203,13 @@ def install_catalogs():
 def sdist():
     pass
 
-@task
-@needs(['setuptools.command.install'])
-def install():
-    '''Override the setuptools install.'''
-    _install_catalogs(options.install)
+if PAVER_VER != '0.8':
+    # Paver 0.8 will have to explicitly install the message catalogs
+    @task
+    @needs(['setuptools.command.install'])
+    def install():
+        '''Override the setuptools install.'''
+        _install_catalogs(options.install)
 
 #
 # Generic Tasks
