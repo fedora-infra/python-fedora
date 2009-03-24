@@ -1,5 +1,5 @@
 include setup.py
-include minilib.zip
+include paver-minilib.zip
 include *.spec
 include COPYING AUTHORS ChangeLog NEWS
 recursive-include doc *

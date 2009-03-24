@@ -1,3 +1,49 @@
+2009-03-23  Toshio Kuratomi <toshio@fedoraproject.org> - r461
+Update for new release.
+
+2009-03-23  Toshio Kuratomi <toshio@fedoraproject.org> - r460
+* Build and install message catalogs.
+* Port to paver-1.0
+
+2009-03-23  Toshio Kuratomi <toshio@fedoraproject.org> - r459
+Correct paver-minilib include.
+
+2009-03-20  Toshio Kuratomi <toshio@fedoraproject.org> - r458
+Update pot file with strings from genshi templates.
+
+2009-03-20  Toshio Kuratomi <toshio@fedoraproject.org> - r457
+Add setup.py so that easy_install will work.
+
+2009-03-19  Toshio Kuratomi <toshio@fedoraproject.org> - r456
+Fix some pylint warnings and a few errors.
+
+2009-03-19  Toshio Kuratomi <toshio@fedoraproject.org> - r455
+Update pot and po files with new strings.
+
+2009-03-19  Toshio Kuratomi <toshio@fedoraproject.org> - r454
+Merge translations.
+
+2009-03-19  Toshio Kuratomi <toshio@fedoraproject.org> - r453
+Mark strings for translation.
+
+2009-03-19  Toshio Kuratomi <toshio@fedoraproject.org> - r452
+Fix jsonfasprovider2 so that username + password actually is sufficient with
+Cherrypy >= 2.3.
+
+2009-03-19  Toshio Kuratomi <toshio@fedoraproject.org> - r451
+Fix proyclient so that sending query params in the action argument will work.
+
+2009-03-18  Toshio Kuratomi <toshio@fedoraproject.org> - r450
+David no longer has a @fp.o address.
+
+2009-03-12  Toshio Kuratomi <toshio@fedoraproject.org> - r449
+No longer need to import HttpResponse.
+
+2009-03-12  Ignacio Vazquez-Abrams <ivazqueznet+bzr@gmail.com> - r448
+The smart way doesn't work, the dumb way didn't work, so we'll try the brain-dead way
+2009-03-12  Toshio Kuratomi <toshio@fedoraproject.org> - r447
+Update ChangeLog for release.
+
 2009-03-12  Toshio Kuratomi <toshio@fedoraproject.org> - r446
 Update for new release.
 

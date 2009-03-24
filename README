@@ -181,16 +181,15 @@ Compiling Message Catalogs
 
 Message catalogs can be compiled for testing and should always be compiled
 just prior to release.  Do this with the following paver command::
-  for po_file in po/*.po ; do
-    LOCALE=`basename $po_file .po`
-    mkdir -p locale/$LOCALE/LC_MESSAGES
-    paver compile_catalog -D python_fedora -d locale -i $po_file --locale $LOCALE
-  done
+  paver make_catalogs
 
 Compiled message catalogs should not be committed to source control.
 
-*Important* The paver install target needs to be enhanced to install the
-message catalogs.
+Installing Message Catalogs
+===========================
+
+``paver install_catalogs`` will install the catalogs.  This commmand has been
+added to ``paver install``.
 
 -------
 Release
