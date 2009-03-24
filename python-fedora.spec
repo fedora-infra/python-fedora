@@ -16,6 +16,8 @@ BuildRequires:  python-devel
 BuildRequires:  python-setuptools-devel
 BuildRequires:  python-paver
 BuildRequires:  python-sphinx
+BuildRequires:  python-cherrypy2
+BuildRequires:  python-babel
 Requires:       python-simplejson
 Requires:       python-bugzilla
 Requires:       python-feedparser
@@ -46,6 +48,11 @@ paver html
 %install
 rm -rf %{buildroot}
 paver install --skip-build --root %{buildroot}
+%if 0%{?fedora} <= 10
+    paver install_catalogs --root %{buildroot} --install-catalogs \
+             %{_datadir}/locale --skip-build
+%endif
+
 mv build-doc/html doc/
 %find_lang %{name}
 

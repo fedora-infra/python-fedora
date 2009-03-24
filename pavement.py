@@ -6,11 +6,13 @@ try:
     import paver.misctasks
     from paver import setuputils
     setuputils.install_distutils_tasks()
+    PAVER_VER = '1.0'
 except ImportError:
     # 0.8
     from paver.defaults import *
     from paver.runtime import path as paver_path
     from paver.runtime import sh as paver_sh
+    PAVER_VER = '0.8'
 
 import sys, os
 import glob
@@ -122,19 +124,19 @@ if has_babel:
                 'LC_MESSAGES'))
 
             try:
-                build_dir.makedirs()
+                build_dir.makedirs(mode=0755)
             except OSError, e:
                 # paver < 1.0 raises if directory exists
                 if e.errno == 17:
                     pass
                 else:
                     raise
-            if 'compile_catalog' in paver.tasks.environment.options:
-                defaults = paver.tasks.environment.options['compile_catalog']
+            if 'compile_catalog' in options:
+                defaults = options['compile_catalog']
             else:
                 defaults = Bunch(domain=options.domain,
                         directory=options.builddir)
-                paver.tasks.environment.options['compile_catalog'] = defaults
+                options['compile_catalog'] = defaults
 
             defaults.update({'input-file': po_file, 'locale': locale})
             ### FIXME: compile_catalog cannot handle --dry-run on its own
@@ -148,7 +150,7 @@ def _install_catalogs(args):
     Note: To use this with non-default commandline arguments, you must use 
     '''
     # Rebuild message catalogs
-    if 'skip-build' not in args:
+    if 'skip_build' not in args:
         call_task('make_catalogs')
 
     options.order('i18n', add_rest=True)
@@ -174,7 +176,7 @@ def _install_catalogs(args):
                 install_locale = cat_dir.joinpath(os.path.join(
                         *locale_dir.splitall()[index + 1:]))
                 try:
-                    install_locale.makedirs()
+                    install_locale.makedirs(mode=0755)
                 except OSError, e:
                     # paver < 1.0 raises if directory exists
                     if e.errno == 17:
@@ -185,6 +187,7 @@ def _install_catalogs(args):
                 if install_locale.exists():
                     install_locale.remove()
                 catalog.copy(install_locale)
+                install_locale.chmod(0644)
 
 @task
 @cmdopts([('root=', None, 'Base root directory to install into'),
@@ -200,11 +203,13 @@ def install_catalogs():
 def sdist():
     pass
 
-@task
-@needs(['setuptools.command.install'])
-def install():
-    '''Override the setuptools install.'''
-    _install_catalogs(options.install)
+if PAVER_VER != '0.8':
+    # Paver 0.8 will have to explicitly install the message catalogs
+    @task
+    @needs(['setuptools.command.install'])
+    def install():
+        '''Override the setuptools install.'''
+        _install_catalogs(options.install)
 
 #
 # Generic Tasks
