@@ -3,14 +3,24 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 12 Mar 2009
+:Date: 23 Mar 2009
 :Version: 0.3.x
+
+------
+0.3.12
+------
+
+* Bugfix to django auth to allow login
+* Bugfix to jsonfas2 that allows login when using json calls with Cherrypy 2.3+
+* Get i18n infrastructure ready and take translations from transifex
+* Include a setup.py so easy_install works
+* Update build to work with paver 1.0 or 0.8
 
 --------
 0.3.11.1
 --------
 
-* Fix a bug with django auth and recirects
+* Fix a bug with django auth and redirects
 
 ------
 0.3.11

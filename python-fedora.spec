@@ -1,7 +1,7 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.3.11.1
+Version:        0.3.12
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -47,16 +47,20 @@ paver html
 rm -rf %{buildroot}
 paver install --skip-build --root %{buildroot}
 mv build-doc/html doc/
+%find_lang %{name}
 
 %clean
 rm -rf %{buildroot}
 
-%files
+%files -f %{name}.lang
 %defattr(-,root,root,-)
 %doc README COPYING AUTHORS ChangeLog doc
 %{python_sitelib}/*
 
 %changelog
+* Thu Mar 19 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.12-1
+- Bugfix and cleanup release.
+
 * Thu Mar 12 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.11.1-1
 - Update to fix problem with django auth and redirects.
 
@@ -157,92 +161,3 @@ rm -rf %{buildroot}
 
 * Wed Feb 13 2008 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.99.0-1
 - First beta of new release.  This release is for TG-1.0.4 and SA-0.4.
-
-* Thu Dec 13 2007 Luke Macken <lmacken@redhat.com> - 0.2.90.22-1
-- Convert fasLDAP to get its connection information fedora-db-access.
-- Add requirements for python-feedparser and python-bugzilla
-- Add fedora.tg.widgets module containing a few proof-of-concept
-  Fedora TurboGears widgets
-- Add a new method to fas: get_users() that returns common public information
-  about all users.
-
-* Thu Nov 15 2007 Toshio Kuratomi <tkuratom@redhat.com> - 0.2.90.21-1
-- Bugfix release for expired sessions.
-
-* Wed Nov 14 2007 Luke Macken <lmacken@redhat.com> - 0.2.90.20-3
-- Handle our SQLAlchemy requirement differently for Fedora 8+, until
-  TurboGears can use SQLAlchemy >= 0.4
-
-* Wed Nov  7 2007 Luke Macken <lmacken@redhat.com> - 0.2.90.20-2
-- Require SQLAlchemy 0.3 for python-fedora-infrastructure
-
-* Wed Nov  7 2007 Luke Macken <lmacken@redhat.com> - 0.2.90.20-1
-- Latest upstream release
-
-* Tue Sep 25 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.19-1
-- New upstream release with a FAS2 unicode fix.
-
-* Mon Sep 24 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.18-3
-- Fix the Source URL.  Should be fedorapeople rather than fedoraproject.
-
-* Fri Sep 21 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.18-2
-- BR: python-setuptools-devel as this has been split in the new versions.
-
-* Tue Sep 18 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.18-1
-- Update to version wih handling of control-center-maint bugzilla address.
-
-* Tue Sep 18 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.17-2
-- Minor touchups to description and URL.
-
-* Mon Sep 17 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.17-1
-- Update to 0.2.90.17. 
-- Build separate packages for pieces useful on clients and only on the server.
-
-* Mon Sep 10 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.16-1
-- Bugfix to fasLDAP module.
-
-* Fri Sep 7 2007 Toshio Kuratomi <a.badger@gmail.com> - 0.2.90.15-1
-- Make the fasLDAP module more OO.
-- Bugfixes.
-- Update the install line.
-
-* Thu Aug 2 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.14-1
-- Fix safas2provider to only create the visit_identity class.
-- Add COPYING and AUTHORS files.
-
-* Sat Jul 21 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.13-1
-- New class fedora.tg.client.BaseClient that can be used as the basis of a TG
-  standalone application.  With a little support on the server side (mostly
-  allowing tg_format=json) this class will provide you with the basis to read
-  and write data to the server.
-- Fix safasprovider to only create the visit_identity class since the other
-  information is stored directly in FAS.
-
-* Mon Jul 10 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.12-1
-- Fix some issues with Unicode.
-- Catch a traceback when the database is down.
-
-* Sun Apr 14 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.11-1
-- Remove a decorator so running on python-2.3 works.
-- Have FASUser and FASGroup emit json on demand so that they can be returned
-  when tg_format=json.
-
-* Sun Apr 14 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.10-1
-- Update fas2 integration with changes from mmcgrath.
-- berrange has changed his email address in the account system, no longer need
-  to special case his bugzilla address.
-- Fix a bug in the handling of db errors in accounts/fas.
-
-* Sun Apr 14 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.9-1
-- Update fas2 integration with changes from mmcgrath.
-
-* Sun Apr 14 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.8-1
-- Catch some exceptions when the database connection dies.
-
-* Sun Apr 14 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.7-1
-- Fix another bug with the new bugzilla email code.  Need to grab the user
-  email from the database even if unathenticated so bugzilla_email has
-  something to pull from.
-
-* Sun Apr 14 2007 Toshio Kuratomi <toshio@tiki-lounge.com> - 0.2.90.6-1
-- Fix bug with the new bugzilla email code.
