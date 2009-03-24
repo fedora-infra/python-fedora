@@ -48,8 +48,9 @@ paver html
 %install
 rm -rf %{buildroot}
 paver install --skip-build --root %{buildroot}
-%if 0%{?fedora} >= 11
-    paver install_catalogs --root %{buildroot} --install-catalogs %{_datadir}/locale --skip-build
+%if 0%{?fedora} <= 10
+    paver install_catalogs --root %{buildroot} --install-catalogs \
+             %{_datadir}/locale --skip-build
 %endif
 
 mv build-doc/html doc/
