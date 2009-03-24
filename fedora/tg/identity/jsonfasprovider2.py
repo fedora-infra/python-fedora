@@ -55,10 +55,13 @@ if config.get('identity.ssl', False):
     fas_user = config.get('fas.username', None)
     fas_password = config.get('fas.password', None)
     if not (fas_user and fas_password):
-        raise identity.IdentityConfigurationException(_('Cannot enable ssl certificate auth via identity.ssl without setting fas.usernamme and fas.password for authorization'))
-    url = config.get('fas.url', None)
-    if url:
-        fas = AccountSystem(url, username=config.get('fas.username'), password=config.get('fas.password'))
+        raise identity.IdentityConfigurationException(
+                _('Cannot enable ssl certificate auth via identity.ssl without'
+                ' setting fas.usernamme and fas.password for authorization'))
+    __url = config.get('fas.url', None)
+    if __url:
+        fas = AccountSystem(__url, username=config.get('fas.username'),
+                password=config.get('fas.password'))
 
 
 class JsonFasIdentity(BaseClient):
@@ -69,7 +72,8 @@ class JsonFasIdentity(BaseClient):
     useragent = 'JsonFasIdentity/%s' % __version__
     cache_session = False
 
-    def __init__(self, visit_key=None, user=None, username=None, password=None, using_ssl=False):
+    def __init__(self, visit_key=None, user=None, username=None, password=None,
+            using_ssl=False):
         # The reason we have both _retrieved_user and _user is this:
         # _user is set if both the user is authenticated and a csrf_token is
         # present.
@@ -80,6 +84,8 @@ class JsonFasIdentity(BaseClient):
         self.log = log
         self.visit_key = visit_key
         session_id = visit_key
+        self._group_ids = frozenset()
+        self.using_ssl = using_ssl
         if user:
             self._user = user
             self._user_retrieved = user
@@ -139,14 +145,15 @@ class JsonFasIdentity(BaseClient):
             if cherrypy.request.headers['X-Client-Verify'] != 'SUCCESS':
                 self.logout()
                 return None
-            global fas
             # Retrieve the user information differently when using ssl
             try:
                 person = fas.person_by_username(self.username, auth=True)
             except Exception, e:
-                # Any errors have to result in no user being set.  The rest of the
-                # framework doesn't know what to do otherwise.
-                self.log.warning('jsonfasprovider, ssl, returned errors from send_request: %s' % e)
+                # pylint: disable-msg=W0703
+                # :W0703: Any errors have to result in no user being set.  The
+                # rest of the framework doesn't know what to do otherwise.
+                self.log.warning(_('jsonfasprovider, ssl, returned errors'
+                    ' from send_request: %s') % e)
                 person = None
             self._retrieved_user = person or None
             return self._retrieved_user
@@ -154,9 +161,11 @@ class JsonFasIdentity(BaseClient):
         try:
             data = self.send_request('user/view', auth=True)
         except Exception, e:
-            # Any errors have to result in no user being set.  The rest of the
-            # framework doesn't know what to do otherwise.
-            self.log.warning('jsonfasprovider returned errors from send_request: %s' % e)
+            # pylint: disable-msg=W0703
+            # :W0703: Any errors have to result in no user being set.  The rest
+            # of the framework doesn't know what to do otherwise.
+            self.log.warning(_('jsonfasprovider returned errors from'
+                ' send_request: %s') % e)
             return None
         # pylint: enable-msg=W0702
 
@@ -170,8 +179,7 @@ class JsonFasIdentity(BaseClient):
             # No visit, no user
             self._user = None
         else:
-            if not len(set(a for a in cherrypy.request.original_params if a
-                    in ('user_name', 'password', 'login'))) == 3:
+            if not (self.username and self.password):
                 # Unless we were given the user_name and password to login on
                 # this request, a CSRF token is required
                 if (not '_csrf_token' in cherrypy.request.params or
@@ -202,6 +210,7 @@ class JsonFasIdentity(BaseClient):
     user = property(_get_user)
 
     def _get_token(self):
+        '''Get the csrf token for this identity'''
         if self.visit_key:
             return hash_constructor(self.visit_key).hexdigest()
         else:
@@ -253,6 +262,8 @@ class JsonFasIdentity(BaseClient):
 
     def _get_permissions(self):
         '''Get set of permission names of this identity.'''
+        # pylint: disable-msg=R0201
+        # :R0201: method is part of the TG Identity API
         ### TG difference: No permissions in FAS
         return frozenset()
     permissions = property(_get_permissions)
@@ -274,7 +285,8 @@ class JsonFasIdentity(BaseClient):
         try:
             return self._groups
         except AttributeError:
-            # Groups haven't been computed yet
+            # pylint: disable-msg=W0704
+            # :W0704: Groups haven't been computed yet
             pass
         if not self.user:
             # User and groups haven't been returned.  Since the json call
@@ -288,12 +300,14 @@ class JsonFasIdentity(BaseClient):
         try:
             return self._group_ids
         except AttributeError:
-            # Groups haven't been computed yet
+            # pylint: disable-msg=W0704
+            # :W0704: Groups haven't been computed yet
             pass
         if not self.groups:
             self._group_ids = frozenset()
         else:
-            self._group_ids = frozenset([g.id for g in self._user.approved_memberships])
+            self._group_ids = frozenset([g.id for g in
+                self._user.approved_memberships])
         return self._group_ids
     group_ids = property(_get_group_ids)
 
@@ -330,6 +344,7 @@ class JsonFasIdentityProvider(object):
     def __init__(self):
         # Default encryption algorithm is to use plain text passwords
         algorithm = config.get('identity.saprovider.encryption_algorithm', None)
+        self.log = log
         # pylint: disable-msg=W0212
         # TG does this so we shouldn't get rid of it.
         self.encrypt_password = lambda pw: \
@@ -395,6 +410,9 @@ class JsonFasIdentityProvider(object):
         :returns: True if the password matches the username.  Otherwise False.
             Can return False for problems within the Account System as well.
         '''
+        # pylint: disable-msg=R0201,W0613
+        # :R0201: TG identity providers must instantiate this method.
+
         # crypt.crypt(stuff, '') == ''
         # Just kill any possibility of blanks.
         if not user.password:
@@ -402,8 +420,8 @@ class JsonFasIdentityProvider(object):
         if not password:
             return False
 
-        # :W0613: TG identity providers have this method so we can't get rid of it.
         # pylint: disable-msg=W0613
+        # :W0613: TG identity providers have this method
         return user.password == crypt.crypt(password, user.password)
 
     def load_identity(self, visit_key):
@@ -416,6 +434,8 @@ class JsonFasIdentityProvider(object):
             :groups: a set of group IDs
             :permissions: a set of permission IDs
         '''
+        # pylint: disable-msg=R0201
+        # :R0201: TG identity providers must instantiate this method.
         ident = JsonFasIdentity(visit_key)
         if 'csrf_login' in cherrypy.request.params:
             cherrypy.request.params.pop('csrf_login')
@@ -432,7 +452,7 @@ class JsonFasIdentityProvider(object):
             :permissions: a set of permission IDs
         '''
         # pylint: disable-msg=R0201
-        # TG identity providers have this method so we can't get rid of it.
+        # :R0201: TG identity providers must instantiate this method.
         return JsonFasIdentity(None)
 
     def authenticated_identity(self, user):
@@ -446,4 +466,6 @@ class JsonFasIdentityProvider(object):
             :groups: a set of group IDs
             :permissions: a set of permission IDs
         '''
-        return SaFasIdentity(None, user)
+        # pylint: disable-msg=R0201
+        # :R0201: TG identity providers must instantiate this method.
+        return JsonFasIdentity(None, user)

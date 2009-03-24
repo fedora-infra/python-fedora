@@ -101,7 +101,7 @@ class ProxyClient(object):
         self._log_handler.setFormatter(format)
         self.log.addHandler(self._log_handler)
 
-        self.log.debug('proxyclient.__init__:entered')
+        self.log.debug(_('proxyclient.__init__:entered'))
         if base_url[-1] != '/':
             base_url = base_url +'/'
         self.base_url = base_url
@@ -110,13 +110,13 @@ class ProxyClient(object):
         self.session_name = session_name
         self.session_as_cookie = session_as_cookie
         if session_as_cookie:
-            warnings.warn(_("Returning cookies from send_request() is"
-                " deprecated and will be removed in 0.4.  Please port your"
-                " code to use a session_id instead by calling the ProxyClient"
-                " constructor with session_as_cookie=False"),
+            warnings.warn(_('Returning cookies from send_request() is'
+                ' deprecated and will be removed in 0.4.  Please port your'
+                ' code to use a session_id instead by calling the ProxyClient'
+                ' constructor with session_as_cookie=False'),
                 DeprecationWarning, stacklevel=2)
         self.insecure = insecure
-        self.log.debug('proxyclient.__init__:exited')
+        self.log.debug(_('proxyclient.__init__:exited'))
 
     def __get_debug(self):
         '''Return whether we have debug logging turned on.
@@ -183,7 +183,7 @@ class ProxyClient(object):
             of session_id and data instead.
         :rtype: tuple of session information and data from server
         '''
-        self.log.debug('proxyclient.send_request: entered')
+        self.log.debug(_('proxyclient.send_request: entered'))
         # Check whether we need to authenticate for this request
         session_id = None
         username = None
@@ -192,9 +192,9 @@ class ProxyClient(object):
             if 'session_id' in auth_params:
                 session_id = auth_params['session_id']
             elif 'cookie' in auth_params:
-                warnings.warn(_("Giving a cookie to send_request() to"
-                " authenticate is deprecated and will be removed in 0.4."
-                " Please port your code to use session_id instead."),
+                warnings.warn(_('Giving a cookie to send_request() to'
+                ' authenticate is deprecated and will be removed in 0.4.'
+                ' Please port your code to use session_id instead.'),
                 DeprecationWarning, stacklevel=2)
                 session_id = auth_params['cookie'].output(attrs=[],
                         header='').strip()
@@ -202,21 +202,18 @@ class ProxyClient(object):
                 username = auth_params['username']
                 password = auth_params['password']
             elif 'username' in auth_params or 'password' in auth_params:
-                raise AuthError, _('username and password must both be set in'
-                        ' auth_params')
+                raise AuthError(_('username and password must both be set in'
+                        ' auth_params'))
             if not (session_id or username):
-                raise AuthError, _('No known authentication methods specified:'
+                raise AuthError(_('No known authentication methods specified:'
                         ' set "cookie" in auth_params or set both username and'
-                        ' password in auth_params')
+                        ' password in auth_params'))
 
         # urljoin is slightly different than os.path.join().  Make sure method
         # will work with it.
         method = method.lstrip('/')
         # And join to make our url.
-        # Note: ?tg_format=json is going away in the future as the Accept
-        # header should serve the same purpose in a more framework neutral
-        # manner.
-        url = urljoin(self.base_url, urllib.quote(method) + '?tg_format=json')
+        url = urljoin(self.base_url, urllib.quote(method))
 
         response = _PyCurlData() # The data we get back from the server
         data = None     # decoded JSON via simplejson.load()
@@ -249,6 +246,10 @@ class ProxyClient(object):
                 session_id))
 
         complete_params = req_params or {}
+        # Note: tg_format=json is going away in the future as the Accept
+        # header should serve the same purpose in a more framework neutral
+        # manner.
+        complete_params['tg_format'] = 'json'
         if session_id:
             # Add the csrf protection token
             token = sha_constructor(session_id)
@@ -283,13 +284,13 @@ class ProxyClient(object):
         if http_status in (401, 403):
             # Wrong username or password
             self.log.debug(_('Authentication failed logging in'))
-            raise AuthError, _('Unable to log into server.  Invalid'
-                    ' authentication tokens.  Send new username and password')
+            raise AuthError(_('Unable to log into server.  Invalid'
+                    ' authentication tokens.  Send new username and password'))
         elif http_status >= 400:
             try:
                 msg = httplib.responses[http_status]
             except (KeyError, AttributeError):
-                msg = 'Unknown HTTP Server Response'
+                msg = _('Unknown HTTP Server Response')
             raise ServerError(url, http_status, msg)
 
         # In case the server returned a new session cookie to us
@@ -309,8 +310,9 @@ class ProxyClient(object):
             data = simplejson.loads(json_string)
         except ValueError, e:
             # The response wasn't JSON data
-            raise ServerError(url, http_status, 'Error returned from'
-                    ' simplejson while processing %s: %s' % (url, str(e)))
+            raise ServerError(url, http_status, _('Error returned from'
+                    ' simplejson while processing %(url)s: %(err)s') %
+                    {'url': url, 'err': str(e)})
 
         if 'exc' in data:
             name = data.pop('exc')
@@ -324,5 +326,5 @@ class ProxyClient(object):
             new_session = cookie
 
         request.close()
-        self.log.debug('proxyclient.send_request: exited')
+        self.log.debug(_('proxyclient.send_request: exited'))
         return new_session, DictContainer(data)

@@ -24,6 +24,7 @@ A Wiki Client
 
 from datetime import datetime, timedelta
 from fedora.client import BaseClient
+from fedora import _
 
 class Wiki(BaseClient):
 
@@ -52,7 +53,7 @@ class Wiki(BaseClient):
                 'lgpassword': password,
                 })
         if 'lgtoken' not in data.get('login', {}):
-            raise Exception('Login failed: %s' % data)
+            raise Exception(_('Login failed: %s') % data)
         #self.session_id = data['login']['lgtoken']
         #self.username = data['login']['lgusername']
         return data
@@ -60,14 +61,14 @@ class Wiki(BaseClient):
     def print_recent_changes(self, days=7, show=10):
         now = datetime.utcnow()
         then = now - timedelta(days=days)
-        print "From %s to %s" % (then, now)
+        print _("From %(then)s to %(now)s") % {'then': then, 'now': now}
         changes = self.get_recent_changes(now=now, then=then)
         num_changes = len(changes)
-        print "%d wiki changes in the past week" % num_changes
+        print _("%d wiki changes in the past week") % num_changes
         if num_changes == 500:
-            print "Warning: Number of changes reaches the API return limit."
-            print "You will not get the complete list of changes unless "
-            print "you run this script using a 'bot' account."
+            print _("""Warning: Number of changes reaches the API return limit.
+You will not get the complete list of changes unless
+you run this script using a 'bot' account.""")
 
         users = {}
         pages = {}
@@ -75,14 +76,14 @@ class Wiki(BaseClient):
             users.setdefault(change['user'], []).append(change['title'])
             pages[change['title']] = pages.setdefault(change['title'], 0) + 1
 
-        print '\n== Most active wiki users =='
+        print _('\n== Most active wiki users ==')
         for user, changes in sorted(users.items(),
                                     cmp=lambda x, y: cmp(len(x[1]), len(y[1])),
                                     reverse=True)[:show]:
             print ' %-50s %d' % (('%s' % user).ljust(50, '.'),
                                   len(changes))
 
-        print '\n== Most edited pages =='
+        print _('\n== Most edited pages ==')
         for page, num in sorted(pages.items(),
                                 cmp=lambda x, y: cmp(x[1], y[1]),
                                 reverse=True)[:show]:

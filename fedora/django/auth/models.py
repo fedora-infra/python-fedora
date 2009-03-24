@@ -20,10 +20,9 @@
 '''
 from fedora.client import AuthError
 from fedora.django import connection, person_by_id
+from fedora import _
 
 import django.contrib.auth.models as authmodels
-from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
 # Map FAS user elements to model attributes
@@ -60,7 +59,7 @@ def _syncdb_handler(sender, **kwargs):
         for group in groups:
             _new_group(group)
         if verbosity > 0:
-            print _("FAS groups loaded. Don't forget to unset "
+            print _('FAS groups loaded. Don\'t forget to unset '
                 'FAS_USERNAME and FAS_PASSWORD.')
 
 class FasUserManager(authmodels.UserManager):

@@ -20,7 +20,7 @@ Controller functions that are standard across Fedora Applications
 
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
-from turbogears import expose, flash
+from turbogears import flash
 from turbogears import identity, redirect
 from cherrypy import request, response
 
@@ -46,7 +46,6 @@ def login(forward_url=None, *args, **kwargs):
 
     :kwarg: forward_url: The url to send to once authentication succeeds
     '''
-
     if forward_url:
         if isinstance(forward_url, list):
             forward_url = forward_url.pop(0)
@@ -65,15 +64,15 @@ def login(forward_url=None, *args, **kwargs):
         redirect(forward_url or '/')
 
     if identity.was_login_attempted():
-        msg = _("The credentials you supplied were not correct or "
-               "did not grant access to this resource.")
+        msg = _('The credentials you supplied were not correct or '
+               'did not grant access to this resource.')
     elif identity.get_identity_errors():
-        msg = _("You must provide your credentials before accessing "
-               "this resource.")
+        msg = _('You must provide your credentials before accessing '
+               'this resource.')
     else:
-        msg = _("Please log in.")
+        msg = _('Please log in.')
         if not forward_url:
-            forward_url = request.headers.get("Referer", "/")
+            forward_url = request.headers.get('Referer', '/')
 
     response.status = 401
     return dict(logging_in=True, message=msg,
@@ -100,5 +99,5 @@ def logout(url=None):
     if request_format() == 'json':
         return dict()
     if not url:
-        url = request.headers.get("Referer","/")
+        url = request.headers.get('Referer','/')
     redirect(url)

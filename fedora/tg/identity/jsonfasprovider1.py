@@ -91,14 +91,14 @@ class JsonFasIdentity(BaseClient):
         We need to override the send_request provided by ``BaseClient`` to
         keep the visit_key in sync.
         '''
-        log.debug('entering jsonfas send_request')
+        log.debug('Entering jsonfas send_request')
         if self.session_id != self.visit_key:
             # When the visit_key changes (because the old key had expired or
             # been deleted from the db) change the visit_key in our variables
             # and the session cookie to be sent back to the client.
             self.visit_key = self.session_id
             response.simple_cookie[self.cookie_name] = self.visit_key
-        log.debug('leaving jsonfas send_request')
+        log.debug('Leaving jsonfas send_request')
         return super(JsonFasIdentity, self).send_request(method, req_params,
                 auth)
 

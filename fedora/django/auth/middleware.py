@@ -20,9 +20,7 @@
 '''
 from fedora.client import AuthError
 from fedora.django import local
-from fedora.django.auth.models import FasUser
 
-from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import AnonymousUser
 
@@ -39,7 +37,7 @@ class FasMiddleware(object):
                     logout(request)
 
     def process_response(self, request, response):
-        if type(response) == HttpResponse:
+        if response.status_code != 301:
             if isinstance(request.user, AnonymousUser):
 #                response.set_cookie(key='tg-visit', value='', max_age=0)
                 if 'tg-visit' in request.session:

@@ -1,8 +1,10 @@
+include setup.py
+include paver-minilib.zip
 include *.spec
 include COPYING AUTHORS ChangeLog NEWS
 recursive-include doc *
 include fedora/tg/templates/genshi/*.html
 include po/*.pot
-include po/*/*/*.po
-include po/*/*/*.mo
+include po/*.po
+include locale/*/*/*.mo
 include pavement.py
