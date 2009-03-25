@@ -164,7 +164,7 @@ def _install_catalogs(args):
     Note: To use this with non-default commandline arguments, you must use 
     '''
     # Rebuild message catalogs
-    if 'skip_build' not in args or 'skip-build' not in args:
+    if 'skip_build' not in args and 'skip-build' not in args:
         call_task('make_catalogs')
 
     options.order('i18n', add_rest=True)

@@ -16,7 +16,11 @@ BuildRequires:  python-devel
 BuildRequires:  python-setuptools-devel
 BuildRequires:  python-paver
 BuildRequires:  python-sphinx
+%if 0%{?fedora} >= 9
 BuildRequires:  python-cherrypy2
+%else
+BuildRequires:  python-cherrypy
+%endif
 BuildRequires:  python-babel
 Requires:       python-simplejson
 Requires:       python-bugzilla
