@@ -149,7 +149,14 @@ if has_babel and PAVER_VER != '0.8':
             ### FIXME: compile_catalog cannot handle --dry-run on its own
             dry('paver compile_catalog -D %(domain)s -d %(directory)s'
                     ' -i %(input-file)s --locale %(locale)s' % defaults,
-                    call_task, 'babel.messages.frontend.compile_catalog')
+                    paver_sh, 'paver compile_catalog -D %(domain)s' \
+                        ' -d %(directory)s -i %(input-file)s' \
+                        ' --locale %(locale)s' % defaults)
+            ### FIXME: Need to get call_task to call this repeatedly
+            # because options.compile_catalog has changed
+            #dry('paver compile_catalog -D %(domain)s -d %(directory)s'
+            #        ' -i %(input-file)s --locale %(locale)s' % defaults,
+            #        call_task, 'babel.messages.frontend.compile_catalog', options)
 
 def _install_catalogs(args):
     '''Install message catalogs in their proper location on the filesystem.
