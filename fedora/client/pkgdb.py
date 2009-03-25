@@ -294,6 +294,8 @@ class PackageDB(BaseClient):
             Default: None which means user removed from all collections
             associated with the package.
         :returns: status code from the request
+
+        .. versionadded:: 0.3.12
         '''
         params={'username': username, 'pkg_name': pkg_name,
             'collectn_list': collectn_list}
