@@ -85,6 +85,9 @@ options(
         installdir='/usr/share/locale',
         domain='python-fedora',
         ),
+    ### FIXME: These are due to a bug in paver-1.0
+    # http://code.google.com/p/paver/issues/detail?id=24
+    sdist=Bunch(),
     )
 
 @task
@@ -92,7 +95,9 @@ options(
 def publish_doc():
     options.order('publish', add_rest=True)
     command = 'rsync -av build-doc/html/ %s' % (options.doc_location,)
-    dry(command, paver_sh, [command])
+    if PAVER_VER == '0.8':
+        command = [command]
+    dry(command, paver_sh, command)
 
 @task
 @needs(['sdist'])
@@ -100,7 +105,9 @@ def publish_tarball():
     options.order('publish', add_rest=True)
     tarname = '%s-%s.tar.gz' % (options.name, options.version)
     command = 'scp dist/%s %s' % (tarname, options.tarball_location)
-    dry(command, paver_sh, [command])
+    if PAVER_VER == '0.8':
+        command = [command]
+    dry(command, paver_sh, command)
 
 @task
 @needs(['publish_doc', 'publish_tarball'])
@@ -113,7 +120,7 @@ try:
 except ImportError:
     has_babel = False
 
-if has_babel:
+if has_babel and PAVER_VER != '0.8':
     @task
     def make_catalogs():
         '''Compile all message catalogs for release'''
@@ -186,8 +193,10 @@ def _install_catalogs(args):
                 install_locale = install_locale.joinpath(catalog.basename())
                 if install_locale.exists():
                     install_locale.remove()
-                catalog.copy(install_locale)
-                install_locale.chmod(0644)
+                dry('cp %s %s'%  (catalog, install_locale),
+                        catalog.copy, install_locale)
+                dry('chmod 0644 %s'%  install_locale,
+                        install_locale.chmod, 0644)
 
 @task
 @cmdopts([('root=', None, 'Base root directory to install into'),
@@ -203,8 +212,10 @@ def install_catalogs():
 def sdist():
     pass
 
+### FIXME: setuptools.command.install does not respond to --dry-run
 if PAVER_VER != '0.8':
     # Paver 0.8 will have to explicitly install the message catalogs
+    # As overriding setuptools.command gives errors on paver-0.8
     @task
     @needs(['setuptools.command.install'])
     def install():

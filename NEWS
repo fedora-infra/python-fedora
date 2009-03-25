@@ -111,7 +111,7 @@ Bugfixes
 * fedora.client.pkgdb merge with pkgdb-client from Mike Watters and Toshio
   Kuratomi.
 * Generate documentation for json and util modules.
-* Delay import of koji, yum,and iniparse in the bodhi client libraries so
+* Delay import of koji, yum, and iniparse in the bodhi client libraries so
   they're not strict dependencies for now.
 
 -----
