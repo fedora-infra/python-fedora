@@ -287,12 +287,15 @@ class PackageDB(BaseClient):
 
     def remove_user(self, username, pkg_name, collectn_list=None):
         '''Remove user from a package
-        
+
         :arg username: Name of user to remove from the package
         :arg pkg_name: Name of the package
-        :arg collectn_list: list of collections like 'F-10','devel'.
-          If collectn_list=None, user removed from all collections associates 
-           with the package.
+        :kwarg collectn_list: list of collections like 'F-10','devel'.
+            Default: None which means user removed from all collections
+            associated with the package.
+        :returns: status code from the request
+
+        .. versionadded:: 0.3.12
         '''
         if collectn_list:
             params={'username': username, 'pkg_name': pkg_name, 

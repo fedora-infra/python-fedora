@@ -1,3 +1,28 @@
+2009-03-23  Toshio Kuratomi <toshio@fedoraproject.org> - r468
+Fix reversed comparison for when to run the extra paver command.
+
+2009-03-23  Toshio Kuratomi <toshio@fedoraproject.org> - r467
+Fix a syntax error and a little documentation cleanup.
+
+2009-03-23  Toshio Kuratomi <toshio@fedoraproject.org> - r466
+pkgdb.remove_users() method from kolesovdv.
+
+2009-03-23  Toshio Kuratomi <toshio@fedoraproject.org> - r465
+* Workaround a limitation of paver - 0.8 by not overriding the setuptools
+  install command if we detect that.paver - 0.8 users will have to call
+  install_catalogs explicitly.
+* Set mode on locale files.
+
+2009-03-23  Toshio Kuratomi <toshio@fedoraproject.org> - r464
+* Fix directory modes
+* Some paver-0.8 compat fixes.
+
+2009-03-23  Toshio Kuratomi <toshio@fedoraproject.org> - r463
+Couple new buildrequirement.
+
+2009-03-23  Toshio Kuratomi <toshio@fedoraproject.org> - r462
+Update ChangeLog for the new release.
+
 2009-03-23  Toshio Kuratomi <toshio@fedoraproject.org> - r461
 Update for new release.
 
