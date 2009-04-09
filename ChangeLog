@@ -1,3 +1,22 @@
+2009-04-09  Toshio Kuratomi <toshio@fedoraproject.org> - r465
+Fix de.po format strings.
+
+2009-04-09  transifex user <transifex@app1.fedora.phx.redhat.com> - r464
+Sending translation for Spanish
+2009-04-02  transifex user <transifex@app1.fedora.phx.redhat.com> - r463
+Sending translation for po/es.po
+2009-03-30  kolesov <kolesov@fedora10.jde-vlad.ru> - r462
+    Dmitry Kolesov 2009-03-30 Added check of the parameters in remove_user()
+
+2009-03-30  kolesov <kolesov@fedora10.jde-vlad.ru> - r461
+   2009-03-30  Dmitry Kolesov:  Added check of the parameters in remove_user()
+
+2009-03-23  kolesov <kolesov@fedora10.jde-vlad.ru> - r460
+    Dmitry Kolesov 2009-03-23 Added the remove_user()
+
+2009-03-23  kolesov <kolesov@fedora10.jde-vlad.ru> - r459
+ 2009-03-24 Dmitry Kolesov  Added the remove_user()
+
 2009-03-23  Toshio Kuratomi <toshio@fedoraproject.org> - r468
 Fix reversed comparison for when to run the extra paver command.
 

@@ -297,7 +297,10 @@ class PackageDB(BaseClient):
 
         .. versionadded:: 0.3.12
         '''
-        params={'username': username, 'pkg_name': pkg_name,
-            'collectn_list': collectn_list}
+        if collectn_list:
+            params={'username': username, 'pkg_name': pkg_name, 
+                'collectn_list': collectn_list}
+        else:
+            params={'username': username, 'pkg_name': pkg_name}
         return self.send_request('/packages/dispatcher/remove_user', auth=True,
                    req_params=params)
