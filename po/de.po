@@ -50,7 +50,7 @@ msgstr "Nicht möglich die Session von %(file)s zu laden"
 #: fedora/client/baseclient.py:119
 #, fuzzy, python-format
 msgid "Unable to create %(dir)s: %(error)s"
-msgstr "Müll-Verzeichnis %s konnte nicht angelegt werden: %s"
+msgstr "Müll-Verzeichnis %(dir)s konnte nicht angelegt werden: %(error)s"
 
 #: fedora/client/baseclient.py:131
 #, python-format
@@ -60,7 +60,7 @@ msgstr "Schreiben der Session-Datei %(session)s nicht möglich: %(error)s"
 #: fedora/client/baseclient.py:153
 #, fuzzy, python-format
 msgid "No session cached for \"%s\""
-msgstr "Session ID für XMMS"
+msgstr "Session ID für \"%s\""
 
 #: fedora/client/baseclient.py:275
 #, python-format
@@ -373,5 +373,5 @@ msgstr "Abmelden"
 #: fedora/tg/visit/jsonfasvisit2.py:110
 #, fuzzy, python-format
 msgid "updating visit (%s)"
-msgstr "Aktualisiere alles"
+msgstr "Aktualisiere alles (%s)"
 
