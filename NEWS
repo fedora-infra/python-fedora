@@ -3,7 +3,7 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 23 Mar 2009
+:Date: 9 Apr 2009
 :Version: 0.3.x
 
 ------
@@ -14,7 +14,8 @@ NEWS
 * Bugfix to jsonfas2 that allows login when using json calls with Cherrypy 2.3+
 * Get i18n infrastructure ready and take translations from transifex
 * Include a setup.py so easy_install works
-* Update build to work with paver 1.0 or 0.8
+* Update build to work with paver 1.0 and somewhat with 0.8
+* Add remove_user() to pkgdb client module.
 
 --------
 0.3.11.1

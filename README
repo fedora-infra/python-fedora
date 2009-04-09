@@ -39,7 +39,12 @@ procedures::
 
     # bzr branch bzr://bzr.fedorahosted.org/bzr/python-fedora/python-fedora-devel
     # cd python-fedora-devel
-    # python setup.py install
+    # paver install
+
+You'll need Paver 1.0 or higher for this to work.  In Fedora, this can be
+installed with::
+
+    # yum install -y python-paver
 
 See the configuration notes in each section for information on configuring
 your application after install.
