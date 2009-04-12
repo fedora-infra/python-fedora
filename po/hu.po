@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: python-fedora 0.3.12\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-03-20 00:04-0700\n"
-"PO-Revision-Date: 2009-04-11 22:50+0200\n"
+"PO-Revision-Date: 2009-04-12 09:19+0200\n"
 "Last-Translator: Sulyok Péter <peti@fedoraproject.org>\n"
 "Language-Team: Hungarian <fedora-trans-hu@redhat.com>\n"
 "MIME-Version: 1.0\n"
@@ -91,29 +91,32 @@ msgid ""
 "username and password or session_id before calling this function with "
 "auth=True"
 msgstr ""
+"Hitelesítést kértek, de nem adták meg milyen módon.  Kérem adja "
+"meg a használót és a jelszót, vagy a munkafolyamat azonosítót "
+"mielőtt auth=True argumentummal hívja e függvényt."
 
 #: fedora/client/bodhi.py:190
 msgid "You must specify a username"
-msgstr ""
+msgstr "Meg kell adni a használó nevét"
 
 #: fedora/client/bodhi.py:259
 #, python-format
 msgid "Reading from %s "
-msgstr ""
+msgstr "Olvasás %s fájlból "
 
 #: fedora/client/fas2.py:187
 #, python-format
 msgid "FAS server unable to retrieve group %s"
-msgstr ""
+msgstr "FAS szolgálónak nem sikerült %s csoportot lekérdeznie"
 
 #: fedora/client/fas2.py:299
 msgid "key must be one of \"id\", \"username\", or \"email\""
-msgstr ""
+msgstr "a kulcs vagy „id” vagy „username” vagy „email” kell legyen"
 
 #: fedora/client/fas2.py:305
 #, python-format
 msgid "%(field)s is not a valid field to filter"
-msgstr ""
+msgstr "%(field)s érvénytelen mint szűrendő mező"
 
 #: fedora/client/fas2.py:354
 msgid ""
@@ -121,19 +124,22 @@ msgid ""
 "your code to use people_by_key(key='id', fields=['human_name', 'email', "
 "'username', 'bugzilla_email']) instead"
 msgstr ""
+"people_by_id() elavult, és 0.4-ben már nem lesz.  Kérem változtasson "
+"a kódon, hogy inkább a people_by_key(key='id', fields=['human_name',·"
+"'email', 'username', 'bugzilla_email']) hívást használja."
 
 #: fedora/client/fas2.py:507
 msgid "FAS server unable to retrieve group members"
-msgstr ""
+msgstr "FAS szolgáló képtelen csoporttagokat lekérni"
 
 #: fedora/client/fas2.py:529
 msgid "FAS server unable to retrieve user information"
-msgstr ""
+msgstr "FAS szolgáló képtelen használó adatokat lekérni"
 
 #: fedora/client/pkgdb.py:188
 #, python-format
 msgid "PackageDB returned an error creating %(pkg)s: %(msg)s"
-msgstr ""
+msgstr "%(pkg)s csomagot készítvén PackageDB hibával tért vissza: %(msg)s"
 
 #: fedora/client/pkgdb.py:193
 #, python-format
@@ -141,20 +147,22 @@ msgid ""
 "Package %(pkg)s does not exist and we do not have enough information to "
 "create it."
 msgstr ""
+"Nincs %(pkg)s csomag, és nincs elég adatunk hogy megteremtsük."
 
 #: fedora/client/pkgdb.py:230
 #, python-format
 msgid "Unable to save all information for %(pkg)s: %(msg)s"
-msgstr ""
+msgstr "Nem sikerült %(pkg)s minden adatát elmenteni: %(msg)s"
 
 #: fedora/client/pkgdb.py:256
 #, python-format
 msgid "Collection abbreviation %(collection)s is unknown.  Use F, FC, EL, or OLPC"
-msgstr ""
+msgstr "%(collection)s gyűjtemény rövidítés ismeretlen.  Használja F, FC, EL, "
+"vagy OLPC rövidítések valamelyikét."
 
 #: fedora/client/proxyclient.py:104
 msgid "proxyclient.__init__:entered"
-msgstr ""
+msgstr "proxyclient.__init__:belépve"
 
 #: fedora/client/proxyclient.py:113
 msgid ""
@@ -162,83 +170,94 @@ msgid ""
 "in 0.4.  Please port your code to use a session_id instead by calling the"
 " ProxyClient constructor with session_as_cookie=False"
 msgstr ""
+"A send_request() hívásból visszatérő sütik használata elavult, és "
+"0.4-től már nem lesz.  Kérem változtasson, hogy inkább "
+"munkafolyamat azonosítót használjon a ProxyClient építő "
+"hívásakor session_as_cookie=False argumentummal."
 
 #: fedora/client/proxyclient.py:119
 msgid "proxyclient.__init__:exited"
-msgstr ""
+msgstr "proxyclient.__init__:kilépve"
 
 #: fedora/client/proxyclient.py:186
 msgid "proxyclient.send_request: entered"
-msgstr ""
+msgstr "proxyclient.send_request: belépve"
 
 #: fedora/client/proxyclient.py:195
 msgid ""
 "Giving a cookie to send_request() to authenticate is deprecated and will "
 "be removed in 0.4. Please port your code to use session_id instead."
 msgstr ""
+"Süti megadása send_request() hívásnak hitelesítéshez elavult, és "
+"0.4-től már nem lesz. Kérem változtasson: használjon inkább "
+"munkafolyamat azonosítót."
 
 #: fedora/client/proxyclient.py:205
 msgid "username and password must both be set in auth_params"
-msgstr ""
+msgstr "használó nevet és jelszót is meg kell adni auth_params paraméterben"
 
 #: fedora/client/proxyclient.py:208
 msgid ""
 "No known authentication methods specified: set \"cookie\" in auth_params "
 "or set both username and password in auth_params"
 msgstr ""
+"Nincs megadva ismert hitelesítő eljárás: használó nevet és jelszót "
+"auth_params paraméterben"
 
 #: fedora/client/proxyclient.py:269
 #, python-format
 msgid "Creating request %(url)s"
-msgstr ""
+msgstr "%(url)s kérelem megteremtése"
 
 #: fedora/client/proxyclient.py:270
 #, python-format
 msgid "Headers: %(header)s"
-msgstr ""
+msgstr "Fejlécek: %(header)s"
 
 #: fedora/client/proxyclient.py:274
 #, python-format
 msgid "Data: %(data)s"
-msgstr ""
+msgstr "Adatok: %(data)s"
 
 #: fedora/client/proxyclient.py:286
 msgid "Authentication failed logging in"
-msgstr ""
+msgstr "Hitelesítésen bukott a bejelentkezés"
 
 #: fedora/client/proxyclient.py:287
 msgid ""
 "Unable to log into server.  Invalid authentication tokens.  Send new "
 "username and password"
 msgstr ""
+"Nem lehet a szolgálóra bejelentkezni.  Érvénytelen hitelesítő adatok.  "
+"Küldjön új használó nevet és jelszót."
 
 #: fedora/client/proxyclient.py:293
 msgid "Unknown HTTP Server Response"
-msgstr ""
+msgstr "Ismeretlen HTTP szolgáló válasz"
 
 #: fedora/client/proxyclient.py:313
 #, python-format
 msgid "Error returned from simplejson while processing %(url)s: %(err)s"
-msgstr ""
+msgstr "Hiba tért vissza simplejsonból %(url)s helyet feldolgozván: %(err)s"
 
 #: fedora/client/proxyclient.py:329
 msgid "proxyclient.send_request: exited"
-msgstr ""
+msgstr "proxyclient.send_request: kilépve"
 
 #: fedora/client/wiki.py:56
 #, python-format
 msgid "Login failed: %s"
-msgstr ""
+msgstr "Elbukott bejelentkezés: %s"
 
 #: fedora/client/wiki.py:64
 #, python-format
 msgid "From %(then)s to %(now)s"
-msgstr ""
+msgstr "%(then)s - %(now)s"
 
 #: fedora/client/wiki.py:67
 #, python-format
 msgid "%d wiki changes in the past week"
-msgstr ""
+msgstr "%d wiki változás a múlt héten"
 
 #: fedora/client/wiki.py:69
 msgid ""
@@ -246,18 +265,25 @@ msgid ""
 "You will not get the complete list of changes unless\n"
 "you run this script using a 'bot' account."
 msgstr ""
+"Figyelmeztetés: Számos változás éri el az API visszatérés korlátot.\n"
+"Nem fogja megkapni a változások teljes listáját, hacsak nem\n"
+"„bot” számlára futtatja ezt az írást."
 
 #: fedora/client/wiki.py:79
 msgid ""
 "\n"
 "== Most active wiki users =="
 msgstr ""
+"\n"
+"== Legtevékenyebb wiki használók =="
 
 #: fedora/client/wiki.py:86
 msgid ""
 "\n"
 "== Most edited pages =="
 msgstr ""
+"\n"
+"== Legtöbbet szerkesztett oldalak =="
 
 #: fedora/django/auth/models.py:48
 msgid "Loading FAS groups..."
@@ -306,29 +332,31 @@ msgstr "Sikerült kijelentkezni."
 
 #: fedora/tg/util.py:106
 msgid "url() expects a dictionary for query parameters"
-msgstr ""
+msgstr "url() python szótár típusú argumentumot vár a kérés paramétereiként"
 
 #: fedora/tg/identity/jsonfasprovider1.py:226
 #: fedora/tg/identity/jsonfasprovider2.py:392
 #, python-format
 msgid "Error logging in %(user)s: %(error)s"
-msgstr ""
+msgstr "Hiba %(user)s bejelentkezésekor: %(error)s"
 
 #: fedora/tg/identity/jsonfasprovider2.py:59
 msgid ""
 "Cannot enable ssl certificate auth via identity.ssl without setting "
 "fas.usernamme and fas.password for authorization"
 msgstr ""
+"Nem lehet engedélyezni ssl bizonyítványt identity.ssl-lel "
+"a fas.usernamme·és·fas.password megadása nélkül."
 
 #: fedora/tg/identity/jsonfasprovider2.py:155
 #, python-format
 msgid "jsonfasprovider, ssl, returned errors from send_request: %s"
-msgstr ""
+msgstr "jsonfasprovider, ssl, hibával tért vissza a send_requestből: %s"
 
 #: fedora/tg/identity/jsonfasprovider2.py:167
 #, python-format
 msgid "jsonfasprovider returned errors from send_request: %s"
-msgstr ""
+msgstr "jsonfasprovider·hibákkal tért vissza send_requestből:·%s"
 
 #: fedora/tg/templates/genshi/login.html:10
 msgid "Log In"
@@ -349,7 +377,7 @@ msgstr "Bejelentkezés"
 
 #: fedora/tg/templates/genshi/login.html:28
 msgid "CSRF attacks"
-msgstr ""
+msgstr "CSRF támadások"
 
 #: fedora/tg/templates/genshi/login.html:29
 msgid ""
@@ -364,6 +392,13 @@ msgid ""
 "        forwarding your authentication cookies on behalf of a malicious\n"
 "        website."
 msgstr ""
+"rosszindulatú webhelyek eszköze arra, hogy kérést intézzen más\n"
+"        webszolgálókhoz a rosszindulatú webhellyel kapcsolatba lépő\n"
+"        használóként.  E lap célja, hogy segítsen megvédeni az ön\n"
+"        számláját és e szolgálót az ilyen rosszindulatú webhelyektől.\n"
+"        Alább kattintva ön bizonyítja, hogy inkább élő személy\n"
+"        mint csak egy rosszindulatú webhely nevében eljáró és az\n"
+"        ön hitelesítő sütijét továbbító webböngésző."
 
 #: fedora/tg/templates/genshi/login.html:36
 msgid "I am a human"
@@ -387,7 +422,7 @@ msgstr "Ön nem jelentkezett be"
 
 #: fedora/tg/templates/genshi/login.html:89
 msgid "CSRF protected"
-msgstr ""
+msgstr "CSRF védve"
 
 #: fedora/tg/templates/genshi/login.html:91
 msgid "Verify Login"
