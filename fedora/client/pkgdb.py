@@ -211,17 +211,8 @@ class PackageDB(BaseClient):
 
         # Parse the Branch abbreviations into collections
         if branches:
-            data['collections'] = {}
-            for branch in branches:
-                collection, version = self.canonical_branch_name(branch)
-                # Create branch
-                try:
-                    data['collections'][collection].append(version)
-                except KeyError:
-                    data['collections'][collection] = [version]
-
-            # Transform the collections dict into JSON.
-            data['collections'] = simplejson.dumps(data['collections'])
+            data['collections'] = []
+            data['collections'] = branches
 
         # Request the changes
         response = self.send_request('/packages/dispatcher/edit_package/%s'
