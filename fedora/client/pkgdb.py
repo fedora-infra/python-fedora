@@ -139,9 +139,73 @@ class PackageDB(BaseClient):
         return self.send_request('/collections/mass_branch/%s' % branch,
                 auth=True)
 
-    def add_edit_package(self, pkg, owner=None, description=None,
+    def add_package(self, pkg, owner=None, description=None,
             branches=None, cc_list=None, comaintainers=None, groups=None):
-        '''Add or edit a package to the database.
+        '''Add a package to the database.
+
+        :arg pkg: Name of the package to edit
+        :kwarg owner: If set, make this person the owner of both branches
+        :kwarg description: If set, make this the description of both branches
+        :kwarg branches: List of branches to operate on
+        :kwarg cc_list: If set, list or tuple of usernames to watch the
+            package.
+        :kwarg comaintainers: If set, list or tuple of usernames to comaintain
+            the package.
+        :kwarg groups: If set, list or tuple of group names that can commit to
+            the package.
+        :raises AppError: If the server returns an error
+
+        This method adds the package to the database.
+
+        Note: This method will be going away in favor of methods that do
+        smaller chunks of work:
+
+        1) A method to add a new package
+        '''
+        # See if we have the information to
+        # create it
+        if not owner:
+            raise AppError(name='AppError',message=_('We do not have '
+                    'enough information to create package %(pkg)s. '
+                    'Need owner.') % {'pkg': pkg})
+
+        data = {'owner': owner, 'summary': description}
+        # This call creates the package and an initial branch for
+        # Fedora devel
+        response = self.send_request('/packages/dispatcher/add_package/%s'
+            % pkg, auth=True, req_params=data)
+        if 'status' in response and not response['status']:
+            raise AppError(name='PackageDBError', message=
+                _('PackageDB returned an error creating %(pkg)s:'
+                ' %(msg)s') % {'pkg': pkg, 'msg': response['message']})
+            
+        if cc_list:
+            data['ccList'] = simplejson.dumps(cc_list)
+        if comaintainers:
+            data['comaintList'] = simplejson.dumps(comaintainers)
+
+        # Parse the groups information
+        if groups:
+            data['groups'] = simplejson.dumps(groups)
+
+        # Parse the Branch abbreviations into collections
+        if branches:
+            data['collections'] = []
+            data['collections'] = branches
+        del data['owner']
+
+        if cc_list or comaintainers or groups or branches:
+            response = self.send_request('/packages/dispatcher/'
+                    'edit_package/%s' % pkg, auth=True, req_params=data)
+            if 'status' in response and not response['status']:
+                raise AppError(name='PackageDBError', 
+                    message=_('Unable to save all information for'
+                        ' %(pkg)s: %(msg)s') % {'pkg': pkg,
+                        'msg': response['message']})
+
+    def edit_package(self, pkg, owner=None, description=None,
+            branches=None, cc_list=None, comaintainers=None, groups=None):
+        '''Edit a package.
 
         :arg pkg: Name of the package to edit
         :kwarg owner: If set, make this person the owner of both branches
@@ -156,44 +220,15 @@ class PackageDB(BaseClient):
         :raises AppError: If the server returns an error
 
         This method takes information about a package and either edits the
-        package to reflect the changes to information or adds the package to
-        the database.
+        package to reflect the changes to information.
 
         Note: This method will be going away in favor of methods that do
         smaller chunks of work:
 
-        1) A method to add a new package
-        2) A method to add a new branch
-        3) A method to edit an existing package
-        4) A method to edit and existing branch
+        1) A method to add a new branch
+        2) A method to edit an existing package
+        3) A method to edit and existing branch
         '''
-        # Check if the package exists
-        try:
-            self.get_package_info(pkg)
-        except AppError:
-            # Package doesn't exist yet.  See if we have the information to
-            # create it
-            if owner:
-                if 'devel' not in branches:
-                    # automatically add a devel branch to new packages
-                    branches.append('devel')
-
-                data = {'package': pkg, 'owner': owner, 'summary': description}
-                # This call creates the package and an initial branch for
-                # Fedora devel
-                response = self.send_request('/packages/dispatcher/add_package',
-                    auth=True, req_params=data)
-                if 'status' in response and not response['status']:
-                    raise AppError(name='PackageDBError', message=
-                        _('PackageDB returned an error creating %(pkg)s:'
-                        ' %(msg)s') % {'pkg': pkg, 'msg': response['message']})
-                owner = None
-                description = None
-            else:
-                raise PackageDBError, _('Package %(pkg)s does not exist and we'
-                        ' do not have enough information to create it.') % \
-                                {'pkg': pkg}
-
         # Change the branches, owners, or anything else that needs changing
         data = {}
         if owner:
@@ -221,6 +256,7 @@ class PackageDB(BaseClient):
             raise AppError(name='PackageDBError', message=_('Unable to save'
                 ' all information for %(pkg)s: %(msg)s') % {'pkg': pkg,
                     'msg': response['message']})
+
 
     def canonical_branch_name(self, branch):
         '''Change a branch abbreviation into a name and version.
