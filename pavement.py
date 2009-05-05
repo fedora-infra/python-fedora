@@ -39,7 +39,7 @@ options(
         # non-setuptools package.  When everything we care about uses
         # python-2.5 distutils we can add these:
         #   for bodhi (koji yum)
-        install_requires=['simplejson'],
+        install_requires=['simplejson', 'pycurl'],
         # And these to extra_require:
         #   for widgets: (bugzilla feedparser)
         extras_require = {'tg' : ['TurboGears >= 1.0.4', 'SQLAlchemy',
