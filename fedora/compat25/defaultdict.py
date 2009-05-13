@@ -25,6 +25,8 @@
 # This code provides an emulation for the defaultdict functionality 
 # introduced in python 2.5's collection module
 
+from fedora import _
+
 try:
     from collections import defaultdict
 except:
@@ -32,7 +34,7 @@ except:
         def __init__(self, default_factory=None, *a, **kw):
             if (default_factory is not None and
                 not hasattr(default_factory, '__call__')):
-                raise TypeError('first argument must be callable')
+                raise TypeError(_('first argument must be callable'))
             dict.__init__(self, *a, **kw)
             self.default_factory = default_factory
         def __getitem__(self, key):
@@ -62,4 +64,3 @@ except:
         def __repr__(self):
             return 'defaultdict(%s, %s)' % (self.default_factory,
                                             dict.__repr__(self))
-
