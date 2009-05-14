@@ -37,7 +37,7 @@ except ImportError:
         def __init__(self, default_factory=None, *args, **kwargs):
             if (default_factory is not None and
                 not hasattr(default_factory, '__call__')):
-                raise TypeError(_('first argument must be callable'))
+                raise TypeError(_('First argument must be callable'))
             dict.__init__(self, *args, **kwargs)
             self.default_factory = default_factory
         def __getitem__(self, key):
