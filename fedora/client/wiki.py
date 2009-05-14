@@ -28,8 +28,8 @@ from fedora import _
 
 class Wiki(BaseClient):
 
-    def __init__(self, base_url='http://fedoraproject.org/w/', *args, **kw):
-        super(Wiki, self).__init__(base_url, *args, **kw)
+    def __init__(self, base_url='http://fedoraproject.org/w/', *args, **kwargs):
+        super(Wiki, self).__init__(base_url, *args, **kwargs)
 
     def get_recent_changes(self, now, then, limit=500):
         """ Get recent wiki changes from `now` until `then` """

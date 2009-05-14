@@ -148,8 +148,7 @@ class JsonFasIdentity(BaseClient):
             # Retrieve the user information differently when using ssl
             try:
                 person = fas.person_by_username(self.username, auth=True)
-            except Exception, e:
-                # pylint: disable-msg=W0703
+            except Exception, e: # pylint: disable-msg=W0703
                 # :W0703: Any errors have to result in no user being set.  The
                 # rest of the framework doesn't know what to do otherwise.
                 self.log.warning(_('jsonfasprovider, ssl, returned errors'
@@ -160,8 +159,7 @@ class JsonFasIdentity(BaseClient):
         # pylint: disable-msg=W0702
         try:
             data = self.send_request('user/view', auth=True)
-        except Exception, e:
-            # pylint: disable-msg=W0703
+        except Exception, e: # pylint: disable-msg=W0703
             # :W0703: Any errors have to result in no user being set.  The rest
             # of the framework doesn't know what to do otherwise.
             self.log.warning(_('jsonfasprovider returned errors from'
@@ -284,8 +282,7 @@ class JsonFasIdentity(BaseClient):
         '''Return the groups that a user is a member of.'''
         try:
             return self._groups
-        except AttributeError:
-            # pylint: disable-msg=W0704
+        except AttributeError: # pylint: disable-msg=W0704
             # :W0704: Groups haven't been computed yet
             pass
         if not self.user:
@@ -299,8 +296,7 @@ class JsonFasIdentity(BaseClient):
         '''Get set of group IDs of this identity.'''
         try:
             return self._group_ids
-        except AttributeError:
-            # pylint: disable-msg=W0704
+        except AttributeError: # pylint: disable-msg=W0704
             # :W0704: Groups haven't been computed yet
             pass
         if not self.groups:

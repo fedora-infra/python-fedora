@@ -276,11 +276,11 @@ def json_or_redirect(forward_url):
     .. versionadded:: 0.3.7
        To make writing methods that use validation easier
     '''
-    def call(func, *args, **kw):
+    def call(func, *args, **kwargs):
         if request_format() == 'json':
-            return func(*args, **kw)
+            return func(*args, **kwargs)
         else:
-            func(*args, **kw)
+            func(*args, **kwargs)
             raise redirect(forward_url)
     return decorator(call)
 

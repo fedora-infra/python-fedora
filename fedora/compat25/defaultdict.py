@@ -28,14 +28,17 @@
 from fedora import _
 
 try:
+    # :W0611: We're importing the 2.5 version first.  If that doesn't work,
+    # implement our own.
+    # pylint: disable-msg=W0611
     from collections import defaultdict
-except:
+except ImportError:
     class defaultdict(dict):
-        def __init__(self, default_factory=None, *a, **kw):
+        def __init__(self, default_factory=None, *args, **kwargs):
             if (default_factory is not None and
                 not hasattr(default_factory, '__call__')):
                 raise TypeError(_('first argument must be callable'))
-            dict.__init__(self, *a, **kw)
+            dict.__init__(self, *args, **kwargs)
             self.default_factory = default_factory
         def __getitem__(self, key):
             try:

@@ -162,7 +162,7 @@ class PackageDB(BaseClient):
         # See if we have the information to
         # create it
         if not owner:
-            raise AppError(name='AppError',message=_('We do not have '
+            raise AppError(name='AppError', message=_('We do not have '
                     'enough information to create package %(pkg)s. '
                     'Need version owner.') % {'pkg': pkg})
 
@@ -323,9 +323,9 @@ class PackageDB(BaseClient):
         .. versionadded:: 0.3.12
         '''
         if collectn_list:
-            params={'username': username, 'pkg_name': pkg_name, 
+            params = {'username': username, 'pkg_name': pkg_name, 
                 'collectn_list': collectn_list}
         else:
-            params={'username': username, 'pkg_name': pkg_name}
+            params = {'username': username, 'pkg_name': pkg_name}
         return self.send_request('/packages/dispatcher/remove_user', auth=True,
                    req_params=params)
