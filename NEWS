@@ -3,8 +3,20 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 9 Apr 2009
+:Date: 13 May 2009
 :Version: 0.3.x
+
+------
+0.3.13
+------
+* Add new pkgdb methods: add_package() to add a new package and edit_package()
+  to edit an existing one.  add_edit_package() was removed.
+* More translations.
+* Change from 401 response code to 403.  401 was causing problems for konqueror
+  and webkit and our usage wasn't http spec compliant.
+* New fedora.compat25 that has python-2.5 features for older releases.
+  - fedora.compat25.defaultdict a defaultdict implementation for older python
+    releases.
 
 ------
 0.3.12
