@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: python-fedora 0.3.6\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2008-09-16 17:38+0700\n"
-"PO-Revision-Date: 2009-03-19 15:50-0700\n"
+"PO-Revision-Date: 2009-05-13 22:15-0700\n"
 "Last-Translator: Diego Búrigo Zacarão <diegobz@fedoraproject.org>\n"
 "Language-Team: American English <fedora-trans-pt_br@redhat.com>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -99,46 +99,53 @@ msgstr ""
 msgid "Reading from %s "
 msgstr ""
 
-#: fedora/client/fas2.py:187
+#: fedora/client/fas2.py:189
 #, python-format
 msgid "FAS server unable to retrieve group %s"
 msgstr ""
 
-#: fedora/client/fas2.py:299
+#: fedora/client/fas2.py:301
 msgid "key must be one of \"id\", \"username\", or \"email\""
 msgstr ""
 
-#: fedora/client/fas2.py:305
+#: fedora/client/fas2.py:307
 #, python-format
 msgid "%(field)s is not a valid field to filter"
 msgstr ""
 
-#: fedora/client/fas2.py:510
+#: fedora/client/fas2.py:356
+msgid ""
+"people_by_id() is deprecated and will be removed in 0.4.  Please port "
+"your code to use people_by_key(key='id', fields=['human_name', 'email', "
+"'username', 'bugzilla_email']) instead"
+msgstr ""
+
+#: fedora/client/fas2.py:509
 msgid "FAS server unable to retrieve group members"
 msgstr ""
 
-#: fedora/client/fas2.py:532
+#: fedora/client/fas2.py:531
 msgid "FAS server unable to retrieve user information"
 msgstr ""
 
-#: fedora/client/pkgdb.py:188
+#: fedora/client/pkgdb.py:165
+#, python-format
+msgid ""
+"We do not have enough information to create package %(pkg)s. Need version"
+" owner."
+msgstr ""
+
+#: fedora/client/pkgdb.py:176
 #, python-format
 msgid "PackageDB returned an error creating %(pkg)s: %(msg)s"
 msgstr ""
 
-#: fedora/client/pkgdb.py:193
-#, python-format
-msgid ""
-"Package %(pkg)s does not exist and we do not have enough information to "
-"create it."
-msgstr ""
-
-#: fedora/client/pkgdb.py:230
+#: fedora/client/pkgdb.py:199 fedora/client/pkgdb.py:255
 #, python-format
 msgid "Unable to save all information for %(pkg)s: %(msg)s"
 msgstr "Impossível salvar todas as informações para %(pkg)s: %(msg)s"
 
-#: fedora/client/pkgdb.py:256
+#: fedora/client/pkgdb.py:281
 #, python-format
 msgid "Collection abbreviation %(collection)s is unknown.  Use F, FC, EL, or OLPC"
 msgstr ""
@@ -250,15 +257,19 @@ msgid ""
 "== Most edited pages =="
 msgstr ""
 
-#: fedora/django/auth/models.py:49
+#: fedora/compat25/defaultdict.py:40
+msgid "First argument must be callable"
+msgstr ""
+
+#: fedora/django/auth/models.py:48
 msgid "Loading FAS groups..."
 msgstr ""
 
-#: fedora/django/auth/models.py:56
+#: fedora/django/auth/models.py:55
 msgid "Unable to load FAS groups. Did you set FAS_USERNAME and FAS_PASSWORD?"
 msgstr ""
 
-#: fedora/django/auth/models.py:63
+#: fedora/django/auth/models.py:62
 msgid "FAS groups loaded. Don't forget to unset FAS_USERNAME and FAS_PASSWORD."
 msgstr ""
 
@@ -291,12 +302,12 @@ msgstr ""
 msgid "You have successfully logged out."
 msgstr ""
 
-#: fedora/tg/util.py:105
+#: fedora/tg/util.py:106
 msgid "url() expects a dictionary for query parameters"
 msgstr ""
 
 #: fedora/tg/identity/jsonfasprovider1.py:226
-#: fedora/tg/identity/jsonfasprovider2.py:378
+#: fedora/tg/identity/jsonfasprovider2.py:388
 #, python-format
 msgid "Error logging in %(user)s: %(error)s"
 msgstr ""
@@ -307,35 +318,91 @@ msgid ""
 "fas.usernamme and fas.password for authorization"
 msgstr ""
 
+#: fedora/tg/identity/jsonfasprovider2.py:154
+#, python-format
+msgid "jsonfasprovider, ssl, returned errors from send_request: %s"
+msgstr ""
+
+#: fedora/tg/identity/jsonfasprovider2.py:165
+#, python-format
+msgid "jsonfasprovider returned errors from send_request: %s"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:10
+msgid "Log In"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:14
+msgid "User Name:"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:17
+msgid "Password:"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:21
+#: fedora/tg/templates/genshi/login.html:84
+msgid "Login"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:28
+msgid "CSRF attacks"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:29
+msgid ""
+" are a means for a malicious website to make a request of another\n"
+"        web server as the user who contacted the malicious web site.  The"
+"\n"
+"        purpose of this page is to help protect your account and this "
+"server\n"
+"        from attacks from such malicious web sites.  By clicking below, "
+"you are\n"
+"        proving that you are a person rather than just the web browser\n"
+"        forwarding your authentication cookies on behalf of a malicious\n"
+"        website."
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:36
+msgid "I am a human"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:41
+msgid "Forgot Password?"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:42
+msgid "Sign Up"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:60
+msgid "Welcome"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:82
+msgid "You are not logged in"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:89
+msgid "CSRF protected"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:91
+msgid "Verify Login"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:97
+msgid "Logout"
+msgstr ""
+
 #: fedora/tg/visit/jsonfasvisit1.py:109 fedora/tg/visit/jsonfasvisit2.py:110
 #, python-format
 msgid "updating visit (%s)"
 msgstr "atualizando visita (%s)"
 
-#~ msgid "Python modules for interacting with Fedora services"
-#~ msgstr ""
-
-#~ msgid "%(pkg)s has no %(branch)s branch; cannot clone from it.  Error: %(msg)s"
-#~ msgstr ""
-
 #~ msgid ""
-#~ "PackageDB returned an error while "
-#~ "setting acls for %(person)s on %(pkg)s:"
-#~ " %(msg)s"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Returning cookies from send_request() is "
-#~ "deprecated and will be removed in "
-#~ "0.4.  Please port your code to use"
-#~ " a sesison_id instead by calling the"
-#~ " ProxyClient constructor with "
-#~ "session_as_cookie=False"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Unable to log into server.  Invalid "
-#~ "authentication tokens.  Send new username "
-#~ "and password:  %(error)s"
+#~ "Package %(pkg)s does not exist and "
+#~ "we do not have enough information "
+#~ "to create it."
 #~ msgstr ""
 

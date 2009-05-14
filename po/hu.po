@@ -8,13 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: python-fedora 0.3.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-03-20 00:04-0700\n"
-"PO-Revision-Date: 2009-04-12 09:19+0200\n"
+"POT-Creation-Date: 2009-03-20 00:04+0700\n"
+"PO-Revision-Date: 2009-05-13 22:15-0700\n"
 "Last-Translator: Sulyok Péter <peti@fedoraproject.org>\n"
 "Language-Team: Hungarian <fedora-trans-hu@redhat.com>\n"
+"Plural-Forms: nplurals=1; plural=0\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
-"Content-Transfer-Encoding: 8bit"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.4\n"
 
 #: fedora/release.py:9
 msgid "Python modules for interacting with Fedora Services"
@@ -40,8 +42,8 @@ msgid ""
 "fedora.accounts.fas2 has moved to fedora.client.fas2.  This location will"
 " disappear in 0.4"
 msgstr ""
-"fedora.accounts.fas2 elköltözött fedora.client.fas2 helyre.  E hely el fog "
-"tűnni 0.4-ben"
+"fedora.accounts.fas2 elköltözött fedora.client.fas2 helyre.  E hely el "
+"fog tűnni 0.4-ben"
 
 #: fedora/client/baseclient.py:84 fedora/client/baseclient.py:203
 #: fedora/client/baseclient.py:222 fedora/client/baseclient.py:234
@@ -83,7 +85,9 @@ msgstr "send_request() váratlan kulcsszó argumentumot kapott"
 
 #: fedora/client/baseclient.py:287
 msgid "send_request(input) is deprecated.  Use send_request(req_params) instead"
-msgstr "send_request(input) elavult.  Használja inkább a send_request(req_params) hívást"
+msgstr ""
+"send_request(input) elavult.  Használja inkább a send_request(req_params)"
+" hívást"
 
 #: fedora/client/baseclient.py:303
 msgid ""
@@ -91,9 +95,9 @@ msgid ""
 "username and password or session_id before calling this function with "
 "auth=True"
 msgstr ""
-"Hitelesítést kértek, de nem adták meg milyen módon.  Kérem adja "
-"meg a használót és a jelszót, vagy a munkafolyamat azonosítót "
-"mielőtt auth=True argumentummal hívja e függvényt."
+"Hitelesítést kértek, de nem adták meg milyen módon.  Kérem adja meg a "
+"használót és a jelszót, vagy a munkafolyamat azonosítót mielőtt auth=True"
+" argumentummal hívja e függvényt."
 
 #: fedora/client/bodhi.py:190
 msgid "You must specify a username"
@@ -104,61 +108,62 @@ msgstr "Meg kell adni a használó nevét"
 msgid "Reading from %s "
 msgstr "Olvasás %s fájlból "
 
-#: fedora/client/fas2.py:187
+#: fedora/client/fas2.py:189
 #, python-format
 msgid "FAS server unable to retrieve group %s"
 msgstr "FAS szolgálónak nem sikerült %s csoportot lekérdeznie"
 
-#: fedora/client/fas2.py:299
+#: fedora/client/fas2.py:301
 msgid "key must be one of \"id\", \"username\", or \"email\""
 msgstr "a kulcs vagy „id” vagy „username” vagy „email” kell legyen"
 
-#: fedora/client/fas2.py:305
+#: fedora/client/fas2.py:307
 #, python-format
 msgid "%(field)s is not a valid field to filter"
 msgstr "%(field)s érvénytelen mint szűrendő mező"
 
-#: fedora/client/fas2.py:354
+#: fedora/client/fas2.py:356
 msgid ""
 "people_by_id() is deprecated and will be removed in 0.4.  Please port "
 "your code to use people_by_key(key='id', fields=['human_name', 'email', "
 "'username', 'bugzilla_email']) instead"
 msgstr ""
-"people_by_id() elavult, és 0.4-ben már nem lesz.  Kérem változtasson "
-"a kódon, hogy inkább a people_by_key(key='id', fields=['human_name',·"
-"'email', 'username', 'bugzilla_email']) hívást használja."
+"people_by_id() elavult, és 0.4-ben már nem lesz.  Kérem változtasson a "
+"kódon, hogy inkább a people_by_key(key='id', "
+"fields=['human_name',·'email', 'username', 'bugzilla_email']) hívást "
+"használja."
 
-#: fedora/client/fas2.py:507
+#: fedora/client/fas2.py:509
 msgid "FAS server unable to retrieve group members"
 msgstr "FAS szolgáló képtelen csoporttagokat lekérni"
 
-#: fedora/client/fas2.py:529
+#: fedora/client/fas2.py:531
 msgid "FAS server unable to retrieve user information"
 msgstr "FAS szolgáló képtelen használó adatokat lekérni"
 
-#: fedora/client/pkgdb.py:188
+#: fedora/client/pkgdb.py:165
+#, python-format
+msgid ""
+"We do not have enough information to create package %(pkg)s. Need version"
+" owner."
+msgstr ""
+
+#: fedora/client/pkgdb.py:176
 #, python-format
 msgid "PackageDB returned an error creating %(pkg)s: %(msg)s"
 msgstr "%(pkg)s csomagot készítvén PackageDB hibával tért vissza: %(msg)s"
 
-#: fedora/client/pkgdb.py:193
-#, python-format
-msgid ""
-"Package %(pkg)s does not exist and we do not have enough information to "
-"create it."
-msgstr ""
-"Nincs %(pkg)s csomag, és nincs elég adatunk hogy megteremtsük."
-
-#: fedora/client/pkgdb.py:230
+#: fedora/client/pkgdb.py:199 fedora/client/pkgdb.py:255
 #, python-format
 msgid "Unable to save all information for %(pkg)s: %(msg)s"
 msgstr "Nem sikerült %(pkg)s minden adatát elmenteni: %(msg)s"
 
-#: fedora/client/pkgdb.py:256
+#: fedora/client/pkgdb.py:281
 #, python-format
 msgid "Collection abbreviation %(collection)s is unknown.  Use F, FC, EL, or OLPC"
-msgstr "%(collection)s gyűjtemény rövidítés ismeretlen.  Használja F, FC, EL, "
-"vagy OLPC rövidítések valamelyikét."
+msgstr ""
+"%(collection)s gyűjtemény rövidítés ismeretlen.  Használja F, FC, EL, \"\n"
+"\"vagy OLPC rövidítések valamelyikét."
 
 #: fedora/client/proxyclient.py:104
 msgid "proxyclient.__init__:entered"
@@ -170,10 +175,10 @@ msgid ""
 "in 0.4.  Please port your code to use a session_id instead by calling the"
 " ProxyClient constructor with session_as_cookie=False"
 msgstr ""
-"A send_request() hívásból visszatérő sütik használata elavult, és "
-"0.4-től már nem lesz.  Kérem változtasson, hogy inkább "
-"munkafolyamat azonosítót használjon a ProxyClient építő "
-"hívásakor session_as_cookie=False argumentummal."
+"A send_request() hívásból visszatérő sütik használata elavult, és 0.4-től"
+" már nem lesz.  Kérem változtasson, hogy inkább munkafolyamat azonosítót "
+"használjon a ProxyClient építő hívásakor session_as_cookie=False "
+"argumentummal."
 
 #: fedora/client/proxyclient.py:119
 msgid "proxyclient.__init__:exited"
@@ -188,9 +193,9 @@ msgid ""
 "Giving a cookie to send_request() to authenticate is deprecated and will "
 "be removed in 0.4. Please port your code to use session_id instead."
 msgstr ""
-"Süti megadása send_request() hívásnak hitelesítéshez elavult, és "
-"0.4-től már nem lesz. Kérem változtasson: használjon inkább "
-"munkafolyamat azonosítót."
+"Süti megadása send_request() hívásnak hitelesítéshez elavult, és 0.4-től "
+"már nem lesz. Kérem változtasson: használjon inkább munkafolyamat "
+"azonosítót."
 
 #: fedora/client/proxyclient.py:205
 msgid "username and password must both be set in auth_params"
@@ -285,13 +290,19 @@ msgstr ""
 "\n"
 "== Legtöbbet szerkesztett oldalak =="
 
+#: fedora/compat25/defaultdict.py:40
+msgid "First argument must be callable"
+msgstr ""
+
 #: fedora/django/auth/models.py:48
 msgid "Loading FAS groups..."
 msgstr "Fedora csoportok betöltése…"
 
 #: fedora/django/auth/models.py:55
 msgid "Unable to load FAS groups. Did you set FAS_USERNAME and FAS_PASSWORD?"
-msgstr "Nem lehet Fedora csoportokat betölteni. FAS_USERNAME és FAS_PASSWORD beállítva?"
+msgstr ""
+"Nem lehet Fedora csoportokat betölteni. FAS_USERNAME és FAS_PASSWORD "
+"beállítva?"
 
 #: fedora/django/auth/models.py:62
 msgid "FAS groups loaded. Don't forget to unset FAS_USERNAME and FAS_PASSWORD."
@@ -302,8 +313,8 @@ msgid ""
 "fedora.tg.client has moved to fedora.client.  This location will "
 "disappear in 0.4"
 msgstr ""
-"fedora.tg.client elköltözött fedora.client helyre.  E hely el fog "
-"tűnni 0.4-ben"
+"fedora.tg.client elköltözött fedora.client helyre.  E hely el fog tűnni "
+"0.4-ben"
 
 #: fedora/tg/controllers.py:58
 #, python-format
@@ -315,8 +326,8 @@ msgid ""
 "The credentials you supplied were not correct or did not grant access to "
 "this resource."
 msgstr ""
-"A megadott igazolvány nem jó vagy nem jogosítja fel a hozzáférésre "
-"az erőforráshoz."
+"A megadott igazolvány nem jó vagy nem jogosítja fel a hozzáférésre az "
+"erőforráshoz."
 
 #: fedora/tg/controllers.py:70
 msgid "You must provide your credentials before accessing this resource."
@@ -335,7 +346,7 @@ msgid "url() expects a dictionary for query parameters"
 msgstr "url() python szótár típusú argumentumot vár a kérés paramétereiként"
 
 #: fedora/tg/identity/jsonfasprovider1.py:226
-#: fedora/tg/identity/jsonfasprovider2.py:392
+#: fedora/tg/identity/jsonfasprovider2.py:388
 #, python-format
 msgid "Error logging in %(user)s: %(error)s"
 msgstr "Hiba %(user)s bejelentkezésekor: %(error)s"
@@ -345,15 +356,15 @@ msgid ""
 "Cannot enable ssl certificate auth via identity.ssl without setting "
 "fas.usernamme and fas.password for authorization"
 msgstr ""
-"Nem lehet engedélyezni ssl bizonyítványt identity.ssl-lel "
-"a fas.usernamme·és·fas.password megadása nélkül."
+"Nem lehet engedélyezni ssl bizonyítványt identity.ssl-lel a "
+"fas.usernamme·és·fas.password megadása nélkül."
 
-#: fedora/tg/identity/jsonfasprovider2.py:155
+#: fedora/tg/identity/jsonfasprovider2.py:154
 #, python-format
 msgid "jsonfasprovider, ssl, returned errors from send_request: %s"
 msgstr "jsonfasprovider, ssl, hibával tért vissza a send_requestből: %s"
 
-#: fedora/tg/identity/jsonfasprovider2.py:167
+#: fedora/tg/identity/jsonfasprovider2.py:165
 #, python-format
 msgid "jsonfasprovider returned errors from send_request: %s"
 msgstr "jsonfasprovider·hibákkal tért vissza send_requestből:·%s"
@@ -436,4 +447,10 @@ msgstr "Kijelentkezés"
 #, python-format
 msgid "updating visit (%s)"
 msgstr "látogatás frissítése (%s)"
+
+#~ msgid ""
+#~ "Package %(pkg)s does not exist and "
+#~ "we do not have enough information "
+#~ "to create it."
+#~ msgstr "Nincs %(pkg)s csomag, és nincs elég adatunk hogy megteremtsük."
 
