@@ -1,3 +1,52 @@
+2009-05-13  Toshio Kuratomi <toshio@fedoraproject.org> - r480
+Add Jef to AUTHORS
+
+2009-05-13  Toshio Kuratomi <toshio@fedoraproject.org> - r479
+Update for 0.3.13.
+
+2009-05-13  Toshio Kuratomi <toshio@fedoraproject.org> - r478
+Capitalize first word in exception message.
+
+2009-05-13  Toshio Kuratomi <toshio@fedoraproject.org> - r477
+Update pot and po files for a couple string changes.
+
+2009-05-13  Toshio Kuratomi <toshio@fedoraproject.org> - r476
+Correct a few minor stylistic issues for pylint.
+
+2009-05-13  Toshio Kuratomi <toshio@fedoraproject.org> - r475
+Move compat24 to compat25.  We're providing compat to py2.5.
+Translate strings in defaultdict.py
+
+2009-05-13  Toshio Kuratomi <toshio@fedoraproject.org> - r474
+Merge changes from trunk with changes:
+* Docstring changes in pkgdb.py
+* Cannot require pycurl in pavement.py as it only has egg-info in python-2.5+
+
+2009-05-13  Toshio Kuratomi <toshio@fedoraproject.org> - r473
+Note why we're using 403 instead of 401 in the documentation.
+
+2009-05-13  Toshio Kuratomi <toshio@fedoraproject.org> - r472
+401 response code causes problems for konqueror and also our usage is contrary
+to the http specification.
+
+2009-05-12  Toshio Kuratomi <toshio@fedoraproject.org> - r471
+Correct a space in a comment.
+
+2009-04-22  Toshio Kuratomi <toshio@fedoraproject.org> - r470
+Merge edit_package() change to mirror the server and spanaish translation update.
+
+2009-04-20  Toshio Kuratomi <toshio@fedoraproject.org> - r469
+Add a bz email address for bochecha.
+
+2009-04-16  Toshio Kuratomi <toshio@fedoraproject.org> - r468
+Merge spanish and Hungarian translations.
+
+2009-04-09  Toshio Kuratomi <toshio@fedoraproject.org> - r467
+Now that Paver-1.0 is in all Fedora versions, update the spec file.
+
+2009-04-09  Toshio Kuratomi <toshio@fedoraproject.org> - r466
+Update for last minute changes before release.
+
 2009-04-09  Toshio Kuratomi <toshio@fedoraproject.org> - r465
 Fix de.po format strings.
 
