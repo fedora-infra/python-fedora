@@ -39,6 +39,7 @@ options(
         # non-setuptools package.  When everything we care about uses
         # python-2.5 distutils we can add these:
         #   for bodhi (koji yum)
+        #   pycurl
         install_requires=['simplejson'],
         # And these to extra_require:
         #   for widgets: (bugzilla feedparser)

@@ -1,7 +1,7 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.3.12
+Version:        0.3.13
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -52,10 +52,6 @@ paver html
 %install
 rm -rf %{buildroot}
 paver install --skip-build --root %{buildroot}
-%if 0%{?fedora} <= 10
-    paver install_catalogs --root %{buildroot} --install-catalogs \
-             %{_datadir}/locale --skip-build
-%endif
 
 mv build-doc/html doc/
 %find_lang %{name}
@@ -69,6 +65,10 @@ rm -rf %{buildroot}
 %{python_sitelib}/*
 
 %changelog
+* Wed 13 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.13-1
+- New release.  Some new pkgdb API, defaultdict implementation, and a
+  bugfix to response code from the shipped login controller.
+
 * Thu Mar 19 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.12-1
 - Bugfix and cleanup release.
 

@@ -74,7 +74,7 @@ def login(forward_url=None, *args, **kwargs):
         if not forward_url:
             forward_url = request.headers.get('Referer', '/')
 
-    response.status = 401
+    response.status = 403
     return dict(logging_in=True, message=msg,
         forward_url=forward_url, previous_url=request.path_info,
         original_parameters=request.params)

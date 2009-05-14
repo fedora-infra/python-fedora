@@ -141,6 +141,8 @@ class AccountSystem(BaseClient):
                 109464: 'cassmodiah@fedoraproject.org',
                 # Robert M. Albrecht: romal@gmx.de
                 101475: 'mail@romal.de',
+                # Mathieu Bridon: mathieu.bridon@gmail.com
+                100753: 'bochecha@fedoraproject.org',
                 }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email

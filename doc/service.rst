@@ -219,6 +219,13 @@ with ``exc='AuthError'`` set, the server should return with ``response.status =
 This is the signal for the client to ask the user for new credentials (usually
 a new username and password).
 
+.. note::
+    Upstream :term:`TurboGears` has switched to sending a 401 for
+    authentication problems.  However, their use of 401 is against the http
+    specification (It doesn't set the 'WWW-Authentication' header) and it
+    causes problems for konqueror and webkit based browsers so we probably
+    will not be switching.
+
 ------------------------------------------------
 Performing Different Actions when Returning JSON
 ------------------------------------------------
