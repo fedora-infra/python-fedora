@@ -65,7 +65,7 @@ rm -rf %{buildroot}
 %{python_sitelib}/*
 
 %changelog
-* Wed 13 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.13-1
+* Wed May 13 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.13-1
 - New release.  Some new pkgdb API, defaultdict implementation, and a
   bugfix to response code from the shipped login controller.
 
