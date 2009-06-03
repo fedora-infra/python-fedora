@@ -3,8 +3,15 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 9 Apr 2009
+:Date: 3 Jun 2009
 :Version: 0.3.x
+
+--------
+0.3.12.1
+--------
+
+* Rename group_by_id and person_by_id request parameters
+* Add force_refresh parameter to group_data
 
 ------
 0.3.12
