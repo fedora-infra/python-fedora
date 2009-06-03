@@ -10,6 +10,7 @@ NEWS
 0.3.12.1
 --------
 
+* Add people_query method
 * Rename group_by_id and person_by_id request parameters
 * Add force_refresh parameter to group_data
 

@@ -458,6 +458,38 @@ class AccountSystem(BaseClient):
         if 'exc' in request:
             raise AppError(name = request['exc'], message = request['tg_flash'])
 
+    def people_query(self, constraints=None, columns=None):
+        '''Returns a list of dicts representing database rows
+
+        :arg constraints A dictionary specifying WHERE constraints on
+            columns
+        :arg columns A list of columns to be selected in the query
+        :raises AppError: if the query failed on the server (most likely
+            because  the server was given a bad query)
+        :returns: A list of dicts representing database rows (the keys of
+            the dict are the columns requested)
+
+        .. versionadded:: 0.3.12.1
+        '''
+        if constraints is None:
+            constraints = {}
+        if columns is None:
+            columns = []
+
+        req_params = {}
+        req_params.update(constraints)
+        req_params['columns'] = ','.join(columns)
+
+        try:
+            request = self.send_request('json/people_query',
+                req_params=req_params, auth=True)
+            if request['success']:
+                return request['data']
+            else:
+                raise AppError(message=request['error'], name='FASError')
+        except FedoraServiceError:
+            raise
+
     ### Certs ###
 
     def user_gencert(self):
