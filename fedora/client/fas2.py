@@ -141,6 +141,8 @@ class AccountSystem(BaseClient):
                 109464: 'cassmodiah@fedoraproject.org',
                 # Robert M. Albrecht: romal@gmx.de
                 101475: 'mail@romal.de',
+                # Mathieu Bridon: mathieu.bridon@gmail.com
+                100753: 'bochecha@fedoraproject.org',
                 }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email
@@ -168,7 +170,7 @@ class AccountSystem(BaseClient):
 
     def group_by_id(self, group_id):
         '''Returns a group object based on its id'''
-        params = {'id': int(group_id)}
+        params = {'group_id': int(group_id)}
         request = self.send_request('json/group_by_id', auth = True,
                 req_params = params)
         if request['success']:
@@ -212,7 +214,7 @@ class AccountSystem(BaseClient):
     def person_by_id(self, person_id):
         '''Returns a person object based on its id'''
         person_id = int(person_id)
-        params = {'id': person_id}
+        params = {'person_id': person_id}
         request = self.send_request('json/person_by_id', auth=True,
                 req_params=params)
 
@@ -490,17 +492,24 @@ class AccountSystem(BaseClient):
 
     ### fasClient Special Methods ###
 
-    def group_data(self):
+    def group_data(self, force_refresh=None):
         '''Return administrators/sponsors/users and group type for all groups
 
+        :arg force_refresh: If true, the returned data will be queried from the
+            database, as opposed to memcached.
         :raises AppError: if the query failed on the server
         :returns: A dict mapping group names to the group type and the
             user IDs of the administrator, sponsors, and users of the group.
 
         .. versionadded:: 0.3.8
         '''
+        params = {}
+        if force_refresh:
+            params['force_refresh'] = True
+
         try:
-            request = self.send_request('json/fas_client/group_data', auth=True)
+            request = self.send_request('json/fas_client/group_data',
+                req_params=params, auth=True)
             if request['success']:
                 return request['data']
             else:
