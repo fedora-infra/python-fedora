@@ -492,17 +492,24 @@ class AccountSystem(BaseClient):
 
     ### fasClient Special Methods ###
 
-    def group_data(self):
+    def group_data(self, force_refresh=None):
         '''Return administrators/sponsors/users and group type for all groups
 
+        :arg force_refresh: If true, the returned data will be queried from the
+            database, as opposed to memcached.
         :raises AppError: if the query failed on the server
         :returns: A dict mapping group names to the group type and the
             user IDs of the administrator, sponsors, and users of the group.
 
         .. versionadded:: 0.3.8
         '''
+        params = {}
+        if force_refresh:
+            params['force_refresh'] = True
+
         try:
-            request = self.send_request('json/fas_client/group_data', auth=True)
+            request = self.send_request('json/fas_client/group_data',
+                req_params=params, auth=True)
             if request['success']:
                 return request['data']
             else:
