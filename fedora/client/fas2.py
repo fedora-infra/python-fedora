@@ -170,7 +170,7 @@ class AccountSystem(BaseClient):
 
     def group_by_id(self, group_id):
         '''Returns a group object based on its id'''
-        params = {'id': int(group_id)}
+        params = {'group_id': int(group_id)}
         request = self.send_request('json/group_by_id', auth = True,
                 req_params = params)
         if request['success']:
@@ -214,7 +214,7 @@ class AccountSystem(BaseClient):
     def person_by_id(self, person_id):
         '''Returns a person object based on its id'''
         person_id = int(person_id)
-        params = {'id': person_id}
+        params = {'person_id': person_id}
         request = self.send_request('json/person_by_id', auth=True,
                 req_params=params)
 
@@ -458,6 +458,38 @@ class AccountSystem(BaseClient):
         if 'exc' in request:
             raise AppError(name = request['exc'], message = request['tg_flash'])
 
+    def people_query(self, constraints=None, columns=None):
+        '''Returns a list of dicts representing database rows
+
+        :arg constraints A dictionary specifying WHERE constraints on
+            columns
+        :arg columns A list of columns to be selected in the query
+        :raises AppError: if the query failed on the server (most likely
+            because  the server was given a bad query)
+        :returns: A list of dicts representing database rows (the keys of
+            the dict are the columns requested)
+
+        .. versionadded:: 0.3.12.1
+        '''
+        if constraints is None:
+            constraints = {}
+        if columns is None:
+            columns = []
+
+        req_params = {}
+        req_params.update(constraints)
+        req_params['columns'] = ','.join(columns)
+
+        try:
+            request = self.send_request('json/people_query',
+                req_params=req_params, auth=True)
+            if request['success']:
+                return request['data']
+            else:
+                raise AppError(message=request['error'], name='FASError')
+        except FedoraServiceError:
+            raise
+
     ### Certs ###
 
     def user_gencert(self):
@@ -492,17 +524,24 @@ class AccountSystem(BaseClient):
 
     ### fasClient Special Methods ###
 
-    def group_data(self):
+    def group_data(self, force_refresh=None):
         '''Return administrators/sponsors/users and group type for all groups
 
+        :arg force_refresh: If true, the returned data will be queried from the
+            database, as opposed to memcached.
         :raises AppError: if the query failed on the server
         :returns: A dict mapping group names to the group type and the
             user IDs of the administrator, sponsors, and users of the group.
 
         .. versionadded:: 0.3.8
         '''
+        params = {}
+        if force_refresh:
+            params['force_refresh'] = True
+
         try:
-            request = self.send_request('json/fas_client/group_data', auth=True)
+            request = self.send_request('json/fas_client/group_data',
+                req_params=params, auth=True)
             if request['success']:
                 return request['data']
             else:

@@ -3,7 +3,7 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 13 May 2009
+:Date: 4 Jun 2009
 :Version: 0.3.x
 
 ------
@@ -17,6 +17,14 @@ NEWS
 * New fedora.compat25 that has python-2.5 features for older releases.
   - fedora.compat25.defaultdict a defaultdict implementation for older python
     releases.
+
+--------
+0.3.12.1
+--------
+
+* Add people_query method
+* Rename group_by_id and person_by_id request parameters
+* Add force_refresh parameter to group_data
 
 ------
 0.3.12
