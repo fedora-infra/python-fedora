@@ -72,6 +72,9 @@ rm -rf %{buildroot}
 - New release.  Some new pkgdb API, defaultdict implementation, and a
   bugfix to response code from the shipped login controller.
 
+* Wed Jun 11 2009 Ricky Zhou <ricky@fedoraproject.org> - 0.3.12.1-2
+- Backport a patch to add a bugzilla_email entry.
+
 * Wed Jun 03 2009 Ricky Zhou <ricky@fedoraproject.org> - 0.3.12.1-1
 - Update for new FAS release.
 
