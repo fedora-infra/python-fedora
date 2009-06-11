@@ -10,6 +10,7 @@ NEWS
 0.3.13.1
 --------
 * Merge the 0.3.13 and 0.3.12.1 release together.
+* Bugfix for Django Auth provider and new fas server.
 
 ------
 0.3.13
