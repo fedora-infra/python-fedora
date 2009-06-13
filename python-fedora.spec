@@ -14,7 +14,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  python-devel
 BuildRequires:  python-setuptools-devel
-BuildRequires:  python-paver
+BuildRequires:  python-paver >= 1.0
 BuildRequires:  python-sphinx
 %if 0%{?fedora} >= 9
 BuildRequires:  python-cherrypy2
