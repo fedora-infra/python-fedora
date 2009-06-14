@@ -1,7 +1,7 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.3.13
+Version:        0.3.13.1
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -14,7 +14,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  python-devel
 BuildRequires:  python-setuptools-devel
-BuildRequires:  python-paver
+BuildRequires:  python-paver >= 1.0
 BuildRequires:  python-sphinx
 %if 0%{?fedora} >= 9
 BuildRequires:  python-cherrypy2
@@ -65,9 +65,15 @@ rm -rf %{buildroot}
 %{python_sitelib}/*
 
 %changelog
-* Wed June 04 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.13-1
+* Sat Jun 13 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.13.1-1
+- Merge 0.3.12.1 and 0.3.13 releases together.
+
+* Sat Jun 13 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.13-1
 - New release.  Some new pkgdb API, defaultdict implementation, and a
   bugfix to response code from the shipped login controller.
+
+* Wed Jun 11 2009 Ricky Zhou <ricky@fedoraproject.org> - 0.3.12.1-2
+- Backport a patch to add a bugzilla_email entry.
 
 * Wed Jun 03 2009 Ricky Zhou <ricky@fedoraproject.org> - 0.3.12.1-1
 - Update for new FAS release.

@@ -34,7 +34,7 @@ def person_by_id(userid):
     if not hasattr(local, 'session_id'):
         return None
     sid, userinfo = connection.send_request('json/person_by_id',
-        req_params={'id': userid},
+        req_params={'person_id': userid},
         auth_params={'session_id': local.session_id})
     return userinfo
 

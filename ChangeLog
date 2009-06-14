@@ -1,3 +1,42 @@
+2009-06-11  Toshio Kuratomi <toshio@fedoraproject.org> - r493
+Add email map for nb@fp.o
+
+2009-06-11  Toshio Kuratomi <toshio@fedoraproject.org> - r492
+Add note about DJango auth fix.
+
+2009-06-11  Ricky Zhou <ricky@fedoraproject.org> - r491
+Fix person_by_id call.
+
+2009-06-11  Ricky Zhou <ricky@fedoraproject.org> - r490
+Sync the spec file for that patch.
+
+2009-06-11  Ricky Zhou <ricky@fedoraproject.org> - r489
+Add bugzilla_email for ceski.
+
+2009-06-08  transifex user <transifex@app1.fedora.phx.redhat.com> - r488
+Sending translation for German
+2009-06-06  Toshio Kuratomi <toshio@fedoraproject.org> - r487
+Merge changes from 0.3.12.1 release.
+
+2009-06-06  Toshio Kuratomi <toshio@fedoraproject.org> - r486
+merge force_refresh() for fas and ca translation from -devel.
+
+2009-06-06  Toshio Kuratomi <toshio@fedoraproject.org> - r485
+0.3.13.1 prep.
+
+2009-05-20  Toshio Kuratomi <toshio@fedoraproject.org> - r484
+New translations.
+
+2009-05-20  Toshio Kuratomi <toshio@fedoraproject.org> - r483
+Fix changelog line
+
+2009-05-20  Toshio Kuratomi <toshio@fedoraproject.org> - r482
+Port a method to apply root directory additions to the install root from
+the packagedb install.
+
+2009-05-13  Toshio Kuratomi <toshio@fedoraproject.org> - r481
+Update ChangeLog for next release.
+
 2009-05-13  Toshio Kuratomi <toshio@fedoraproject.org> - r480
 Add Jef to AUTHORS
 

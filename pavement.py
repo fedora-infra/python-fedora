@@ -159,6 +159,20 @@ if has_babel and PAVER_VER != '0.8':
             #        ' -i %(input-file)s --locale %(locale)s' % defaults,
             #        call_task, 'babel.messages.frontend.compile_catalog', options)
 
+#
+# Backends
+#
+
+def _apply_root(args, path):
+    '''Add the root value to the start of the path'''
+    if 'root' in args:
+        if path.startswith('/'):
+            path = path[1:]
+        path = paver_path(os.path.join(args['root'], path))
+    else:
+        path = paver_path(path)
+    return path
+
 def _install_catalogs(args):
     '''Install message catalogs in their proper location on the filesystem.
 
@@ -177,10 +191,8 @@ def _install_catalogs(args):
     else:
         cat_dir = options.installdir
 
-    if 'root' in args:
-        if cat_dir.startswith('/'):
-            cat_dir = cat_dir[1:]
-        cat_dir = paver_path(os.path.join(args['root'], cat_dir))
+    # Setup the install_dir
+    cat_dir = _apply_root(args, cat_dir)
 
     for catalog in paver_path(options.builddir).walkfiles('*.mo'):
         locale_dir = catalog.dirname()

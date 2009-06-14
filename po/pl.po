@@ -6,15 +6,12 @@ msgstr ""
 "Project-Id-Version: python-fedora 0.3.12\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-03-20 00:04+0700\n"
-"PO-Revision-Date: 2009-05-13 22:15-0700\n"
+"PO-Revision-Date: 2009-05-14 10:26+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <pl@li.org>\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && "
-"(n%100<10 || n%100>=20) ? 1 : 2)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.4\n"
 
 #: fedora/release.py:9
 msgid "Python modules for interacting with Fedora Services"
@@ -30,9 +27,9 @@ msgid ""
 "This package contains software that helps us do that.\n"
 msgstr ""
 "\n"
-"Projekt Fedora prowadzi wiele różnych usług. Pomagają nam tworzyć pakiety"
-"\n"
-"oprogramowania, tworzyć nowe programy, i w ogóle składać dystrybucję.\n"
+"Projekt Fedora prowadzi wiele różnych usług. Pomagają nam tworzyć\n"
+"pakiety oprogramowania, tworzyć nowe programy, i w ogóle składać\n"
+"dystrybucję.\n"
 "Ten pakiet zawiera oprogramowanie, które nam w tym pomaga.\n"
 
 #: fedora/accounts/fas2.py:8
@@ -71,11 +68,13 @@ msgstr "Nie zapisano sesji w pamięci podręcznej dla \"%s\""
 #: fedora/client/baseclient.py:275
 #, python-format
 msgid "send_request() got an unexpected keyword argument \"%s\""
-msgstr "send_request() otrzymało nieoczekiwany parametr słowa kluczowego \"%s\""
+msgstr ""
+"send_request() otrzymało nieoczekiwany parametr słowa kluczowego \"%s\""
 
 #: fedora/client/baseclient.py:279
 msgid "send_request() got an unexpected keyword argument \"input\""
-msgstr "send_request() otrzymało nieoczekiwany parametr słowa kluczowego \"input\""
+msgstr ""
+"send_request() otrzymało nieoczekiwany parametr słowa kluczowego \"input\""
 
 #: fedora/client/baseclient.py:283
 msgid "send_request() got an unexpected keyword argument"
@@ -144,6 +143,8 @@ msgid ""
 "We do not have enough information to create package %(pkg)s. Need version"
 " owner."
 msgstr ""
+"Brak wystarczającej ilości informacji, aby utworzyć pakiet %(pkg)s. Wymagana "
+"jest wersja i właściciel."
 
 #: fedora/client/pkgdb.py:176
 #, python-format
@@ -286,7 +287,7 @@ msgstr ""
 
 #: fedora/compat25/defaultdict.py:40
 msgid "First argument must be callable"
-msgstr ""
+msgstr "Pierwszy parametr musi móc być wywoływany"
 
 #: fedora/django/auth/models.py:48
 msgid "Loading FAS groups..."
@@ -445,13 +446,3 @@ msgstr "Wyloguj się"
 #, python-format
 msgid "updating visit (%s)"
 msgstr "aktualizowanie wizyty (%s)"
-
-#~ msgid ""
-#~ "Package %(pkg)s does not exist and "
-#~ "we do not have enough information "
-#~ "to create it."
-#~ msgstr ""
-#~ "Pakiet %(pkg)s nie istnieje i brak "
-#~ "wystarczającej ilości informacji, aby go "
-#~ "utworzyć."
-
