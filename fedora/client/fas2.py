@@ -21,6 +21,7 @@
 '''
 Provide a client module for talking to the Fedora Account System.
 
+
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
@@ -465,9 +466,8 @@ class AccountSystem(BaseClient):
     def people_query(self, constraints=None, columns=None):
         '''Returns a list of dicts representing database rows
 
-        :arg constraints A dictionary specifying WHERE constraints on
-            columns
-        :arg columns A list of columns to be selected in the query
+        :arg constraints: A dictionary specifying WHERE constraints on columns
+        :arg columns: A list of columns to be selected in the query
         :raises AppError: if the query failed on the server (most likely
             because  the server was given a bad query)
         :returns: A list of dicts representing database rows (the keys of
