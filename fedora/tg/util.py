@@ -155,8 +155,14 @@ def enable_csrf():
 
     .. versionadded:: 0.3.10
        Added to enable :ref:`CSRF-Protection`
+
+    .. versionchanged:: 0.3.11
+       Save the original turbogears.url function as
+       :func:`fedora.tg.util.tg_url`
+
     '''
     # Override the turbogears.url funciton with our own
+    turbogears.tg_url = turbogears.url
     turbogears.url = url
     turbogears.controllers.url = url
 
