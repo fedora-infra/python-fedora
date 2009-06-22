@@ -6,6 +6,12 @@ NEWS
 :Date: 4 Jun 2009
 :Version: 0.3.x
 
+------
+0.3.14
+------
+* Save the original tg.url() function as fedora.tg.tg_url().  That allows us
+  to change the url to have the base_url without adding the csrf token.
+
 --------
 0.3.13.1
 --------
