@@ -188,8 +188,8 @@ class BodhiClient(BaseClient):
         """
         if not self.username:
             raise BodhiClientException(_('You must specify a username'))
-        data = self.send_request('dist_tags')
-        for tag in [tag + '-updates-candidate' for tag in data['tags']]:
+        data = self.send_request('candidate_tags')
+        for tag in data['tags']:
             for build in self.koji_session.listTagged(tag, latest=True):
                 if build['owner_name'] == self.username:
                     yield build
