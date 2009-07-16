@@ -20,11 +20,15 @@ A Wiki Client
 
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
+.. moduleauthor:: Ian Weller <ian@ianweller.org>
 '''
 
 from datetime import datetime, timedelta
 from fedora.client import BaseClient
 from fedora import _
+import time
+
+MEDIAWIKI_DATEFORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
 class Wiki(BaseClient):
 
@@ -88,6 +92,76 @@ you run this script using a 'bot' account.""")
                                 cmp=lambda x, y: cmp(x[1], y[1]),
                                 reverse=True)[:show]:
             print ' %-50s %d' % (('%s' % page).ljust(50, '.'), num)
+
+    def fetch_all_revisions(self, start=1, flags=True, timestamp=True,
+                            user=True, size=False, comment=True, content=False,
+                            title=True, ignore_imported_revs=True):
+        """
+        Fetch data for all revisions. This could take a long time. You can start
+        at a specific revision by modifying the 'start' keyword argument.
+
+        To ignore revisions made by "ImportUser", set ignore_imported_revs to
+        True (this is the default).
+
+        Modifying the remainder of the keyword arguments will return less/more
+        data.
+        """
+        # first we need to get the latest revision id
+        change = self.send_request('api.php', req_params={
+                'list': 'recentchanges',
+                'action': 'query',
+                'format': 'json',
+                'rcprop': 'ids',
+                'rclimit': 1
+        })
+        latest_revid = change['query']['recentchanges'][0]['revid']
+        # now we loop through all the revisions we want
+        rvprop_list = {
+                'flags': flags,
+                'timestamp': timestamp,
+                'user': True,
+                'size': size,
+                'comment': comment,
+                'content': content,
+                'ids': True,
+        }
+        rvprop = '|'.join([key for key in rvprop_list if rvprop_list[key]])
+        revs_to_get = range(start, latest_revid)
+        all_revs = {}
+        for i in xrange(0, len(revs_to_get), 10):
+            revid_list = revs_to_get[i:i+10]
+            revid_str = '|'.join([str(rev) for rev in revid_list])
+            data = self.send_request('api.php', req_params={
+                    'action': 'query',
+                    'prop': 'revisions',
+                    'rvprop': rvprop,
+                    'revids': revid_str,
+                    'format': 'json',
+            })
+            for pageid in data['query']['pages']:
+                page = data['query']['pages'][pageid]
+                for revision in page['revisions']:
+                    if ignore_imported_revs and \
+                       revision['user'] == 'ImportUser':
+                        continue
+                    this_rev = {}
+                    if flags:
+                        this_rev['minor'] = 'minor' in revision.keys()
+                    if timestamp:
+                        this_rev['time'] = time.strptime(revision['timestamp'],
+                                                         MEDIAWIKI_DATEFORMAT)
+                    if user:
+                        this_rev['user'] = revision['user']
+                    if size:
+                        this_rev['size'] = revision['size']
+                    if comment:
+                        this_rev['comment'] = revision['comment']
+                    if content:
+                        this_rev['content'] = revision['content']
+                    if title:
+                        this_rev['title'] = page['title']
+                    all_revs[revision['revid']] = this_rev
+        return all_revs
 
 
 if __name__ == '__main__':
