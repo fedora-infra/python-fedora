@@ -11,6 +11,8 @@ NEWS
 ------
 * Save the original tg.url() function as fedora.tg.tg_url().  That allows us
   to change the url to have the base_url without adding the csrf token.
+* Update fedora.client.AccountSystem for compatibility with the next FAS
+  server update (backwards compatible).
 
 --------
 0.3.13.1
