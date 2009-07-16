@@ -13,6 +13,8 @@ NEWS
   to change the url to have the base_url without adding the csrf token.
 * Update fedora.client.AccountSystem for compatibility with the next FAS
   server update (backwards compatible).
+* Add fedora.client.PackageDB.user_packages() method that retrieves the packages
+  that a particular user owns.
 
 --------
 0.3.13.1
