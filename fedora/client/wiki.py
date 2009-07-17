@@ -31,6 +31,7 @@ import time
 MEDIAWIKI_DATEFORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
 class Wiki(BaseClient):
+    api_high_limits = False
 
     def __init__(self, base_url='http://fedoraproject.org/w/', *args, **kwargs):
         super(Wiki, self).__init__(base_url, *args, **kwargs)
@@ -60,7 +61,20 @@ class Wiki(BaseClient):
             raise Exception(_('Login failed: %s') % data)
         #self.session_id = data['login']['lgtoken']
         #self.username = data['login']['lgusername']
+        self.check_api_limits()
         return data
+
+    def check_api_limits(self):
+        """ Checks whether you have the 'apihighlimits' right or not. """
+        data = self.send_request('api.php', req_params={
+                'action': 'query',
+                'meta': 'userinfo',
+                'uiprop': 'rights',
+                'format': 'json',
+                })
+        self.api_high_limits = "apihighlimits" in \
+                data['query']['userinfo']['rights']
+        return self.api_high_limits
 
     def print_recent_changes(self, days=7, show=10):
         now = datetime.utcnow()
@@ -128,8 +142,12 @@ you run this script using a 'bot' account.""")
         rvprop = '|'.join([key for key in rvprop_list if rvprop_list[key]])
         revs_to_get = range(start, latest_revid)
         all_revs = {}
-        for i in xrange(0, len(revs_to_get), 50):
-            revid_list = revs_to_get[i:i+10]
+        if self.api_high_limits:
+            limit = 500
+        else:
+            limit = 50
+        for i in xrange(0, len(revs_to_get), limit):
+            revid_list = revs_to_get[i:i+limit]
             revid_str = '|'.join([str(rev) for rev in revid_list])
             data = self.send_request('api.php', req_params={
                     'action': 'query',
