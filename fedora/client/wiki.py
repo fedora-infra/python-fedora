@@ -128,7 +128,7 @@ you run this script using a 'bot' account.""")
         rvprop = '|'.join([key for key in rvprop_list if rvprop_list[key]])
         revs_to_get = range(start, latest_revid)
         all_revs = {}
-        for i in xrange(0, len(revs_to_get), 10):
+        for i in xrange(0, len(revs_to_get), 50):
             revid_list = revs_to_get[i:i+10]
             revid_str = '|'.join([str(rev) for rev in revid_list])
             data = self.send_request('api.php', req_params={
