@@ -173,7 +173,10 @@ you run this script using a 'bot' account.""")
                     if size:
                         this_rev['size'] = revision['size']
                     if comment:
-                        this_rev['comment'] = revision['comment']
+                        if 'comment' in revision.keys():
+                            this_rev['comment'] = revision['comment']
+                        else:
+                            this_rev['comment'] = None
                     if content:
                         this_rev['content'] = revision['content']
                     if title:
