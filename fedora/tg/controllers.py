@@ -36,7 +36,7 @@ def login(forward_url=None, *args, **kwargs):
 
     To use this, replace your current login controller method with::
 
-        import fedora.controllers.login as fc_login
+        from fedora.controllers import login as fc_login
 
         @expose(template='yourapp.yourlogintemplate', allow_json=True)
         def login(self, forward_url=None, *args, **kwargs):
@@ -84,7 +84,7 @@ def logout(url=None):
 
     To use this, replace your current login controller method with::
 
-        import fedora.controllers.logout as fc_logout
+        from fedora.controllers import logout as fc_logout
 
         @expose(allow_json=True)
         def logout(self):
