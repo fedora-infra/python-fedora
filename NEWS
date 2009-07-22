@@ -15,6 +15,9 @@ NEWS
   server update (backwards compatible).
 * Add fedora.client.PackageDB.user_packages() method that retrieves the packages
   that a particular user owns.
+* Add a function for fetching all revisions of the wiki (fetch_all_revisions)
+* Add a function for seeing if we have the wiki API high limits right
+  (check_api_limits)
 
 --------
 0.3.13.1
