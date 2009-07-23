@@ -161,7 +161,7 @@ def enable_csrf():
     .. versionadded:: 0.3.10
        Added to enable :ref:`CSRF-Protection`
     '''
-    # Override the turbogears.url funciton with our own
+    # Override the turbogears.url function with our own
     turbogears.url = url
     turbogears.controllers.url = url
 

@@ -332,7 +332,7 @@ class PackageDB(BaseClient):
 
 
 
-    def user_packages(self, username, acls=None, eol=None):
+    def user_packages(self, username, acls=None, eol=False):
         '''Retrieve information about the packages a user owns
 
         :arg username: user whose packages we want
