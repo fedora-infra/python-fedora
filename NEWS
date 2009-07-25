@@ -18,6 +18,9 @@ NEWS
 * Add a function for fetching all revisions of the wiki (fetch_all_revisions)
 * Add a function for seeing if we have the wiki API high limits right
   (check_api_limits)
+* Add an identity provider, sqlobjectcsrf, to implement csrf_token protection
+  for applications that use sqlobject for database interaction and don't want
+  to use FAS for auth.
 
 --------
 0.3.13.1
