@@ -26,11 +26,13 @@ csrf attacks.
 
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
+from datetime import datetime
 
 try:
     from hashlib import sha1 as hash_constructor
 except ImportError:
     from sha import new as hash_constructor
+
 
 from sqlobject import SQLObject, SQLObjectNotFound, RelatedJoin, \
     DateTimeCol, IntCol, StringCol, UnicodeCol
@@ -40,10 +42,12 @@ import warnings
 import logging
 log = logging.getLogger("turbogears.identity.soprovider")
 
+import cherrypy
 import turbogears
 from turbogears import identity
 from turbogears.database import PackageHub
 from turbogears.util import load_class
+from turbogears.identity import set_login_attempted
 from turbojson.jsonify import jsonify_sqlobject, jsonify
 
 hub = PackageHub("turbogears.identity")
@@ -89,7 +93,7 @@ permission_class = None
 visit_class = None
 
 
-class SqlObjectIdentity(object):
+class SqlObjectCsrfIdentity(object):
     """Identity that uses a model from a database (via SQLObject)."""
 
     def __init__(self, visit_key=None, user=None):
@@ -117,6 +121,8 @@ class SqlObjectIdentity(object):
 
         # Retrieve the user info from the db
         visit = self.visit_link
+        if not visit:
+            return None
         try:
             self._retrieved_user = user_class.get(visit.user_id)
         except SQLObjectNotFound:
@@ -138,20 +144,19 @@ class SqlObjectIdentity(object):
             # No visit, no user
             self._user = None
         else:
-            if not (self.username and self.password):
-                # Unless we were given the user_name and password to login on
-                # this request, a CSRF token is required
-                if (not '_csrf_token' in cherrypy.request.params or
-                        cherrypy.request.params['_csrf_token'] !=
-                        hash_constructor(self.visit_key).hexdigest()):
-                    self.log.info("Bad _csrf_token")
-                    if '_csrf_token' in cherrypy.request.params:
-                        self.log.info("visit: %s token: %s" % (self.visit_key,
-                            cherrypy.request.params['_csrf_token']))
-                    else:
-                        self.log.info('No _csrf_token present')
-                    cherrypy.request.fas_identity_failure_reason = 'bad_csrf'
-                    self._user = None
+            # Unless we were given the user_name and password to login on
+            # this request, a CSRF token is required
+            if (not '_csrf_token' in cherrypy.request.params or
+                    cherrypy.request.params['_csrf_token'] !=
+                    hash_constructor(self.visit_key).hexdigest()):
+                log.info("Bad _csrf_token")
+                if '_csrf_token' in cherrypy.request.params:
+                    log.info("visit: %s token: %s" % (self.visit_key,
+                        cherrypy.request.params['_csrf_token']))
+                else:
+                    log.info('No _csrf_token present')
+                cherrypy.request.fas_identity_failure_reason = 'bad_csrf'
+                self._user = None
         try:
             return self._user
         except AttributeError:
@@ -274,14 +279,14 @@ class SqlObjectIdentity(object):
         if visit:
             visit.destroySelf()
         # Clear the current identity
-        identity.set_current_identity(SqlObjectIdentity())
+        identity.set_current_identity(SqlObjectCsrfIdentity())
 
 
-class SqlObjectIdentityProvider(object):
+class SqlObjectCsrfIdentityProvider(object):
     """IdentityProvider that uses a model from a database (via SQLObject)."""
 
     def __init__(self):
-        super(SqlObjectIdentityProvider, self).__init__()
+        super(SqlObjectCsrfIdentityProvider, self).__init__()
         get = turbogears.config.get
 
         global user_class, group_class, permission_class, visit_class
@@ -331,7 +336,7 @@ class SqlObjectIdentityProvider(object):
             hub.end()
         except KeyError:
             log.warning("No database is configured:"
-                " SqlObjectIdentityProvider is disabled.")
+                " SqlObjectCsrfIdentityProvider is disabled.")
             return
 
     def validate_identity(self, user_name, password, visit_key):
@@ -353,7 +358,7 @@ class SqlObjectIdentityProvider(object):
                 return None
             log.info("Associating user (%s) with visit (%s)",
                 user_name, visit_key)
-            return SqlObjectIdentity(visit_key, user)
+            return SqlObjectCsrfIdentity(visit_key, user)
         except SQLObjectNotFound:
             log.warning("No such user: %s", user_name)
             return None
@@ -363,9 +368,9 @@ class SqlObjectIdentityProvider(object):
 
         Note: user_name is not used here, but is required by external
         password validation schemes that might override this method.
-        If you use SqlObjectIdentityProvider, but want to check the passwords
+        If you use SqlObjectCsrfIdentityProvider, but want to check the passwords
         against an external source (i.e. PAM, a password file, Windows domain),
-        subclass SqlObjectIdentityProvider, and override this method.
+        subclass SqlObjectCsrfIdentityProvider, and override this method.
 
         """
         return user.password == self.encrypt_password(password)
@@ -382,7 +387,7 @@ class SqlObjectIdentityProvider(object):
             permissions: a set of permission names
 
         """
-        ident = SqlObjectIdentity(visit_key)
+        ident = SqlObjectCsrfIdentity(visit_key)
         if 'csrf_login' in cherrypy.request.params:
             cherrypy.request.params.pop('csrf_login')
             set_login_attempted(True)
@@ -398,11 +403,11 @@ class SqlObjectIdentityProvider(object):
             permissions: a set of permission names
 
         """
-        return SqlObjectIdentity()
+        return SqlObjectCsrfIdentity()
 
     def authenticated_identity(self, user):
         """Constructs Identity object for users with no visit_key."""
-        return SqlObjectIdentity(user=user)
+        return SqlObjectCsrfIdentity(user=user)
 
 
 class TG_VisitIdentity(SQLObject):
@@ -482,7 +487,7 @@ class TG_User(InheritableSQLObject):
         except identity.exceptions.IdentityManagementNotEnabledException:
             # Creating identity provider just to encrypt password
             # (so we don't reimplement the encryption step).
-            ip = SqlObjectIdentityProvider()
+            ip = SqlObjectCsrfIdentityProvider()
             hash = ip.encrypt_password(cleartext_password)
             if hash == cleartext_password:
                 log.info("Identity provider not enabled,"
@@ -534,7 +539,7 @@ def encrypt_password(cleartext_password):
     except identity.exceptions.RequestRequiredException:
         # Creating identity provider just to encrypt password
         # (so we don't reimplement the encryption step).
-        ip = SqlObjectIdentityProvider()
+        ip = SqlObjectCsrfIdentityProvider()
         hash = ip.encrypt_password(cleartext_password)
         if hash == cleartext_password:
             log.info("Identity provider not enabled, and no encryption "

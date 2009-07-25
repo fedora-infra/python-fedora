@@ -51,7 +51,7 @@ options(
             'turbogears.identity.provider' : (
                 'jsonfas = fedora.tg.identity.jsonfasprovider1:JsonFasIdentityProvider [tg]',
                 'jsonfas2 = fedora.tg.identity.jsonfasprovider2:JsonFasIdentityProvider [tg]',
-                'sqlobjectcsrf = fedora.tg.identity.soprovidercsrf:SqlObjectIdentityProvider [tg]'),
+                'sqlobjectcsrf = fedora.tg.identity.soprovidercsrf:SqlObjectCsrfIdentityProvider [tg]'),
             'turbogears.visit.manager' : (
                 'jsonfas = fedora.tg.visit.jsonfasvisit1:JsonFasVisitManager [tg]',
                 'jsonfas2 = fedora.tg.visit.jsonfasvisit2:JsonFasVisitManager [tg]'),
