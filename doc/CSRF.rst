@@ -354,13 +354,8 @@ Here's a small bit of sample code::
 Summary of Changes Per App
 --------------------------
 
-This section is a work in progress.  As I implement this for a few apps I'll
-add the changes that web application authors need to implement in order to be
-protected against :term:`CSRF`.  When that is done, this paragraph will be
-removed.
-
- * On startup, run :func:`~fedora.tg.util.enable_csrf`.  Code like this will
-   do it::
+ * On startup, run :func:`~fedora.tg.util.enable_csrf`.  This could be done in a
+   start-APP.py and APP.wsgi scripts.  Code like this will do it::
 
     from turbogears import startup
     from fedora.tg.util import enable_csrf
