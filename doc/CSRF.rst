@@ -261,6 +261,7 @@ template.  Here's some snippets from a :file:`master.html` to illustrate::
   [...]
     </body>
     <xi:include href="${tg.fedora_template('login.html')}" />
+    <xi:include href="${tg.fedora_template('jsglobals.html')}" />
   </html>
 
 .. warning::

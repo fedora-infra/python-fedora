@@ -18,6 +18,13 @@ TurboGears Identity Provider 2
 
 An identity provider with :term:`CSRF` protection.
 
+This will install as a TurboGears identity plugin.  To use it, set the
+following in your :file:`APPNAME/config/app.cfg` file::
+
+    identity.provider='jsonfas2'
+    visit.manager='jsonfas2'
+
+
 .. seealso:: :ref:`CSRF-Protection`
 
 .. automodule:: fedora.tg.identity.jsonfasprovider2
