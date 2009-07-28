@@ -329,3 +329,24 @@ class PackageDB(BaseClient):
             params = {'username': username, 'pkg_name': pkg_name}
         return self.send_request('/packages/dispatcher/remove_user', auth=True,
                    req_params=params)
+
+
+
+    def user_packages(self, username, acls=None, eol=False):
+        '''Retrieve information about the packages a user owns
+
+        :arg username: user whose packages we want
+        :kwarg acls: list of acls that the user must have on the package.
+            The list can include 'owner', 'approveacls', 'commit',
+            'watchbugzilla', 'watchcommits'.  Default is to select for all
+            acls.
+        :kwarg eol: If True, then include ownership of packages in End of Life
+            distributions.  If False, only include ownership of packages in
+            active releases.
+        :returns: packages that the user has acls on
+
+        .. versionadded:: 0.3.14
+        '''
+        params = {'acls': acls, 'eol': eol}
+        return self.send_request('/users/packages/%s' % username, req_params=params)
+

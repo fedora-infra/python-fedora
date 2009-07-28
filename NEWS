@@ -3,8 +3,24 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 4 Jun 2009
+:Date: 27 Jul 2009
 :Version: 0.3.x
+
+------
+0.3.14
+------
+* Save the original tg.url() function as fedora.tg.tg_url().  That allows us
+  to change the url to have the base_url without adding the csrf token.
+* Update fedora.client.AccountSystem for compatibility with the next FAS
+  server update (backwards compatible).
+* Add fedora.client.PackageDB.user_packages() method that retrieves the packages
+  that a particular user owns.
+* Add a function for fetching all revisions of the wiki (fetch_all_revisions)
+* Add a function for seeing if we have the wiki API high limits right
+  (check_api_limits)
+* Add an identity provider, sqlobjectcsrf, to implement csrf_token protection
+  for applications that use sqlobject for database interaction and don't want
+  to use FAS for auth.
 
 --------
 0.3.13.1

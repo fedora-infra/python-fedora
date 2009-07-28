@@ -21,6 +21,7 @@
 '''
 Provide a client module for talking to the Fedora Account System.
 
+
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
@@ -147,6 +148,16 @@ class AccountSystem(BaseClient):
                 123204: 'ceski@fedoraproject.org',
                 # Nick Bebout: nick@bebout.net
                 101458: 'nb@fedoraproject.org',
+                # Niels Haase: haase.niels@gmail.com
+                126862: 'arxs@fedoraproject.org',
+                # Thomas Janssen: th.p.janssen@googlemail.com
+                103110: 'thomaj@fedoraproject.org',
+                # Michael J Gruber: 'michaeljgruber+fedoraproject@gmail.com'
+                105113: 'mjg@fedoraproject.org',
+                # Juan Manuel Rodriguez Moreno: 'nushio@gmail.com'
+                101302: 'nushio@fedoraproject.org',
+                # Andrew Cagney: 'andrew.cagney@gmail.com'
+                102169: 'cagney@fedoraproject.org',
                 }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email
@@ -228,6 +239,12 @@ class AccountSystem(BaseClient):
                         self.__bugzilla_email[person_id]
             else:
                 request['person']['bugzilla_email'] = request['person']['email']
+            # In the new FAS, membership info is returned separately
+            if 'approved' in request:
+                request['person']['approved_memberships'] = request['approved']
+            if 'unapproved' in request:
+                request['person']['unapproved_memberships'] = \
+                        request['unapproved']
             return request['person']
         else:
             return dict()
@@ -244,6 +261,12 @@ class AccountSystem(BaseClient):
                 person['bugzilla_email'] = self.__bugzilla_email[person['id']]
             else:
                 person['bugzilla_email'] = person['email']
+            # In the new FAS, membership info is returned separately
+            if 'approved' in request:
+                request['person']['approved_memberships'] = request['approved']
+            if 'unapproved' in request:
+                request['person']['unapproved_memberships'] = \
+                        request['unapproved']
             return person
         else:
             return dict()
@@ -465,9 +488,8 @@ class AccountSystem(BaseClient):
     def people_query(self, constraints=None, columns=None):
         '''Returns a list of dicts representing database rows
 
-        :arg constraints A dictionary specifying WHERE constraints on
-            columns
-        :arg columns A list of columns to be selected in the query
+        :arg constraints: A dictionary specifying WHERE constraints on columns
+        :arg columns: A list of columns to be selected in the query
         :raises AppError: if the query failed on the server (most likely
             because  the server was given a bad query)
         :returns: A list of dicts representing database rows (the keys of

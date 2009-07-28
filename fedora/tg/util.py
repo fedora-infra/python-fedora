@@ -22,6 +22,8 @@
 '''
 Miscellaneous functions of use on a TurboGears Server
 
+.. versionchanged:: 0.3.11
+   Save the original turbogears.url function as :func:`fedora.tg.util.tg_url`
 
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
@@ -43,6 +45,9 @@ from turbogears.identity.exceptions import RequestRequiredException
 from decorator import decorator
 
 from fedora import _
+
+
+tg_url = turbogears.url
 
 def fedora_template(template, template_type='genshi'):
     '''Function to return the path to a template.
@@ -156,7 +161,7 @@ def enable_csrf():
     .. versionadded:: 0.3.10
        Added to enable :ref:`CSRF-Protection`
     '''
-    # Override the turbogears.url funciton with our own
+    # Override the turbogears.url function with our own
     turbogears.url = url
     turbogears.controllers.url = url
 

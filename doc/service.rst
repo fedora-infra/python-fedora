@@ -409,10 +409,21 @@ modified to allow people to connect to it via :term:`JSON`::
 CSRF Protection
 ---------------
 
+For an overview of CSRF and how to protect :term:`TurboGears` 1 based
+services, look at this document.
+
 .. toctree::
    :maxdepth: 2
 
    CSRF
+
+For information on protecting :term:`TurboGears` 2 based services, look at this
+document.
+
+.. toctree::
+   :maxdepth: 2
+
+   CSRF-middleware
 
 .. _Using-SABase:
 

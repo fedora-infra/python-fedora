@@ -44,11 +44,14 @@ options(
         # And these to extra_require:
         #   for widgets: (bugzilla feedparser)
         extras_require = {'tg' : ['TurboGears >= 1.0.4', 'SQLAlchemy',
-            'decorator']},
+            'decorator'],
+            'wsgi': ['repoze.who'],
+            },
         entry_points = {
             'turbogears.identity.provider' : (
                 'jsonfas = fedora.tg.identity.jsonfasprovider1:JsonFasIdentityProvider [tg]',
-                'jsonfas2 = fedora.tg.identity.jsonfasprovider2:JsonFasIdentityProvider [tg]'),
+                'jsonfas2 = fedora.tg.identity.jsonfasprovider2:JsonFasIdentityProvider [tg]',
+                'sqlobjectcsrf = fedora.tg.identity.soprovidercsrf:SqlObjectCsrfIdentityProvider [tg]'),
             'turbogears.visit.manager' : (
                 'jsonfas = fedora.tg.visit.jsonfasvisit1:JsonFasVisitManager [tg]',
                 'jsonfas2 = fedora.tg.visit.jsonfasvisit2:JsonFasVisitManager [tg]'),
