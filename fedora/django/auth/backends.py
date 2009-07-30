@@ -1,23 +1,25 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright © 2009  Ignacio Vazquez-Abrams All rights reserved.
+# Copyright (C) 2009  Ignacio Vazquez-Abrams
+# This file is part of python-fedora
+# 
+# python-fedora is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+# 
+# python-fedora is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-# This copyrighted material is made available to anyone wishing to use, modify,
-# copy, or redistribute it subject to the terms and conditions of the GNU
-# General Public License v.2.  This program is distributed in the hope that it
-# will be useful, but WITHOUT ANY WARRANTY expressed or implied, including the
-# implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the GNU General Public License for more details.  You should have
-# received a copy of the GNU General Public License along with this program;
-# if not, write to the Free Software Foundation, Inc., 51 Franklin Street,
-# Fifth Floor, Boston, MA 02110-1301, USA. Any Red Hat trademarks that are
-# incorporated in the source code or documentation are not subject to the GNU
-# General Public License and may only be used or replicated with the express
-# permission of Red Hat, Inc.
+# You should have received a copy of the GNU Lesser General Public
+# License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
 '''
 .. moduleauthor:: Ignacio Vazquez-Abrams <ivazquez@fedoraproject.org>
 '''
+ 
 from fedora.client import AuthError
 from fedora.django import connection, person_by_id, local
 from fedora.django.auth.models import FasUser

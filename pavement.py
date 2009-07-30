@@ -66,7 +66,7 @@ options(
             'Framework :: Django',
             'Intended Audience :: Developers',
             'Intended Audience :: System Administrators',
-            'License :: OSI Approved :: GNU General Public License (GPL)',
+            'License :: OSI Approved :: GNU Lesser General Public License v2+ (LGPLv2+)',
             'Programming Language :: Python :: 2.4',
             'Topic :: Internet :: WWW/HTTP',
             'Topic :: Software Development :: Libraries :: Python Modules',

@@ -3,7 +3,7 @@ Python Fedora Module
 ====================
 
 :Author: Toshio Kuratomi
-:Date: 17 Oct 2008
+:Date: 30 July 2009
 :Version: 0.3.x
 
 The Fedora module provides a python API for building `Fedora Services`_ and
@@ -20,8 +20,8 @@ services much easier.
 License
 -------
 
-This python module is distributed under the terms of the GNU General Public
-License Version 2.
+This python module is distributed under the terms of the GNU Lesser General
+Public License Version 2 or later.
 
 ----------
 Installing

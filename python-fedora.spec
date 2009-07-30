@@ -6,7 +6,7 @@ Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
 Group:          Development/Languages
-License:        GPLv2
+License:        LGPLv2+
 URL:            https://fedorahosted.org/python-fedora/
 Source0:        https://fedorahosted.org/releases/p/y/%{name}/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
