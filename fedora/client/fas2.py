@@ -519,7 +519,7 @@ class AccountSystem(BaseClient):
     def user_gencert(self):
         '''Generate a cert for a user'''
         try:
-            request = self.send_request('user/gencert', auth=True)
+            request = self.send_request('user/dogencert', auth=True)
         except FedoraServiceError:
             raise
         if not request['cla']:
