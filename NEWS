@@ -7,6 +7,12 @@ NEWS
 :Version: 0.3.x
 
 ------
+0.3.15
+------
+* Relicense to LGPLv2+
+* Fix user_gencert URL
+
+------
 0.3.14
 ------
 * Save the original tg.url() function as fedora.tg.tg_url().  That allows us

@@ -1,12 +1,12 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.3.14
+Version:        0.3.15
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
 Group:          Development/Languages
-License:        GPLv2
+License:        LGPLv2+
 URL:            https://fedorahosted.org/python-fedora/
 Source0:        https://fedorahosted.org/releases/p/y/%{name}/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -65,6 +65,10 @@ rm -rf %{buildroot}
 %{python_sitelib}/*
 
 %changelog
+* Mon Aug 06 2009 Ricky Zhou <ricky@fedoraproject.org> - 0.3.15-1
+- New release 0.3.15.
+- Relicensed to LGPLv2+
+
 * Mon Jul 27 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.14-1
 - New release 0.3.14.
 
