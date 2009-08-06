@@ -1,7 +1,7 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.3.14
+Version:        0.3.15
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -65,6 +65,10 @@ rm -rf %{buildroot}
 %{python_sitelib}/*
 
 %changelog
+* Mon Aug 06 2009 Ricky Zhou <ricky@fedoraproject.org> - 0.3.15-1
+- New release 0.3.15.
+- Relicensed to LGPLv2+
+
 * Mon Jul 27 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.14-1
 - New release 0.3.14.
 
