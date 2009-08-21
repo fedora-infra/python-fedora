@@ -156,6 +156,8 @@ class AccountSystem(BaseClient):
                 101302: 'nushio@fedoraproject.org',
                 # Andrew Cagney: 'andrew.cagney@gmail.com'
                 102169: 'cagney@fedoraproject.org',
+                # Jeremy Katz: 'jeremy@katzbox.net'
+                100036: 'katzj@fedoraproject.org',
                 }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email
