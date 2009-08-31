@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: python-fedora 0.3.6\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2009-05-13 22:15-0700\n"
-"PO-Revision-Date: 2009-07-09 08:15-0300\n"
+"PO-Revision-Date: 2009-08-20 01:18-0300\n"
 "Last-Translator: Rafael Gomes <rafaelgomes@projetofedora.org>\n"
 "Language-Team: American English <fedora-trans-pt_br@redhat.com>\n"
 "MIME-Version: 1.0\n"
@@ -123,7 +123,7 @@ msgid "FAS server unable to retrieve user information"
 msgstr "Servidor FAS incapaz de obter informações do usuário"
 
 #: fedora/client/pkgdb.py:165
-#, fuzzy, python-format
+#, python-format
 msgid "We do not have enough information to create package %(pkg)s. Need version owner."
 msgstr "Nós não temos informações o suficiente para cria o pacote %(pkg)s. Precisa do dono da versão."
 
@@ -168,7 +168,6 @@ msgid "username and password must both be set in auth_params"
 msgstr "usuário e senha devem ambos estar configurados em auth_params"
 
 #: fedora/client/proxyclient.py:208
-#, fuzzy
 msgid "No known authentication methods specified: set \"cookie\" in auth_params or set both username and password in auth_params"
 msgstr "Métodos de autenticação específicados não conhecidos : defina \"cookie\" em auth_params ou defina ambos; nome de usuário e senha em auth_params"
 
