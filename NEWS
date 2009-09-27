@@ -7,6 +7,12 @@ NEWS
 :Version: 0.3.x
 
 ------
+0.3.16
+------
+* Update paver-minilib.zip to pull in more of paver.  Fixes a bug when used
+  with easy_install
+
+------
 0.3.15
 ------
 * Relicense to LGPLv2+

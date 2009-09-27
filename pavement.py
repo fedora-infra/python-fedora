@@ -72,6 +72,9 @@ options(
             'Topic :: Software Development :: Libraries :: Python Modules',
             ],
         ),
+    minilib=Bunch(
+        extra_files=['doctools']
+        ),
     sphinx=Bunch(
         docroot='.',
         builddir='build-doc',
