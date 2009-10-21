@@ -164,8 +164,8 @@ class AccountSystem(BaseClient):
                 100271: 'cwickert@fedoraproject.org',
                 # Elliott Baron: 'elliottbaron@gmail.com'
                 106760: 'ebaron@fedoraproject.org',
-                # Nigel Jones: 'nigjones@redhat.com'
-                101468: 'nigelj@fedoraproject.org',
+                # Nigel Jones
+                101468: 'nigjones@redhat.com',
                 # Thomas Spura: 'spurath@students.uni-mainz.de'
                 111433: 'tomspur@fedoraproject.org',
                 }
