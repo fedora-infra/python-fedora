@@ -11,7 +11,7 @@ NEWS
 ------
 * Update paver-minilib.zip to pull in more of paver.  Fixes a bug when used
   with easy_install
-* Fix a bug in fedora.tg.util.url that was creating more thawn one _csrf_token
+* Fix a bug in fedora.tg.util.url that was creating more than one _csrf_token
   entry.
 
 ------
