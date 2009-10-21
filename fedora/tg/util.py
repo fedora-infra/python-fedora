@@ -109,17 +109,16 @@ def url(tgpath, tgparams=None, **kwargs):
                     _('url() expects a dictionary for query parameters'))
     args = []
     # Add the _csrf_token
-    query_params = tgparams.iteritems()
     try:
         if identity.current.csrf_token:
-            query_params = chain(query_params,
-                    [('_csrf_token', identity.current.csrf_token)])
+            tgparams.update({'_csrf_token': identity.current.csrf_token})
     except RequestRequiredException: # pylint: disable-msg=W0704
         # :W0704: If we are outside of a request (called from non-controller
         # methods/ templates) just don't set the _csrf_token.
         pass
 
     # Check for query params in the current url
+    query_params = tgparams.iteritems()
     scheme, netloc, path, params, query_s, fragment = urlparse.urlparse(tgpath)
     if query_s:
         query_params = chain((p for p in cgi.parse_qsl(query_s) if p[0] !=
