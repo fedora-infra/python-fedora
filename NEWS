@@ -3,8 +3,16 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 27 Jul 2009
+:Date: 21 Oct 2009
 :Version: 0.3.x
+
+------
+0.3.16
+------
+* Update paver-minilib.zip to pull in more of paver.  Fixes a bug when used
+  with easy_install
+* Fix a bug in fedora.tg.util.url that was creating more than one _csrf_token
+  entry.
 
 ------
 0.3.15

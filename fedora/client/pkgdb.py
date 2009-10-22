@@ -85,6 +85,25 @@ class PackageDB(BaseClient):
         if 'useragent' not in kwargs:
             kwargs['useragent'] = 'Fedora PackageDB Client/%s' % __version__
         super(PackageDB, self).__init__(base_url, *args, **kwargs)
+        self._branches = None
+
+    def _get_branches(self, refresh=False):
+        '''Return collection branch information from the packagedb.
+
+        This method caches the branch information from the packagedb in
+        self._branches.  It returns that information when called.
+
+        :kwarg refresh: If refresh is set to True, contact the server even if
+            the information was previously cached
+        :returns: dictionary of branches keyed by their shortname
+        '''
+        if self._branches and not refresh:
+            return self._branches
+        data = self.send_request('/collections')
+        self._branches = dict((b[0]['branchname'], b[0])
+                for b in data.collections)
+        return self._branches
+    branches = property(_get_branches)
 
     def get_package_info(self, pkg, branch=None):
         '''Get information about the package.
@@ -269,6 +288,15 @@ class PackageDB(BaseClient):
         >>> version
         6
         '''
+        # This is a small change in behaviour.  Might as well wait for the 
+        # pkgdb update.
+        #try:
+        #    collection = self.branches[branch]
+        #except KeyError:
+        #    raise PackageDBError(_('Collection %(branch)s does not exist in'
+        #        ' the packagedb') % {'branch': branch})
+        #return collection['name'], collection['version']
+
         if branch == 'devel':
             collection = 'Fedora'
             version = 'devel'
@@ -329,8 +357,6 @@ class PackageDB(BaseClient):
         return self.send_request('/packages/dispatcher/remove_user', auth=True,
                    req_params=params)
 
-
-
     def user_packages(self, username, acls=None, eol=False):
         '''Retrieve information about the packages a user owns
 
@@ -349,3 +375,107 @@ class PackageDB(BaseClient):
         params = {'acls': acls, 'eol': eol}
         return self.send_request('/users/packages/%s' % username, req_params=params)
 
+    def get_package_list(self, collectn=None):
+        '''Retrieve a list of all package names in a collection.
+
+        :kwarg collectn: Collection to look for packages in.  If unset,
+            return packages in all collections
+        :returns: list of package names present in the collection.
+
+        .. versionadded:: 0.3.15
+        '''
+        params = {'tg_paginate_limit': '0'}
+        if collectn:
+            try:
+                collectn_id = self.branches[collectn]['id']
+            except KeyError:
+                raise PackageDBError(_('Collection shortname %(collectn)s'
+                    ' is unknown.') % {'collectn': collectn})
+            data = self.send_request('/collections/id/%s' % collectn_id, params)
+        else:
+            data = self.send_request('/packages/', params)
+        names = [p['name'] for p in data.packages]
+        return names
+
+    def get_vcs_acls(self):
+        '''Return the acls for the version control system.
+
+        Note: the return values from this function will be changing when the
+        PackageDB updates to 0.5.x.  The return data will look like this::
+            data[pkg][branch].people
+            data[pkg][branch].groups
+
+        :rtype: DictContainer
+        :returns: `DictContainer` representing the vcs acls for every person.
+            It looks like this: data[pkg][branch]['commit'].people list of
+            users who can commit to the package.
+            example::
+                >>> print data['bzr']['devel']['commit'].people
+                ['toshio', 'hno', 'shahms', 'toshio']
+                >>> print data['bzr']['devel']['commit'].groups
+                ['provenpackager']
+
+        .. versionadded:: 0.3.15
+        '''
+        data = self.send_request('/lists/vcs')
+        if 'exc' in data:
+            raise AppError(data['exc'], data['tg_flash'])
+
+        return data.packageAcls
+
+    def get_bugzilla_acls(self):
+        '''Return the package attributes used by bugzilla.
+
+        :rtype: DictContainer
+        :returns: `DictContainer` contains information needed to setup bugzilla
+            for every collection.  It looks like this:
+            data[collctn][pkg][attribute] where attribute is one of:
+                :owner: FAS username for the owner
+                :qacontact: if the package hasa special qacontact, their useid
+                    is listed here
+                :summary: Short description of the package
+                :cclist: list of FAS userids that are watching the package
+            Example::
+                >>> print data['Fedora']['bzr']['owner']
+                'toshio'
+                >>> print data['Fedora']['bzr']['qacontact']
+                None
+                >>> print data['Fedora']['bzr']['summary']
+                'Friendly distributed version control system'
+                >>> print data['Fedora']['bzr']['cclist']
+                {'groups': [], 'people': ['hno', 'shahms', 'toshio']}
+                >>> data.keys()
+                ['Fedora OLPC', 'Fedora', 'Fedora EPEL']
+
+        .. versionadded:: 0.3.15
+        '''
+        data = self.send_request('/lists/bugzilla')
+        if 'exc' in data:
+            raise AppError(data['exc'], data['tg_flash'])
+
+        return data.bugzillaAcls
+
+    def get_notify_acls(self, collctn_name=None, collctn_ver=None, eol=False):
+        '''Return the package attibutes used by notify
+
+        :kwarg collctn_name: Limit the packages to those in collection with
+            this name.  for instance, 'Fedora', 'Fedora EPEL', 'Fedora OLPC'.
+        :kwarg collctn_ver: If collctn_name is specified, this allows you to
+            also limit to a specific version of a collection.  If collctn_name
+            isn't specified, this option does nothing.
+        :kwarg eol: If eol is set to True, include eol distributions in the
+            notify list.  Default: False
+        :kwarg role_list: Note, this will not do anything until pkgdb-0.5.
+            List of roles that the user must have the acls for in order to be
+            included.  Valid roles are: owner, comaintainer, committer,
+            bzwatcher, and vcswatcher
+        :rtype: DictContainer
+        :returns: `DictContainer` keyed on package name.  Each entry has a list
+            of people to be notified for this package.
+
+        .. versionadded:: 0.3.15
+        '''
+        data = self.send_request('/lists/notify')
+        if 'exc' in data:
+            raise AppError(data['exc'], data['tg_flash'])
+        return data.packages
