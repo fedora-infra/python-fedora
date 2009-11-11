@@ -7,6 +7,12 @@ NEWS
 :Version: 0.3.x
 
 ------
+0.3.17
+------
+* Add a connection pool to ProxyClient.  Reusing the curl objects from the pool
+  speeds up requests that go to the same server.
+
+------
 0.3.16
 ------
 * Update paver-minilib.zip to pull in more of paver.  Fixes a bug when used
