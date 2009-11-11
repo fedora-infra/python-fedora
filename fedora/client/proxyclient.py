@@ -86,7 +86,6 @@ class CurlPool(Queue.Queue):
         if conn:
             now = time.time()
             if conn[0] + self.max_age < now:
-                print 'in reap old'
                 # Reap old connections
                 try:
                     c = self.get(block=False, timeout=0)
@@ -99,7 +98,6 @@ class CurlPool(Queue.Queue):
                     c = self.get(block=False, timeout=0)
             conn = conn[1]
         else:
-            print 'create new connection'
             conn = pycurl.Curl()
         return conn
 
