@@ -31,6 +31,7 @@ from repoze.who.plugins.form import RedirectingFormPlugin
 from repoze.who.classifiers import default_request_classifier
 from repoze.who.classifiers import default_challenge_decider
 from repoze.who.interfaces import IChallenger, IIdentifier
+from repoze.who.plugins.friendlyform import FriendlyFormPlugin
 from Cookie import SimpleCookie
 from paste.request import parse_dict_querystring, parse_formvars
 from urllib import quote_plus
@@ -44,18 +45,51 @@ FAS_CACHE_TIMEOUT=900 # 15 minutes (FAS visits timeout after 20)
 
 fas_cache = Cache('fas_repozewho_cache', type="memory")
 
+
+def add_fas_auth_middleware(self, app, *args):
+    """ Add our FAS authentication middleware.
+
+    This method should be used in the TG2 AppConfig class.
+    """
+    from fedora.wsgi.faswho import fas_make_who_middleware
+    from repoze.what.plugins.pylonshq import booleanize_predicates
+    from copy import copy
+    from tg.configuration import Bunch
+    import logging
+
+    booleanize_predicates()
+
+    if not hasattr(self, 'fas_auth'):
+        self.fas_auth = Bunch()
+
+    # Configuring auth logging:
+    if 'log_stream' not in self.fas_auth:
+        self.fas_auth['log_stream'] = logging.getLogger('auth')
+
+    # Pull in some of the default auth arguments
+    auth_args = copy(self.fas_auth)
+
+    app = fas_make_who_middleware(app, **auth_args)
+    return app
+
+
 def fas_make_who_middleware(app, log_stream, login_handler='/login_handler',
-        login_form_url='/login', logout_handler_path='/logout'):
+        login_form_url='/login', logout_handler='/logout_handler',
+        post_login_url='/post_login', post_logout_url=None):
 
     faswho = FASWhoPlugin(FAS_URL)
     csrf_mdprovider = CSRFMetadataProvider(login_handler=login_handler)
 
-    form = RedirectingFormPlugin(login_form_url, login_handler,
-                                 logout_handler_path,
-                                 rememberer_name='fasident',
-                                 reason_param='ec')
-    form.classifications = { IIdentifier:['browser'],
-                             IChallenger:['browser'] } # only for browser
+    form = FriendlyFormPlugin(login_form_url,
+                              login_handler,
+                              post_login_url,
+                              logout_handler,
+                              post_logout_url,
+                              rememberer_name='fasident')
+                              #reason_param='ec')
+
+    form.classifications = { IIdentifier: ['browser'],
+                             IChallenger: ['browser'] } # only for browser
 
     identifiers = [('form', form),('fasident', faswho)]
     authenticators = [('fasauth', faswho)]
@@ -238,8 +272,8 @@ class FASWhoPlugin(object):
             environ['FAS_AUTH_ERROR'] = err
 
             err_app = HTTPFound(err_goto + '?' +
-                                'came_from=' + quote_plus(came_from) +
-                                '&ec=login_err.USERNAME_PASSWORD_ERROR')
+                                'came_from=' + quote_plus(came_from))
+                                #'&ec=login_err.USERNAME_PASSWORD_ERROR')
 
             environ['repoze.who.application'] = err_app
 
@@ -255,8 +289,8 @@ class FASWhoPlugin(object):
 
         err = 'An unknown error happened when trying to log you in.  Please try again.'
         environ['FAS_AUTH_ERROR'] = err
-        err_app = HTTPFound(err_goto + '?' + 'came_from=' + came_from +
-                            '&ec=login_err.UNKNOWN_AUTH_ERROR')
+        err_app = HTTPFound(err_goto + '?' + 'came_from=' + came_from)
+                            #'&ec=login_err.UNKNOWN_AUTH_ERROR')
 
         environ['repoze.who.application'] = err_app
 
