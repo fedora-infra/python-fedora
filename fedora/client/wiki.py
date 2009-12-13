@@ -26,7 +26,7 @@ A Wiki Client
 '''
 
 from datetime import datetime, timedelta
-from fedora.client import BaseClient
+from fedora.client import BaseClient, AuthError
 from fedora import _
 import time
 
@@ -60,7 +60,7 @@ class Wiki(BaseClient):
                 'lgpassword': password,
                 })
         if 'lgtoken' not in data.get('login', {}):
-            raise Exception(_('Login failed: %s') % data)
+            raise AuthError(_('Login failed: %s') % data)
         #self.session_id = data['login']['lgtoken']
         #self.username = data['login']['lgusername']
         self.check_api_limits()
