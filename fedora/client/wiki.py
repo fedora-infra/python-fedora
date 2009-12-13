@@ -117,8 +117,8 @@ you run this script using a 'bot' account.""")
         Fetch data for all revisions. This could take a long time. You can start
         at a specific revision by modifying the 'start' keyword argument.
 
-        To ignore revisions made by "ImportUser", set ignore_imported_revs to
-        True (this is the default).
+        To ignore revisions made by "ImportUser" and "Admin" set
+        ignore_imported_revs to True (this is the default).
 
         Modifying the remainder of the keyword arguments will return less/more
         data.
@@ -163,7 +163,7 @@ you run this script using a 'bot' account.""")
                 page = data['query']['pages'][pageid]
                 for revision in page['revisions']:
                     if ignore_imported_revs and \
-                       revision['user'] == 'ImportUser':
+                       revision['user'] in ['ImportUser', 'Admin']:
                         revs_to_get.remove(revision['revid'])
                         continue
                     this_rev = {}
