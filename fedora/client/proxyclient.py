@@ -216,7 +216,6 @@ class ProxyClient(object):
                 for the server
             :username: Username to send to the server
             :password: Password to use with username to send to the server
-            :mediawiki: dict of cookie values
 
             Note that cookie can be sent alone but if one of username or
             password is set the other must as well.  Code can set all of these
@@ -233,14 +232,11 @@ class ProxyClient(object):
         self.log.debug(_('proxyclient.send_request: entered'))
         # Check whether we need to authenticate for this request
         session_id = None
-        mediawiki_id = None
         username = None
         password = None
         if auth_params:
             if 'session_id' in auth_params:
                 session_id = auth_params['session_id']
-            elif 'mediawiki' in auth_params:
-                mediawiki_id = auth_params['mediawiki']
             elif 'cookie' in auth_params:
                 warnings.warn(_('Giving a cookie to send_request() to'
                 ' authenticate is deprecated and will be removed in 0.4.'
@@ -254,7 +250,7 @@ class ProxyClient(object):
             elif 'username' in auth_params or 'password' in auth_params:
                 raise AuthError(_('username and password must both be set in'
                         ' auth_params'))
-            if not (session_id or mediawiki_id or username):
+            if not (session_id or username):
                 raise AuthError(_('No known authentication methods specified:'
                         ' set "cookie" in auth_params or set both username and'
                         ' password in auth_params'))
@@ -294,9 +290,6 @@ class ProxyClient(object):
             # works.  Will also authenticate us if there's a need.
             request.setopt(pycurl.COOKIE, '%s=%s;' % (self.session_name,
                 session_id))
-        elif mediawiki_id:
-            request.setopt(pycurl.COOKIE, \
-                           ';'.join(['%s=%s' % x in mediawiki_id.items()]))
 
         complete_params = req_params or {}
         # Note: tg_format=json is going away in the future as the Accept
@@ -349,22 +342,15 @@ class ProxyClient(object):
             raise ServerError(url, http_status, msg)
 
         # In case the server returned a new session cookie to us
-        if session_id:
-            new_session = ''
-        else: # mediawiki_id
-            new_session = {}
+        new_session = ''
         cookies = request.getinfo(pycurl.INFO_COOKIELIST)
         self.pool.return_connection(request)
         for cookie in cookies:
             host, isdomain, path, secure, expires, name, value  = \
                     cookie.split('\t')
-            if session_id:
-                if name == self.session_name:
-                    new_session = value
-                    break
-            elif mediawiki_id:
-                if name in mediawiki_id.keys():
-                    new_session[name] = value
+            if name == self.session_name:
+                new_session = value
+                break
 
         # Read the response
         json_string = response.data
@@ -389,6 +375,6 @@ class ProxyClient(object):
             new_session = cookie
 
         self.log.debug(_('proxyclient.send_request: exited'))
-        return new_session, DictContainer(data) # mediawiki makes it a dict
+        return new_session, DictContainer(data)
 
 __all__ = [ProxyClient, CurlPool]
