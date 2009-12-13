@@ -111,7 +111,8 @@ you run this script using a 'bot' account.""")
 
     def fetch_all_revisions(self, start=1, flags=True, timestamp=True,
                             user=True, size=False, comment=True, content=False,
-                            title=True, ignore_imported_revs=True):
+                            title=True, ignore_imported_revs=True,
+                            callback=None):
         """
         Fetch data for all revisions. This could take a long time. You can start
         at a specific revision by modifying the 'start' keyword argument.
@@ -163,6 +164,7 @@ you run this script using a 'bot' account.""")
                 for revision in page['revisions']:
                     if ignore_imported_revs and \
                        revision['user'] == 'ImportUser':
+                        revs_to_get.remove(revision['revid'])
                         continue
                     this_rev = {}
                     if flags:
@@ -184,6 +186,8 @@ you run this script using a 'bot' account.""")
                     if title:
                         this_rev['title'] = page['title']
                     all_revs[revision['revid']] = this_rev
+            if callback:
+                callback(all_revs, revs_to_get)
         return all_revs
 
 
