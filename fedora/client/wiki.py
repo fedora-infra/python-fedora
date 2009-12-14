@@ -112,13 +112,14 @@ you run this script using a 'bot' account.""")
     def fetch_all_revisions(self, start=1, flags=True, timestamp=True,
                             user=True, size=False, comment=True, content=False,
                             title=True, ignore_imported_revs=True,
-                            callback=None):
+                            ignore_wikibot=False, callback=None):
         """
         Fetch data for all revisions. This could take a long time. You can start
         at a specific revision by modifying the 'start' keyword argument.
 
         To ignore revisions made by "ImportUser" and "Admin" set
-        ignore_imported_revs to True (this is the default).
+        ignore_imported_revs to True (this is the default). To ignore edits made
+        by Wikibot set ignore_wikibot to True (False is the default).
 
         Modifying the remainder of the keyword arguments will return less/more
         data.
@@ -159,11 +160,14 @@ you run this script using a 'bot' account.""")
                     'revids': revid_str,
                     'format': 'json',
             })
+            if 'pages' not in data['query'].keys():
+                continue
             for pageid in data['query']['pages']:
                 page = data['query']['pages'][pageid]
                 for revision in page['revisions']:
                     if ignore_imported_revs and \
-                       revision['user'] in ['ImportUser', 'Admin']:
+                       revision['user'] in ['ImportUser', 'Admin'] or \
+                       ignore_wikibot and revision['user'] == 'Wikibot':
                         revs_to_get.remove(revision['revid'])
                         continue
                     this_rev = {}
