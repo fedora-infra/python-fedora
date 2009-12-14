@@ -163,6 +163,9 @@ you run this script using a 'bot' account.""")
             })
             if 'pages' not in data['query'].keys():
                 continue
+            if 'badrevids' in data['query'].keys():
+                [revs_to_get.remove(i['revid']) for i in \
+                 data['query']['badrevids'].values()]
             for pageid in data['query']['pages']:
                 page = data['query']['pages'][pageid]
                 for revision in page['revisions']:
