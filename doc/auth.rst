@@ -59,3 +59,10 @@ Django Authentication Backend
     :maxdepth: 2
 
     django
+
+FAS Who Plugin for TurboGears2
+==============================
+.. toctree::
+    :maxdepth: 2
+
+    faswho
