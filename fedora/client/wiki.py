@@ -130,7 +130,8 @@ you run this script using a 'bot' account.""")
                 'action': 'query',
                 'format': 'json',
                 'rcprop': 'ids',
-                'rclimit': 1
+                'rclimit': 1,
+                'rctype': 'edit|new',
         })
         latest_revid = change['query']['recentchanges'][0]['revid']
         # now we loop through all the revisions we want
