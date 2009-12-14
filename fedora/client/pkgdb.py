@@ -61,7 +61,7 @@ class PackageDBError(FedoraClientError):
 # need to be changed.
 
 class PackageDB(BaseClient):
-    '''Provide an easy to use interface to the PackageDB.'''
+
     def __init__(self, base_url='https://admin.fedoraproject.org/pkgdb/',
             *args, **kwargs):
         '''Create the PackageDB client.
@@ -172,8 +172,6 @@ class PackageDB(BaseClient):
         :kwarg groups: If set, list or tuple of group names that can commit to
             the package.
         :raises AppError: If the server returns an error
-
-        This method adds the package to the database.
 
         .. versionadded:: 0.3.13
         '''
@@ -402,14 +400,15 @@ class PackageDB(BaseClient):
 
         Note: the return values from this function will be changing when the
         PackageDB updates to 0.5.x.  The return data will look like this::
+
             data[pkg][branch].people
             data[pkg][branch].groups
 
         :rtype: DictContainer
         :returns: `DictContainer` representing the vcs acls for every person.
             It looks like this: data[pkg][branch]['commit'].people list of
-            users who can commit to the package.
-            example::
+            users who can commit to the package.  Example::
+
                 >>> print data['bzr']['devel']['commit'].people
                 ['toshio', 'hno', 'shahms', 'toshio']
                 >>> print data['bzr']['devel']['commit'].groups
@@ -430,11 +429,11 @@ class PackageDB(BaseClient):
         :returns: `DictContainer` contains information needed to setup bugzilla
             for every collection.  It looks like this:
             data[collctn][pkg][attribute] where attribute is one of:
-                :owner: FAS username for the owner
-                :qacontact: if the package hasa special qacontact, their useid
-                    is listed here
-                :summary: Short description of the package
-                :cclist: list of FAS userids that are watching the package
+            :owner: FAS username for the owner
+            :qacontact: if the package hasa special qacontact, their userid is listed here
+            :summary: Short description of the package
+            :cclist: list of FAS userids that are watching the package
+
             Example::
                 >>> print data['Fedora']['bzr']['owner']
                 'toshio'
