@@ -65,7 +65,7 @@ class AccountSystem(BaseClient):
         '''Create the AccountSystem client object.
 
         :kwargs base_url: Base of every URL used to contact the server.
-            Defalts to the Fedora Project instance.
+            Defaults to the Fedora Project FAS instance.
         :kwargs useragent: useragent string to use.  If not given, default to
             "Fedora Account System Client/VERSION"
         :kwargs debug: If True, log debug information
