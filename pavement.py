@@ -43,9 +43,9 @@ options(
         install_requires=['simplejson'],
         # And these to extra_require:
         #   for widgets: (bugzilla feedparser)
-        extras_require = {'tg' : ['TurboGears >= 1.0.4', 'SQLAlchemy',
-            'decorator'],
-            'wsgi': ['repoze.who'],
+        extras_require = {
+            'tg' : ['TurboGears >= 1.0.4', 'SQLAlchemy', 'decorator'],
+            'wsgi': ['repoze.who', 'Beaker', 'Paste'],
             },
         entry_points = {
             'turbogears.identity.provider' : (
