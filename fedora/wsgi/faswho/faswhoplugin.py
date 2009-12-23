@@ -155,7 +155,7 @@ class FASWhoPlugin(object):
 
         try:
             me = linfo[1]
-            me.update({'repoze.who.userid': me['person']['username']})
+            me.update({'repoze.who.userid': me['username']})
             environ['FAS_LOGIN_INFO'] = linfo
             return me
         except Exception, e:
@@ -276,7 +276,7 @@ class FASWhoPlugin(object):
         # memberships in the future (such as special fedora community groups)
 
         groups = set()
-        for g in identity['person']['approved_memberships']:
+        for g in identity['approved_memberships']:
             groups.add(g['name'])
 
         identity['groups'] = groups
