@@ -3,7 +3,7 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 21 Oct 2009
+:Date: 23 Dec 2009
 :Version: 0.3.x
 
 ------
@@ -11,6 +11,11 @@ NEWS
 ------
 * Add a connection pool to ProxyClient.  Reusing the curl objects from the pool
   speeds up requests that go to the same server.
+* New class FasProxyClient that is used to implement thread-safe communication
+  with the Fedora Account System.  Our authentication plugins that talk to
+  FAS have been ported to use this internally.
+* faswho and csrf middleware that allow TG2 apps to authenticate against FAS
+* Documentation on how to use faswho and CSRF in a TG2 app.
 
 ------
 0.3.16
