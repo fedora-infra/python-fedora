@@ -152,7 +152,11 @@ class FASWhoPlugin(object):
 
     def keep_alive(self, session_id):
         log.info("Keep alive cache miss")
-        linfo = self.fas.get_user_info({'session_id': session_id})
+        try:
+            linfo = self.fas.get_user_info({'session_id': session_id})
+        except AuthError, e:
+            log.warning(e)
+            return None
         try:
             del linfo[1]['password']
         except:
