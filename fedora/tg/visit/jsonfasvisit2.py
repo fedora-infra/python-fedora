@@ -29,7 +29,7 @@ calls to the account system server.
 from turbogears import config
 from turbogears.visit.api import Visit, BaseVisitManager
 
-from fedora.client import ProxyClient
+from fedora.client import FasProxyClient
 
 from fedora import _, __version__
 
@@ -47,8 +47,7 @@ class JsonFasVisitManager(BaseVisitManager):
         self.log = log
         self.debug = config.get('jsonfas.debug', False)
         if not self.fas:
-            self.fas = ProxyClient(self.fas_url, session_as_cookie=False,
-                    debug=self.debug,
+            self.fas = FasProxyClient(self.fas_url, debug=self.debug,
                     session_name=config.get('visit.cookie.name', 'tg-visit'),
                     useragent='JsonFasVisitManager/%s' % __version__)
         BaseVisitManager.__init__(self, timeout)
@@ -70,8 +69,7 @@ class JsonFasVisitManager(BaseVisitManager):
         # Hit any URL in fas2 with the visit_key set.  That will call the
         # new_visit method in fas2
         # We only need to get the session cookie from this request
-        request_data = self.fas.send_request('',
-                auth_params={'session_id': visit_key})
+        request_data = self.fas.refresh_session(visit_key)
         session_id = request_data[0]
         self.log.debug('JsonFasVisitManager.new_visit_with_key: exit')
         return Visit(session_id, True)
@@ -85,8 +83,7 @@ class JsonFasVisitManager(BaseVisitManager):
         # Hit any URL in fas2 with the visit_key set.  That will call the
         # new_visit method in fas2
         # We only need to get the session cookie from this request
-        request_data = self.fas.send_request('',
-                auth_params={'session_id': visit_key})
+        request_data = self.fas.refresh_session(visit_key)
         session_id = request_data[0]
 
         # Knowing what happens in turbogears/visit/api.py when this is called,
@@ -109,5 +106,5 @@ class JsonFasVisitManager(BaseVisitManager):
         # Hit any URL in fas with each visit_key to update the sessions
         for visit_key in queue:
             self.log.info(_('updating visit (%s)'), visit_key)
-            self.fas.send_request('', auth_params={'session_id': visit_key})
+            self.fas.refresh_session(visit_key)
         self.log.debug('JsonFasVisitManager.update_queued_visits: exit')

@@ -63,7 +63,7 @@ class FasProxyClient(ProxyClient):
         '''
         if 'useragent' not in kwargs:
             kwargs['useragent'] = 'FAS Proxy Client/%s' % __version__
-        if 'session_as_cookie'in kwargs and kwargs['session_as_cookie']:
+        if 'session_as_cookie' in kwargs and kwargs['session_as_cookie']:
             # No need to allow this in FasProxyClient as it's deprecated in
             # ProxyClient
             raise TypeError(_('FasProxyClient() got an unexpected keyword argument'
@@ -93,8 +93,9 @@ class FasProxyClient(ProxyClient):
         '''Try to refresh a session_id to prevent it from timing out
 
         :arg session_id: FAS session_id to refresh
+        :returns: session_id that FAS has set now
         '''
-        self.send_request('', auth_params={'session_id': session_id})
+        return self.send_request('', auth_params={'session_id': session_id})
 
     def verify_session(self, session_id):
         '''Verify that a session is active.

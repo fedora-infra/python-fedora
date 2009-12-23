@@ -18,6 +18,7 @@
 #
 '''
 .. moduleauthor:: Ignacio Vazquez-Abrams <ivazquez@fedoraproject.org>
+.. moduleauthor:: Toshio Kuratomi <toshio@fedoraproject.org>
 '''
  
 from fedora.client import AuthError
@@ -35,8 +36,7 @@ class FasBackend(ModelBackend):
                 auth = {'session_id': session_id}
             else:
                 auth = {'username': username, 'password': password}
-            session_id, userinfo = connection.send_request('user/view',
-                auth_params=auth)
+            session_id, userinfo = connection.get_user_info(auth_params=auth)
             local.session_id = session_id
             user = FasUser.objects.user_from_fas(userinfo['person'])
             if user.is_active:
