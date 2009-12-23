@@ -163,6 +163,7 @@ class FASWhoPlugin(object):
 
     def __init__(self, url, session_cookie='authtkt'):
         self.url = url
+        self.fas = FasClient(url)
         self.session_cookie = session_cookie
         self._session_cache = {}
         self._metadata_plugins = []
@@ -172,8 +173,7 @@ class FASWhoPlugin(object):
 
     def keep_alive(self, session_id):
         log.info("Keep alive cache miss")
-        fas = FasClient(self.url)
-        linfo = fas.keep_alive(session_id, True)
+        linfo = self.fas.keep_alive(session_id, True)
         return linfo
 
     def identify(self, environ):
@@ -228,8 +228,7 @@ class FASWhoPlugin(object):
             session_id = linfo[0]
             log.info("Forgetting login data for cookie %s" % (session_id))
 
-            fas = FasClient(self.url)
-            fas.logout(session_id)
+            self.fas.logout(session_id)
 
             result = []
             fas_cache.remove_value(key=session_id + "_identity")
@@ -263,8 +262,7 @@ class FASWhoPlugin(object):
 
         user_data = ""
         try:
-            fas = FasClient(self.url)
-            user_data = fas.login(login, password)
+            user_data = self.fas.login(login, password)
         except AuthError, e:
             log.info('Authentication failed, setting error')
             log.warning(e)
@@ -281,7 +279,7 @@ class FASWhoPlugin(object):
 
         if user_data:
             if isinstance(user_data, tuple):
-                environ['FAS_LOGIN_INFO'] = fas.keep_alive(user_data[0], True)
+                environ['FAS_LOGIN_INFO'] = self.fas.keep_alive(user_data[0], True)
                 # let the csrf plugin know we just authenticated and it needs
                 # to rewrite the redirection app
                 environ['CSRF_AUTH_SESSION_ID'] = environ['FAS_LOGIN_INFO'][0]
