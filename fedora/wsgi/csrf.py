@@ -34,45 +34,17 @@ import logging
 from webob import Request
 from paste.httpexceptions import HTTPFound
 from paste.response import replace_header
-from urlparse import urlparse, urlunparse
-from urllib import urlencode
 from repoze.who.interfaces import IMetadataProvider
 from zope.interface import implements
-
-try:
-    from urlparse import parse_qs
-except:
-    from cgi import parse_qs
 
 try:
     from hashlib import sha1
 except ImportError:
     from sha import sha as sha1
 
+from fedora.urlutils import update_qs
+
 log = logging.getLogger(__name__)
-
-def update_qs(uri, d):
-    """
-    Helper function for updating query string values.  Similar to calling
-    update on a dictionary except we modify the query string of the uri
-    instead of another dictionary.
-    """
-    loc = list(urlparse(uri))
-    query_dict = parse_qs(loc[4])
-    query_dict.update(d)
-
-    # seems that we have to sanitize a bit here
-    query_list = []
-    for k, v in query_dict.items():
-        if isinstance(v, list):
-            for item in v:
-                query_list.append((k, item))
-        else:
-            query_list.append((k, v))
-
-    loc[4] = urlencode(query_list)
-
-    return urlunparse(loc)
 
 
 class CSRFProtectionMiddleware(object):

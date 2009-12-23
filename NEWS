@@ -16,6 +16,10 @@ NEWS
   FAS have been ported to use this internally.
 * faswho and csrf middleware that allow TG2 apps to authenticate against FAS
 * Documentation on how to use faswho and CSRF in a TG2 app.
+* New functions:
+  - fedora.iterutils.isiterable(): Can tell whether an object is an iterable.
+    Can also exclude strings if desired.
+  - fedora.urlutils.update_qs(): Updates a htp query string.
 
 ------
 0.3.16
