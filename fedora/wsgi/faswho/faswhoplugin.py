@@ -23,16 +23,15 @@ import logging
 import pkg_resources
 
 from beaker.cache import Cache
-from fedora.client import ProxyClient, AuthError
+from fedora.client import AuthError
+from fedora.client.fasproxy import FasProxyClient
 from paste.httpexceptions import HTTPFound
-from paste.deploy.converters import asbool
 from repoze.who.middleware import PluggableAuthenticationMiddleware
 from repoze.who.plugins.form import RedirectingFormPlugin
 from repoze.who.classifiers import default_request_classifier
 from repoze.who.classifiers import default_challenge_decider
 from repoze.who.interfaces import IChallenger, IIdentifier
 from repoze.who.plugins.friendlyform import FriendlyFormPlugin
-from Cookie import SimpleCookie
 from paste.request import parse_dict_querystring, parse_formvars
 from urllib import quote_plus
 
@@ -113,57 +112,11 @@ def fas_make_who_middleware(app, log_stream, login_handler='/login_handler',
     return app
 
 
-class FasClient(ProxyClient):
-
-    def __init__(self, baseURL, check_certs=True):
-        insecure = not asbool(check_certs)
-        super(FasClient, self).__init__(baseURL,
-                                        session_as_cookie=False,
-                                        insecure=insecure)
-
-    def convert_cookie(self, cookie):
-        sc = SimpleCookie()
-        for key, value in cookie.iteritems():
-            sc[key] = value
-        return sc
-
-    def login(self, login, password):
-        return self.send_request("login",
-                auth_params={'username': login, 'password':password})
-
-    def logout(self, session_id):
-        return self.send_request("logout",
-                auth_params={'session_id': session_id})
-
-    def keep_alive(self, session_id, get_user_info):
-        if not session_id:
-            return None
-
-        method = ''
-        if get_user_info:
-            method = 'user/view'
-
-        auth_params = {'session_id': session_id}
-
-        result = None
-        try:
-            result = self.send_request(method, auth_params=auth_params)
-        except AuthError, e:
-            log.warning(e)
-
-        try:
-            del(result[1]['person']['password'])
-        except:
-            pass
-
-        return result
-
-
 class FASWhoPlugin(object):
 
     def __init__(self, url, session_cookie='authtkt'):
         self.url = url
-        self.fas = FasClient(url)
+        self.fas = FasProxyClient(url)
         self.session_cookie = session_cookie
         self._session_cache = {}
         self._metadata_plugins = []
@@ -173,7 +126,11 @@ class FASWhoPlugin(object):
 
     def keep_alive(self, session_id):
         log.info("Keep alive cache miss")
-        linfo = self.fas.keep_alive(session_id, True)
+        linfo = self.fas.get_user_info({'session_id': session_id})
+        try:
+            del linfo[1]['password']
+        except:
+            pass
         return linfo
 
     def identify(self, environ):
@@ -262,7 +219,7 @@ class FASWhoPlugin(object):
 
         user_data = ""
         try:
-            user_data = self.fas.login(login, password)
+            user_data = self.fas.get_user_info({'username': login, 'password': password})
         except AuthError, e:
             log.info('Authentication failed, setting error')
             log.warning(e)
@@ -271,7 +228,6 @@ class FASWhoPlugin(object):
 
             err_app = HTTPFound(err_goto + '?' +
                                 'came_from=' + quote_plus(came_from))
-                                #'&ec=login_err.USERNAME_PASSWORD_ERROR')
 
             environ['repoze.who.application'] = err_app
 
@@ -279,7 +235,8 @@ class FASWhoPlugin(object):
 
         if user_data:
             if isinstance(user_data, tuple):
-                environ['FAS_LOGIN_INFO'] = self.fas.keep_alive(user_data[0], True)
+                del user_data[1]['password']
+                environ['FAS_LOGIN_INFO'] = user_data
                 # let the csrf plugin know we just authenticated and it needs
                 # to rewrite the redirection app
                 environ['CSRF_AUTH_SESSION_ID'] = environ['FAS_LOGIN_INFO'][0]
