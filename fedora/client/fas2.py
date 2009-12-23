@@ -26,8 +26,8 @@ Provide a client module for talking to the Fedora Account System.
 import urllib
 import warnings
 
-from fedora.client import DictContainer, BaseClient, ProxyClient, \
-        AuthError, AppError, FedoraServiceError, FedoraClientError
+from fedora.client import DictContainer, BaseClient, FasProxyClient, \
+        AppError, FedoraServiceError, FedoraClientError
 from fedora import __version__, _
 
 ### FIXME: To merge:
@@ -84,7 +84,7 @@ class AccountSystem(BaseClient):
         # We need a single proxy for the class to verify username/passwords
         # against.
         if not self.proxy:
-            self.proxy = ProxyClient(base_url, useragent=self.useragent,
+            self.proxy = FasProxyClient(base_url, useragent=self.useragent,
                     session_as_cookie=False, debug=self.debug)
 
         # Preseed a list of FAS accounts with bugzilla addresses
@@ -549,16 +549,7 @@ class AccountSystem(BaseClient):
         :arg password: password for the user
         :returns: True if the username/password are valid.  False otherwise.
         '''
-        try:
-            # This will attempt to authenticate to the account system and
-            # raise an AuthError if the password and username don't match. 
-            self.proxy.send_request('/home',
-                    auth_params={'username': username, 'password': password})
-        except AuthError:
-            return False
-        except:
-            raise
-        return True
+        return self.proxy.verify_password(username, password)
 
     ### fasClient Special Methods ###
 
