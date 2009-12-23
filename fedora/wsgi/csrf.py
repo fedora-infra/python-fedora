@@ -203,7 +203,7 @@ class CSRFMetadataProvider(object):
     This plugin will also set ``CSRF_AUTH_STATE`` in the environ if the user
     has just authenticated during this request.
 
-    To enable this plugin in an existing TurboGears2 application, you can
+    To enable this plugin in a TurboGears2 application, you can
     add the following to your ``project/config/app_cfg.py``
 
     .. code-block:: python
@@ -211,6 +211,7 @@ class CSRFMetadataProvider(object):
         from fedora.wsgi.csrf import CSRFMetadataProvider
         base_config.sa_auth.mdproviders = [('csrfmd', CSRFMetadataProvider())]
 
+    Note: If you use the faswho plugin, this is turned on automatically.
     """
     implements(IMetadataProvider)
 
