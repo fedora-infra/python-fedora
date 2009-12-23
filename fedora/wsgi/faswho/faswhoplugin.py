@@ -41,7 +41,7 @@ from repoze.who.plugins.friendlyform import FriendlyFormPlugin
 from paste.request import parse_dict_querystring, parse_formvars
 from urllib import quote_plus
 
-from fedora.wsgi.csrf import CSRFMetadataProvider
+from fedora.wsgi.csrf import CSRFMetadataProvider, CSRFProtectionMiddleware
 
 log = logging.getLogger(__name__)
 
@@ -111,7 +111,6 @@ def fas_make_who_middleware(app, log_stream, login_handler='/login_handler',
                               logout_handler,
                               post_logout_url,
                               rememberer_name='fasident')
-                              #reason_param='ec')
 
     form.classifications = { IIdentifier: ['browser'],
                              IChallenger: ['browser'] } # only for browser
@@ -124,6 +123,7 @@ def fas_make_who_middleware(app, log_stream, login_handler='/login_handler',
     if os.environ.get('FAS_WHO_LOG'):
         log_stream = sys.stdout
 
+    app = CSRFProtectionMiddleware(app)
     app = PluggableAuthenticationMiddleware(
             app,
             identifiers,
