@@ -15,7 +15,14 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
+#
+"""
+repoze.who plugin to authenticate against hte Fedora Account System
 
+.. moduleauthor:: John (J5) Palmieri <johnp@redhat.com>
+.. moduleauthor:: Luke Macken <lmacken@redhat.com>
+.. moduleauthor:: Toshio Kuratomi <toshio@fedoraproject.org>
+"""
 import os
 import sys
 import webob
@@ -27,7 +34,6 @@ from fedora.client import AuthError
 from fedora.client.fasproxy import FasProxyClient
 from paste.httpexceptions import HTTPFound
 from repoze.who.middleware import PluggableAuthenticationMiddleware
-from repoze.who.plugins.form import RedirectingFormPlugin
 from repoze.who.classifiers import default_request_classifier
 from repoze.who.classifiers import default_challenge_decider
 from repoze.who.interfaces import IChallenger, IIdentifier
@@ -46,10 +52,30 @@ fas_cache = Cache('fas_repozewho_cache', type="memory")
 
 
 def add_fas_auth_middleware(self, app, *args):
-    """ Add our FAS authentication middleware.
+    ''' Add our FAS authentication middleware.
 
-    This method should be used in the TG2 AppConfig class.
-    """
+    This is a convenience method that sets up the FAS authentication
+    middleware.  It needs to be used in :file:`app/config/app_cfg.py` like
+    this:
+
+    .. code-block:: diff
+        @@ -19,7 +19,13 @@ import testtg2
+         from testtg2 import model
+         from testtg2.lib import app_globals, helpers.
+
+        -base_config = AppConfig()
+        +from fedora.wsgi.faswho import add_fas_auth_middleware
+        +
+        +class MyAppConfig(AppConfig):
+        +    add_auth_middleware = add_fas_auth_middleware
+        +
+        +base_config = MyAppConfig()
+        +
+         base_config.renderers = []
+
+         base_config.package = testtg2
+
+    '''
     from fedora.wsgi.faswho import fas_make_who_middleware
     from repoze.what.plugins.pylonshq import booleanize_predicates
     from copy import copy

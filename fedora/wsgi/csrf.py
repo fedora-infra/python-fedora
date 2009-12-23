@@ -86,22 +86,20 @@ class CSRFProtectionMiddleware(object):
     since it relies upon ``repoze.who.identity`` to exist in the environ before
     it is called.
 
-    This middleware is enabled by default when using Moksha, and can be
-    disabled by setting ``moksha.csrf_protection = False`` in your
-    configuration file.
-
-    To utilize this middleware without Moksha, you can just add it to your
-    WSGI below the :mod:`repoze.who` middleware.  Here is an example of
-    utilizing the `CSRFProtectionMiddleware` within a TurboGears2 application.
+    To utilize this middleware, you can just add it to your WSGI stack below
+    the :mod:`repoze.who` middleware.  Here is an example of utilizing the
+    `CSRFProtectionMiddleware` within a TurboGears2 application.
     In your ``project/config/middleware.py``, you would wrap your main
     application with the `CSRFProtectionMiddleware`, like so:
 
     .. code-block:: python
 
+        from fedora.wsgi.csrf import CSRFProtectionMiddleware
         def make_app(global_conf, full_stack=True, **app_conf):
-            from moksha.middleware.csrf import CSRFProtectionMiddleware
             app = make_base_app(global_conf, wrap_app=CSRFProtectionMiddleware,
                                 full_stack=full_stack, **app_conf)
+
+    === From here on is broken ===
 
     The :class:`moksha.api.widgets.moksha:MokshaGlobals` widget then needs to
     be rendered in every page, which automatically handles injecting the CSRF
@@ -205,13 +203,12 @@ class CSRFMetadataProvider(object):
     This plugin will also set ``CSRF_AUTH_STATE`` in the environ if the user
     has just authenticated during this request.
 
-    This plugin is enabled by default when using Moksha's application stack.
     To enable this plugin in an existing TurboGears2 application, you can
     add the following to your ``project/config/app_cfg.py``
 
     .. code-block:: python
 
-        from moksha.middleware.csrf import CSRFMetadataProvider
+        from fedora.wsgi.csrf import CSRFMetadataProvider
         base_config.sa_auth.mdproviders = [('csrfmd', CSRFMetadataProvider())]
 
     """
