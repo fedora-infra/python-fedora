@@ -163,7 +163,7 @@ class FASWhoPlugin(object):
             return None
 
     def remember(self, environ, identity):
-        log.info('Remeber')
+        log.info('Remember')
         req = webob.Request(environ)
         result = []
 
