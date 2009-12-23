@@ -25,6 +25,8 @@ http://en.wikipedia.org/wiki/Cross-site_request_forgery
 
 .. moduleauthor:: John (J5) Palmieri <johnp@redhat.com>
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
+
+.. versionadded:: 0.3.17
 """
 
 import logging

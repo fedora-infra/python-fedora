@@ -22,6 +22,8 @@ repoze.who plugin to authenticate against hte Fedora Account System
 .. moduleauthor:: John (J5) Palmieri <johnp@redhat.com>
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 .. moduleauthor:: Toshio Kuratomi <toshio@fedoraproject.org>
+
+.. versionadded:: 0.3.17
 """
 import os
 import sys

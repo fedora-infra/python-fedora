@@ -21,6 +21,8 @@
 
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
+
+.. versionadded:: 0.3.17
 '''
 
 from fedora.client import AuthError, AppError
