@@ -217,7 +217,7 @@ class CSRFMetadataProvider(object):
     """
     implements(IMetadataProvider)
 
-    def __init__(self, csrf_token_id='_csrf_token', session_cookie='authtkt',
+    def __init__(self, csrf_token_id='_csrf_token', session_cookie='tg-visit',
                  clear_env='repoze.who.identity repoze.what.credentials',
                  login_handler='/post_login', token_env='CSRF_TOKEN',
                  auth_session_id='CSRF_AUTH_SESSION_ID',

@@ -114,7 +114,7 @@ def fas_make_who_middleware(app, log_stream, login_handler='/login_handler',
 
 class FASWhoPlugin(object):
 
-    def __init__(self, url, session_cookie='authtkt'):
+    def __init__(self, url, session_cookie='tg-visit'):
         self.url = url
         self.fas = FasProxyClient(url)
         self.session_cookie = session_cookie
