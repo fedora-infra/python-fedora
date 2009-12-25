@@ -38,7 +38,7 @@ except ImportError:
 
 
 from sqlobject import SQLObject, SQLObjectNotFound, RelatedJoin, \
-    DateTimeCol, IntCol, StringCol, UnicodeCol
+        DateTimeCol, IntCol, StringCol, UnicodeCol
 from sqlobject.inheritance import InheritableSQLObject
 
 import warnings
@@ -486,7 +486,8 @@ class TG_User(InheritableSQLObject):
     def _set_password(self, cleartext_password):
         """Run cleartext_password through the hash algorithm before saving."""
         try:
-            hash = identity.current_provider.encrypt_password(cleartext_password)
+            hash = identity.current_provider.encrypt_password(
+                    cleartext_password)
         except identity.exceptions.IdentityManagementNotEnabledException:
             # Creating identity provider just to encrypt password
             # (so we don't reimplement the encryption step).
