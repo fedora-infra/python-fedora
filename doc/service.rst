@@ -46,12 +46,12 @@ layer but there's also code that works on the model and view behind the scenes.
 -----------
 Controllers
 -----------
-.. automodule:: fedora.tg.util
+.. automodule:: fedora.tg.tg1utils
 
 The :term:`controller` is the code that processes an http request.  It
 validates and processes requests and parameters sent by the user, gets data
 from the model to satisfy the request, and then passes it onto a view layer to
-be returned to the user.  :mod:`fedora.tg.util` contains several helpful
+be returned to the user.  :mod:`fedora.tg.tg1utils` contains several helpful
 functions for working with controllers.
 
 -----------
@@ -233,12 +233,12 @@ Performing Different Actions when Returning JSON
 So far we've run across three features of :term:`TurboGears` that provide
 value to a web application but don't work when returning :term:`JSON` data.
 We provide a function that can code around this.
-``fedora.tg.util.request_format()`` will return the format that the page is
-being returned as.  Code can use this to check whether :term:`JSON` output is
-expected and do something different based on it::
+``fedora.tg.tg1utils.request_format()`` will return the format that the page
+is being returned as.  Code can use this to check whether :term:`JSON` output
+is expected and do something different based on it::
 
     output = {'tg_flash': 'An Error Occurred'}
-    if fedora.tg.util.request_format() == 'json':
+    if fedora.tg.tg1utils.request_format() == 'json':
         output['exc'] = 'ServerError'
     else:
         output['tg_template'] = 'my.templates.error'
@@ -271,8 +271,8 @@ is a perfectly valid way to use :term:`TurboGears`.  Unfortunately, since
 :term:`JSON` is simply another template in :term:`TurboGears` you have to be
 sure not to interfere with the generation of :term:`JSON` data.  You need to
 check whether :term:`JSON` was requested using
-``fedora.tg.util.request_format()`` and only return a different template if
-that's not the case.  The recipe above shows how to do this.
+``fedora.tg.tg1utils.request_format()`` and only return a different template
+if that's not the case.  The recipe above shows how to do this.
 
 Validators
 ==========
@@ -311,7 +311,7 @@ in the ``error_handler`` method::
 
         @expose(template='my.templates.errorpage', allow_json=True)
         def no_numbers(self, data):
-            errors = fedora.tg.util.jsonify_validation_errors()
+            errors = fedora.tg.tg1utils.jsonify_validation_errors()
             if errors:
                 return errors
             # Construct a dict to return the data error message as HTML via
@@ -369,7 +369,7 @@ allows :class:`~fedora.client.BaseClient` to authenticate against your Service::
                  and identity.was_login_attempted() \
                  and not identity.get_identity_errors():
     +            # User is logged in
-    +            if 'json' == fedora.tg.util.request_format():
+    +            if 'json' == fedora.tg.tg1utils.request_format():
     +                return dict(user=identity.current.user)
     +            if not forward_url:
     +                forward_url = turbogears.url('/')
@@ -401,7 +401,7 @@ modified to allow people to connect to it via :term:`JSON`::
     +    @expose(allow_json=True)
          def logout(self):
              identity.current.logout()
-    +        if 'json' in fedora.tg.util.request_format():
+    +        if 'json' in fedora.tg.tg1utils.request_format():
     +            return dict()
              raise redirect("/")
 
