@@ -2,7 +2,7 @@
 FASWhoPlugin
 ============
 :Authors: Luke Macken
-          John "J5" Palmieri
+          Toshio Kuratomi
 :Date: 11 Dec 2009
 
 This plugin provdes authenticate to the Fedora Account System using
