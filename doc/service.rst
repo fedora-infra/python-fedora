@@ -417,14 +417,6 @@ services, look at this document.
 
    CSRF
 
-For information on protecting :term:`TurboGears` 2 based services, look at this
-document.
-
-.. toctree::
-   :maxdepth: 2
-
-   CSRF-middleware
-
 .. _Using-SABase:
 
 ------------
