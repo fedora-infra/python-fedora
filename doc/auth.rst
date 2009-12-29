@@ -53,12 +53,16 @@ protection of :ref:`jsonfas2`.  Please use that identity provider instead.
     :undoc-members:
     :deprecated:
 
+.. _djangoauth:
+
 Django Authentication Backend
 =============================
 .. toctree::
     :maxdepth: 2
 
     django
+
+.. _faswho:
 
 FAS Who Plugin for TurboGears2
 ==============================
