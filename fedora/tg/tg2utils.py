@@ -26,6 +26,12 @@ Miscellaneous functions of use on a TurboGears 2 Server
 
 import tg
 from tg import config
+from repoze.what.plugins.pylonshq import booleanize_predicates
+from copy import copy
+from tg.configuration import Bunch
+import logging
+
+from fedora.wsgi.faswho import fas_make_who_middleware
 from fedora.urlutils import update_qs
 # We're re-exporting this from here
 from fedora.tg._utils import fedora_template
@@ -36,13 +42,16 @@ tg_url = tg.url
 # To have all of the functions that exist for TG1
 
 def url(*args, **kwargs):
-    '''Compuiter URL
+    '''Compute URL
 
     This is a replacement for :func:`tg.controllers.url` (aka :func:`tg.url`
     in the template).  In addition to the functionality that :func:`tg.url`
     provides, it adds a token to prevent :term:`CSRF` attacks.
 
     The arguments and return value are the same as for :func:`tg.url`
+
+    The original :func:`tg.url` is accessible as
+    :func:`fedora.tg.tg2utils.tg_url`
 
     .. versionadded:: 0.3.17
        Added to enable :ref:`CSRF-Protection` for TG2
@@ -57,15 +66,82 @@ def url(*args, **kwargs):
                 overwrite=True)
     return new_url
 
-def enable_csrf():
+def add_fas_auth_middleware(self, app, *args):
+    ''' Add our FAS authentication middleware.
+
+    This is a convenience method that sets up the FAS authentication
+    middleware.  It needs to be used in :file:`app/config/app_cfg.py` like
+    this:
+
+    .. code-block:: diff
+
+         from myapp import model
+         from myapp.lib import app_globals, helpers.
+
+        -base_config = AppConfig()
+        +from fedora.tg.tg2utils import add_fas_auth_middleware
+        +
+        +class MyAppConfig(AppConfig):
+        +    add_auth_middleware = add_fas_auth_middleware
+        +
+        +base_config = MyAppConfig()
+        +
+         base_config.renderers = []
+
+         base_config.package = myapp
+
+    '''
+    # Set up csrf protection
+    _enable_csrf()
+
+    booleanize_predicates()
+
+    if not hasattr(self, 'fas_auth'):
+        self.fas_auth = Bunch()
+
+    # Configuring auth logging:
+    if 'log_stream' not in self.fas_auth:
+        self.fas_auth['log_stream'] = logging.getLogger('auth')
+
+    # Pull in some of the default auth arguments
+    auth_args = copy(self.fas_auth)
+
+    app = fas_make_who_middleware(app, **auth_args)
+    return app
+
+
+def _enable_csrf():
     '''A startup function to setup :ref:`CSRF-Protection`.
 
-    This should be run at application startup.  Code like the following in the
-    start-APP script or the method in :file:`commands.py` that starts it::
+    This should be run at application startup.  It does three things:
+    
+    1) overrides the :func:`tg.url` function with
+       :func:`fedora.tg.tg2utils.url` so that :term:`CSRF` tokens are
+       appended to URLs.
+    2) tells the TG2 app to ignore `_csrf_token`.  This lets the app know not
+       to throw an error if the variable is passed through to the app.
+    3) adds :func:`fedora.tg.fedora_template` function to the template
+       variables.  This lets us xi:include templates from python-fedora in
+       our templates.
 
-        from turbogears import startup
-        from fedora.tg.util import enable_csrf
-        startup.call_on_startup.append(enable_csrf)
+    Presently, this is run when the faswho middleware is invoked.  See the
+    documentation for :func:`fedora.tg.tgutils.add_fas_auth_middleware` for
+    how to enable that.
+
+    .. note::
+
+        The following code is broken at least as late as
+        :term:`TurboGears`-2.0.3.  We need to have something similar in order
+        to use CSRF protection with applications that do not always want to
+        rely on FAS to authenticate.
+
+        .. seealso:: http://trac.turbogears.org/ticket/2432
+
+        To run this at application startup, add
+        code like the following to :file:`MYAPP/config/app_config.py`::
+
+        from fedora.tg.tg2utils import enable_csrf
+        base_config.call_on_startup = [enable_csrf]
 
     If we can get the :ref:`CSRF-Protection` into upstream :term:`TurboGears`,
     we might be able to remove this in the future.
@@ -81,15 +157,14 @@ def enable_csrf():
     ignore = config.get('ignore_parameters', [])
     if '_csrf_token' not in ignore:
         ignore.append('_csrf_token')
-        config.update({'ignore_parameters': ignore})
+        config['ignore_parameters'] = ignore
 
     # Add a function to the template tg stdvars that looks up a template.
     var_provider = config.get('variable_provider', None)
     if var_provider:
-        config.update({'variable_provider': lambda:
-            var_provider().update({'fedora_template': fedora_template})})
+        config['variable_provider'] = lambda: \
+            var_provider().update({'fedora_template': fedora_template})
     else:
-        config.update({'variable_provider': lambda: {'fedora_template':
-            fedora_template}})
-
+        config['variable_provider'] = lambda: {'fedora_template':
+                fedora_template}
 __all__ = ('enable_csrf', 'fedora_template', 'tg_url', 'url')

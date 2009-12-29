@@ -26,7 +26,7 @@ from turbogears import flash
 from turbogears import identity, redirect
 from cherrypy import request, response
 
-from fedora.tg.util import request_format
+from fedora.tg.tg1utils import request_format
 
 from fedora import _
 

@@ -53,53 +53,6 @@ FAS_CACHE_TIMEOUT=900 # 15 minutes (FAS visits timeout after 20)
 fas_cache = Cache('fas_repozewho_cache', type="memory")
 
 
-def add_fas_auth_middleware(self, app, *args):
-    ''' Add our FAS authentication middleware.
-
-    This is a convenience method that sets up the FAS authentication
-    middleware.  It needs to be used in :file:`app/config/app_cfg.py` like
-    this:
-
-    .. code-block:: diff
-        @@ -19,7 +19,13 @@ import testtg2
-         from testtg2 import model
-         from testtg2.lib import app_globals, helpers.
-
-        -base_config = AppConfig()
-        +from fedora.wsgi.faswho import add_fas_auth_middleware
-        +
-        +class MyAppConfig(AppConfig):
-        +    add_auth_middleware = add_fas_auth_middleware
-        +
-        +base_config = MyAppConfig()
-        +
-         base_config.renderers = []
-
-         base_config.package = testtg2
-
-    '''
-    from fedora.wsgi.faswho import fas_make_who_middleware
-    from repoze.what.plugins.pylonshq import booleanize_predicates
-    from copy import copy
-    from tg.configuration import Bunch
-    import logging
-
-    booleanize_predicates()
-
-    if not hasattr(self, 'fas_auth'):
-        self.fas_auth = Bunch()
-
-    # Configuring auth logging:
-    if 'log_stream' not in self.fas_auth:
-        self.fas_auth['log_stream'] = logging.getLogger('auth')
-
-    # Pull in some of the default auth arguments
-    auth_args = copy(self.fas_auth)
-
-    app = fas_make_who_middleware(app, **auth_args)
-    return app
-
-
 def fas_make_who_middleware(app, log_stream, login_handler='/login_handler',
         login_form_url='/login', logout_handler='/logout_handler',
         post_login_url='/post_login', post_logout_url=None):
