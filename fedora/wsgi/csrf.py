@@ -144,12 +144,6 @@ class CSRFProtectionMiddleware(object):
                     log.warning("Invalid CSRF token.  User supplied (%s) "
                                 "does not match what's in our environ (%s)"
                                 % (csrf_token, token))
-                    if not environ.get(self.auth_state):
-                        log.debug("Logging the user out")
-                        request.path_info = '/logout_handler'
-                        response = request.get_response(self.application)
-                        response.status = '401'
-                        return response(environ, start_response)
 
         response = request.get_response(self.application)
 
