@@ -116,7 +116,7 @@ class CSRFProtectionMiddleware(object):
         log.info('Creating CSRFProtectionMiddleware')
         self.application = application
         self.csrf_token_id = csrf_token_id
-        self.clear_env = clear_env
+        self.clear_env = clear_env.split()
         self.token_env = token_env
         self.auth_state = auth_state
 
@@ -275,7 +275,7 @@ class CSRFMetadataProvider(object):
     def clean_environ(cls, environ, keys):
         """ Delete the ``keys`` from the supplied ``environ`` """
         log.debug('clean_environ(%s)' % keys)
-        for key in keys.split():
+        for key in keys:
             if key in environ:
                 log.debug("Deleting %s from environ" % key)
                 del(environ[key])
