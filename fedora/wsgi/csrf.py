@@ -120,6 +120,14 @@ class CSRFProtectionMiddleware(object):
         self.token_env = token_env
         self.auth_state = auth_state
 
+    def _clean_environ(self, environ):
+        """ Delete the ``keys`` from the supplied ``environ`` """
+        log.debug('clean_environ(%s)' % self.clear_env)
+        for key in self.clear_env:
+            if key in environ:
+                log.debug("Deleting %s from environ" % key)
+                del(environ[key])
+
     def __call__(self, environ, start_response):
         """
         This method is called for each request.  It looks for a user-supplied
@@ -139,7 +147,7 @@ class CSRFProtectionMiddleware(object):
         else:
             if not environ.get(self.auth_state):
                 log.debug("Clearing identity")
-                CSRFMetadataProvider.clean_environ(environ, self.clear_env)
+                self._clean_environ(environ)
                 if csrf_token:
                     log.warning("Invalid CSRF token.  User supplied (%s) "
                                 "does not match what's in our environ (%s)"
@@ -270,12 +278,3 @@ class CSRFMetadataProvider(object):
             del(request.POST[self.csrf_token_id])
 
         return csrf_token
-
-    @classmethod
-    def clean_environ(cls, environ, keys):
-        """ Delete the ``keys`` from the supplied ``environ`` """
-        log.debug('clean_environ(%s)' % keys)
-        for key in keys:
-            if key in environ:
-                log.debug("Deleting %s from environ" % key)
-                del(environ[key])
