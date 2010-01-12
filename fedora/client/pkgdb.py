@@ -373,6 +373,22 @@ class PackageDB(BaseClient):
         params = {'acls': acls, 'eol': eol}
         return self.send_request('/users/packages/%s' % username, req_params=params)
 
+    def get_collection_list(self, eol=True):
+        '''Retrieve a list of all collections.
+
+        :kwarg eol: Default True.  If set to False, do not return collections
+            marked eol.
+        :returns: list of collections
+        '''
+        ### TODO: Once the server is updated to 0.5.x, we can update this to use
+        # req_params={'eol': eol} instead of postprocessing it.
+        data = self.send_request('/collections/')
+        if not eol:
+            collections = [c for c in data.collections if
+                    c[0]['statuscode'] != 9]
+            data.collections = collections
+        return data.collections
+
     def get_package_list(self, collectn=None):
         '''Retrieve a list of all package names in a collection.
 
