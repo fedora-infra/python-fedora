@@ -20,6 +20,8 @@ NEWS
   - fedora.iterutils.isiterable(): Can tell whether an object is an iterable.
     Can also exclude strings if desired.
   - fedora.urlutils.update_qs(): Updates a htp query string.
+* new pkgdb method get_collection_list() that returns the list of collections
+  that are registered in the pkgdb.
 
 ------
 0.3.16
