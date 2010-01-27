@@ -61,6 +61,12 @@ def url(*args, **kwargs):
     new_url = tg_url(*args, **kwargs)
     identity = tg.request.environ.get('repoze.who.identity')
 
+    print tg.request.environ.keys()
+    if identity:
+        print 'DEBUG: In url:  identity: %s' % identity
+        print 'DEBUG: In Url: csrf_token: %s' % identity.get('_csrf_token')
+    else:
+        print 'DEBUG: In url: No identity'
     if identity and identity.get('_csrf_token', None):
         new_url = update_qs(new_url, {'_csrf_token': identity['_csrf_token']},
                 overwrite=True)
@@ -92,7 +98,7 @@ def add_fas_auth_middleware(self, app, *args):
 
     '''
     # Set up csrf protection
-    _enable_csrf()
+    #_enable_csrf()
 
     booleanize_predicates()
 
