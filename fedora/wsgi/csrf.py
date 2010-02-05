@@ -123,12 +123,7 @@ class CSRFProtectionMiddleware(object):
     def _clean_environ(self, environ):
         """ Delete the ``keys`` from the supplied ``environ`` """
         log.debug('clean_environ(%s)' % self.clear_env)
-        if 'repoze.who.identity' in self.clear_env and 'repoze.who.identity' in environ:
-            for key in [k for k in environ['repoze.who.identity'] if k != self.csrf_token_id]:
-                log.debug("Deleting %s from environ['repoze.who.identity']")
-                del(environ['repoze.who.identity'][key])
-
-        for key in (k for k in self.clear_env if k != 'repoze.who.identity'):
+        for key in self.clear_env:
             if key in environ:
                 log.debug("Deleting %s from environ" % key)
                 del(environ[key])
@@ -147,9 +142,6 @@ class CSRFProtectionMiddleware(object):
         token = environ.get('repoze.who.identity', {}).get(self.csrf_token_id)
         csrf_token = environ.get(self.token_env)
 
-        print 'DEBUG token: %s' % token
-        print 'DEBUG csrf_token: %s' % csrf_token
-
         if token and csrf_token and token == csrf_token:
             log.debug("User supplied CSRF token matches environ!")
         else:
@@ -165,19 +157,13 @@ class CSRFProtectionMiddleware(object):
 
         if environ.get(self.auth_state):
             log.debug("CSRF_AUTH_STATE; rewriting headers")
-            new_token = environ.get('repoze.who.identity', {}).get(self.csrf_token_id)
+            token = environ.get('repoze.who.identity', {}).get(self.csrf_token_id)
 
-            loc = update_qs(response.location, {self.csrf_token_id: str(new_token)})
+            loc = update_qs(response.location, {self.csrf_token_id: str(token)})
             response.location = loc
             log.debug("response.location = %s" % response.location)
             environ[self.auth_state] = None
 
-        # Restore the csrf_token to the identity.
-        if 'repoze.who.identity' not in environ:
-            environ['repoze.who.identity'] = {}
-        environ['repoze.who.identity'][self.csrf_token_id] = token
-
-        print 'DEBUG: %s' % environ['repoze.who.identity']
         return response(environ, start_response)
 
 
