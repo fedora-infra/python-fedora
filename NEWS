@@ -25,7 +25,8 @@ NEWS
     registered in the pkgdb.
   - orphan_packages() that returns the list of packages orphaned in non-EOL
     releases.
-
+* fedora.client.wiki: add ignore_wikibot and callback kwargs to
+  Wiki.fetch_all_revisions() and minor bug fixes
 ------
 0.3.16
 ------
