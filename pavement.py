@@ -55,6 +55,8 @@ options(
             'turbogears.visit.manager' : (
                 'jsonfas = fedora.tg.visit.jsonfasvisit1:JsonFasVisitManager [tg]',
                 'jsonfas2 = fedora.tg.visit.jsonfasvisit2:JsonFasVisitManager [tg]'),
+            'paste.app_factory' : (
+                'main = fedora.wsgi.test:make_app'),
             },
         message_extractors = {
             'fedora': [('**.py', 'python', None),
@@ -267,3 +269,6 @@ if has_pylint:
         dry('pylint %s' % (" ".join(pylintopts)), lint.Run, pylintopts)
 
 
+@task
+def test():
+    sh("nosetests --where=fedora/wsgi/test")
