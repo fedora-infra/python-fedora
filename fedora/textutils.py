@@ -24,6 +24,8 @@ Functions to manipulate unicode and byte strings
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
 
+from fedora import _
+
 def to_unicode(obj, encoding='utf8', errors='replace', non_string='empty'):
     '''Convert an object into a unicode string
 
@@ -66,17 +68,16 @@ def to_unicode(obj, encoding='utf8', errors='replace', non_string='empty'):
         return unicode(obj, encoding=encoding, errors=errors)
     if non_string == 'empty':
         return u''
-    elif non_string == 'strict':
-        raise TypeError(_('to_unicode was given something that is neither'
-            ' a byte string (str) or a unicode string'))
     elif non_string == 'passthru':
         return obj
-    elif non_string == 'repr':
+    elif non_string in ('repr', 'strict'):
         obj_repr = repr(obj)
-        if isinstance(obj_repr, unicode):
+        if not isinstance(obj_repr, unicode):
+            unicode(obj_repr, encoding=encoding, errors=errors)
+        if non_string == 'strict':
             return obj_repr
-        else:
-            return unicode(obj_repr, encoding=encoding, errors=errors)
+        raise TypeError(_('to_unicode was given "%(obj)s" which is neither'
+            ' a byte string (str) or a unicode string') % {'obj': obj_repr})
 
     raise TypeError(_('non_string value, %(param)s, is not set to a valid action' % {'param': non_string}))
 
@@ -122,17 +123,18 @@ def to_bytes(obj, encoding='utf8', errors='replace', non_string='empty'):
         return obj.encode(encoding, errors)
     if non_string == 'empty':
         return ''
-    elif non_string == 'strict':
-        raise TypeError(_('to_bytes was given something that is neither'
-            ' a unicode string or a byte string (str)'))
     elif non_string == 'passthru':
         return obj
-    elif non_string == 'repr':
+    elif non_string in ('repr', 'strict'):
         obj_repr = repr(obj)
         if isinstance(obj_repr, unicode):
-            return obj_repr.encode(encoding, errors)
+            obj_repr =  obj_repr.encode(encoding, errors)
         else:
-            return str(obj_repr)
+            obj_repr = str(obj_repr)
+        if non_string == 'repr':
+            return obj_repr
+        raise TypeError(_('to_bytes was given "%(obj)s" which is neither'
+            ' a unicode string or a byte string (str)' % {'obj': obj_repr}))
 
     raise TypeError(_('non_string value, %(param)s, is not set to a valid action' % {'param': non_string}))
 
