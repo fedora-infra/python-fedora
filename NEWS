@@ -3,7 +3,7 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 23 Dec 2009
+:Date: 11 Feb 2010
 :Version: 0.3.x
 
 ------
@@ -19,7 +19,9 @@ NEWS
 * New functions:
   - fedora.iterutils.isiterable(): Can tell whether an object is an iterable.
     Can also exclude strings if desired.
-  - fedora.urlutils.update_qs(): Updates a htp query string.
+  - fedora.urlutils.update_qs(): Updates a http query string.
+  - fedora.textutils.to_unicode(): Converts a byte string to unicode string.
+  - fedora.textutils.to_bytes(): Converts a unicode string into a byte string.
 * new pkgdb methods
   - get_collection_list() that returns the list of collections that are
     registered in the pkgdb.
@@ -27,6 +29,7 @@ NEWS
     releases.
 * fedora.client.wiki: add ignore_wikibot and callback kwargs to
   Wiki.fetch_all_revisions() and minor bug fixes
+ 
 ------
 0.3.16
 ------
