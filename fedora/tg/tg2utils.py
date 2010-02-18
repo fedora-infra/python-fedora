@@ -23,6 +23,10 @@ Miscellaneous functions of use on a TurboGears 2 Server
 
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
+try:
+    from hashlib import sha1 as sha_constructor
+except ImportError:
+    from sha import new as sha_constructor
 
 import tg
 from tg import config
@@ -56,13 +60,13 @@ def url(*args, **kwargs):
     .. versionadded:: 0.3.17
        Added to enable :ref:`CSRF-Protection` for TG2
     '''
+    new_url = tg_url(*args, **kwargs)
+
     # Set the current _csrf_token on the url.  It will overwrite any current
     # _csrf_token
-    new_url = tg_url(*args, **kwargs)
-    identity = tg.request.environ.get('repoze.who.identity')
-
-    if identity and identity.get('_csrf_token', None):
-        new_url = update_qs(new_url, {'_csrf_token': identity['_csrf_token']},
+    if tg.request.environ['FAS_LOGIN_INFO']:
+        csrf_token = sha_constructor(tg.request.environ['FAS_LOGIN_INFO'][0]).hexdigest()
+        new_url = update_qs(new_url, {'_csrf_token': csrf_token},
                 overwrite=True)
     return new_url
 
