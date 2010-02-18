@@ -31,7 +31,7 @@ from copy import copy
 from tg.configuration import Bunch
 import logging
 
-from fedora.wsgi.faswho import fas_make_who_middleware
+from fedora.wsgi.faswho import make_faswho_middleware
 from fedora.urlutils import update_qs
 # We're re-exporting this from here
 from fedora.tg._utils import fedora_template
@@ -106,7 +106,7 @@ def add_fas_auth_middleware(self, app, *args):
     # Pull in some of the default auth arguments
     auth_args = copy(self.fas_auth)
 
-    app = fas_make_who_middleware(app, **auth_args)
+    app = make_faswho_middleware(app, **auth_args)
     return app
 
 

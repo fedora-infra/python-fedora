@@ -53,7 +53,7 @@ FAS_CACHE_TIMEOUT=900 # 15 minutes (FAS visits timeout after 20)
 fas_cache = Cache('fas_repozewho_cache', type="memory")
 
 
-def fas_make_who_middleware(app, log_stream, login_handler='/login_handler',
+def make_faswho_middleware(app, log_stream, login_handler='/login_handler',
         login_form_url='/login', logout_handler='/logout_handler',
         post_login_url='/post_login', post_logout_url=None):
 
