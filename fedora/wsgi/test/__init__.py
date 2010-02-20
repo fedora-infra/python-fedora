@@ -16,17 +16,29 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 
-import sys
+import os
 import simplejson
 
-from os import path
-from tg import config
+from tg import config as tg_config
 from paste.deploy import loadapp
 from paste.script.appinstall import SetupCommand
-from routes import url_for
 from webtest import TestApp
 from nose.tools import eq_
-from testapp import *
+from fedora.wsgi.test import model
+from testapp import make_app
+
+__all__ = ['make_app', 'TestTG2App', 'setup_db', 'teardown_db']
+
+def setup_db():
+    """Method used to build a database"""
+    engine = tg_config['pylons.app_globals'].sa_engine
+    model.init_model(engine)
+    model.metadata.create_all(engine)
+
+def teardown_db():
+    """Method used to destroy a database"""
+    engine = tg_config['pylons.app_globals'].sa_engine
+    model.metadata.drop_all(engine)
 
 class TestTG2App(object):
     application_under_test = 'main'
@@ -36,14 +48,16 @@ class TestTG2App(object):
                           relative_to='.')
         self.app = TestApp(wsgiapp)
 
+        # Setting it up:
+        test_file = os.path.abspath('test.ini')
+        cmd = SetupCommand('setup-app')
+        cmd.run([test_file])
+
+    def tearDown(self):
+        """Method called by nose after running each test"""
+        # Cleaning up the database:
+        teardown_db()
+
     def test_tg2_app(self):
         """ Ensure our dummy TG2 app actually works """
         eq_(simplejson.loads(self.app.get('/').body), {'foo': 'bar'})
-
-
-class TestCSRF(TestTG2App):
-    application_under_test = 'main_with_csrf'
-
-    def test_wsgi_app(self):
-        resp = self.app.get('/')
-        assert resp

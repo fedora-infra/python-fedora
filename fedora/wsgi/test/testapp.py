@@ -26,16 +26,12 @@ with various pieces of middleware.
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 """
 
-import fedora
-
+import os
 from tg import config
-from tg.configuration import AppConfig
+from paste.script.appinstall import SetupCommand
 
 def make_app(global_conf, **kw):
-    base_config = AppConfig()
-    base_config.package = fedora.wsgi.test
-    base_config.renderers = []
-    base_config.use_sqlalchemy = False
+    from fedora.wsgi.test.config import base_config
     load_environment = base_config.make_load_environment()
     make_base_app = base_config.setup_tg_wsgi_app(load_environment)
     app = make_base_app(global_conf, **kw)
