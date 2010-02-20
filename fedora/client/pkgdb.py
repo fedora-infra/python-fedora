@@ -370,8 +370,17 @@ class PackageDB(BaseClient):
 
         .. versionadded:: 0.3.14
         '''
-        params = {'acls': acls, 'eol': eol}
+        params = {'acls': acls, 'eol': eol, 'tg_paginate_limit': 0}
         return self.send_request('/users/packages/%s' % username, req_params=params)
+
+    def orphan_packages(self):
+        '''List the packages whichare orphaned
+
+        :returns: List of pkgs which are orphaned in any non-EOL release.
+        '''
+        params = {'tg_paginate_limit': 0}
+        data = self.send_request('/packages/orphans', req_params=params)
+        return data.pkgs
 
     def get_collection_list(self, eol=True):
         '''Retrieve a list of all collections.

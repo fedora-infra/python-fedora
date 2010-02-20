@@ -23,6 +23,10 @@ Miscellaneous functions of use on a TurboGears 2 Server
 
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
+try:
+    from hashlib import sha1 as sha_constructor
+except ImportError:
+    from sha import new as sha_constructor
 
 import tg
 from tg import config
@@ -31,7 +35,7 @@ from copy import copy
 from tg.configuration import Bunch
 import logging
 
-from fedora.wsgi.faswho import fas_make_who_middleware
+from fedora.wsgi.faswho import make_faswho_middleware
 from fedora.urlutils import update_qs
 # We're re-exporting this from here
 from fedora.tg._utils import fedora_template
@@ -56,13 +60,13 @@ def url(*args, **kwargs):
     .. versionadded:: 0.3.17
        Added to enable :ref:`CSRF-Protection` for TG2
     '''
+    new_url = tg_url(*args, **kwargs)
+
     # Set the current _csrf_token on the url.  It will overwrite any current
     # _csrf_token
-    new_url = tg_url(*args, **kwargs)
-    identity = tg.request.environ.get('repoze.who.identity')
-
-    if identity and identity.get('_csrf_token', None):
-        new_url = update_qs(new_url, {'_csrf_token': identity['_csrf_token']},
+    if tg.request.environ['FAS_LOGIN_INFO']:
+        csrf_token = sha_constructor(tg.request.environ['FAS_LOGIN_INFO'][0]).hexdigest()
+        new_url = update_qs(new_url, {'_csrf_token': csrf_token},
                 overwrite=True)
     return new_url
 
@@ -106,7 +110,7 @@ def add_fas_auth_middleware(self, app, *args):
     # Pull in some of the default auth arguments
     auth_args = copy(self.fas_auth)
 
-    app = fas_make_who_middleware(app, **auth_args)
+    app = make_faswho_middleware(app, **auth_args)
     return app
 
 

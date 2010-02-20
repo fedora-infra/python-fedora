@@ -20,7 +20,7 @@
 '''
 Miscellaneous functions of use on a TurboGears Server
 
-.. versionchanged:: 0.3.11
+.. versionchanged:: 0.3.14
    Save the original turbogears.url function as :func:`fedora.tg.util.tg_url`
 
 .. versionchanged:: 0.3.17
