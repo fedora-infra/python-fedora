@@ -22,6 +22,8 @@ BuildRequires:  python-cherrypy2
 BuildRequires:  python-cherrypy
 %endif
 BuildRequires:  python-babel
+BuildRequires:  TurboGears2
+BuildRequires:  python-nose
 Requires:       python-simplejson
 Requires:       python-bugzilla
 Requires:       python-feedparser
