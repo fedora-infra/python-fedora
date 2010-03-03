@@ -29,6 +29,7 @@ NEWS
     releases.
 * fedora.client.wiki: add ignore_wikibot and callback kwargs to
   Wiki.fetch_all_revisions() and minor bug fixes
+* Fix some bugs in the DJango auth layer.
  
 ------
 0.3.16
