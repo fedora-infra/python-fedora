@@ -25,6 +25,8 @@ http://en.wikipedia.org/wiki/Cross-site_request_forgery
 
 .. moduleauthor:: John (J5) Palmieri <johnp@redhat.com>
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
+
+.. versionadded:: 0.3.17
 """
 
 import logging
@@ -32,45 +34,17 @@ import logging
 from webob import Request
 from paste.httpexceptions import HTTPFound
 from paste.response import replace_header
-from urlparse import urlparse, urlunparse
-from urllib import urlencode
 from repoze.who.interfaces import IMetadataProvider
 from zope.interface import implements
-
-try:
-    from urlparse import parse_qs
-except:
-    from cgi import parse_qs
 
 try:
     from hashlib import sha1
 except ImportError:
     from sha import sha as sha1
 
+from fedora.urlutils import update_qs
+
 log = logging.getLogger(__name__)
-
-def update_qs(uri, d):
-    """
-    Helper function for updating query string values.  Similar to calling
-    update on a dictionary except we modify the query string of the uri
-    instead of another dictionary.
-    """
-    loc = list(urlparse(uri))
-    query_dict = parse_qs(loc[4])
-    query_dict.update(d)
-
-    # seems that we have to sanitize a bit here
-    query_list = []
-    for k, v in query_dict.items():
-        if isinstance(v, list):
-            for item in v:
-                query_list.append((k, item))
-        else:
-            query_list.append((k, v))
-
-    loc[4] = urlencode(query_list)
-
-    return urlunparse(loc)
 
 
 class CSRFProtectionMiddleware(object):
@@ -86,22 +60,20 @@ class CSRFProtectionMiddleware(object):
     since it relies upon ``repoze.who.identity`` to exist in the environ before
     it is called.
 
-    This middleware is enabled by default when using Moksha, and can be
-    disabled by setting ``moksha.csrf_protection = False`` in your
-    configuration file.
-
-    To utilize this middleware without Moksha, you can just add it to your
-    WSGI below the :mod:`repoze.who` middleware.  Here is an example of
-    utilizing the `CSRFProtectionMiddleware` within a TurboGears2 application.
+    To utilize this middleware, you can just add it to your WSGI stack below
+    the :mod:`repoze.who` middleware.  Here is an example of utilizing the
+    `CSRFProtectionMiddleware` within a TurboGears2 application.
     In your ``project/config/middleware.py``, you would wrap your main
     application with the `CSRFProtectionMiddleware`, like so:
 
     .. code-block:: python
 
+        from fedora.wsgi.csrf import CSRFProtectionMiddleware
         def make_app(global_conf, full_stack=True, **app_conf):
-            from moksha.middleware.csrf import CSRFProtectionMiddleware
             app = make_base_app(global_conf, wrap_app=CSRFProtectionMiddleware,
                                 full_stack=full_stack, **app_conf)
+
+    === From here on is broken ===
 
     The :class:`moksha.api.widgets.moksha:MokshaGlobals` widget then needs to
     be rendered in every page, which automatically handles injecting the CSRF
@@ -144,9 +116,17 @@ class CSRFProtectionMiddleware(object):
         log.info('Creating CSRFProtectionMiddleware')
         self.application = application
         self.csrf_token_id = csrf_token_id
-        self.clear_env = clear_env
+        self.clear_env = clear_env.split()
         self.token_env = token_env
         self.auth_state = auth_state
+
+    def _clean_environ(self, environ):
+        """ Delete the ``keys`` from the supplied ``environ`` """
+        log.debug('clean_environ(%s)' % self.clear_env)
+        for key in self.clear_env:
+            if key in environ:
+                log.debug("Deleting %s from environ" % key)
+                del(environ[key])
 
     def __call__(self, environ, start_response):
         """
@@ -167,17 +147,11 @@ class CSRFProtectionMiddleware(object):
         else:
             if not environ.get(self.auth_state):
                 log.debug("Clearing identity")
-                CSRFMetadataProvider.clean_environ(environ, self.clear_env)
+                self._clean_environ(environ)
                 if csrf_token:
                     log.warning("Invalid CSRF token.  User supplied (%s) "
                                 "does not match what's in our environ (%s)"
                                 % (csrf_token, token))
-                    if not environ.get(self.auth_state):
-                        log.debug("Logging the user out")
-                        request.path_info = '/logout_handler'
-                        response = request.get_response(self.application)
-                        response.status = '401'
-                        return response(environ, start_response)
 
         response = request.get_response(self.application)
 
@@ -205,19 +179,19 @@ class CSRFMetadataProvider(object):
     This plugin will also set ``CSRF_AUTH_STATE`` in the environ if the user
     has just authenticated during this request.
 
-    This plugin is enabled by default when using Moksha's application stack.
-    To enable this plugin in an existing TurboGears2 application, you can
+    To enable this plugin in a TurboGears2 application, you can
     add the following to your ``project/config/app_cfg.py``
 
     .. code-block:: python
 
-        from moksha.middleware.csrf import CSRFMetadataProvider
+        from fedora.wsgi.csrf import CSRFMetadataProvider
         base_config.sa_auth.mdproviders = [('csrfmd', CSRFMetadataProvider())]
 
+    Note: If you use the faswho plugin, this is turned on automatically.
     """
     implements(IMetadataProvider)
 
-    def __init__(self, csrf_token_id='_csrf_token', session_cookie='authtkt',
+    def __init__(self, csrf_token_id='_csrf_token', session_cookie='tg-visit',
                  clear_env='repoze.who.identity repoze.what.credentials',
                  login_handler='/post_login', token_env='CSRF_TOKEN',
                  auth_session_id='CSRF_AUTH_SESSION_ID',
@@ -304,12 +278,3 @@ class CSRFMetadataProvider(object):
             del(request.POST[self.csrf_token_id])
 
         return csrf_token
-
-    @classmethod
-    def clean_environ(cls, environ, keys):
-        """ Delete the ``keys`` from the supplied ``environ`` """
-        log.debug('clean_environ(%s)' % keys)
-        for key in keys.split():
-            if key in environ:
-                log.debug("Deleting %s from environ" % key)
-                del(environ[key])

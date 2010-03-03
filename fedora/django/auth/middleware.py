@@ -44,7 +44,13 @@ class FasMiddleware(object):
                 if 'tg-visit' in request.session:
                     del request.session['tg-visit']
             else:
-                request.session['tg-visit'] = local.session_id
+                try:
+                    request.session['tg-visit'] = local.session_id
+                except AttributeError, e:
+                    # We expect that local.session_id won't be set if the user
+                    # is logging in with a non-FAS account (ie: Django local
+                    # auth.
+                    pass
 #               response.set_cookie(key='tg-visit',
 #                   value=local.session_id, max_age=0)
         return response

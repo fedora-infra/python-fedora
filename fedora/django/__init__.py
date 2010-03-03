@@ -18,25 +18,24 @@
 #
 '''
 .. moduleauthor:: Ignacio Vazquez-Abrams <ivazquez@fedoraproject.org>
+.. moduleauthor:: Toshio Kuratomi <toshio@fedoraproject.org>
 '''
 import threading
 
-from fedora.client import ProxyClient
+from fedora.client import FasProxyClient
 
 from django.conf import settings
 
 connection = None
 
 if not connection:
-    connection = ProxyClient(settings.FAS_URL, settings.FAS_USERAGENT,
-        session_as_cookie=False)
+    connection = FasProxyClient(settings.FAS_URL, settings.FAS_USERAGENT)
 
 def person_by_id(userid):
     if not hasattr(local, 'session_id'):
         return None
-    sid, userinfo = connection.send_request('json/person_by_id',
-        req_params={'person_id': userid},
-        auth_params={'session_id': local.session_id})
+    sid, userinfo = connection.person_by_id(userid,
+            {'session_id': local.session_id})
     return userinfo
 
 local = threading.local()

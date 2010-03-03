@@ -73,7 +73,24 @@ Glossary
 
         .. seealso:: http://www.turbogears.org/
 
+    TurboGears2
+        The successor to :term:`TurboGears`, TurboGears2 provides a very
+        similar framework to coders but has some notable differences. It is
+        based on pylons and paste so it is much more tightly integrated with
+        :term:`WSGI`.  The differences with :ref`TurboGears`1 are largely with
+        the organization of code and how to configure the application.
+
+        .. seealso:: http://www.turbogears.org/
+
     view
         In MVC design, the layer that takes care of formatting and rendering
         data for the consumer.  This could be displaying the data as an html
         page or marshalling it into :term:`JSON` objects.
+
+    WSGI
+        WSGI is an interface between web servers and web frameworks that
+        originated in the Python community.  WSGI lets different components
+        embed each other even if they were originally written for different
+        python web frameworks.
+
+        .. seealso:: http://en.wikipedia.org/wiki/Web_Server_Gateway_Interface

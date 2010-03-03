@@ -1,7 +1,7 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.3.16
+Version:        0.3.17
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -22,6 +22,8 @@ BuildRequires:  python-cherrypy2
 BuildRequires:  python-cherrypy
 %endif
 BuildRequires:  python-babel
+BuildRequires:  TurboGears2
+BuildRequires:  python-nose
 Requires:       python-simplejson
 Requires:       python-bugzilla
 Requires:       python-feedparser
@@ -65,6 +67,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/*
 
 %changelog
+* Tue Mar 02 2010 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.17-1
+- New release 0.3.17.
+
 * Wed Oct 21 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.16-1
 - New release 0.3.16.
 

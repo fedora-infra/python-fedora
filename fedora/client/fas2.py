@@ -26,8 +26,8 @@ Provide a client module for talking to the Fedora Account System.
 import urllib
 import warnings
 
-from fedora.client import DictContainer, BaseClient, ProxyClient, \
-        AuthError, AppError, FedoraServiceError, FedoraClientError
+from fedora.client import DictContainer, BaseClient, FasProxyClient, \
+        AppError, FedoraServiceError, FedoraClientError
 from fedora import __version__, _
 
 ### FIXME: To merge:
@@ -65,7 +65,7 @@ class AccountSystem(BaseClient):
         '''Create the AccountSystem client object.
 
         :kwargs base_url: Base of every URL used to contact the server.
-            Defalts to the Fedora Project instance.
+            Defaults to the Fedora Project FAS instance.
         :kwargs useragent: useragent string to use.  If not given, default to
             "Fedora Account System Client/VERSION"
         :kwargs debug: If True, log debug information
@@ -84,7 +84,7 @@ class AccountSystem(BaseClient):
         # We need a single proxy for the class to verify username/passwords
         # against.
         if not self.proxy:
-            self.proxy = ProxyClient(base_url, useragent=self.useragent,
+            self.proxy = FasProxyClient(base_url, useragent=self.useragent,
                     session_as_cookie=False, debug=self.debug)
 
         # Preseed a list of FAS accounts with bugzilla addresses
@@ -164,10 +164,12 @@ class AccountSystem(BaseClient):
                 100271: 'cwickert@fedoraproject.org',
                 # Elliott Baron: 'elliottbaron@gmail.com'
                 106760: 'ebaron@fedoraproject.org',
-                # Nigel Jones
-                101468: 'nigjones@redhat.com',
                 # Thomas Spura: 'spurath@students.uni-mainz.de'
                 111433: 'tomspur@fedoraproject.org',
+                # Adam Miller: 'maxamillion@gmail.com'
+                110673: 'maxamillion@fedoraproject.org',
+                # Garrett Holmstrom: 'garrett.holmstrom@gmail.com'
+                131739: 'gholms@fedoraproject.org',
                 }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email
@@ -547,16 +549,7 @@ class AccountSystem(BaseClient):
         :arg password: password for the user
         :returns: True if the username/password are valid.  False otherwise.
         '''
-        try:
-            # This will attempt to authenticate to the account system and
-            # raise an AuthError if the password and username don't match. 
-            self.proxy.send_request('/home',
-                    auth_params={'username': username, 'password': password})
-        except AuthError:
-            return False
-        except:
-            raise
-        return True
+        return self.proxy.verify_password(username, password)
 
     ### fasClient Special Methods ###
 

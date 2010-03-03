@@ -43,10 +43,11 @@ options(
         install_requires=['simplejson'],
         # And these to extra_require:
         #   for widgets: (bugzilla feedparser)
-        extras_require = {'tg' : ['TurboGears >= 1.0.4', 'SQLAlchemy',
-            'decorator'],
-            'wsgi': ['repoze.who'],
+        extras_require = {
+            'tg' : ['TurboGears >= 1.0.4', 'SQLAlchemy', 'decorator'],
+            'wsgi': ['repoze.who', 'Beaker', 'Paste'],
             },
+        test_require = ['TurboGears >= 2.0', 'nose', ],
         entry_points = {
             'turbogears.identity.provider' : (
                 'jsonfas = fedora.tg.identity.jsonfasprovider1:JsonFasIdentityProvider [tg]',
@@ -55,6 +56,11 @@ options(
             'turbogears.visit.manager' : (
                 'jsonfas = fedora.tg.visit.jsonfasvisit1:JsonFasVisitManager [tg]',
                 'jsonfas2 = fedora.tg.visit.jsonfasvisit2:JsonFasVisitManager [tg]'),
+            # Needed for the test suite
+            'paste.app_factory' : (
+                'main = fedora.wsgi.test.testapp:make_app'),
+            'paste.app_install' : (
+                'main = pylons.util:PylonsInstaller'),
             },
         message_extractors = {
             'fedora': [('**.py', 'python', None),
@@ -267,3 +273,6 @@ if has_pylint:
         dry('pylint %s' % (" ".join(pylintopts)), lint.Run, pylintopts)
 
 
+@task
+def test():
+    sh("nosetests --where=fedora/wsgi/test")

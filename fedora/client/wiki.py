@@ -26,7 +26,7 @@ A Wiki Client
 '''
 
 from datetime import datetime, timedelta
-from fedora.client import BaseClient
+from fedora.client import BaseClient, AuthError
 from fedora import _
 import time
 
@@ -35,7 +35,7 @@ MEDIAWIKI_DATEFORMAT = "%Y-%m-%dT%H:%M:%SZ"
 class Wiki(BaseClient):
     api_high_limits = False
 
-    def __init__(self, base_url='http://fedoraproject.org/w/', *args, **kwargs):
+    def __init__(self, base_url='https://fedoraproject.org/w/', *args, **kwargs):
         super(Wiki, self).__init__(base_url, *args, **kwargs)
 
     def get_recent_changes(self, now, then, limit=500):
@@ -60,7 +60,7 @@ class Wiki(BaseClient):
                 'lgpassword': password,
                 })
         if 'lgtoken' not in data.get('login', {}):
-            raise Exception(_('Login failed: %s') % data)
+            raise AuthError(_('Login failed: %s') % data)
         #self.session_id = data['login']['lgtoken']
         #self.username = data['login']['lgusername']
         self.check_api_limits()
@@ -111,13 +111,15 @@ you run this script using a 'bot' account.""")
 
     def fetch_all_revisions(self, start=1, flags=True, timestamp=True,
                             user=True, size=False, comment=True, content=False,
-                            title=True, ignore_imported_revs=True):
+                            title=True, ignore_imported_revs=True,
+                            ignore_wikibot=False, callback=None):
         """
         Fetch data for all revisions. This could take a long time. You can start
         at a specific revision by modifying the 'start' keyword argument.
 
-        To ignore revisions made by "ImportUser", set ignore_imported_revs to
-        True (this is the default).
+        To ignore revisions made by "ImportUser" and "Admin" set
+        ignore_imported_revs to True (this is the default). To ignore edits made
+        by Wikibot set ignore_wikibot to True (False is the default).
 
         Modifying the remainder of the keyword arguments will return less/more
         data.
@@ -128,7 +130,8 @@ you run this script using a 'bot' account.""")
                 'action': 'query',
                 'format': 'json',
                 'rcprop': 'ids',
-                'rclimit': 1
+                'rclimit': 1,
+                'rctype': 'edit|new',
         })
         latest_revid = change['query']['recentchanges'][0]['revid']
         # now we loop through all the revisions we want
@@ -158,11 +161,18 @@ you run this script using a 'bot' account.""")
                     'revids': revid_str,
                     'format': 'json',
             })
+            if 'pages' not in data['query'].keys():
+                continue
+            if 'badrevids' in data['query'].keys():
+                [revs_to_get.remove(i['revid']) for i in \
+                 data['query']['badrevids'].values()]
             for pageid in data['query']['pages']:
                 page = data['query']['pages'][pageid]
                 for revision in page['revisions']:
                     if ignore_imported_revs and \
-                       revision['user'] == 'ImportUser':
+                       revision['user'] in ['ImportUser', 'Admin'] or \
+                       ignore_wikibot and revision['user'] == 'Wikibot':
+                        revs_to_get.remove(revision['revid'])
                         continue
                     this_rev = {}
                     if flags:
@@ -184,6 +194,8 @@ you run this script using a 'bot' account.""")
                     if title:
                         this_rev['title'] = page['title']
                     all_revs[revision['revid']] = this_rev
+            if callback:
+                callback(all_revs, revs_to_get)
         return all_revs
 
 

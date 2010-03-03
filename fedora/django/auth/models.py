@@ -18,6 +18,7 @@
 #
 '''
 .. moduleauthor:: Ignacio Vazquez-Abrams <ivazquez@fedoraproject.org>
+.. moduleauthor:: Toshio Kuratomi <toshio@fedoraproject.org>
 '''
 from fedora.client import AuthError
 from fedora.django import connection, person_by_id
@@ -48,8 +49,7 @@ def _syncdb_handler(sender, **kwargs):
     if verbosity > 0:
         print _('Loading FAS groups...')
     try:
-        gl = connection.send_request('group/list', 
-            auth_params={'username': settings.FAS_USERNAME,
+        gl = connection.group_list({'username': settings.FAS_USERNAME,
             'password': settings.FAS_PASSWORD})
     except AuthError:
         if verbosity > 0:
