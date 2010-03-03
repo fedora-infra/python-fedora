@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2008-2009  Red Hat, Inc.
+# Copyright (C) 2008-2010  Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
@@ -31,6 +31,7 @@
 '''
 
 import simplejson
+import warnings
 
 from fedora import __version__, _
 from fedora.client import BaseClient, FedoraClientError, AppError
@@ -99,7 +100,7 @@ class PackageDB(BaseClient):
         '''
         if self._branches and not refresh:
             return self._branches
-        data = self.send_request('/collections')
+        data = self.send_request('/collections/')
         self._branches = dict((b[0]['branchname'], b[0])
                 for b in data.collections)
         return self._branches
@@ -119,7 +120,7 @@ class PackageDB(BaseClient):
         if branch:
             collection, ver = self.canonical_branch_name(branch)
             data = {'collectionName': collection, 'collectionVersion': ver}
-        pkg_info = self.send_request('/packages/name/%s' % pkg,
+        pkg_info = self.send_request('/acls/name/%s' % pkg,
                 req_params=data)
 
         if 'status' in pkg_info and not pkg_info['status']:
@@ -185,7 +186,7 @@ class PackageDB(BaseClient):
         data = {'owner': owner, 'summary': description}
         # This call creates the package and an initial branch for
         # Fedora devel
-        response = self.send_request('/packages/dispatcher/add_package/%s'
+        response = self.send_request('/acls/dispatcher/add_package/%s'
             % pkg, auth=True, req_params=data)
         if 'status' in response and not response['status']:
             raise AppError(name='PackageDBError', message=
@@ -208,7 +209,7 @@ class PackageDB(BaseClient):
         del data['owner']
 
         if cc_list or comaintainers or groups or branches:
-            response = self.send_request('/packages/dispatcher/'
+            response = self.send_request('/acls/dispatcher/'
                     'edit_package/%s' % pkg, auth=True, req_params=data)
             if 'status' in response and not response['status']:
                 raise AppError(name='PackageDBError', 
@@ -309,23 +310,45 @@ class PackageDB(BaseClient):
 
         return collection, version
 
-    def get_owners(self, package, collection=None, collection_ver=None):
+    def get_owners(self, package, collectn=None, collectn_ver=None,
+                                  collection=None, collection_ver=None):
         '''Retrieve the ownership information for a package.
 
         :arg package: Name of the package to retrieve package information about.
-        :kwarg collection: Limit the returned information to this collection
+        :kwarg collectn: Limit the returned information to this collection
             ('Fedora', 'Fedora EPEL', Fedora OLPC', etc)
-        :kwarg collection_ver: If collection is specified, further limit to this
+        :kwarg collectn_ver: If collection is specified, further limit to this
             version of the collection.
+        :kwarg collection: old/deprecated argument; use collectn
+        :kward collection_ver: old/deprecated argument; use collectn_ver
         :raises AppError: If the server returns an error
         :rtype: DictContainer
         :return: dict of ownership information for the package
         '''
-        method = '/packages/name/%s' % package
-        if collection:
-            method = method + '/' + collection
-            if collection_ver:
-                method = method + '/' + collection_ver
+        if (collectn and collection) or (collectn_ver and collection_ver):
+            warnings.warn('collection and collection_ver are deprecated'
+                ' names for collectn and collectn_ver respectively.\nIgnoring'
+                ' the values given in them.', DeprecationWarning, stacklevel=2)
+
+        if collection and not collectn:
+            warnings.warn('collection has been renamed to collectn.\n'
+                'Please start using the new name.  collection will go '
+                'away in 0.4.x.', DeprecationWarning, stacklevel=2)
+
+        collectn = collection
+
+        if collection_ver and not collectn_ver:
+            warnings.warn('collection_ver has been renamed to collectn_ver.\n'
+                'Please start using the new name.  collection_ver will go '
+                'away in 0.4.x.', DeprecationWarning, stacklevel=2)
+
+        collectn_ver = collection_ver
+
+        method = '/acls/name/%s' % package
+        if collectn:
+            method = method + '/' + collectn
+            if collectn_ver:
+                method = method + '/' + collectn_ver
 
         response = self.send_request(method)
         if 'status' in response and not response['status']:
@@ -414,9 +437,9 @@ class PackageDB(BaseClient):
             except KeyError:
                 raise PackageDBError(_('Collection shortname %(collectn)s'
                     ' is unknown.') % {'collectn': collectn})
-            data = self.send_request('/collections/id/%s' % collectn_id, params)
+            data = self.send_request('/collections/name/%s/' % collectn, params)
         else:
-            data = self.send_request('/packages/', params)
+            data = self.send_request('/acls/list/*', params)
         names = [p['name'] for p in data.packages]
         return names
 
@@ -499,7 +522,15 @@ class PackageDB(BaseClient):
 
         .. versionadded:: 0.3.15
         '''
-        data = self.send_request('/lists/notify')
+        method = '/lists/notify' 
+        if collctn_name:
+            method = method + '/' + collctn_name
+            if collctn_ver:
+                method = method + '/' + collctn_ver
+
+#        params = {'eol': eol, 'tg_paginate_limit': 0}
+        params = {'eol': eol}
+        data = self.send_request(method, req_params=params)
         if 'exc' in data:
             raise AppError(data['exc'], data['tg_flash'])
         return data.packages
