@@ -3,7 +3,7 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 11 Feb 2010
+:Date: 2 Mar 2010
 :Version: 0.3.x
 
 ------
@@ -29,7 +29,9 @@ NEWS
     releases.
 * fedora.client.wiki: add ignore_wikibot and callback kwargs to
   Wiki.fetch_all_revisions() and minor bug fixes
-* Fix some bugs in the DJango auth layer.
+* Fix some bugs in the Django auth layer.
+* Remove tg_format=json from the requests that are sent.  The Accept header
+  that we send has been serving this purpose for a long time.
  
 ------
 0.3.16
