@@ -31,8 +31,5 @@ _ = translation.ugettext
 from fedora import release
 __version__ = release.VERSION
 
-# Needed for our unit tests
-from fedora.wsgi.test import websetup
-
 __all__ = ('_', 'release', '__version__',
         'accounts', 'client', 'tg', 'websetup')
