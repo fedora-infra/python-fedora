@@ -534,3 +534,25 @@ class PackageDB(BaseClient):
         if 'exc' in data:
             raise AppError(data['exc'], data['tg_flash'])
         return data.packages
+
+    def get_critpath_pkgs(self, collctn_list=None):
+        '''Return names of packages marked critical path.
+
+        :kwarg collctn_list: When set to a list of Collection names, only
+            retrieve packages which are marked critpath in any of the
+            collections.  Defaults to retrieving critpath packages in all
+            non-EOL releases
+        :rtype: DictContainer
+        :returns: Keys of the returned dict are collection simple names.  The
+            values are lists of package names that are marked critpath
+
+        .. versionadded:: 0.3.17
+        '''
+        if collctn_list:
+            params = {'collctn_list': collctn_list}
+        else:
+            params = {}
+
+        data = self.send_request('/lists/critpath', req_params=params)
+
+        return data['pkgs']
