@@ -32,4 +32,4 @@ from fedora import release
 __version__ = release.VERSION
 
 __all__ = ('_', 'release', '__version__',
-        'accounts', 'client', 'tg', 'websetup')
+        'accounts', 'client', 'tg')
