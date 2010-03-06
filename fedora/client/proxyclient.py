@@ -281,7 +281,7 @@ class ProxyClient(object):
 
         # Set standard headers
         headers = ['User-agent: %s' % self.useragent,
-                'Accept: text/javascript']
+                'Accept: application/json']
         request.setopt(pycurl.HTTPHEADER, headers)
 
         # If we have a session_id, send it
