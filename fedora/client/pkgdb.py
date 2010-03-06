@@ -556,3 +556,30 @@ class PackageDB(BaseClient):
         data = self.send_request('/lists/critpath', req_params=params)
 
         return data['pkgs']
+
+    def set_critpath(self, pkg_list=None, critpath=True, collctn_list=None, reset=False):
+        '''Mark packages as being in the critical path.
+
+        Critical path packages are subject to more testing or stringency of
+        criteria for updating when a release occurs.
+
+        :kwarg pkg_list: List of package names to set as critical path.
+            Default: all packages within `collectn_list`
+        :kwarg critpath: Boolean.  True (default) means this package is in the
+            critical path.  False means that it should be taken out
+        :kwarg collctn_list: List of collection shortnames that this change
+            will be applied on.  The default is all non-EOL collections.
+        :kwarg reset: If True, clear the critpath flag from all packages in
+            collectn_list before setting critpath on the packages in pkg_list.
+            Default is False
+
+        .. versionadded:: 0.3.17
+        '''
+        params = {'critpath': critpath, 'reset': reset}
+        if pkg_list:
+            params['pkg_list'] = pkg_list
+        if collctn_list:
+            params['collctn_list'] = collctn_list
+
+        self.send_request('/acls/dispatcher/set_critpath', req_params=params,
+                auth=True)
