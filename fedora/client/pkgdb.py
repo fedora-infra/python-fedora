@@ -310,45 +310,43 @@ class PackageDB(BaseClient):
 
         return collection, version
 
-    def get_owners(self, package, collectn=None, collectn_ver=None,
+    def get_owners(self, package, collctn_name=None, collctn_ver=None,
                                   collection=None, collection_ver=None):
         '''Retrieve the ownership information for a package.
 
         :arg package: Name of the package to retrieve package information about.
-        :kwarg collectn: Limit the returned information to this collection
+        :kwarg collctn_name: Limit the returned information to this collection
             ('Fedora', 'Fedora EPEL', Fedora OLPC', etc)
-        :kwarg collectn_ver: If collection is specified, further limit to this
+        :kwarg collctn_ver: If collection is specified, further limit to this
             version of the collection.
-        :kwarg collection: old/deprecated argument; use collectn
-        :kward collection_ver: old/deprecated argument; use collectn_ver
+        :kwarg collection: old/deprecated argument; use collctn_name
+        :kward collection_ver: old/deprecated argument; use collctn_ver
         :raises AppError: If the server returns an error
         :rtype: DictContainer
         :return: dict of ownership information for the package
         '''
-        if (collectn and collection) or (collectn_ver and collection_ver):
+        if (collctn_name and collection) or (collctn_ver and collection_ver):
             warnings.warn('collection and collection_ver are deprecated'
-                ' names for collectn and collectn_ver respectively.\nIgnoring'
+                ' names for collctn_name and collctn_ver respectively.\nIgnoring'
                 ' the values given in them.', DeprecationWarning, stacklevel=2)
 
-        if collection and not collectn:
-            warnings.warn('collection has been renamed to collectn.\n'
+        if collection and not collctn_name:
+            warnings.warn('collection has been renamed to collctn_name.\n'
                 'Please start using the new name.  collection will go '
                 'away in 0.4.x.', DeprecationWarning, stacklevel=2)
+            collctn_name = collection
 
-        collectn = collection
-
-        if collection_ver and not collectn_ver:
-            warnings.warn('collection_ver has been renamed to collectn_ver.\n'
+        if collection_ver and not collctn_ver:
+            warnings.warn('collection_ver has been renamed to collctn_ver.\n'
                 'Please start using the new name.  collection_ver will go '
                 'away in 0.4.x.', DeprecationWarning, stacklevel=2)
-
-        collectn_ver = collection_ver
+            collctn_ver = collection_ver
 
         method = '/acls/name/%s' % package
-        if collectn:
-            method = method + '/' + collectn
-            if collectn_ver:
-                method = method + '/' + collectn_ver
+        if collctn_name:
+            method = method + '/' + collctn_name
+            if collctn_ver:
+                method = method + '/' + collctn_ver
 
         response = self.send_request(method)
         if 'status' in response and not response['status']:
@@ -358,21 +356,33 @@ class PackageDB(BaseClient):
         # list of collection, version, owner
         return response
 
-    def remove_user(self, username, pkg_name, collectn_list=None):
+    def remove_user(self, username, pkg_name, collctn_list=None, collectn_list=None):
         '''Remove user from a package
 
         :arg username: Name of user to remove from the package
         :arg pkg_name: Name of the package
-        :kwarg collectn_list: list of collections like 'F-10','devel'.
-            Default: None which means user removed from all collections
-            associated with the package.
+        :kwarg collctn_list: list of collection simple names like
+            'F-10','devel'.  Default: None which means user removed from all
+            collections associated with the package.
+        :kwarg collectn_list: *Deprecated* Use collctn_list instead.
         :returns: status code from the request
 
         .. versionadded:: 0.3.12
         '''
-        if collectn_list:
+        if (collctn_list and collectn_list):
+            warnings.warn('collectn_list is a deprecated name for'
+                    ' collctn_list.\nIgnoring the value of collectn_list.',
+                    DeprecationWarning, stacklevel=2)
+
+        if collectn_list and not collctn_list:
+            warnings.warn('collectn_list has been renamed to collctn_list.\n'
+                    'Please start using the new name.  collectn_list will go'
+                    ' away in 0.4.x.', DeprecationWarning, stacklevel=2)
+            collctn_list = collectn_list
+
+        if collctn_list:
             params = {'username': username, 'pkg_name': pkg_name, 
-                'collectn_list': collectn_list}
+                'collectn_list': collctn_list}
         else:
             params = {'username': username, 'pkg_name': pkg_name}
         return self.send_request('/acls/dispatcher/remove_user', auth=True,
@@ -421,23 +431,36 @@ class PackageDB(BaseClient):
             data.collections = collections
         return data.collections
 
-    def get_package_list(self, collectn=None):
+    def get_package_list(self, collctn=None, collectn=None):
         '''Retrieve a list of all package names in a collection.
 
-        :kwarg collectn: Collection to look for packages in.  If unset,
-            return packages in all collections
+        :kwarg collctn: Collection to look for packages in.  This is a collctn
+            shortname like 'devel' or 'F-13'.  If unset, return packages in
+            all collections
+        :kwarg collectn: *Deprecated*.  Please use collctn instead
         :returns: list of package names present in the collection.
 
         .. versionadded:: 0.3.15
         '''
+        if (collctn and collectn):
+            warnings.warn('collectn is a deprecated name for'
+                    ' collctn.\nIgnoring the value of collectn.',
+                    DeprecationWarning, stacklevel=2)
+
+        if collectn and not collctn:
+            warnings.warn('collectn has been renamed to collctn.\n'
+                    'Please start using the new name.  collectn will go'
+                    ' away in 0.4.x.', DeprecationWarning, stacklevel=2)
+            collctn = collectn
+
         params = {'tg_paginate_limit': '0'}
-        if collectn:
+        if collctn:
             try:
-                collectn_id = self.branches[collectn]['id']
+                collctn_id = self.branches[collctn]['id']
             except KeyError:
-                raise PackageDBError(_('Collection shortname %(collectn)s'
-                    ' is unknown.') % {'collectn': collectn})
-            data = self.send_request('/collections/name/%s/' % collectn, params)
+                raise PackageDBError(_('Collection shortname %(collctn)s'
+                    ' is unknown.') % {'collctn': collctn})
+            data = self.send_request('/collections/name/%s/' % collctn, params)
         else:
             data = self.send_request('/acls/list/*', params)
         names = [p['name'] for p in data.packages]
