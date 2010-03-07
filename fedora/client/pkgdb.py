@@ -140,7 +140,7 @@ class PackageDB(BaseClient):
 
         '''
         params = {'email_log': email_log}
-        return self.send_request('/packages/dispatcher/clone_branch/'
+        return self.send_request('/acls/dispatcher/clone_branch/'
                 '%s/%s/%s' % (pkg, branch, master), auth=True,
                 req_params=params)
 
@@ -266,7 +266,7 @@ class PackageDB(BaseClient):
             data['collections'] = branches
 
         # Request the changes
-        response = self.send_request('/packages/dispatcher/edit_package/%s'
+        response = self.send_request('/acls/dispatcher/edit_package/%s'
                 % pkg, auth=True, req_params=data)
         if 'status' in response and not response['status']:
             raise AppError(name='PackageDBError', message=_('Unable to save'
@@ -375,7 +375,7 @@ class PackageDB(BaseClient):
                 'collectn_list': collectn_list}
         else:
             params = {'username': username, 'pkg_name': pkg_name}
-        return self.send_request('/packages/dispatcher/remove_user', auth=True,
+        return self.send_request('/acls/dispatcher/remove_user', auth=True,
                    req_params=params)
 
     def user_packages(self, username, acls=None, eol=False):
@@ -397,12 +397,12 @@ class PackageDB(BaseClient):
         return self.send_request('/users/packages/%s' % username, req_params=params)
 
     def orphan_packages(self):
-        '''List the packages whichare orphaned
+        '''List the packages which are orphaned
 
         :returns: List of pkgs which are orphaned in any non-EOL release.
         '''
         params = {'tg_paginate_limit': 0}
-        data = self.send_request('/packages/orphans', req_params=params)
+        data = self.send_request('/acls/orphans', req_params=params)
         return data.pkgs
 
     def get_collection_list(self, eol=True):
