@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: python-fedora 0.3.12\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2009-05-13 22:15+0700\n"
-"PO-Revision-Date: 2010-03-02 20:29-0500\n"
+"PO-Revision-Date: 2010-03-06 20:07-0500\n"
 "Last-Translator: Fabian Affolter <fab@fedoraproject.org>\n"
 "Language-Team: German <fedora-trans-de@redhat.com>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -158,35 +158,78 @@ msgid "FAS server unable to retrieve user information"
 msgstr "FAS-Server ist nicht fähig, die Benutzerinformationen zu erhalten"
 
 #: fedora/client/fasproxy.py:71
-#, fuzzy, python-format
+#, fuzzy
 msgid "FasProxyClient() got an unexpected keyword argument 'session_as_cookie'"
 msgstr "send_request() erhielt ein ungültiges Schlüsselwort-Argument \"%s\""
 
-#: fedora/client/pkgdb.py:181
+#: fedora/client/pkgdb.py:182
 #, python-format
 msgid ""
 "We do not have enough information to create package %(pkg)s. Need version"
 " owner."
 msgstr ""
 
-#: fedora/client/pkgdb.py:192
+#: fedora/client/pkgdb.py:193
 #, python-format
 msgid "PackageDB returned an error creating %(pkg)s: %(msg)s"
 msgstr ""
 
-#: fedora/client/pkgdb.py:215 fedora/client/pkgdb.py:271
+#: fedora/client/pkgdb.py:216 fedora/client/pkgdb.py:272
 #, python-format
 msgid "Unable to save all information for %(pkg)s: %(msg)s"
 msgstr ""
 
-#: fedora/client/pkgdb.py:306
+#: fedora/client/pkgdb.py:307
 #, python-format
 msgid "Collection abbreviation %(collection)s is unknown.  Use F, FC, EL, or OLPC"
 msgstr ""
 
-#: fedora/client/pkgdb.py:415
+#: fedora/client/pkgdb.py:329
+msgid ""
+"collection and collection_ver are deprecated names for collctn_name and "
+"collctn_ver respectively.\n"
+"Ignoring the values given in them."
+msgstr ""
+
+#: fedora/client/pkgdb.py:334
+msgid ""
+"collection has been renamed to collctn_name.\n"
+"Please start using the new name.  collection will go away in 0.4.x."
+msgstr ""
+
+#: fedora/client/pkgdb.py:340
+msgid ""
+"collection_ver has been renamed to collctn_ver.\n"
+"Please start using the new name.  collection_ver will go away in 0.4.x."
+msgstr ""
+
+#: fedora/client/pkgdb.py:373
+msgid ""
+"collectn_list is a deprecated name for collctn_list.\n"
+"Ignoring the value of collectn_list."
+msgstr ""
+
+#: fedora/client/pkgdb.py:378
+msgid ""
+"collectn_list has been renamed to collctn_list.\n"
+"Please start using the new name.  collectn_list will go away in 0.4.x."
+msgstr ""
+
+#: fedora/client/pkgdb.py:446
+msgid ""
+"collectn is a deprecated name for collctn.\n"
+"Ignoring the value of collectn."
+msgstr ""
+
+#: fedora/client/pkgdb.py:451
+msgid ""
+"collectn has been renamed to collctn.\n"
+"Please start using the new name.  collectn will go away in 0.4.x."
+msgstr ""
+
+#: fedora/client/pkgdb.py:461
 #, python-format
-msgid "Collection shortname %(collectn)s is unknown."
+msgid "Collection shortname %(collctn)s is unknown."
 msgstr ""
 
 #: fedora/client/proxyclient.py:149
@@ -224,42 +267,42 @@ msgid ""
 "or set both username and password in auth_params"
 msgstr ""
 
-#: fedora/client/proxyclient.py:315
+#: fedora/client/proxyclient.py:311
 #, python-format
 msgid "Creating request %(url)s"
 msgstr "Erzeuge Anforderung %(url)s"
 
-#: fedora/client/proxyclient.py:316
+#: fedora/client/proxyclient.py:312
 #, python-format
 msgid "Headers: %(header)s"
 msgstr "Headers: %(header)s"
 
-#: fedora/client/proxyclient.py:320
+#: fedora/client/proxyclient.py:316
 #, python-format
 msgid "Data: %(data)s"
 msgstr "Daten: %(data)s"
 
-#: fedora/client/proxyclient.py:332
+#: fedora/client/proxyclient.py:328
 #, fuzzy
 msgid "Authentication failed logging in"
 msgstr "Logge ein mit Heimatverzeichnis = „/“.\n"
 
-#: fedora/client/proxyclient.py:334
+#: fedora/client/proxyclient.py:330
 msgid ""
 "Unable to log into server.  Invalid authentication tokens.  Send new "
 "username and password"
 msgstr ""
 
-#: fedora/client/proxyclient.py:340
+#: fedora/client/proxyclient.py:336
 msgid "Unknown HTTP Server Response"
 msgstr "Unbekannte HTTP-Server-Antwort"
 
-#: fedora/client/proxyclient.py:362
+#: fedora/client/proxyclient.py:358
 #, python-format
 msgid "Error returned from simplejson while processing %(url)s: %(err)s"
 msgstr ""
 
-#: fedora/client/proxyclient.py:377
+#: fedora/client/proxyclient.py:373
 msgid "proxyclient.send_request: exited"
 msgstr "proxyclient.send_request: beenden"
 
@@ -468,4 +511,7 @@ msgstr "Willkommen, %s"
 #: fedora/wsgi/test/controllers/root.py:56
 msgid "We hope to see you soon!"
 msgstr ""
+
+#~ msgid "Collection shortname %(collectn)s is unknown."
+#~ msgstr ""
 
