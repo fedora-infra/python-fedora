@@ -250,7 +250,7 @@ msgstr ""
 #, fuzzy, python-format
 msgid "Collection shortname %(collctn)s is unknown."
 msgstr ""
-"L'abreviació de la col·lecció %(collection)s és desconeguda. Utilitzeu F,"
+"L'abreviació de la col·lecció %(collctn)s és desconeguda. Utilitzeu F,"
 " FC, EL o OLPC"
 
 #: fedora/client/proxyclient.py:149

@@ -229,7 +229,7 @@ msgstr ""
 #: fedora/client/pkgdb.py:461
 #, fuzzy, python-format
 msgid "Collection shortname %(collctn)s is unknown."
-msgstr "ไม่รู้จักคำย่อชุด %(collection)s กรุณาใช้ F, FC, EL หรือ OLPC"
+msgstr "ไม่รู้จักคำย่อชุด %(collctn)s กรุณาใช้ F, FC, EL หรือ OLPC"
 
 #: fedora/client/proxyclient.py:149
 msgid "proxyclient.__init__:entered"
