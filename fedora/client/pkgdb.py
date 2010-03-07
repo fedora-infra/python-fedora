@@ -326,20 +326,20 @@ class PackageDB(BaseClient):
         :return: dict of ownership information for the package
         '''
         if (collctn_name and collection) or (collctn_ver and collection_ver):
-            warnings.warn('collection and collection_ver are deprecated'
+            warnings.warn(_('collection and collection_ver are deprecated'
                 ' names for collctn_name and collctn_ver respectively.\nIgnoring'
-                ' the values given in them.', DeprecationWarning, stacklevel=2)
+                ' the values given in them.'), DeprecationWarning, stacklevel=2)
 
         if collection and not collctn_name:
-            warnings.warn('collection has been renamed to collctn_name.\n'
+            warnings.warn(_('collection has been renamed to collctn_name.\n'
                 'Please start using the new name.  collection will go '
-                'away in 0.4.x.', DeprecationWarning, stacklevel=2)
+                'away in 0.4.x.'), DeprecationWarning, stacklevel=2)
             collctn_name = collection
 
         if collection_ver and not collctn_ver:
-            warnings.warn('collection_ver has been renamed to collctn_ver.\n'
+            warnings.warn(_('collection_ver has been renamed to collctn_ver.\n'
                 'Please start using the new name.  collection_ver will go '
-                'away in 0.4.x.', DeprecationWarning, stacklevel=2)
+                'away in 0.4.x.'), DeprecationWarning, stacklevel=2)
             collctn_ver = collection_ver
 
         method = '/acls/name/%s' % package
@@ -370,14 +370,14 @@ class PackageDB(BaseClient):
         .. versionadded:: 0.3.12
         '''
         if (collctn_list and collectn_list):
-            warnings.warn('collectn_list is a deprecated name for'
-                    ' collctn_list.\nIgnoring the value of collectn_list.',
+            warnings.warn(_('collectn_list is a deprecated name for'
+                    ' collctn_list.\nIgnoring the value of collectn_list.'),
                     DeprecationWarning, stacklevel=2)
 
         if collectn_list and not collctn_list:
-            warnings.warn('collectn_list has been renamed to collctn_list.\n'
+            warnings.warn(_('collectn_list has been renamed to collctn_list.\n'
                     'Please start using the new name.  collectn_list will go'
-                    ' away in 0.4.x.', DeprecationWarning, stacklevel=2)
+                    ' away in 0.4.x.'), DeprecationWarning, stacklevel=2)
             collctn_list = collectn_list
 
         if collctn_list:
@@ -443,14 +443,14 @@ class PackageDB(BaseClient):
         .. versionadded:: 0.3.15
         '''
         if (collctn and collectn):
-            warnings.warn('collectn is a deprecated name for'
-                    ' collctn.\nIgnoring the value of collectn.',
+            warnings.warn(_('collectn is a deprecated name for'
+                    ' collctn.\nIgnoring the value of collectn.'),
                     DeprecationWarning, stacklevel=2)
 
         if collectn and not collctn:
-            warnings.warn('collectn has been renamed to collctn.\n'
+            warnings.warn(_('collectn has been renamed to collctn.\n'
                     'Please start using the new name.  collectn will go'
-                    ' away in 0.4.x.', DeprecationWarning, stacklevel=2)
+                    ' away in 0.4.x.'), DeprecationWarning, stacklevel=2)
             collctn = collectn
 
         params = {'tg_paginate_limit': '0'}
