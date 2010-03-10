@@ -403,7 +403,9 @@ class PackageDB(BaseClient):
 
         .. versionadded:: 0.3.14
         '''
-        params = {'acls': acls, 'eol': eol, 'tg_paginate_limit': 0}
+        params = {'eol': eol, 'tg_paginate_limit': 0}
+        if acls:
+            params['acls'] = acls
         return self.send_request('/users/packages/%s' % username, req_params=params)
 
     def orphan_packages(self):
