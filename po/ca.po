@@ -19,7 +19,7 @@ msgstr ""
 "Project-Id-Version: python-fedora 0.3.13\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-05-13 22:15+0700\n"
-"PO-Revision-Date: 2010-03-06 20:07-0500\n"
+"PO-Revision-Date: 2010-03-11 08:51-0500\n"
 "Last-Translator: Albert Carabasa <albertc@asic.udl.cat>\n"
 "Language-Team: Catalan <fedora@softcatala.net>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -55,16 +55,16 @@ msgid ""
 "a unicode string"
 msgstr ""
 
-#: fedora/textutils.py:82 fedora/textutils.py:139
+#: fedora/textutils.py:82 fedora/textutils.py:140
 #, python-format
-msgid "non_string value, %(param)s, is not set to a valid actionparam"
+msgid "non_string value, %(param)s, is not set to a valid action"
 msgstr ""
 
-#: fedora/textutils.py:136
+#: fedora/textutils.py:137
 #, python-format
 msgid ""
 "to_bytes was given \"%(obj)s\" which is neither a unicode string or a "
-"byte string (str)obj"
+"byte string (str)"
 msgstr ""
 
 #: fedora/accounts/fas2.py:8
@@ -172,7 +172,7 @@ msgstr "El servidor FAS no pot recuperar els membres del grup"
 msgid "FAS server unable to retrieve user information"
 msgstr "El servidor FAS no pot recuperar la informació de l'usuari"
 
-#: fedora/client/fasproxy.py:71
+#: fedora/client/fasproxy.py:67
 #, fuzzy
 msgid "FasProxyClient() got an unexpected keyword argument 'session_as_cookie'"
 msgstr "send_request() ha rebut un argument amb una paraula clau inesperada \"%s\""
@@ -203,55 +203,54 @@ msgstr ""
 "L'abreviació de la col·lecció %(collection)s és desconeguda. Utilitzeu F,"
 " FC, EL o OLPC"
 
-#: fedora/client/pkgdb.py:329
+#: fedora/client/pkgdb.py:332
 msgid ""
 "collection and collection_ver are deprecated names for collctn_name and "
-"collctn_ver respectively.\n"
-"Ignoring the values given in them."
+"collctn_ver respectively.  Ignoring the values given in them."
 msgstr ""
 
-#: fedora/client/pkgdb.py:334
+#: fedora/client/pkgdb.py:338
 msgid ""
 "collection has been renamed to collctn_name.\n"
 "Please start using the new name.  collection will go away in 0.4.x."
 msgstr ""
 
-#: fedora/client/pkgdb.py:340
+#: fedora/client/pkgdb.py:344
 msgid ""
 "collection_ver has been renamed to collctn_ver.\n"
 "Please start using the new name.  collection_ver will go away in 0.4.x."
 msgstr ""
 
-#: fedora/client/pkgdb.py:373
+#: fedora/client/pkgdb.py:381
 msgid ""
 "collectn_list is a deprecated name for collctn_list.\n"
 "Ignoring the value of collectn_list."
 msgstr ""
 
-#: fedora/client/pkgdb.py:378
+#: fedora/client/pkgdb.py:386
 msgid ""
 "collectn_list has been renamed to collctn_list.\n"
 "Please start using the new name.  collectn_list will go away in 0.4.x."
 msgstr ""
 
-#: fedora/client/pkgdb.py:446
+#: fedora/client/pkgdb.py:460
 msgid ""
 "collectn is a deprecated name for collctn.\n"
 "Ignoring the value of collectn."
 msgstr ""
 
-#: fedora/client/pkgdb.py:451
+#: fedora/client/pkgdb.py:465
 msgid ""
 "collectn has been renamed to collctn.\n"
 "Please start using the new name.  collectn will go away in 0.4.x."
 msgstr ""
 
-#: fedora/client/pkgdb.py:461
+#: fedora/client/pkgdb.py:475
 #, fuzzy, python-format
 msgid "Collection shortname %(collctn)s is unknown."
 msgstr ""
-"L'abreviació de la col·lecció %(collctn)s és desconeguda. Utilitzeu F,"
-" FC, EL o OLPC"
+"L'abreviació de la col·lecció %(collctn)s és desconeguda. Utilitzeu F, "
+"FC, EL o OLPC"
 
 #: fedora/client/proxyclient.py:149
 msgid "proxyclient.__init__:entered"
@@ -271,11 +270,11 @@ msgstr ""
 msgid "proxyclient.__init__:exited"
 msgstr "proxyclient__init__:sortit"
 
-#: fedora/client/proxyclient.py:232
+#: fedora/client/proxyclient.py:236
 msgid "proxyclient.send_request: entered"
 msgstr "proxyclient.send_request: s'ha entrat"
 
-#: fedora/client/proxyclient.py:241
+#: fedora/client/proxyclient.py:245
 msgid ""
 "Giving a cookie to send_request() to authenticate is deprecated and will "
 "be removed in 0.4. Please port your code to use session_id instead."
@@ -284,11 +283,11 @@ msgstr ""
 "eliminat en la versió 0.4. Si us plau, utilitzeu en el vostre codi "
 "session_id."
 
-#: fedora/client/proxyclient.py:251
+#: fedora/client/proxyclient.py:255
 msgid "username and password must both be set in auth_params"
 msgstr "El nom d'usuari i la contrassenya han d'estar definits a auth_params"
 
-#: fedora/client/proxyclient.py:254
+#: fedora/client/proxyclient.py:258
 msgid ""
 "No known authentication methods specified: set \"cookie\" in auth_params "
 "or set both username and password in auth_params"
@@ -297,26 +296,26 @@ msgstr ""
 "\"cookie\" en auth_params o bé definiu el nom d'usuari i la contrasenya a"
 " auth_params"
 
-#: fedora/client/proxyclient.py:311
+#: fedora/client/proxyclient.py:315
 #, python-format
 msgid "Creating request %(url)s"
 msgstr "S'està creant la sol·licitud %(url)s"
 
-#: fedora/client/proxyclient.py:312
+#: fedora/client/proxyclient.py:316
 #, python-format
 msgid "Headers: %(header)s"
 msgstr "Capçaleres: %(header)s"
 
-#: fedora/client/proxyclient.py:316
+#: fedora/client/proxyclient.py:320
 #, python-format
 msgid "Data: %(data)s"
 msgstr "Dades: %(data)s"
 
-#: fedora/client/proxyclient.py:328
+#: fedora/client/proxyclient.py:332
 msgid "Authentication failed logging in"
 msgstr "L'autenticació ha fallat en iniciar la sessió"
 
-#: fedora/client/proxyclient.py:330
+#: fedora/client/proxyclient.py:334
 msgid ""
 "Unable to log into server.  Invalid authentication tokens.  Send new "
 "username and password"
@@ -324,35 +323,35 @@ msgstr ""
 "No es pot entrar al servidor. Testimonis d'autenticació no vàlids. Envieu"
 " un nom d'usuari i contrasenya nous"
 
-#: fedora/client/proxyclient.py:336
+#: fedora/client/proxyclient.py:340
 msgid "Unknown HTTP Server Response"
 msgstr "Resposta del servidor HTTP desconeguda"
 
-#: fedora/client/proxyclient.py:358
+#: fedora/client/proxyclient.py:362
 #, python-format
 msgid "Error returned from simplejson while processing %(url)s: %(err)s"
 msgstr "Simplejson ha retornat un error en processar %(url)s: %(err)s"
 
-#: fedora/client/proxyclient.py:373
+#: fedora/client/proxyclient.py:377
 msgid "proxyclient.send_request: exited"
 msgstr "proxyclient.send_request: sortit"
 
-#: fedora/client/wiki.py:63
+#: fedora/client/wiki.py:64
 #, python-format
 msgid "Login failed: %s"
 msgstr "Inici de sessió fallada: %s"
 
-#: fedora/client/wiki.py:84
+#: fedora/client/wiki.py:85
 #, python-format
 msgid "From %(then)s to %(now)s"
 msgstr "De %(then)s a %(now)s"
 
-#: fedora/client/wiki.py:87
+#: fedora/client/wiki.py:88
 #, python-format
 msgid "%d wiki changes in the past week"
 msgstr "%d canvis al wiki la passada setmana"
 
-#: fedora/client/wiki.py:89
+#: fedora/client/wiki.py:90
 msgid ""
 "Warning: Number of changes reaches the API return limit.\n"
 "You will not get the complete list of changes unless\n"
@@ -362,7 +361,7 @@ msgstr ""
 "No obtindreu la llista completa de canvis a no ser que\n"
 "executeu aquest script utilitzant un compte 'bot'."
 
-#: fedora/client/wiki.py:99
+#: fedora/client/wiki.py:100
 msgid ""
 "\n"
 "== Most active wiki users =="
@@ -370,7 +369,7 @@ msgstr ""
 "\n"
 "== Els usuaris de la wiki més actius =="
 
-#: fedora/client/wiki.py:106
+#: fedora/client/wiki.py:107
 msgid ""
 "\n"
 "== Most edited pages =="
@@ -549,6 +548,147 @@ msgstr "Surt"
 msgid "updating visit (%s)"
 msgstr "s'està actualitzant la visita (%s)"
 
+#: fedora/wsgi/csrf.py:117
+msgid "Creating CSRFProtectionMiddleware"
+msgstr ""
+
+#: fedora/wsgi/csrf.py:126
+#, python-format
+msgid "clean_environ(%s)"
+msgstr ""
+
+#: fedora/wsgi/csrf.py:129
+#, python-format
+msgid "Deleting %(key)s from environ"
+msgstr ""
+
+#: fedora/wsgi/csrf.py:141
+#, python-format
+msgid "CSRFProtectionMiddleware(%(r_path)s)"
+msgstr ""
+
+#: fedora/wsgi/csrf.py:148
+msgid "User supplied CSRF token matches environ!"
+msgstr ""
+
+#: fedora/wsgi/csrf.py:151
+msgid "Clearing identity"
+msgstr ""
+
+#: fedora/wsgi/csrf.py:154
+#, python-format
+msgid ""
+"Invalid CSRF token.  User supplied (%(u_token)s) does not match what's in"
+" our environ (%(e_token)s)"
+msgstr ""
+
+#: fedora/wsgi/csrf.py:162
+msgid "CSRF_AUTH_STATE; rewriting headers"
+msgstr ""
+
+#: fedora/wsgi/csrf.py:168
+#, python-format
+msgid "response.location = %(r_loc)s"
+msgstr ""
+
+#: fedora/wsgi/csrf.py:240
+#, python-format
+msgid "CSRFMetadataProvider.add_metadata(%(r_path)s)"
+msgstr ""
+
+#: fedora/wsgi/csrf.py:246
+#, python-format
+msgid "session_id = %(s_id)r"
+msgstr ""
+
+#: fedora/wsgi/csrf.py:251
+msgid "Identity updated with CSRF token"
+msgstr ""
+
+#: fedora/wsgi/csrf.py:254
+msgid "Setting CSRF_AUTH_STATE"
+msgstr ""
+
+#: fedora/wsgi/csrf.py:264
+msgid "Got HTTPFound(302) from repoze.who.application"
+msgstr ""
+
+#: fedora/wsgi/csrf.py:270
+#, fuzzy, python-format
+msgid "Altered headers: %(headers)s"
+msgstr "Capçaleres: %(header)s"
+
+#: fedora/wsgi/csrf.py:273
+#, python-format
+msgid "Invalid session cookie %(s_id)r, not setting CSRF token!"
+msgstr ""
+
+#: fedora/wsgi/csrf.py:283
+#, python-format
+msgid "%(token)s in GET"
+msgstr ""
+
+#: fedora/wsgi/csrf.py:290
+#, python-format
+msgid "%(token)s in POST"
+msgstr ""
+
+#: fedora/wsgi/faswho/faswhoplugin.py:110
+msgid "Keep alive cache miss"
+msgstr ""
+
+#: fedora/wsgi/faswho/faswhoplugin.py:124
+msgid "in identify()"
+msgstr ""
+
+#: fedora/wsgi/faswho/faswhoplugin.py:131
+#, python-format
+msgid "Request identify for cookie %(cookie)s"
+msgstr ""
+
+#: fedora/wsgi/faswho/faswhoplugin.py:155
+msgid "In remember()"
+msgstr ""
+
+#: fedora/wsgi/faswho/faswhoplugin.py:168
+msgid "In forget()"
+msgstr ""
+
+#: fedora/wsgi/faswho/faswhoplugin.py:175
+#, python-format
+msgid "Forgetting login data for cookie %(s_id)s"
+msgstr ""
+
+#: fedora/wsgi/faswho/faswhoplugin.py:192
+msgid "In authenticate()"
+msgstr ""
+
+#: fedora/wsgi/faswho/faswhoplugin.py:216
+#, fuzzy
+msgid "Authentication failed, setting error"
+msgstr "L'autenticació ha fallat en iniciar la sessió"
+
+#: fedora/wsgi/faswho/faswhoplugin.py:237
+msgid "An unknown error happened when trying to log you in.  Please try again."
+msgstr ""
+
+#: fedora/wsgi/faswho/faswhoplugin.py:248
+msgid "Metadata cache miss - refreshing metadata"
+msgstr ""
+
+#: fedora/wsgi/faswho/faswhoplugin.py:279
+msgid "In add_metadata"
+msgstr ""
+
+#: fedora/wsgi/faswho/faswhoplugin.py:283
+msgid "Error exists in session, no need to set metadata"
+msgstr ""
+
+#: fedora/wsgi/faswho/faswhoplugin.py:293
+#, python-format
+msgid "Request metadata for cookie %(cookie)s"
+msgstr ""
+
 #: fedora/wsgi/test/controllers/root.py:31
 msgid "Wrong credentials"
 msgstr ""
@@ -561,4 +701,20 @@ msgstr "Benvingut, %s"
 #: fedora/wsgi/test/controllers/root.py:56
 msgid "We hope to see you soon!"
 msgstr ""
+
+#~ msgid "non_string value, %(param)s, is not set to a valid actionparam"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "to_bytes was given \"%(obj)s\" which is"
+#~ " neither a unicode string or a "
+#~ "byte string (str)obj"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "collection and collection_ver are deprecated"
+#~ " names for collctn_name and collctn_ver "
+#~ "respectively.\n"
+#~ "Ignoring the values given in them."
+#~ msgstr ""
 
