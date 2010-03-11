@@ -40,7 +40,7 @@ def make_app(global_conf, **kw):
         from fedora.wsgi.csrf import CSRFProtectionMiddleware
         app = CSRFProtectionMiddleware(app)
     if config.get('use_faswho'):
-        from fedora.wsgi.faswho import fas_make_who_middleware
-        app = fas_make_who_middleware(app)
+        from fedora.wsgi.faswho import make_faswho_middleware
+        app = make_faswho_middleware(app)
 
     return app

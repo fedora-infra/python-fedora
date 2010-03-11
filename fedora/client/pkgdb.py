@@ -330,8 +330,9 @@ class PackageDB(BaseClient):
         '''
         if (collctn_name and collection) or (collctn_ver and collection_ver):
             warnings.warn(_('collection and collection_ver are deprecated'
-                ' names for collctn_name and collctn_ver respectively.\nIgnoring'
-                ' the values given in them.'), DeprecationWarning, stacklevel=2)
+                ' names for collctn_name and collctn_ver respectively.'
+                '  Ignoring the values given in them.'), DeprecationWarning,
+                stacklevel=2)
 
         if collection and not collctn_name:
             warnings.warn(_('collection has been renamed to collctn_name.\n'
@@ -359,7 +360,8 @@ class PackageDB(BaseClient):
         # list of collection, version, owner
         return response
 
-    def remove_user(self, username, pkg_name, collctn_list=None, collectn_list=None):
+    def remove_user(self, username, pkg_name, collctn_list=None,
+            collectn_list=None):
         '''Remove user from a package
 
         :arg username: Name of user to remove from the package
@@ -412,7 +414,8 @@ class PackageDB(BaseClient):
         params = {'eol': eol, 'tg_paginate_limit': 0}
         if acls:
             params['acls'] = acls
-        return self.send_request('/users/packages/%s' % username, req_params=params)
+        return self.send_request('/users/packages/%s' % username,
+                req_params=params)
 
     def orphan_packages(self):
         '''List the packages which are orphaned
@@ -591,7 +594,8 @@ class PackageDB(BaseClient):
 
         return data['pkgs']
 
-    def set_critpath(self, pkg_list=None, critpath=True, collctn_list=None, reset=False):
+    def set_critpath(self, pkg_list=None, critpath=True, collctn_list=None,
+            reset=False):
         '''Mark packages as being in the critical path.
 
         Critical path packages are subject to more testing or stringency of

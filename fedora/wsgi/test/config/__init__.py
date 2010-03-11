@@ -1,1 +1,1 @@
-from app_cfg import *
+from fedora.wsgi.test.config.app_cfg import *
