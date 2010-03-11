@@ -324,6 +324,9 @@ class PackageDB(BaseClient):
         :raises AppError: If the server returns an error
         :rtype: DictContainer
         :return: dict of ownership information for the package
+
+        .. versionchanged:: 0.3.17
+            Rename collection and collection_ver to collctn_name and collctn_ver
         '''
         if (collctn_name and collection) or (collctn_ver and collection_ver):
             warnings.warn(_('collection and collection_ver are deprecated'
@@ -368,6 +371,9 @@ class PackageDB(BaseClient):
         :returns: status code from the request
 
         .. versionadded:: 0.3.12
+
+        .. versionchanged:: 0.3.17
+            Rename collectn_list to collctn_list
         '''
         if (collctn_list and collectn_list):
             warnings.warn(_('collectn_list is a deprecated name for'
@@ -443,6 +449,9 @@ class PackageDB(BaseClient):
         :returns: list of package names present in the collection.
 
         .. versionadded:: 0.3.15
+
+        .. versionchanged:: 0.3.17
+            Rename collectn to collctn
         '''
         if (collctn and collectn):
             warnings.warn(_('collectn is a deprecated name for'

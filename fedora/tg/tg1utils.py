@@ -173,6 +173,10 @@ def request_format():
     :rtype: string
     :returns: The requested format.  If none was specified, 'default' is
         returned
+
+    .. versionchanged:: 0.3.17
+        Return symbolic names for json, html, xhtml, and xml instead of
+        letting raw mime types through
     '''
     output_format = cherrypy.request.params.get('tg_format', '').lower()
     if not output_format:
