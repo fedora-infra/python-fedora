@@ -65,7 +65,8 @@ def url(*args, **kwargs):
     # Set the current _csrf_token on the url.  It will overwrite any current
     # _csrf_token
     if tg.request.environ['FAS_LOGIN_INFO']:
-        csrf_token = sha_constructor(tg.request.environ['FAS_LOGIN_INFO'][0]).hexdigest()
+        csrf_token = sha_constructor(tg.request.environ['FAS_LOGIN_INFO'][0])\
+                .hexdigest()
         new_url = update_qs(new_url, {'_csrf_token': csrf_token},
                 overwrite=True)
     return new_url
