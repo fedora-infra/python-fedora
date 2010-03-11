@@ -48,10 +48,9 @@ from fedora.wsgi.csrf import CSRFMetadataProvider, CSRFProtectionMiddleware
 log = logging.getLogger(__name__)
 
 FAS_URL = 'https://admin.fedoraproject.org/accounts/'
-FAS_CACHE_TIMEOUT=900 # 15 minutes (FAS visits timeout after 20)
+FAS_CACHE_TIMEOUT = 900 # 15 minutes (FAS visits timeout after 20)
 
 fas_cache = Cache('fas_repozewho_cache', type="memory")
-
 
 def make_faswho_middleware(app, log_stream, login_handler='/login_handler',
         login_form_url='/login', logout_handler='/logout_handler',
