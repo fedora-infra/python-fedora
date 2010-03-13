@@ -67,7 +67,7 @@ rm -rf %{buildroot}
 %{python_sitelib}/*
 
 %changelog
-* Tue Mar 02 2010 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.17-1
+* Thu Mar 11 2010 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.17-1
 - New release 0.3.17.
 
 * Wed Oct 21 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.16-1

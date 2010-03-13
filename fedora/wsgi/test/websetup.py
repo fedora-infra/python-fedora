@@ -34,7 +34,8 @@ def setup_app(command, conf, vars):
 
     permission = model.Permission()
     permission.permission_name = u'manage'
-    permission.description = u'This permission give an administrative right to the bearer'
+    permission.description = u'This permission gives an administrative right'\
+            ' to the bearer'
     permission.groups.append(group)
 
     model.DBSession.add(permission)

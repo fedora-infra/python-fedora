@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2008-2009  Red Hat, Inc.
+# Copyright (C) 2008-2010  Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
@@ -31,6 +31,7 @@
 '''
 
 import simplejson
+import warnings
 
 from fedora import __version__, _
 from fedora.client import BaseClient, FedoraClientError, AppError
@@ -99,7 +100,7 @@ class PackageDB(BaseClient):
         '''
         if self._branches and not refresh:
             return self._branches
-        data = self.send_request('/collections')
+        data = self.send_request('/collections/')
         self._branches = dict((b[0]['branchname'], b[0])
                 for b in data.collections)
         return self._branches
@@ -119,7 +120,7 @@ class PackageDB(BaseClient):
         if branch:
             collection, ver = self.canonical_branch_name(branch)
             data = {'collectionName': collection, 'collectionVersion': ver}
-        pkg_info = self.send_request('/packages/name/%s' % pkg,
+        pkg_info = self.send_request('/acls/name/%s' % pkg,
                 req_params=data)
 
         if 'status' in pkg_info and not pkg_info['status']:
@@ -139,7 +140,7 @@ class PackageDB(BaseClient):
 
         '''
         params = {'email_log': email_log}
-        return self.send_request('/packages/dispatcher/clone_branch/'
+        return self.send_request('/acls/dispatcher/clone_branch/'
                 '%s/%s/%s' % (pkg, branch, master), auth=True,
                 req_params=params)
 
@@ -185,7 +186,7 @@ class PackageDB(BaseClient):
         data = {'owner': owner, 'summary': description}
         # This call creates the package and an initial branch for
         # Fedora devel
-        response = self.send_request('/packages/dispatcher/add_package/%s'
+        response = self.send_request('/acls/dispatcher/add_package/%s'
             % pkg, auth=True, req_params=data)
         if 'status' in response and not response['status']:
             raise AppError(name='PackageDBError', message=
@@ -208,7 +209,7 @@ class PackageDB(BaseClient):
         del data['owner']
 
         if cc_list or comaintainers or groups or branches:
-            response = self.send_request('/packages/dispatcher/'
+            response = self.send_request('/acls/dispatcher/'
                     'edit_package/%s' % pkg, auth=True, req_params=data)
             if 'status' in response and not response['status']:
                 raise AppError(name='PackageDBError', 
@@ -265,7 +266,7 @@ class PackageDB(BaseClient):
             data['collections'] = branches
 
         # Request the changes
-        response = self.send_request('/packages/dispatcher/edit_package/%s'
+        response = self.send_request('/acls/dispatcher/edit_package/%s'
                 % pkg, auth=True, req_params=data)
         if 'status' in response and not response['status']:
             raise AppError(name='PackageDBError', message=_('Unable to save'
@@ -309,23 +310,47 @@ class PackageDB(BaseClient):
 
         return collection, version
 
-    def get_owners(self, package, collection=None, collection_ver=None):
+    def get_owners(self, package, collctn_name=None, collctn_ver=None,
+                                  collection=None, collection_ver=None):
         '''Retrieve the ownership information for a package.
 
         :arg package: Name of the package to retrieve package information about.
-        :kwarg collection: Limit the returned information to this collection
+        :kwarg collctn_name: Limit the returned information to this collection
             ('Fedora', 'Fedora EPEL', Fedora OLPC', etc)
-        :kwarg collection_ver: If collection is specified, further limit to this
+        :kwarg collctn_ver: If collection is specified, further limit to this
             version of the collection.
+        :kwarg collection: old/deprecated argument; use collctn_name
+        :kward collection_ver: old/deprecated argument; use collctn_ver
         :raises AppError: If the server returns an error
         :rtype: DictContainer
         :return: dict of ownership information for the package
+
+        .. versionchanged:: 0.3.17
+            Rename collection and collection_ver to collctn_name and collctn_ver
         '''
-        method = '/packages/name/%s' % package
-        if collection:
-            method = method + '/' + collection
-            if collection_ver:
-                method = method + '/' + collection_ver
+        if (collctn_name and collection) or (collctn_ver and collection_ver):
+            warnings.warn(_('collection and collection_ver are deprecated'
+                ' names for collctn_name and collctn_ver respectively.'
+                '  Ignoring the values given in them.'), DeprecationWarning,
+                stacklevel=2)
+
+        if collection and not collctn_name:
+            warnings.warn(_('collection has been renamed to collctn_name.\n'
+                'Please start using the new name.  collection will go '
+                'away in 0.4.x.'), DeprecationWarning, stacklevel=2)
+            collctn_name = collection
+
+        if collection_ver and not collctn_ver:
+            warnings.warn(_('collection_ver has been renamed to collctn_ver.\n'
+                'Please start using the new name.  collection_ver will go '
+                'away in 0.4.x.'), DeprecationWarning, stacklevel=2)
+            collctn_ver = collection_ver
+
+        method = '/acls/name/%s' % package
+        if collctn_name:
+            method = method + '/' + collctn_name
+            if collctn_ver:
+                method = method + '/' + collctn_ver
 
         response = self.send_request(method)
         if 'status' in response and not response['status']:
@@ -335,24 +360,40 @@ class PackageDB(BaseClient):
         # list of collection, version, owner
         return response
 
-    def remove_user(self, username, pkg_name, collectn_list=None):
+    def remove_user(self, username, pkg_name, collctn_list=None,
+            collectn_list=None):
         '''Remove user from a package
 
         :arg username: Name of user to remove from the package
         :arg pkg_name: Name of the package
-        :kwarg collectn_list: list of collections like 'F-10','devel'.
-            Default: None which means user removed from all collections
-            associated with the package.
+        :kwarg collctn_list: list of collection simple names like
+            'F-10','devel'.  Default: None which means user removed from all
+            collections associated with the package.
+        :kwarg collectn_list: *Deprecated* Use collctn_list instead.
         :returns: status code from the request
 
         .. versionadded:: 0.3.12
+
+        .. versionchanged:: 0.3.17
+            Rename collectn_list to collctn_list
         '''
-        if collectn_list:
+        if (collctn_list and collectn_list):
+            warnings.warn(_('collectn_list is a deprecated name for'
+                    ' collctn_list.\nIgnoring the value of collectn_list.'),
+                    DeprecationWarning, stacklevel=2)
+
+        if collectn_list and not collctn_list:
+            warnings.warn(_('collectn_list has been renamed to collctn_list.\n'
+                    'Please start using the new name.  collectn_list will go'
+                    ' away in 0.4.x.'), DeprecationWarning, stacklevel=2)
+            collctn_list = collectn_list
+
+        if collctn_list:
             params = {'username': username, 'pkg_name': pkg_name, 
-                'collectn_list': collectn_list}
+                'collectn_list': collctn_list}
         else:
             params = {'username': username, 'pkg_name': pkg_name}
-        return self.send_request('/packages/dispatcher/remove_user', auth=True,
+        return self.send_request('/acls/dispatcher/remove_user', auth=True,
                    req_params=params)
 
     def user_packages(self, username, acls=None, eol=False):
@@ -370,16 +411,19 @@ class PackageDB(BaseClient):
 
         .. versionadded:: 0.3.14
         '''
-        params = {'acls': acls, 'eol': eol, 'tg_paginate_limit': 0}
-        return self.send_request('/users/packages/%s' % username, req_params=params)
+        params = {'eol': eol, 'tg_paginate_limit': 0}
+        if acls:
+            params['acls'] = acls
+        return self.send_request('/users/packages/%s' % username,
+                req_params=params)
 
     def orphan_packages(self):
-        '''List the packages whichare orphaned
+        '''List the packages which are orphaned
 
         :returns: List of pkgs which are orphaned in any non-EOL release.
         '''
         params = {'tg_paginate_limit': 0}
-        data = self.send_request('/packages/orphans', req_params=params)
+        data = self.send_request('/acls/orphans', req_params=params)
         return data.pkgs
 
     def get_collection_list(self, eol=True):
@@ -398,25 +442,41 @@ class PackageDB(BaseClient):
             data.collections = collections
         return data.collections
 
-    def get_package_list(self, collectn=None):
+    def get_package_list(self, collctn=None, collectn=None):
         '''Retrieve a list of all package names in a collection.
 
-        :kwarg collectn: Collection to look for packages in.  If unset,
-            return packages in all collections
+        :kwarg collctn: Collection to look for packages in.  This is a collctn
+            shortname like 'devel' or 'F-13'.  If unset, return packages in
+            all collections
+        :kwarg collectn: *Deprecated*.  Please use collctn instead
         :returns: list of package names present in the collection.
 
         .. versionadded:: 0.3.15
+
+        .. versionchanged:: 0.3.17
+            Rename collectn to collctn
         '''
+        if (collctn and collectn):
+            warnings.warn(_('collectn is a deprecated name for'
+                    ' collctn.\nIgnoring the value of collectn.'),
+                    DeprecationWarning, stacklevel=2)
+
+        if collectn and not collctn:
+            warnings.warn(_('collectn has been renamed to collctn.\n'
+                    'Please start using the new name.  collectn will go'
+                    ' away in 0.4.x.'), DeprecationWarning, stacklevel=2)
+            collctn = collectn
+
         params = {'tg_paginate_limit': '0'}
-        if collectn:
+        if collctn:
             try:
-                collectn_id = self.branches[collectn]['id']
+                collctn_id = self.branches[collctn]['id']
             except KeyError:
-                raise PackageDBError(_('Collection shortname %(collectn)s'
-                    ' is unknown.') % {'collectn': collectn})
-            data = self.send_request('/collections/id/%s' % collectn_id, params)
+                raise PackageDBError(_('Collection shortname %(collctn)s'
+                    ' is unknown.') % {'collctn': collctn})
+            data = self.send_request('/collections/name/%s/' % collctn, params)
         else:
-            data = self.send_request('/packages/', params)
+            data = self.send_request('/acls/list/*', params)
         names = [p['name'] for p in data.packages]
         return names
 
@@ -499,7 +559,65 @@ class PackageDB(BaseClient):
 
         .. versionadded:: 0.3.15
         '''
-        data = self.send_request('/lists/notify')
+        method = '/lists/notify' 
+        if collctn_name:
+            method = method + '/' + collctn_name
+            if collctn_ver:
+                method = method + '/' + collctn_ver
+
+#        params = {'eol': eol, 'tg_paginate_limit': 0}
+        params = {'eol': eol}
+        data = self.send_request(method, req_params=params)
         if 'exc' in data:
             raise AppError(data['exc'], data['tg_flash'])
         return data.packages
+
+    def get_critpath_pkgs(self, collctn_list=None):
+        '''Return names of packages marked critical path.
+
+        :kwarg collctn_list: When set to a list of Collection names, only
+            retrieve packages which are marked critpath in any of the
+            collections.  Defaults to retrieving critpath packages in all
+            non-EOL releases
+        :rtype: DictContainer
+        :returns: Keys of the returned dict are collection simple names.  The
+            values are lists of package names that are marked critpath
+
+        .. versionadded:: 0.3.17
+        '''
+        if collctn_list:
+            params = {'collctn_list': collctn_list}
+        else:
+            params = {}
+
+        data = self.send_request('/lists/critpath', req_params=params)
+
+        return data['pkgs']
+
+    def set_critpath(self, pkg_list=None, critpath=True, collctn_list=None,
+            reset=False):
+        '''Mark packages as being in the critical path.
+
+        Critical path packages are subject to more testing or stringency of
+        criteria for updating when a release occurs.
+
+        :kwarg pkg_list: List of package names to set as critical path.
+            Default: all packages within `collectn_list`
+        :kwarg critpath: Boolean.  True (default) means this package is in the
+            critical path.  False means that it should be taken out
+        :kwarg collctn_list: List of collection shortnames that this change
+            will be applied on.  The default is all non-EOL collections.
+        :kwarg reset: If True, clear the critpath flag from all packages in
+            collectn_list before setting critpath on the packages in pkg_list.
+            Default is False
+
+        .. versionadded:: 0.3.17
+        '''
+        params = {'critpath': critpath, 'reset': reset}
+        if pkg_list:
+            params['pkg_list'] = pkg_list
+        if collctn_list:
+            params['collctn_list'] = collctn_list
+
+        self.send_request('/acls/dispatcher/set_critpath', req_params=params,
+                auth=True)

@@ -52,6 +52,7 @@ class ServerError(FedoraServiceError):
     This includes network errors and 500 response codes.
     '''
     def __init__(self, url, status, msg):
+        FedoraServiceError.__init__(self)
         self.filename = url
         self.code = status
         self.msg = msg
@@ -66,6 +67,7 @@ class AuthError(FedoraServiceError):
 class AppError(FedoraServiceError):
     '''Error condition that the server is passing back to the client.'''
     def __init__(self, name, message, extras=None):
+        FedoraServiceError.__init__(self)
         self.name = name
         self.message = message
         self.extras = extras

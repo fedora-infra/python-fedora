@@ -25,7 +25,7 @@ from paste.script.appinstall import SetupCommand
 from webtest import TestApp
 from nose.tools import eq_
 from fedora.wsgi.test import model
-from testapp import make_app
+from fedora.wsgi.test.testapp import make_app
 
 __all__ = ['make_app', 'TestTG2App', 'setup_db', 'teardown_db']
 

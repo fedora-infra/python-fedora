@@ -228,6 +228,10 @@ class ProxyClient(object):
             If ProxyClient was created with session_as_cookie=False, a tuple
             of session_id and data instead.
         :rtype: tuple of session information and data from server
+
+        .. versionchanged:: 0.3.17
+            No longer send tg_format=json parameter.  We rely solely on the
+            Accept: application/json header now.
         '''
         self.log.debug(_('proxyclient.send_request: entered'))
         # Check whether we need to authenticate for this request
