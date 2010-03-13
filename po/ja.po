@@ -4,13 +4,12 @@
 # project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: python-fedora 0.3.13\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2009-05-13 22:15+0700\n"
-"PO-Revision-Date: 2010-03-11 08:51-0500\n"
+"PO-Revision-Date: 2010-03-13 00:59-0500\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ja <LL@li.org>\n"
 "Plural-Forms: nplurals=1; plural=0\n"
@@ -116,32 +115,32 @@ msgstr ""
 msgid "Reading from %s "
 msgstr ""
 
-#: fedora/client/fas2.py:216
+#: fedora/client/fas2.py:218
 #, python-format
 msgid "FAS server unable to retrieve group %s"
 msgstr ""
 
-#: fedora/client/fas2.py:340
+#: fedora/client/fas2.py:342
 msgid "key must be one of \"id\", \"username\", or \"email\""
 msgstr ""
 
-#: fedora/client/fas2.py:346
+#: fedora/client/fas2.py:348
 #, python-format
 msgid "%(field)s is not a valid field to filter"
 msgstr ""
 
-#: fedora/client/fas2.py:395
+#: fedora/client/fas2.py:397
 msgid ""
 "people_by_id() is deprecated and will be removed in 0.4.  Please port "
 "your code to use people_by_key(key='id', fields=['human_name', 'email', "
 "'username', 'bugzilla_email']) instead"
 msgstr ""
 
-#: fedora/client/fas2.py:577
+#: fedora/client/fas2.py:579
 msgid "FAS server unable to retrieve group members"
 msgstr ""
 
-#: fedora/client/fas2.py:599
+#: fedora/client/fas2.py:601
 msgid "FAS server unable to retrieve user information"
 msgstr ""
 
@@ -627,20 +626,4 @@ msgstr ""
 #: fedora/wsgi/test/controllers/root.py:56
 msgid "We hope to see you soon!"
 msgstr ""
-
-#~ msgid "non_string value, %(param)s, is not set to a valid actionparam"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "to_bytes was given \"%(obj)s\" which is"
-#~ " neither a unicode string or a "
-#~ "byte string (str)obj"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "collection and collection_ver are deprecated"
-#~ " names for collctn_name and collctn_ver "
-#~ "respectively.\n"
-#~ "Ignoring the values given in them."
-#~ msgstr ""
 
