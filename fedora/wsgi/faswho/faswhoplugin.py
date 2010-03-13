@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
-"""
+'''
 repoze.who plugin to authenticate against hte Fedora Account System
 
 .. moduleauthor:: John (J5) Palmieri <johnp@redhat.com>
@@ -24,7 +24,7 @@ repoze.who plugin to authenticate against hte Fedora Account System
 .. moduleauthor:: Toshio Kuratomi <toshio@fedoraproject.org>
 
 .. versionadded:: 0.3.17
-"""
+'''
 import os
 import sys
 import webob
@@ -44,14 +44,14 @@ from paste.request import parse_dict_querystring, parse_formvars
 from urllib import quote_plus
 
 from fedora.wsgi.csrf import CSRFMetadataProvider, CSRFProtectionMiddleware
+from fedora import _
 
 log = logging.getLogger(__name__)
 
 FAS_URL = 'https://admin.fedoraproject.org/accounts/'
-FAS_CACHE_TIMEOUT=900 # 15 minutes (FAS visits timeout after 20)
+FAS_CACHE_TIMEOUT = 900 # 15 minutes (FAS visits timeout after 20)
 
-fas_cache = Cache('fas_repozewho_cache', type="memory")
-
+fas_cache = Cache('fas_repozewho_cache', type='memory')
 
 def make_faswho_middleware(app, log_stream, login_handler='/login_handler',
         login_form_url='/login', logout_handler='/logout_handler',
@@ -70,9 +70,9 @@ def make_faswho_middleware(app, log_stream, login_handler='/login_handler',
     form.classifications = { IIdentifier: ['browser'],
                              IChallenger: ['browser'] } # only for browser
 
-    identifiers = [('form', form),('fasident', faswho)]
+    identifiers = [('form', form), ('fasident', faswho)]
     authenticators = [('fasauth', faswho)]
-    challengers = [('form',form)]
+    challengers = [('form', form)]
     mdproviders = [('fasmd', faswho), ('csrfmd', csrf_mdprovider)]
 
     if os.environ.get('FAS_WHO_LOG'):
@@ -102,11 +102,12 @@ class FASWhoPlugin(object):
         self._session_cache = {}
         self._metadata_plugins = []
 
-        for entry in pkg_resources.iter_entry_points('fas.repoze.who.metadata_plugins'):
+        for entry in pkg_resources.iter_entry_points(
+                'fas.repoze.who.metadata_plugins'):
             self._metadata_plugins.append(entry.load())
 
     def keep_alive(self, session_id):
-        log.info("Keep alive cache miss")
+        log.info(_('Keep alive cache miss'))
         try:
             linfo = self.fas.get_user_info({'session_id': session_id})
         except AuthError, e:
@@ -114,20 +115,22 @@ class FASWhoPlugin(object):
             return None
         try:
             del linfo[1]['password']
-        except:
+        except KeyError:
+            # Just make sure the password isn't in the info we return
             pass
         return linfo
 
     def identify(self, environ):
-        log.info('Identify')
+        log.info(_('in identify()'))
         req = webob.Request(environ)
         cookie = req.cookies.get(self.session_cookie)
 
         if cookie is None:
             return None
 
-        log.info("Request identify for cookie " + cookie)
-        linfo = fas_cache.get_value(key=cookie + "_identity",
+        log.info(_('Request identify for cookie %(cookie)s') %
+                {'cookie': cookie})
+        linfo = fas_cache.get_value(key=cookie + '_identity',
                                     createfunc=lambda: self.keep_alive(cookie),
                                     expiretime=FAS_CACHE_TIMEOUT)
 
@@ -143,12 +146,13 @@ class FASWhoPlugin(object):
             me.update({'repoze.who.userid': me['username']})
             environ['FAS_LOGIN_INFO'] = linfo
             return me
-        except Exception, e:
+        except Exception, e: # pylint:disable-msg=W0703
+            # For any exceptions, returning None means we failed to identify
             log.warning(e)
             return None
 
     def remember(self, environ, identity):
-        log.info('Remember')
+        log.info(_('In remember()'))
         req = webob.Request(environ)
         result = []
 
@@ -161,20 +165,22 @@ class FASWhoPlugin(object):
         return None
 
     def forget(self, environ, identity):
-        log.info("Forget")
+        log.info(_('In forget()'))
         # return a expires Set-Cookie header
         req = webob.Request(environ)
 
         linfo = environ.get('FAS_LOGIN_INFO')
         if isinstance(linfo, tuple):
             session_id = linfo[0]
-            log.info("Forgetting login data for cookie %s" % (session_id))
+            log.info(_('Forgetting login data for cookie %(s_id)s') %
+                    {'s_id': session_id})
 
             self.fas.logout(session_id)
 
             result = []
-            fas_cache.remove_value(key=session_id + "_identity")
-            expired = '%s=""; Path=/; Expires=Sun, 10-May-1971 11:59:00 GMT' % self.session_cookie
+            fas_cache.remove_value(key=session_id + '_identity')
+            expired = '%s=\'\'; Path=/; Expires=Sun, 10-May-1971 11:59:00 GMT'\
+                    % self.session_cookie
             result.append(('Set-Cookie', expired))
             environ['FAS_LOGIN_INFO'] = None
             return result
@@ -183,7 +189,7 @@ class FASWhoPlugin(object):
 
     # IAuthenticatorPlugin
     def authenticate(self, environ, identity):
-        log.info('Authenticate')
+        log.info(_('In authenticate()'))
         try:
             login = identity['login']
             password = identity['password']
@@ -202,11 +208,12 @@ class FASWhoPlugin(object):
         form.update(query)
         came_from = form.get('came_from', default_came_from)
 
-        user_data = ""
+        user_data = ''
         try:
-            user_data = self.fas.get_user_info({'username': login, 'password': password})
+            user_data = self.fas.get_user_info({'username': login,
+                'password': password})
         except AuthError, e:
-            log.info('Authentication failed, setting error')
+            log.info(_('Authentication failed, setting error'))
             log.warning(e)
             err = 1
             environ['FAS_AUTH_ERROR'] = err
@@ -227,7 +234,8 @@ class FASWhoPlugin(object):
                 environ['CSRF_AUTH_SESSION_ID'] = environ['FAS_LOGIN_INFO'][0]
                 return login
 
-        err = 'An unknown error happened when trying to log you in.  Please try again.'
+        err = _('An unknown error happened when trying to log you in.  Please'
+                ' try again.')
         environ['FAS_AUTH_ERROR'] = err
         err_app = HTTPFound(err_goto + '?' + 'came_from=' + came_from)
                             #'&ec=login_err.UNKNOWN_AUTH_ERROR')
@@ -237,7 +245,7 @@ class FASWhoPlugin(object):
         return None
 
     def get_metadata(self, environ):
-        log.info("Metadata cache miss - refreshing metadata")
+        log.info(_('Metadata cache miss - refreshing metadata'))
         info = environ.get('FAS_LOGIN_INFO')
         identity = {}
 
@@ -268,11 +276,11 @@ class FASWhoPlugin(object):
         return identity
 
     def add_metadata(self, environ, identity):
-        log.info('Metadata')
+        log.info(_('In add_metadata'))
         req = webob.Request(environ)
 
         if identity.get('error'):
-            log.info('Error exists in session, no need to set metadata')
+            log.info(_('Error exists in session, no need to set metadata'))
             return 'error'
 
         cookie = req.cookies.get(self.session_cookie)
@@ -282,10 +290,11 @@ class FASWhoPlugin(object):
             #cookie = environ.get('CSRF_AUTH_SESSION_ID')
             return None
 
-        log.info('Request metadata for cookie %s' % (cookie))
+        log.info(_('Request metadata for cookie %(cookie)s') %
+                {'cookie':cookie})
         info = fas_cache.get_value(key=cookie + '_metadata',
-                                   createfunc=lambda: self.get_metadata(environ),
-                                   expiretime=FAS_CACHE_TIMEOUT)
+                createfunc=lambda: self.get_metadata(environ),
+                expiretime=FAS_CACHE_TIMEOUT)
 
         identity.update(info)
 

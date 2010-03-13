@@ -21,15 +21,20 @@ JSON Helper functions.  Most JSON code directly related to classes is
 implemented via the __json__() methods in model.py.  These methods define
 methods of transforming a class into json for a few common types.
 
+A JSON-based API(view) for your app.  Most rules would look like::
+    @jsonify.when("isinstance(obj, YourClass)")
+    def jsonify_yourclass(obj):
+        return [obj.val1, obj.val2]
+
+@jsonify can convert your objects to following types:
+lists, dicts, numbers and strings
+
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
-# A JSON-based API(view) for your app.
-# Most rules would look like:
-# @jsonify.when("isinstance(obj, YourClass)")
-# def jsonify_yourclass(obj):
-#     return [obj.val1, obj.val2]
-# @jsonify can convert your objects to following types:
-# lists, dicts, numbers and strings
+
+# Pylint ignored messages
+# :E1101: turbogears.jsonify monkey patches some functionality in.  These do
+#   not show up when we pylint so it thinks the members di not exist.
 
 import sqlalchemy
 import sqlalchemy.orm
@@ -47,6 +52,9 @@ class SABase(object):
     2) Selectively add tables pulled in from the table to the data we're
        returning.
     '''
+    # :R0903: The SABase object just adds a __json__ method to all SA mapped
+    #   classes so they can be serialized as json.  It's used as a base class
+    #   and that's it.
     # pylint: disable-msg=R0903
     def __json__(self):
         '''Transform any SA mapped class into json.
@@ -94,8 +102,8 @@ class SABase(object):
                 # pylint: disable-msg=E1101
                 props[field].json_props = self.json_props
             except AttributeError: # pylint: disable-msg=W0704
-                # Certain types of objects are terminal and won't allow setting
-                # json_props
+                # :W0704: Certain types of objects are terminal and won't
+                #   allow setting json_props
                 pass
 
             # Note: Because of the architecture of simplejson and turbojson,

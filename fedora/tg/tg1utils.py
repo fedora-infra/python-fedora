@@ -173,11 +173,31 @@ def request_format():
     :rtype: string
     :returns: The requested format.  If none was specified, 'default' is
         returned
+
+    .. versionchanged:: 0.3.17
+        Return symbolic names for json, html, xhtml, and xml instead of
+        letting raw mime types through
     '''
     output_format = cherrypy.request.params.get('tg_format', '').lower()
     if not output_format:
-        output_format = cherrypy.request.headers.get(
-                'Accept', 'default').lower()
+        ### TODO: Two problems with this:
+        # 1) TG lets this be extended via as_format and accept_format.  We need
+        #    tie into that as well somehow.
+        # 2) Decide whether to standardize on "json" or "application/json"
+        accept = tg_util.simplify_http_accept_header(
+                request.headers.get('Accept', 'default').lower())
+        if accept in ('text/javascript', 'application/json'):
+            output_format = 'json'
+        elif accept == 'text/html':
+            output_format = 'html'
+        elif accept == 'text/plain':
+            output_format = 'plain'
+        elif accept == 'text/xhtml':
+            output_format = 'xhtml'
+        elif accept == 'text/xml':
+            output_format = 'xml'
+        else:
+            output_format = accept
     return output_format
 
 def jsonify_validation_errors():
@@ -221,7 +241,7 @@ def jsonify_validation_errors():
     message = u'\n'.join([u'%s: %s' % (param, msg) for param, msg in
         errors.items()])
     format = request_format()
-    if format == 'html':
+    if format in ('html', 'xhtml'):
         message.translate({ord('\n'): u'<br />\n'})
     flash(message)
 

@@ -52,10 +52,6 @@ class FasProxyClient(ProxyClient):
         :kwargs useragent: useragent string to use.  If not given, default to
             "FAS Proxy Client/VERSION"
         :kwarg session_name: name of the cookie to use with session handling
-        :kwarg session_as_cookie: If set to True, return the session as a
-            SimpleCookie.  If False, return a session_id.  This flag allows us
-            to maintain compatibility for the 0.3 branch.  In 0.4, code will
-            have to deal with session_id's instead of cookies.
         :kwarg debug: If True, log debug information
         :kwarg insecure: If True, do not check server certificates against
             their CA's.  This means that man-in-the-middle attacks are
@@ -68,8 +64,8 @@ class FasProxyClient(ProxyClient):
         if 'session_as_cookie' in kwargs and kwargs['session_as_cookie']:
             # No need to allow this in FasProxyClient as it's deprecated in
             # ProxyClient
-            raise TypeError(_('FasProxyClient() got an unexpected keyword argument'
-                ' \'session_as_cookie\''))
+            raise TypeError(_('FasProxyClient() got an unexpected keyword'
+                ' argument \'session_as_cookie\''))
         kwargs['session_as_cookie'] = False
         super(FasProxyClient, self).__init__(base_url, *args, **kwargs)
 
@@ -106,7 +102,7 @@ class FasProxyClient(ProxyClient):
         :returns: True if the session_id is valid.  False otherwise.
         '''
         try:
-            data = self.send_request('/home', auth_params={'session_id': session_id})
+            self.send_request('/home', auth_params={'session_id': session_id})
         except AuthError:
             return False
         except:
@@ -121,8 +117,8 @@ class FasProxyClient(ProxyClient):
         :returns: True if the username/password are valid.  False otherwise.
         '''
         try:
-            data = self.send_request('/home',
-                    auth_params={'username': username, 'password': password})
+            self.send_request('/home', auth_params={'username': username,
+                'password': password})
         except AuthError:
             return False
         except:

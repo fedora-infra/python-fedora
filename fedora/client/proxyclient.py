@@ -228,6 +228,10 @@ class ProxyClient(object):
             If ProxyClient was created with session_as_cookie=False, a tuple
             of session_id and data instead.
         :rtype: tuple of session information and data from server
+
+        .. versionchanged:: 0.3.17
+            No longer send tg_format=json parameter.  We rely solely on the
+            Accept: application/json header now.
         '''
         self.log.debug(_('proxyclient.send_request: entered'))
         # Check whether we need to authenticate for this request
@@ -281,7 +285,7 @@ class ProxyClient(object):
 
         # Set standard headers
         headers = ['User-agent: %s' % self.useragent,
-                'Accept: text/javascript']
+                'Accept: application/json']
         request.setopt(pycurl.HTTPHEADER, headers)
 
         # If we have a session_id, send it
@@ -292,10 +296,6 @@ class ProxyClient(object):
                 session_id))
 
         complete_params = req_params or {}
-        # Note: tg_format=json is going away in the future as the Accept
-        # header should serve the same purpose in a more framework neutral
-        # manner.
-        complete_params['tg_format'] = 'json'
         if session_id:
             # Add the csrf protection token
             token = sha_constructor(session_id)

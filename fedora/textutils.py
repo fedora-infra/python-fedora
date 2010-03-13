@@ -79,7 +79,8 @@ def to_unicode(obj, encoding='utf8', errors='replace', non_string='empty'):
         raise TypeError(_('to_unicode was given "%(obj)s" which is neither'
             ' a byte string (str) or a unicode string') % {'obj': obj_repr})
 
-    raise TypeError(_('non_string value, %(param)s, is not set to a valid action' % {'param': non_string}))
+    raise TypeError(_('non_string value, %(param)s, is not set to a valid'
+        ' action') % {'param': non_string})
 
 def to_bytes(obj, encoding='utf8', errors='replace', non_string='empty'):
     '''Convert an object into a byte string
@@ -134,8 +135,9 @@ def to_bytes(obj, encoding='utf8', errors='replace', non_string='empty'):
         if non_string == 'repr':
             return obj_repr
         raise TypeError(_('to_bytes was given "%(obj)s" which is neither'
-            ' a unicode string or a byte string (str)' % {'obj': obj_repr}))
+            ' a unicode string or a byte string (str)') % {'obj': obj_repr})
 
-    raise TypeError(_('non_string value, %(param)s, is not set to a valid action' % {'param': non_string}))
+    raise TypeError(_('non_string value, %(param)s, is not set to a valid'
+        ' action') % {'param': non_string})
 
 __all__ = ['to_unicode', 'to_bytes']

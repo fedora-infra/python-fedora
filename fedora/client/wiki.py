@@ -35,7 +35,8 @@ MEDIAWIKI_DATEFORMAT = "%Y-%m-%dT%H:%M:%SZ"
 class Wiki(BaseClient):
     api_high_limits = False
 
-    def __init__(self, base_url='https://fedoraproject.org/w/', *args, **kwargs):
+    def __init__(self, base_url='https://fedoraproject.org/w/',
+            *args, **kwargs):
         super(Wiki, self).__init__(base_url, *args, **kwargs)
 
     def get_recent_changes(self, now, then, limit=500):
