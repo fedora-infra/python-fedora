@@ -7,6 +7,10 @@ NEWS
 :Version: 0.3.x
 
 
+------
+0.3.18
+------
+* Fixes for Django auth provider tracebacks and session not being cleared between users.
 
 ------
 0.3.17
