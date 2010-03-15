@@ -38,7 +38,7 @@ class FasBackend(ModelBackend):
                 auth = {'username': username, 'password': password}
             session_id, userinfo = connection.get_user_info(auth_params=auth)
             local.session_id = session_id
-            user = FasUser.objects.user_from_fas(userinfo['person'])
+            user = FasUser.objects.user_from_fas(userinfo)
             if user.is_active:
                 return user
         except AuthError:
@@ -48,6 +48,6 @@ class FasBackend(ModelBackend):
         try:
             userinfo = person_by_id(userid)
             if userinfo:
-                return FasUser.objects.user_from_fas(userinfo['person'])
+                return FasUser.objects.user_from_fas(userinfo)
         except AuthError:
             return AnonymousUser()
