@@ -53,5 +53,10 @@ class FasMiddleware(object):
                     pass
 #               response.set_cookie(key='tg-visit',
 #                   value=local.session_id, max_age=0)
-        del local.session_id
+        try:
+            del local.session_id
+        except AttributeError:
+            # If we have no session, that's fine.  We just want to make sure
+            # it's cleared before we return the request.
+            pass
         return response
