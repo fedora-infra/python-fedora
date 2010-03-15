@@ -22,7 +22,7 @@
 '''
  
 from fedora.client import AuthError
-from fedora.django import connection, person_by_id, local
+from fedora.django import connection, person_by_id
 from fedora.django.auth.models import FasUser
 
 from django.contrib.auth.models import AnonymousUser
@@ -37,8 +37,8 @@ class FasBackend(ModelBackend):
             else:
                 auth = {'username': username, 'password': password}
             session_id, userinfo = connection.get_user_info(auth_params=auth)
-            local.session_id = session_id
             user = FasUser.objects.user_from_fas(userinfo)
+            user.session_id = session_id
             if user.is_active:
                 return user
         except AuthError:

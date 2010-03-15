@@ -32,10 +32,7 @@ if not connection:
     connection = FasProxyClient(base_url=settings.FAS_URL, useragent=settings.FAS_USERAGENT)
 
 def person_by_id(userid):
-    if not hasattr(local, 'session_id'):
-        return None
     sid, userinfo = connection.person_by_id(userid,
-            {'session_id': local.session_id})
+            {'username': settings.FAS_USERNAME,
+            'password': settings.FAS_PASSWORD})
     return userinfo
-
-local = threading.local()

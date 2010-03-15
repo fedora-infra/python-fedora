@@ -60,8 +60,9 @@ def _syncdb_handler(sender, **kwargs):
         for group in groups:
             _new_group(group)
         if verbosity > 0:
-            print _('FAS groups loaded. Don\'t forget to unset '
-                'FAS_USERNAME and FAS_PASSWORD.')
+            print _('FAS groups loaded. Don\'t forget to set '
+                'FAS_USERNAME and FAS_PASSWORD to a low-privilege '
+                'account.')
 
 class FasUserManager(authmodels.UserManager):
     def user_from_fas(self, user):

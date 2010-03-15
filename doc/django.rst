@@ -8,13 +8,6 @@ Fedora Django Authentication Backend
 The django.auth package provides an authentication backend for Django
 projects.
 
-.. warning::
-    The operation of the Django authentication backend is dependent on
-    the behavior of threads, so a multithreaded or multiprocessed
-    HTTP server is required for proper operation. The default Django
-    built-in HTTP server (``python manage.py runserver``) does not meet
-    this requirement.
-
 ------------------
 fedora.django.auth
 ------------------
@@ -39,9 +32,10 @@ Add the following lines to the project's :file:`settings.py`::
     FAS_URL = '<base URL of FAS server>'
     FAS_ADMINS = ( ... )
 
-``FAS_USERNAME`` and ``FAS_PASSWORD`` are only used during ``syncdb``
-to retrieve the FAS groups. They should remain unset during normal
-operation.
+``FAS_USERNAME`` and ``FAS_PASSWORD`` are used to retrieve group
+information during ``syncdb`` as well as to retrieve users via the
+authentication backend. They should be set to a low-privilege account
+that can read group and user information.
 
 ``FAS_USERAGENT`` is the string used to identify yourself to the FAS
 server.
