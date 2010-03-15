@@ -29,7 +29,7 @@ from django.conf import settings
 connection = None
 
 if not connection:
-    connection = FasProxyClient(settings.FAS_URL, settings.FAS_USERAGENT)
+    connection = FasProxyClient(base_url=settings.FAS_URL, useragent=settings.FAS_USERAGENT)
 
 def person_by_id(userid):
     if not hasattr(local, 'session_id'):
