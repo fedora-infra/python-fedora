@@ -212,7 +212,7 @@ Currently, this is more involved.
      bzr push bzr+ssh://bzr.fedorahosted.org/bzr/python-fedora/python-fedora-stable
 
 2) Go to a temporary directory and checkout a copy of stable::
-     bzr checkout --lightweight bzr+ssh://bzr.fedorahosted.org/bzr/python-fedora/python-fedora-stable
+     bzr checkout --lightweight bzr+ssh://bzr.fedorahosted.org/bzr/python-fedora/python-fedora-stable release
 
 3) Go to that directory and run::
      paver sdist

@@ -11,6 +11,9 @@ NEWS
 0.3.18
 ------
 * Fixes for Django auth provider tracebacks and session not being cleared between users.
+* Revert the connection pool for ProxyClient.  It was part of the reason that
+  Django auth (and the other auth providers although no one noticed) were
+  failing.
 
 ------
 0.3.17

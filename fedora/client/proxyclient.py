@@ -21,8 +21,7 @@
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
-import time
-import Queue
+
 import Cookie
 import re
 import urllib
@@ -59,52 +58,6 @@ class _PyCurlData(object):
         self._data = []
 
     data = property(_read_data, write_data, _clear_data)
-
-class CurlPool(Queue.Queue):
-    '''
-    Thread-safe connection pool for one host.
-
-    :arg max_age: Maximum age in seconds of a connection before it is reaped
-    '''
-    def __init__(self, max_age):
-        self.max_age = max_age
-        Queue.Queue.__init__(self)
-
-    @property
-    def connection(self):
-        '''Get a pycurl connection.
-
-        If there's one in the pool, return that.  Otherwise create a new
-        connection and return that.
-        '''
-        conn = None
-        try:
-            conn = self.get(block=False, timeout=3)
-        except Queue.Empty, e:
-            pass # Oh well, we'll create a new connection then
-
-        if conn:
-            now = time.time()
-            if conn[0] + self.max_age < now:
-                # Reap old connections
-                try:
-                    c = self.get(block=False, timeout=0)
-                except Queue.Empty, e:
-                    c = False
-                while (c):
-                    if c[0] + self.max_age < now:
-                        self.put((time.time(), c[1]))
-                        break
-                    c = self.get(block=False, timeout=0)
-            conn = conn[1]
-        else:
-            conn = pycurl.Curl()
-        return conn
-
-    def return_connection(self, connection):
-        '''Return a connection back to the pool
-        '''
-        self.put((time.time(), connection), block=False)
 
 class ProxyClient(object):
     # pylint: disable-msg=R0903
@@ -162,7 +115,6 @@ class ProxyClient(object):
                 DeprecationWarning, stacklevel=2)
         self.insecure = insecure
         self.log.debug(_('proxyclient.__init__:exited'))
-        self.pool = CurlPool(300)
 
     def __get_debug(self):
         '''Return whether we have debug logging turned on.
@@ -268,7 +220,7 @@ class ProxyClient(object):
         response = _PyCurlData() # The data we get back from the server
         data = None     # decoded JSON via simplejson.load()
 
-        request = self.pool.connection
+        request = pycurl.Curl()
         request.setopt(pycurl.URL, url)
         # Boilerplate so pycurl processes cookies
         request.setopt(pycurl.COOKIEFILE, '/dev/null')
@@ -330,7 +282,6 @@ class ProxyClient(object):
         if http_status in (401, 403):
             # Wrong username or password
             self.log.debug(_('Authentication failed logging in'))
-            self.pool.return_connection(request)
             raise AuthError(_('Unable to log into server.  Invalid'
                     ' authentication tokens.  Send new username and password'))
         elif http_status >= 400:
@@ -338,13 +289,11 @@ class ProxyClient(object):
                 msg = httplib.responses[http_status]
             except (KeyError, AttributeError):
                 msg = _('Unknown HTTP Server Response')
-            self.pool.return_connection(request)
             raise ServerError(url, http_status, msg)
 
         # In case the server returned a new session cookie to us
         new_session = ''
         cookies = request.getinfo(pycurl.INFO_COOKIELIST)
-        self.pool.return_connection(request)
         for cookie in cookies:
             host, isdomain, path, secure, expires, name, value  = \
                     cookie.split('\t')
@@ -374,7 +323,8 @@ class ProxyClient(object):
             cookie[self.session_name] = new_session
             new_session = cookie
 
+        request.close()
         self.log.debug(_('proxyclient.send_request: exited'))
         return new_session, DictContainer(data)
 
-__all__ = [ProxyClient, CurlPool]
+__all__ = (ProxyClient,)

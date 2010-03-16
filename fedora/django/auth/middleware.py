@@ -20,7 +20,6 @@
 .. moduleauthor:: Ignacio Vazquez-Abrams <ivazquez@fedoraproject.org>
 '''
 from fedora.client import AuthError
-from fedora.django import local
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import AnonymousUser
@@ -45,18 +44,12 @@ class FasMiddleware(object):
                     del request.session['tg-visit']
             else:
                 try:
-                    request.session['tg-visit'] = local.session_id
+                    request.session['tg-visit'] = request.user.session_id
                 except AttributeError, e:
-                    # We expect that local.session_id won't be set if the user
-                    # is logging in with a non-FAS account (ie: Django local
-                    # auth.
+                    # We expect that request.user.session_id won't be set
+                    # if the user is logging in with a non-FAS account
+                    # (ie: Django local auth).
                     pass
 #               response.set_cookie(key='tg-visit',
-#                   value=local.session_id, max_age=0)
-        try:
-            del local.session_id
-        except AttributeError:
-            # If we have no session, that's fine.  We just want to make sure
-            # it's cleared before we return the request.
-            pass
+#                   value=request.user.session_id, max_age=0)
         return response
