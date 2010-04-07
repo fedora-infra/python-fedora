@@ -357,7 +357,7 @@ class BodhiClient(BaseClient):
                 if comment['text']:
                     text = wrap(comment['text'], initial_indent=' ' * 13,
                                 subsequent_indent=' ' * 13, width=67)
-                    comments.append('\n'.join(text) + '\n')
+                    comments.append('\n'.join(text))
             val += '\n'.join(comments).lstrip() + '\n'
         if update['updateid']:
             val += "\n  %s\n" % ('%s%s/%s' % (self.base_url,
