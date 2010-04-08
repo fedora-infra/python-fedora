@@ -25,6 +25,7 @@ calls to the account system server.
 
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
+import threading
 
 from turbogears import config
 from turbogears.visit.api import Visit, BaseVisitManager
@@ -42,12 +43,15 @@ class JsonFasVisitManager(BaseVisitManager):
     '''
     fas_url = config.get('fas.url', 'https://admin.fedoraproject.org/accounts')
     fas = None
+    debug = config.get('jsonfas.debug', False)
+    error_session_id = 0
+    error_session_id_lock = threading.Lock()
 
     def __init__(self, timeout):
         self.log = log
-        self.debug = config.get('jsonfas.debug', False)
         if not self.fas:
-            self.fas = FasProxyClient(self.fas_url, debug=self.debug,
+            JsonFasVisitManager.fas = FasProxyClient(self.fas_url,
+                    debug=self.debug,
                     session_name=config.get('visit.cookie.name', 'tg-visit'),
                     useragent='JsonFasVisitManager/%s' % __version__)
         BaseVisitManager.__init__(self, timeout)
@@ -69,8 +73,19 @@ class JsonFasVisitManager(BaseVisitManager):
         # Hit any URL in fas2 with the visit_key set.  That will call the
         # new_visit method in fas2
         # We only need to get the session cookie from this request
-        request_data = self.fas.refresh_session(visit_key)
-        session_id = request_data[0]
+        try:
+            request_data = self.fas.refresh_session(visit_key)
+        except Exception:
+            # HACK -- if we get an error from calling FAS, we still need to
+            # return something to the application
+            try:
+                JsonFasVisitManager.error_session_id_lock.acquire()
+                session_id = str(JsonFasVisitManager.error_session_id)
+                JsonFasVisitManager.error_session_id += 1
+            finally:
+                JsonFasVisitManager.error_session_id_lock.release()
+        else:
+            session_id = request_data[0]
         self.log.debug('JsonFasVisitManager.new_visit_with_key: exit')
         return Visit(session_id, True)
 
@@ -83,8 +98,19 @@ class JsonFasVisitManager(BaseVisitManager):
         # Hit any URL in fas2 with the visit_key set.  That will call the
         # new_visit method in fas2
         # We only need to get the session cookie from this request
-        request_data = self.fas.refresh_session(visit_key)
-        session_id = request_data[0]
+        try:
+            request_data = self.fas.refresh_session(visit_key)
+        except Exception:
+            # HACK -- if we get an error from calling FAS, we still need to
+            # return something to the application
+            try:
+                JsonFasVisitManager.error_session_id_lock.acquire()
+                session_id = str(JsonFasVisitManager.error_session_id)
+                JsonFasVisitManager.error_session_id += 1
+            finally:
+                JsonFasVisitManager.error_session_id_lock.release()
+        else:
+            session_id = request_data[0]
 
         # Knowing what happens in turbogears/visit/api.py when this is called,
         # we can shortcircuit this step and avoid a round trip to the FAS
@@ -102,9 +128,17 @@ class JsonFasVisitManager(BaseVisitManager):
 
     def update_queued_visits(self, queue):
         '''Update the visit information on the server'''
-        self.log.debug('JsonFasVisitManager.update_queued_visits: enter')
+        self.log.debug('JsonFasVisitManager.update_queued_visits: %s' % len(queue))
         # Hit any URL in fas with each visit_key to update the sessions
         for visit_key in queue:
             self.log.info(_('updating visit (%s)'), visit_key)
-            self.fas.refresh_session(visit_key)
-        self.log.debug('JsonFasVisitManager.update_queued_visits: exit')
+            try:
+                self.fas.refresh_session(visit_key)
+            except Exception:
+                # If fas returns an error, push the visit back onto the queue
+                try:
+                    self.lock.acquire()
+                    self.queue[visit_key] = queue[visit_key]
+                finally:
+                    self.lock.release()
+        self.log.debug('JsonFasVisitManager.update_queued_visitsr exit')
