@@ -91,14 +91,20 @@ class FasUserManager(authmodels.UserManager):
         for group in user['approved_memberships']:
             fas_groups.append(group['id'])
 
-        # Make sure that all FAS groups are listed in Django
-        if sorted(known_groups) == sorted(fas_groups):
-          return u;
+        # This user has been added to one or more FAS groups
+        for group in (g for g in user['approved_memberships'] if g['id'] not in known_groups):
+            newgroup = _new_group(group)
+            u.groups.add(newgroup)
 
-        # Some groups didn't match. Update them all
-        for group in user['approved_memberships']:
-            g = _new_group(group)
-            u.groups.add(g)
+        for id in known_groups:
+            found = False
+            for g in user['approved_memberships']:
+                if g['id'] == id:
+                    found = True
+                    break
+            if not found:
+                u.groups.remove(authmodels.Group.objects.get(id=id))
+
         u.save()
         return u
 
