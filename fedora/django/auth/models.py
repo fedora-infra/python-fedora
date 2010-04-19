@@ -83,6 +83,19 @@ class FasUserManager(authmodels.UserManager):
         if getattr(settings, 'FAS_GENERICEMAIL', True):
             u.email = u._get_email()
         u.save()
+        known_groups = []
+        for group in u.groups.values():
+            known_groups.append(group['id'])
+
+        fas_groups = []
+        for group in user['approved_memberships']:
+            fas_groups.append(group['id'])
+
+        # Make sure that all FAS groups are listed in Django
+        if sorted(known_groups) == sorted(fas_groups):
+          return u;
+
+        # Some groups didn't match. Update them all
         for group in user['approved_memberships']:
             g = _new_group(group)
             u.groups.add(g)
