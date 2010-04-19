@@ -96,6 +96,7 @@ class FasUserManager(authmodels.UserManager):
             newgroup = _new_group(group)
             u.groups.add(newgroup)
 
+        # This user has been removed from one or more FAS groups
         for id in known_groups:
             found = False
             for g in user['approved_memberships']:
