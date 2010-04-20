@@ -122,4 +122,6 @@ class FasUser(authmodels.User):
     objects = FasUserManager()
 
     def get_full_name(self):
-        return self.name.strip()
+        if self.name:
+            return self.name.strip()
+        return self.username.strip()
