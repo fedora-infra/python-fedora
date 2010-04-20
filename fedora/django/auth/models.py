@@ -83,9 +83,29 @@ class FasUserManager(authmodels.UserManager):
         if getattr(settings, 'FAS_GENERICEMAIL', True):
             u.email = u._get_email()
         u.save()
+        known_groups = []
+        for group in u.groups.values():
+            known_groups.append(group['id'])
+
+        fas_groups = []
         for group in user['approved_memberships']:
-            g = _new_group(group)
-            u.groups.add(g)
+            fas_groups.append(group['id'])
+
+        # This user has been added to one or more FAS groups
+        for group in (g for g in user['approved_memberships'] if g['id'] not in known_groups):
+            newgroup = _new_group(group)
+            u.groups.add(newgroup)
+
+        # This user has been removed from one or more FAS groups
+        for id in known_groups:
+            found = False
+            for g in user['approved_memberships']:
+                if g['id'] == id:
+                    found = True
+                    break
+            if not found:
+                u.groups.remove(authmodels.Group.objects.get(id=id))
+
         u.save()
         return u
 
