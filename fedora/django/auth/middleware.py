@@ -26,30 +26,32 @@ from django.contrib.auth.models import AnonymousUser
 
 class FasMiddleware(object):
     def process_request(self, request):
-#        tgvisit = request.COOKIES.get('tg-visit', None)
-        tgvisit = request.session.get('tg-visit', None)
+        tgvisit = request.COOKIES.get('tg-visit', None)
+        authenticated = False
         if tgvisit:
             user = authenticate(session_id=tgvisit)
             if user:
                 try:
                     login(request, user)
+                    authenticated = True
                 except AuthError:
-                    logout(request)
+                    pass
+        if not authenticated:
+            logout(request)
 
     def process_response(self, request, response):
         if response.status_code != 301:
             if isinstance(request.user, AnonymousUser):
-#                response.set_cookie(key='tg-visit', value='', max_age=0)
+                response.set_cookie(key='tg-visit', value='', max_age=0)
                 if 'tg-visit' in request.session:
                     del request.session['tg-visit']
             else:
                 try:
-                    request.session['tg-visit'] = request.user.session_id
+                    response.set_cookie('tg-visit',
+                            request.user.session_id, max_age=1814400, path='/', secure=True)
                 except AttributeError, e:
                     # We expect that request.user.session_id won't be set
                     # if the user is logging in with a non-FAS account
                     # (ie: Django local auth).
                     pass
-#               response.set_cookie(key='tg-visit',
-#                   value=request.user.session_id, max_age=0)
         return response
