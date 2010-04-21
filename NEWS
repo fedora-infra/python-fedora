@@ -3,9 +3,18 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 10 Mar 2010
+:Date: 21 Apr 2010
 :Version: 0.3.x
 
+------
+0.3.19
+------
+* Fix DJango Auth Provider to use a cookie shared with the TG apps
+* Fix DJango Auth Provider to timeout with the fas session
+* Optimize group lookup in DJango auth provider for ReviewBoard
+* Add absolute_url() and tg_absolute_url() functions to tg1utils
+* Attempt to stop tracebacks in tg.visit code
+* Don;t crash DJango auth if the user is hiding their Real Name.
 
 ------
 0.3.18
