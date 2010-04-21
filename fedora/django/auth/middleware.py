@@ -21,7 +21,7 @@
 '''
 from fedora.client import AuthError
 
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import AnonymousUser
 
 class FasMiddleware(object):
@@ -37,7 +37,11 @@ class FasMiddleware(object):
                 except AuthError:
                     pass
         if not authenticated:
-            logout(request)
+            # set the user to unknown.  Using logout() is too heavyweight
+            # here as it deletes the session as well (which some apps need for
+            # storing session info even if not logged in)
+            if hasattr(request, 'user'):
+                request.user = AnonymousUser()
 
     def process_response(self, request, response):
         if response.status_code != 301:
