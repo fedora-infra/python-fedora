@@ -190,8 +190,9 @@ class BodhiClient(BaseClient):
         if not self.username:
             raise BodhiClientException(_('You must specify a username'))
         data = self.send_request('candidate_tags')
+        koji = self.get_koji_session(login=False)
         for tag in data['tags']:
-            for build in self.koji_session.listTagged(tag, latest=True):
+            for build in koji.listTagged(tag, latest=True):
                 if build['owner_name'] == self.username:
                     yield build
 
@@ -207,7 +208,7 @@ class BodhiClient(BaseClient):
         yum.doConfigSetup(init_plugins=False)
         fedora = file('/etc/fedora-release').readlines()[0].split()[2]
         tag = 'dist-f%s-updates-testing' % fedora
-        builds = self.koji_session.listTagged(tag, latest=True)
+        builds = self.get_koji_session(login=False).listTagged(tag, latest=True)
         for build in builds:
             pkgs = yum.rpmdb.searchNevra(name=build['name'],
                                          ver=build['version'],
@@ -366,7 +367,7 @@ class BodhiClient(BaseClient):
             val += "\n  %s\n" % ('%s%s' % (self.base_url, update['title']))
         return val
 
-    def __koji_session(self):
+    def get_koji_session(self, login=True):
         """ Return an authenticated koji session """
         import koji
         from iniparse.compat import ConfigParser
@@ -379,7 +380,8 @@ class BodhiClient(BaseClient):
         ca = expanduser(config.get('koji', 'ca'))
         serverca = expanduser(config.get('koji', 'serverca'))
         session = koji.ClientSession(config.get('koji', 'server'))
-        session.ssl_login(cert=cert, ca=ca, serverca=serverca)
+        if login:
+            session.ssl_login(cert=cert, ca=ca, serverca=serverca)
         return session
 
-    koji_session = property(fget=__koji_session)
+    koji_session = property(fget=get_koji_session)
