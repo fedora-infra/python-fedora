@@ -21,27 +21,46 @@
 '''
 from fedora.client import AuthError
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import AnonymousUser
 
 class FasMiddleware(object):
     def process_request(self, request):
-        tgvisit = request.COOKIES.get('tg-visit', None)
+        # Retrieve the sessionid that the user gave, associating them with the
+        # account system session
+        sid = request.COOKIES.get('tg-visit', None)
+
+        # Check if the session is still valid
         authenticated = False
-        if tgvisit:
-            user = authenticate(session_id=tgvisit)
+        if sid:
+            user = authenticate(session_id=sid)
             if user:
                 try:
                     login(request, user)
                     authenticated = True
                 except AuthError:
                     pass
+
         if not authenticated:
-            # set the user to unknown.  Using logout() is too heavyweight
-            # here as it deletes the session as well (which some apps need for
-            # storing session info even if not logged in)
-            if hasattr(request, 'user'):
-                request.user = AnonymousUser()
+            # Hack around misthought out djiblits/django interaction;
+            # If we're logging in in django and get to here without having
+            # the second factor of authentication, we need to logout the
+            # django kept session information.  Since we can't know precisely
+            # what private information django might be keeping we need to use
+            # django API to remove everything.  However, djiblits requires the
+            # request.session.test_cookie_worked() function in order to log
+            # someone in later.  The django logout function has removed that
+            # function from the session attribute so the djiblit login fails.
+            #
+            # Save the necessary pieces of the session architecture here
+            cookie_status = request.session.test_cookie_worked()
+            logout(request)
+            # python doesn't have closures
+            if cookie_status:
+                request.session.test_cookie_worked = lambda: True
+            else:
+                request.session.test_cookie_worked = lambda: False
+            request.session.delete_test_cookie = lambda: None
 
     def process_response(self, request, response):
         if response.status_code != 301:
