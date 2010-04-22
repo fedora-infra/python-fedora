@@ -70,6 +70,9 @@ class FasUserManager(authmodels.UserManager):
         Creates a user in the table based on the structure returned
         by FAS
         """
+        log = open('/var/tmp/django.log', 'a')
+        log.write('in models user_from_fas\n')
+        log.close()
         d = {}
         for k, v in _fasmap.iteritems():
             d[v] = user[k]
@@ -97,24 +100,30 @@ class FasUserManager(authmodels.UserManager):
             u.groups.add(newgroup)
 
         # This user has been removed from one or more FAS groups
-        for id in known_groups:
+        for gid in known_groups:
             found = False
             for g in user['approved_memberships']:
-                if g['id'] == id:
+                if g['id'] == gid:
                     found = True
                     break
             if not found:
-                u.groups.remove(authmodels.Group.objects.get(id=id))
+                u.groups.remove(authmodels.Group.objects.get(id=gid))
 
         u.save()
         return u
 
 class FasUser(authmodels.User):
     def _get_name(self):
+        log = open('/var/tmp/django.log', 'a')
+        log.write('in models _get_name\n')
+        log.close()
         userinfo = person_by_id(self.id)
         return userinfo['human_name']
 
     def _get_email(self):
+        log = open('/var/tmp/django.log', 'a')
+        log.write('in models _get_email\n')
+        log.close()
         return '%s@fedoraproject.org' % self.username
 
     name = property(_get_name)
@@ -122,6 +131,9 @@ class FasUser(authmodels.User):
     objects = FasUserManager()
 
     def get_full_name(self):
+        log = open('/var/tmp/django.log', 'a')
+        log.write('in models get_full_name\n')
+        log.close()
         if self.name:
             return self.name.strip()
         return self.username.strip()
