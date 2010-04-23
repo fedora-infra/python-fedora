@@ -3,8 +3,14 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 21 Apr 2010
+:Date: 22 Apr 2010
 :Version: 0.3.x
+
+------
+0.3.20
+------
+* Fix Django auth provider so it times out when the auth provider is used in a
+  django + djblets app.
 
 ------
 0.3.19
@@ -14,7 +20,7 @@ NEWS
 * Optimize group lookup in DJango auth provider for ReviewBoard
 * Add absolute_url() and tg_absolute_url() functions to tg1utils
 * Attempt to stop tracebacks in tg.visit code
-* Don;t crash DJango auth if the user is hiding their Real Name.
+* Don't crash DJango auth if the user is hiding their Real Name.
 
 ------
 0.3.18
