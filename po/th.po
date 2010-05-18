@@ -2,20 +2,22 @@
 # Copyright (C) 2009 ORGANIZATION
 # This file is distributed under the same license as the python-fedora
 # project.
-#
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
+# Manatsawin Hanmongkolchai <whs@whsgroup.ath.cx>, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: python-fedora 0.3.12\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2009-03-20 00:04+0700\n"
-"PO-Revision-Date: 2010-03-13 01:00-0500\n"
-"Last-Translator: \n"
-"Language-Team: Thai <thai-l10n@googlegroups.com>\n"
-"Plural-Forms: nplurals=2; plural=n != 1\n"
+"POT-Creation-Date: 2010-03-13 00:59-0500\n"
+"PO-Revision-Date: 2010-05-02 17:05+0700\n"
+"Last-Translator: Manatsawin Hanmongkolchai <whs@whsgroup.ath.cx>\n"
+"Language-Team: Thai L10N <thai-l10n@googlegroups.com>\n"
+"Language: th\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Virtaal 0.5.2\n"
 "Generated-By: Babel 0.9.4\n"
 
 #: fedora/release.py:9
@@ -25,8 +27,7 @@ msgstr "มอดูลสำหรับติดต่อกับบริก
 #: fedora/release.py:10
 msgid ""
 "\n"
-"The Fedora Project runs many different services.  These services help us "
-"to\n"
+"The Fedora Project runs many different services.  These services help us to\n"
 "package software, develop new programs, and generally put together the "
 "distro.\n"
 "This package contains software that helps us do that.\n"
@@ -39,29 +40,32 @@ msgstr ""
 #: fedora/textutils.py:79
 #, python-format
 msgid ""
-"to_unicode was given \"%(obj)s\" which is neither a byte string (str) or "
-"a unicode string"
+"to_unicode was given \"%(obj)s\" which is neither a byte string (str) or a "
+"unicode string"
 msgstr ""
+"to_unicode ได้รับค่า \"%(obj)s\" ซึ่งไม่เป็นทั้งสตริงแบบไบต์ (str) "
+"หรือยูนิโค้ด"
 
 #: fedora/textutils.py:82 fedora/textutils.py:140
 #, python-format
 msgid "non_string value, %(param)s, is not set to a valid action"
-msgstr ""
+msgstr "ค่า non_string %(param)s ไม่ได้ถูกกำหนดเป็นการกระทำที่ถูกต้อง"
 
 #: fedora/textutils.py:137
 #, python-format
 msgid ""
-"to_bytes was given \"%(obj)s\" which is neither a unicode string or a "
-"byte string (str)"
+"to_bytes was given \"%(obj)s\" which is neither a unicode string or a byte "
+"string (str)"
 msgstr ""
+"to_bytes ได้รับค่า \"%(obj)s\" ซึ่งไม่ใช่ทั้งสตริงยูนิโค๊ด หรือสตริงแบบไบต์ "
+"(str)"
 
 #: fedora/accounts/fas2.py:8
 msgid ""
-"fedora.accounts.fas2 has moved to fedora.client.fas2.  This location will"
-" disappear in 0.4"
+"fedora.accounts.fas2 has moved to fedora.client.fas2.  This location will "
+"disappear in 0.4"
 msgstr ""
-"fedora.accounts.fas2 ได้ย้ายไปที่ fedora.client.fas2 "
-"ตำแหน่งนี้จะหายไปในรุ่น 0.4"
+"fedora.accounts.fas2 ได้ย้ายไปที่ fedora.client.fas2 ตำแหน่งนี้จะหายไปในรุ่น 0.4"
 
 #: fedora/client/baseclient.py:85 fedora/client/baseclient.py:204
 #: fedora/client/baseclient.py:223 fedora/client/baseclient.py:235
@@ -102,7 +106,8 @@ msgid "send_request() got an unexpected keyword argument"
 msgstr "send_request() ได้รับอากิวเมนต์คีย์เวิร์ดที่ไม่ได้เตรียมไว้"
 
 #: fedora/client/baseclient.py:288
-msgid "send_request(input) is deprecated.  Use send_request(req_params) instead"
+msgid ""
+"send_request(input) is deprecated.  Use send_request(req_params) instead"
 msgstr "send_request(input) เลิกใช้แล้ว ให้ใช้ send_request(req_params) แทน"
 
 #: fedora/client/baseclient.py:304
@@ -111,8 +116,7 @@ msgid ""
 "username and password or session_id before calling this function with "
 "auth=True"
 msgstr ""
-"มีการขอร้องการยึนยันตนแต่ไม่ได้ระบุวิธียึนยันตน "
-"กรุณาระบุชื่อผู้ใช้และรหัสผ่าน หรือ session_id "
+"มีการขอร้องการยึนยันตนแต่ไม่ได้ระบุวิธียึนยันตน กรุณาระบุชื่อผู้ใช้และรหัสผ่าน หรือ session_id "
 "ก่อนเรียกใช้ฟังค์ชั่นนี้ด้วย auth=True"
 
 #: fedora/client/bodhi.py:191
@@ -140,13 +144,13 @@ msgstr "%(field)s ไม่ใช่ฟิลด์ที่ถูกต้อ�
 
 #: fedora/client/fas2.py:397
 msgid ""
-"people_by_id() is deprecated and will be removed in 0.4.  Please port "
-"your code to use people_by_key(key='id', fields=['human_name', 'email', "
+"people_by_id() is deprecated and will be removed in 0.4.  Please port your "
+"code to use people_by_key(key='id', fields=['human_name', 'email', "
 "'username', 'bugzilla_email']) instead"
 msgstr ""
-"people_by_id() เลิกใช้แล้วและจะถูกถอดออกใน 0.4  "
-"กรุณาปรับเปลี่ยนโค๊ดของคุณให้ใช้ people_by_key(key='id', "
-"fields=['human_name', 'email', 'username', 'bugzilla_email']) แทน"
+"people_by_id() เลิกใช้แล้วและจะถูกถอดออกใน 0.4  กรุณาปรับเปลี่ยนโค๊ดของคุณให้ใช้ "
+"people_by_key(key='id', fields=['human_name', 'email', 'username', "
+"'bugzilla_email']) แทน"
 
 #: fedora/client/fas2.py:579
 msgid "FAS server unable to retrieve group members"
@@ -157,16 +161,17 @@ msgid "FAS server unable to retrieve user information"
 msgstr "เซิร์ฟเวอร์ FAS ไม่สามารถรับข้อมูลผู้ใช้"
 
 #: fedora/client/fasproxy.py:67
-#, fuzzy
 msgid "FasProxyClient() got an unexpected keyword argument 'session_as_cookie'"
-msgstr "send_request() ได้รับอากิวเมนต์คีย์เวิร์ดที่ไม่ได้เตรียมไว้ \"%s\""
+msgstr ""
+"FasProxyClient() ได้รับอากิวเมนต์คีย์เวิร์ดที่ไม่ได้เตรียมไว้ "
+"'session_as_cookie'"
 
 #: fedora/client/pkgdb.py:182
 #, python-format
 msgid ""
-"We do not have enough information to create package %(pkg)s. Need version"
-" owner."
-msgstr ""
+"We do not have enough information to create package %(pkg)s. Need version "
+"owner."
+msgstr "เรายังไม่มีข้อมูลเพียงพอที่จะสร้างแพคเกจ %(pkg)s ต้องการทราบเจ้าของรุ่น"
 
 #: fedora/client/pkgdb.py:193
 #, python-format
@@ -180,7 +185,8 @@ msgstr "ไม่สามารถบันทึกข้อมูลทั้
 
 #: fedora/client/pkgdb.py:307
 #, python-format
-msgid "Collection abbreviation %(collection)s is unknown.  Use F, FC, EL, or OLPC"
+msgid ""
+"Collection abbreviation %(collection)s is unknown.  Use F, FC, EL, or OLPC"
 msgstr "ไม่รู้จักคำย่อชุด %(collection)s กรุณาใช้ F, FC, EL หรือ OLPC"
 
 #: fedora/client/pkgdb.py:332
@@ -188,47 +194,61 @@ msgid ""
 "collection and collection_ver are deprecated names for collctn_name and "
 "collctn_ver respectively.  Ignoring the values given in them."
 msgstr ""
+"collection และ collection_ver เป็นชื่อที่เลิกใช้แล้วของ collctn_name และ "
+"collctn_ver ตามลำดับ ดังนั้นจึงจะไม่สนใจค่าที่ได้รับ"
 
 #: fedora/client/pkgdb.py:338
 msgid ""
 "collection has been renamed to collctn_name.\n"
 "Please start using the new name.  collection will go away in 0.4.x."
 msgstr ""
+"collection ได้ถูกเปลี่ยนชื่อเป็น collctn_name แล้ว\n"
+"โปรดเปลี่ยนไปใช้ชื่อใหม่ และ collection จะถูกถอดออกใน 0.4.x"
 
 #: fedora/client/pkgdb.py:344
 msgid ""
 "collection_ver has been renamed to collctn_ver.\n"
 "Please start using the new name.  collection_ver will go away in 0.4.x."
 msgstr ""
+"collection_ver ได้ถูกเปลี่ยนชื่อเป็น collctn_ver แล้ว\n"
+"โปรดเปลี่ยนไปใช้ชื่อใหม่ และ collection_ver จะถูกถอดออกใน 0.4.x"
 
 #: fedora/client/pkgdb.py:381
 msgid ""
 "collectn_list is a deprecated name for collctn_list.\n"
 "Ignoring the value of collectn_list."
 msgstr ""
+"collectn_list เป็นชื่อเก่าที่เลิกใช้แล้วของ collctn_list\n"
+"ดังนั้นจึงจะไม่สนใจค่าของ collectn_list"
 
 #: fedora/client/pkgdb.py:386
 msgid ""
 "collectn_list has been renamed to collctn_list.\n"
 "Please start using the new name.  collectn_list will go away in 0.4.x."
 msgstr ""
+"collectn_list ได้ถูกเปลี่ยนชื่อเป็น collctn_list แล้ว\n"
+"โปรดเปลี่ยนไปใช้ชื่อใหม่ และ collectn_list จะถูกถอดออกใน 0.4.x"
 
 #: fedora/client/pkgdb.py:460
 msgid ""
 "collectn is a deprecated name for collctn.\n"
 "Ignoring the value of collectn."
 msgstr ""
+"collectn เป็นชื่อเก่าที่เลิกใช้แล้วของ collctn\n"
+"ดังนั้นจึงจะไม่สนใจค่าของ collectn"
 
 #: fedora/client/pkgdb.py:465
 msgid ""
 "collectn has been renamed to collctn.\n"
 "Please start using the new name.  collectn will go away in 0.4.x."
 msgstr ""
+"collectn ได้ถูกเปลี่ยนชื่อเป็น collctn แล้ว\n"
+"โปรดเปลี่ยนไปใช้ชื่อใหม่ และ collectn จะถูกถอดออกใน 0.4.x"
 
 #: fedora/client/pkgdb.py:475
-#, fuzzy, python-format
+#, python-format
 msgid "Collection shortname %(collctn)s is unknown."
-msgstr "ไม่รู้จักคำย่อชุด %(collctn)s กรุณาใช้ F, FC, EL หรือ OLPC"
+msgstr "ไม่รู้จักคำย่อชุด %(collctn)s"
 
 #: fedora/client/proxyclient.py:149
 msgid "proxyclient.__init__:entered"
@@ -236,13 +256,12 @@ msgstr "proxyclient.__init__:เข้ามาแล้ว"
 
 #: fedora/client/proxyclient.py:158
 msgid ""
-"Returning cookies from send_request() is deprecated and will be removed "
-"in 0.4.  Please port your code to use a session_id instead by calling the"
-" ProxyClient constructor with session_as_cookie=False"
+"Returning cookies from send_request() is deprecated and will be removed in "
+"0.4.  Please port your code to use a session_id instead by calling the "
+"ProxyClient constructor with session_as_cookie=False"
 msgstr ""
-"การคืนค่าคุ๊กกี้จาก send_request() เลิกใช้แล้ว และจะถูกถอดออกใน 0.4 "
-"กรุณาแก้ไขโค๊ดให้ใช้ session_id แทนโดยสร้าง ProxyClient ด้วย "
-"session_as_cookie=False"
+"การคืนค่าคุ๊กกี้จาก send_request() เลิกใช้แล้ว และจะถูกถอดออกใน 0.4 กรุณาแก้ไขโค๊ดให้ใช้ "
+"session_id แทนโดยสร้าง ProxyClient ด้วย session_as_cookie=False"
 
 #: fedora/client/proxyclient.py:164
 msgid "proxyclient.__init__:exited"
@@ -254,12 +273,11 @@ msgstr "proxyclient.send_request: เข้ามาแล้ว"
 
 #: fedora/client/proxyclient.py:245
 msgid ""
-"Giving a cookie to send_request() to authenticate is deprecated and will "
-"be removed in 0.4. Please port your code to use session_id instead."
+"Giving a cookie to send_request() to authenticate is deprecated and will be "
+"removed in 0.4. Please port your code to use session_id instead."
 msgstr ""
-"การป้อนคุ๊กกี้ไปยัง send_request() "
-"เพื่อยึนยันตนเลิกใช้แล้วและจะถูกถอดออกใน 0.4 กรุณาแก้ไขโค๊ดให้ใช้ "
-"session_id แทน"
+"การป้อนคุ๊กกี้ไปยัง send_request() เพื่อยึนยันตนเลิกใช้แล้วและจะถูกถอดออกใน 0.4 "
+"กรุณาแก้ไขโค๊ดให้ใช้ session_id แทน"
 
 #: fedora/client/proxyclient.py:255
 msgid "username and password must both be set in auth_params"
@@ -267,8 +285,8 @@ msgstr "ชื่อผู้ใช้และรหัสผ่านต้อ
 
 #: fedora/client/proxyclient.py:258
 msgid ""
-"No known authentication methods specified: set \"cookie\" in auth_params "
-"or set both username and password in auth_params"
+"No known authentication methods specified: set \"cookie\" in auth_params or "
+"set both username and password in auth_params"
 msgstr ""
 "ไม่ได้ระบุวิธียึนยันตนที่รู้จักไว้ ให้กำหนด \"cookie\" ใน auth_params "
 "หรือระบุทั้งชื่อผู้ใช้และรหัสผ่านใน auth_params"
@@ -296,9 +314,7 @@ msgstr "การยึนยันตนเข้าระบบล้มเห
 msgid ""
 "Unable to log into server.  Invalid authentication tokens.  Send new "
 "username and password"
-msgstr ""
-"ไม่สามารถเข้าสู่ server เพราะโทเคนยึนยันตนผิด "
-"ให้ระบุชื่อผู้ใช้งานและรหัสผ่านใหม่"
+msgstr "ไม่สามารถเข้าสู่ server เพราะโทเคนยึนยันตนผิด ให้ระบุชื่อผู้ใช้งานและรหัสผ่านใหม่"
 
 #: fedora/client/proxyclient.py:340
 msgid "Unknown HTTP Server Response"
@@ -356,7 +372,7 @@ msgstr ""
 
 #: fedora/compat25/defaultdict.py:40
 msgid "First argument must be callable"
-msgstr ""
+msgstr "จะต้องสามารถเรียกใช้อากิวเมนต์ตัวแรกได้"
 
 #: fedora/django/auth/models.py:50
 msgid "Loading FAS groups..."
@@ -372,8 +388,8 @@ msgstr "เรียกกลุ่มใน FAS เรียบร้อยแ�
 
 #: fedora/tg/client.py:8
 msgid ""
-"fedora.tg.client has moved to fedora.client.  This location will "
-"disappear in 0.4"
+"fedora.tg.client has moved to fedora.client.  This location will disappear "
+"in 0.4"
 msgstr "fedora.tg.client ได้ย้ายไปที่ fedora.client ตำแหน่งนี้จะหายไปในรุ่น 0.4"
 
 #: fedora/tg/controllers.py:60
@@ -405,10 +421,12 @@ msgstr "url() ต้องการ dictionary สำหรับตัวแป
 
 #: fedora/tg/util.py:40
 msgid ""
-"fedora.tg.util is deprecated.  Switch to one of these instead:   TG1 "
-"apps: fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils.  This file will "
-"disappear in 0.4"
+"fedora.tg.util is deprecated.  Switch to one of these instead:   TG1 apps: "
+"fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils.  This file will disappear "
+"in 0.4"
 msgstr ""
+"fedora.tg.util เลิกใช้แล้ว โปรดเปลี่ยนไปใช้ตัวใดตัวหนึ่งดังนี้: โปรแกรม TG1: "
+"fedora.tg.tg1utils โปรแกรม TG2: fedora.tg.tg2utils แฟ้มนี้จะหายไปในรุ่น 0.4"
 
 #: fedora/tg/identity/jsonfasprovider1.py:227
 #: fedora/tg/identity/jsonfasprovider2.py:389
@@ -418,11 +436,11 @@ msgstr "เกิดข้อผิดพลาดในการเข้าร
 
 #: fedora/tg/identity/jsonfasprovider2.py:60
 msgid ""
-"Cannot enable ssl certificate auth via identity.ssl without setting "
-"fas.usernamme and fas.password for authorization"
+"Cannot enable ssl certificate auth via identity.ssl without setting fas."
+"usernamme and fas.password for authorization"
 msgstr ""
-"ไม่สามารถเปิดใช้ใบรับรอง SSL ผ่าน identity.ssl โดยไม่ได้กำหนด "
-"fas.usernamme และ fas.password สำหรับการยึนยันตน"
+"ไม่สามารถเปิดใช้ใบรับรอง SSL ผ่าน identity.ssl โดยไม่ได้กำหนด fas.usernamme และ fas."
+"password สำหรับการยึนยันตน"
 
 #: fedora/tg/identity/jsonfasprovider2.py:155
 #, python-format
@@ -458,25 +476,19 @@ msgstr "การโจมตี CSRF"
 #: fedora/tg/templates/genshi/login.html:29
 msgid ""
 " are a means for a malicious website to make a request of another\n"
-"        web server as the user who contacted the malicious web site.  The"
-"\n"
+"        web server as the user who contacted the malicious web site.  The\n"
 "        purpose of this page is to help protect your account and this "
 "server\n"
-"        from attacks from such malicious web sites.  By clicking below, "
-"you are\n"
+"        from attacks from such malicious web sites.  By clicking below, you "
+"are\n"
 "        proving that you are a person rather than just the web browser\n"
 "        forwarding your authentication cookies on behalf of a malicious\n"
 "        website."
 msgstr ""
-" "
-"เป็นวิธีที่เว็บไซต์ประสงค์ร้ายสร้างคำขอร้องไปยังเว็บเซิร์ฟเวอร์อื่นโดยใช้ผู้ใช้ของ"
-"\n"
-"        ผู้ที่เข้าสู่เว็บไซต์นั้น "
-"วัตถุประสงค์ของหน้านี้คือช่วยคุณป้องกันบัญชีของคุณ\n"
-"        และเซิร์ฟเวอร์นี้จากการโจมตีจากเว็บไซต์เหล่านั้น "
-"การคลิกด้านล่างนี้คุณจะ\n"
-"        แสดงว่าคุณเป็นมนุษย์ "
-"ไม่ใช่เว็บเบราว์เซอร์ที่ส่งคุ๊กกี้ยึนยันตนของคุณจาก\n"
+" เป็นวิธีที่เว็บไซต์ประสงค์ร้ายสร้างคำขอร้องไปยังเว็บเซิร์ฟเวอร์อื่นโดยใช้ผู้ใช้ของ\n"
+"        ผู้ที่เข้าสู่เว็บไซต์นั้น วัตถุประสงค์ของหน้านี้คือช่วยคุณป้องกันบัญชีของคุณ\n"
+"        และเซิร์ฟเวอร์นี้จากการโจมตีจากเว็บไซต์เหล่านั้น การคลิกด้านล่างนี้คุณจะ\n"
+"        แสดงว่าคุณเป็นมนุษย์ ไม่ใช่เว็บเบราว์เซอร์ที่ส่งคุ๊กกี้ยึนยันตนของคุณจาก\n"
 "        เว็บไซต์ประสงค์ร้าย"
 
 #: fedora/tg/templates/genshi/login.html:36
@@ -518,155 +530,155 @@ msgstr "อัพเดตกรุณาเข้าที่ (%s)"
 
 #: fedora/wsgi/csrf.py:117
 msgid "Creating CSRFProtectionMiddleware"
-msgstr ""
+msgstr "กำลังสร้าง CSRFProtectionMiddleware"
 
 #: fedora/wsgi/csrf.py:126
 #, python-format
 msgid "clean_environ(%s)"
-msgstr ""
+msgstr "clean_environ(%s)"
 
 #: fedora/wsgi/csrf.py:129
 #, python-format
 msgid "Deleting %(key)s from environ"
-msgstr ""
+msgstr "กำลังลบ %(key)s จากสภาพแวดล้อม"
 
 #: fedora/wsgi/csrf.py:141
 #, python-format
 msgid "CSRFProtectionMiddleware(%(r_path)s)"
-msgstr ""
+msgstr "CSRFProtectionMiddleware(%(r_path)s)"
 
 #: fedora/wsgi/csrf.py:148
 msgid "User supplied CSRF token matches environ!"
-msgstr ""
+msgstr "โทเค็น CSRF ที่ผู้ใช้ระบุตรวจกับในสภาพแวดล้อม!"
 
 #: fedora/wsgi/csrf.py:151
 msgid "Clearing identity"
-msgstr ""
+msgstr "กำลังล้างการยึนยันตน"
 
 #: fedora/wsgi/csrf.py:154
 #, python-format
 msgid ""
-"Invalid CSRF token.  User supplied (%(u_token)s) does not match what's in"
-" our environ (%(e_token)s)"
+"Invalid CSRF token.  User supplied (%(u_token)s) does not match what's in "
+"our environ (%(e_token)s)"
 msgstr ""
+"โทเค็น CSRF ไม่ถูกต้อง ค่าที่ผู้ใช้ระบุ (%(u_token)s) "
+"ไม่ตรงกับที่อยู่ในสภาพแวดล้อมของเรา (%(e_token)s)"
 
 #: fedora/wsgi/csrf.py:162
 msgid "CSRF_AUTH_STATE; rewriting headers"
-msgstr ""
+msgstr "CSRF_AUTH_STATE; กำลังเขียนเฮดเดอร์ใหม่"
 
 #: fedora/wsgi/csrf.py:168
 #, python-format
 msgid "response.location = %(r_loc)s"
-msgstr ""
+msgstr "response.location = %(r_loc)s"
 
 #: fedora/wsgi/csrf.py:240
 #, python-format
 msgid "CSRFMetadataProvider.add_metadata(%(r_path)s)"
-msgstr ""
+msgstr "CSRFMetadataProvider.add_metadata(%(r_path)s)"
 
 #: fedora/wsgi/csrf.py:246
 #, python-format
 msgid "session_id = %(s_id)r"
-msgstr ""
+msgstr "session_id = %(s_id)r"
 
 #: fedora/wsgi/csrf.py:251
 msgid "Identity updated with CSRF token"
-msgstr ""
+msgstr "ปรับปรุงการยึนยันตัวแล้วด้วยโทเค็น CSRF"
 
 #: fedora/wsgi/csrf.py:254
 msgid "Setting CSRF_AUTH_STATE"
-msgstr ""
+msgstr "กำหนด CSRF_AUTH_STATE"
 
 #: fedora/wsgi/csrf.py:264
 msgid "Got HTTPFound(302) from repoze.who.application"
-msgstr ""
+msgstr "ได้ HTTPFound(302) จาก repoze.who.application"
 
 #: fedora/wsgi/csrf.py:270
-#, fuzzy, python-format
+#, python-format
 msgid "Altered headers: %(headers)s"
-msgstr "ส่วนหัว: %(headers)s"
+msgstr "ส่วนหัวที่ถูกเปลี่ยนแปลง: %(headers)s"
 
 #: fedora/wsgi/csrf.py:273
 #, python-format
 msgid "Invalid session cookie %(s_id)r, not setting CSRF token!"
-msgstr ""
+msgstr "คุกกี้วาระ %(s_id)r ไม่ถูกต้อง จะไม่กำหนดโทเค็น CSRF"
 
 #: fedora/wsgi/csrf.py:283
 #, python-format
 msgid "%(token)s in GET"
-msgstr ""
+msgstr "%(token)s ใน GET"
 
 #: fedora/wsgi/csrf.py:290
 #, python-format
 msgid "%(token)s in POST"
-msgstr ""
+msgstr "%(token)s ใน POST"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:110
 msgid "Keep alive cache miss"
-msgstr ""
+msgstr "พลาดแคช Keep alive"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:124
 msgid "in identify()"
-msgstr ""
+msgstr "ใน identify()"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:131
 #, python-format
 msgid "Request identify for cookie %(cookie)s"
-msgstr ""
+msgstr "กำลังร้องขอการยึนยันตนของคุกกี้ %(cookie)s"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:155
 msgid "In remember()"
-msgstr ""
+msgstr "ใน remember()"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:168
 msgid "In forget()"
-msgstr ""
+msgstr "ใน forget()"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:175
 #, python-format
 msgid "Forgetting login data for cookie %(s_id)s"
-msgstr ""
+msgstr "กำลังล้างข้อมูลการเข้าระบบของคุกกี้ %(s_id)s"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:192
 msgid "In authenticate()"
-msgstr ""
+msgstr "ใน authenticate()"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:216
-#, fuzzy
 msgid "Authentication failed, setting error"
-msgstr "การยึนยันตนเข้าระบบล้มเหลว"
+msgstr "การยึนยันตนล้มเหลว จะกำหนด error"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:237
 msgid "An unknown error happened when trying to log you in.  Please try again."
-msgstr ""
+msgstr "เกิดข้อผิดพลาดที่ไม่รู้จักขึ้นขณะพยายามเข้าระบบ โปรดลองอีกครั้ง"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:248
 msgid "Metadata cache miss - refreshing metadata"
-msgstr ""
+msgstr "พลาดแคช Metadata - กำลังรีเฟรช metadata"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:279
 msgid "In add_metadata"
-msgstr ""
+msgstr "ใน add_metadata"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:283
 msgid "Error exists in session, no need to set metadata"
-msgstr ""
+msgstr "มีข้อผิดพลาดอยู่ในวาระแล้วจึงไม่จำเป็นต้องกำหนด metadata"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:293
 #, python-format
 msgid "Request metadata for cookie %(cookie)s"
-msgstr ""
+msgstr "กำลังขอ metadata ของคุกกี้ %(cookie)s"
 
 #: fedora/wsgi/test/controllers/root.py:31
 msgid "Wrong credentials"
-msgstr ""
+msgstr "การยึนยันตนผิด"
 
 #: fedora/wsgi/test/controllers/root.py:46
-#, fuzzy, python-format
+#, python-format
 msgid "Welcome back, %s!"
-msgstr "ยินดีต้อนรับ %s"
+msgstr "ยินดีต้อนรับอีกครั้ง %s!"
 
 #: fedora/wsgi/test/controllers/root.py:56
 msgid "We hope to see you soon!"
-msgstr ""
-
+msgstr "เราหวังว่าจะได้เจอคุณอีกเร็วๆ นี้!"
