@@ -41,5 +41,6 @@ def isiterable(obj, include_string=True):
             return False
         else:
             return True
+    return False
 
 __all__ = ['isiterable']
