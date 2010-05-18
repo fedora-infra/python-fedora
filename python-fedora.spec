@@ -26,6 +26,7 @@ BuildRequires:  TurboGears2
 BuildRequires:  python-nose
 Requires:       python-simplejson
 Requires:       python-bugzilla
+Requires:       python-bunch
 Requires:       python-feedparser
 Requires:       python-sqlalchemy
 Requires:       python-decorator

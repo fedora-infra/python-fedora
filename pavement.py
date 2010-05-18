@@ -40,7 +40,7 @@ options(
         # python-2.5 distutils we can add these:
         #   for bodhi (koji yum)
         #   pycurl
-        install_requires=['simplejson'],
+        install_requires=['simplejson', 'bunch'],
         # And these to extra_require:
         #   for widgets: (bugzilla feedparser)
         extras_require = {

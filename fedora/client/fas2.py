@@ -26,8 +26,10 @@ Provide a client module for talking to the Fedora Account System.
 import urllib
 import warnings
 
-from fedora.client import DictContainer, BaseClient, FasProxyClient, \
-        AppError, FedoraServiceError, FedoraClientError
+from bunch import Bunch, bunchify
+
+from fedora.client import AppError, BaseClient, FasProxyClient, \
+        FedoraClientError, FedoraServiceError
 from fedora import __version__, _
 
 ### FIXME: To merge:
@@ -231,11 +233,13 @@ class AccountSystem(BaseClient):
         role_type can be one of 'user', 'sponsor', or 'administrator'.
 
         .. versionadded:: 0.3.2
+        .. versionchanged:: 0.3.21
+            Return a Bunch instead of a DictContainer
         '''
         request = self.send_request('/group/dump/%s' %
                 urllib.quote(groupname), auth=True)
 
-        return [DictContainer(username=user[0], role_type=user[3])
+        return [bunchify(username=user[0], role_type=user[3])
                     for user in request['people']]
 
     ### People ###
@@ -336,6 +340,9 @@ class AccountSystem(BaseClient):
             Note that for most users who access this data, many of these
             fields will be set to None due to security or privacy settings.
         :returns: a dict relating the key value to the fields.
+
+        .. versionchanged:: 0.3.21
+            Return a Bunch instead of a DictContainer
         '''
         # Make sure we have a valid key value
         if key not in ('id', 'username', 'email'):
@@ -367,7 +374,7 @@ class AccountSystem(BaseClient):
         request = self.send_request('/user/list', req_params={'search': search,
             'fields': [f for f in fields if f != 'bugzilla_email']}, auth=True)
 
-        people = DictContainer()
+        people = Bunch()
         for person in request['people']:
             # Retrieve bugzilla_email from our list if necessary
             if 'bugzilla_email' in fields:
@@ -393,6 +400,9 @@ class AccountSystem(BaseClient):
 
         Returns a dict relating user IDs to human_name, email, username,
         and bugzilla email
+
+        .. versionchanged:: 0.3.21
+            Return a Bunch instead of a DictContainer
         '''
         warnings.warn(_("people_by_id() is deprecated and will be removed in"
             " 0.4.  Please port your code to use people_by_key(key='id',"
@@ -401,7 +411,7 @@ class AccountSystem(BaseClient):
 
         request = self.send_request('/json/user_id', auth=True)
         user_to_id = {}
-        people = DictContainer()
+        people = Bunch()
         for person_id, username in request['people'].items():
             person_id = int(person_id)
             # change userids from string back to integer

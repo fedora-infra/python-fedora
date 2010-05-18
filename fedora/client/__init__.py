@@ -19,11 +19,15 @@
 '''
 fedora.client is used to interact with Fedora Services.
 
+.. versionchanged:: 0.3.21
+    Deprecate DictContainer in favor of bunch.Bunch
 
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
+
+from bunch import Bunch
 
 class FedoraClientError(Exception):
     '''Base Exception for problems which originate within the Clients.
@@ -76,77 +80,13 @@ class AppError(FedoraServiceError):
         return 'AppError(%s, %s, extras=%s)' % (self.name, self.message,
                 self.extras)
 
-class DictContainer(dict):
-    '''dict whose members can be accessed via attribute lookup.
-
-    One thing to note: You can have an entry in your container that is visible
-    instead of a standard dict method.  So, for instance, you can have this
-    happen::
-
-        >>> d = DictContainer({'keys': 'key'})
-        >>> d.keys()
-        Traceback (most recent call last):
-          File "<stdin>", line 1, in <module>
-        TypeError: 'str' object is not callable
-
-    So, as a safety precaution, you should be sure to access things via the
-    dict methods::
-
-        >>> d = DictContainer({'keys': 'key'})
-        >>> dict.keys(d)
-        ['keys']
-
-    The special methods like __getitem__(), __getattr__(), setattr(), etc
-    that are invoked through alternate syntax rather than called directly as
-    a method are immune to this so you can do this with no ill effects::
-
-        >>> d.__setattr__ = 1000
-        >>> d.__getattr__ = 10
-        >>> print d.__setattr__
-        1000
-        >>> print d.__getattr__
-        10
-    '''
-    def __getitem__(self, key):
-        '''Return the value for the key in the dictionary.
-
-        If the value is a dict, convert it to a DictContainer first.
-        '''
-        value = super(DictContainer, self).__getitem__(key)
-        if type(value) == dict:
-            value = DictContainer(value)
-            self[key] = value
-        return value
-
-    def __getattribute__(self, key):
-        '''Return the value from the dictionary or from the real attributes.
-
-        * If the key exists in the dict
-            * If the value is a dict
-                * Convert it to a DictContainer
-            * Return the converted value
-        * Otherwise, if it exists in the values, return that.
-        * Otherwise, raise AttributeError.
-        '''
-        if key in self:
-            value = super(DictContainer, self).__getitem__(key)
-            if type(value) == dict:
-                value = DictContainer(value)
-                self[key] = value
-            return value
-        return super(DictContainer, self).__getattribute__(key)
-
-    def __setattr__(self, key, value):
-        '''Set a key to a value.
-
-        If the key is not an existing value, set it into the dict instead of
-        as an attribute.
-        '''
-        if hasattr(self, key) and key not in self:
-            super(DictContainer, self).__setattr__(key, value)
-        else:
-            self[key] = value
-
+# Backwards compatibility
+class DictContainer(Bunch):
+    def __init__(self, *args, **kwargs):
+        warnings.warn(_('DictContainer is deprecated.  Use the Bunch class'
+            ' from python-bunch instead.'), DeprecationWarning, stacklevel=2)
+        Bunch.__init__(self, *args, **kwargs)
+ 
 # We want people to be able to import fedora.client.*Client directly
 # pylint: disable-msg=W0611
 from fedora.client.proxyclient import ProxyClient

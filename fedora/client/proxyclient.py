@@ -37,10 +37,10 @@ try:
 except ImportError:
     from sha import new as sha_constructor
 
+from bunch import bunchify
+
 from fedora import __version__
 from fedora import _
-
-from fedora.client import AuthError, ServerError, AppError, DictContainer
 
 log = logging.getLogger(__name__)
 
@@ -184,6 +184,8 @@ class ProxyClient(object):
         .. versionchanged:: 0.3.17
             No longer send tg_format=json parameter.  We rely solely on the
             Accept: application/json header now.
+        .. versionchanged:: 0.3.21
+            Return data as a Bunch instead of a DictContainer
         '''
         self.log.debug(_('proxyclient.send_request: entered'))
         # Check whether we need to authenticate for this request
@@ -325,6 +327,7 @@ class ProxyClient(object):
 
         request.close()
         self.log.debug(_('proxyclient.send_request: exited'))
-        return new_session, DictContainer(data)
+        data = bunchify(data)
+        return new_session, data
 
 __all__ = (ProxyClient,)

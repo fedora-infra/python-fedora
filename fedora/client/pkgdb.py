@@ -114,7 +114,10 @@ class PackageDB(BaseClient):
             Allowed branches are listed in :data:`COLLECTIONMAP`
         :raises AppError: If the server returns an exceptiom
         :returns: Package ownership information
-        :rtype: fedora.client.DictContainer
+        :rtype: Bunch
+
+        .. versionchanged:: 0.3.21
+            Return Bunch instead of DictContainer
         '''
         data = None
         if branch:
@@ -322,11 +325,13 @@ class PackageDB(BaseClient):
         :kwarg collection: old/deprecated argument; use collctn_name
         :kward collection_ver: old/deprecated argument; use collctn_ver
         :raises AppError: If the server returns an error
-        :rtype: DictContainer
+        :rtype: Bunch
         :return: dict of ownership information for the package
 
         .. versionchanged:: 0.3.17
             Rename collection and collection_ver to collctn_name and collctn_ver
+        .. versionchanged:: 0.3.21
+            Return Bunch instead of DictContainer
         '''
         if (collctn_name and collection) or (collctn_ver and collection_ver):
             warnings.warn(_('collection and collection_ver are deprecated'
@@ -489,8 +494,8 @@ class PackageDB(BaseClient):
             data[pkg][branch].people
             data[pkg][branch].groups
 
-        :rtype: DictContainer
-        :returns: `DictContainer` representing the vcs acls for every person.
+        :rtype: Bunch
+        :returns: `Bunch` representing the vcs acls for every person.
             It looks like this: data[pkg][branch]['commit'].people list of
             users who can commit to the package.  Example::
 
@@ -500,6 +505,8 @@ class PackageDB(BaseClient):
                 ['provenpackager']
 
         .. versionadded:: 0.3.15
+        .. versionchanged:: 0.3.21
+            Return Bunch instead of DictContainer
         '''
         data = self.send_request('/lists/vcs')
         if 'exc' in data:
@@ -510,8 +517,8 @@ class PackageDB(BaseClient):
     def get_bugzilla_acls(self):
         '''Return the package attributes used by bugzilla.
 
-        :rtype: DictContainer
-        :returns: `DictContainer` contains information needed to setup bugzilla
+        :rtype: Bunch
+        :returns: `Bunch` contains information needed to setup bugzilla
             for every collection.  It looks like this:
             data[collctn][pkg][attribute] where attribute is one of:
             :owner: FAS username for the owner
@@ -532,6 +539,8 @@ class PackageDB(BaseClient):
                 ['Fedora OLPC', 'Fedora', 'Fedora EPEL']
 
         .. versionadded:: 0.3.15
+        .. versionchanged:: 0.3.21
+            Return Bunch instead of DictContainer
         '''
         data = self.send_request('/lists/bugzilla')
         if 'exc' in data:
@@ -553,11 +562,13 @@ class PackageDB(BaseClient):
             List of roles that the user must have the acls for in order to be
             included.  Valid roles are: owner, comaintainer, committer,
             bzwatcher, and vcswatcher
-        :rtype: DictContainer
-        :returns: `DictContainer` keyed on package name.  Each entry has a list
+        :rtype: Bunch
+        :returns: `Bunch` keyed on package name.  Each entry has a list
             of people to be notified for this package.
 
         .. versionadded:: 0.3.15
+        .. versionchanged:: 0.3.21
+            Return Bunch instead of DictContainer
         '''
         method = '/lists/notify' 
         if collctn_name:
@@ -579,11 +590,13 @@ class PackageDB(BaseClient):
             retrieve packages which are marked critpath in any of the
             collections.  Defaults to retrieving critpath packages in all
             non-EOL releases
-        :rtype: DictContainer
+        :rtype: Bunch
         :returns: Keys of the returned dict are collection simple names.  The
             values are lists of package names that are marked critpath
 
         .. versionadded:: 0.3.17
+        .. versionchanged:: 0.3.21
+            Return Bunch instead of DictContainer
         '''
         if collctn_list:
             params = {'collctn_list': collctn_list}

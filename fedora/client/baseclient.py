@@ -266,7 +266,10 @@ class BaseClient(ProxyClient):
         :kwarg req_params: Extra parameters to send to the server.
         :kwarg auth: If True perform auth to the server, else do not.
         :returns: The data from the server
-        :rtype: DictContainer
+        :rtype: Bunch
+
+        .. versionchanged:: 0.3.21
+            Return data as a Bunch instead of a DictContainer
         '''
         # Check for deprecated arguments.  This section can go once we hit 0.4
         if len(kwargs) >= 1:
