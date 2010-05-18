@@ -7,6 +7,11 @@ NEWS
 :Version: 0.3.x
 
 ------
+0.3.21
+------
+* Port from DictContainer to python-bunch
+
+------
 0.3.20
 ------
 * Fix Django auth provider so it times out when the auth provider is used in a
