@@ -10,6 +10,8 @@ NEWS
 0.3.21
 ------
 * Port from DictContainer to python-bunch
+* Fix how we're using data from FasProxy.group_list() in the django auth
+  provider
 
 ------
 0.3.20
