@@ -56,7 +56,7 @@ def _syncdb_handler(sender, **kwargs):
             print _('Unable to load FAS groups. Did you set '
                 'FAS_USERNAME and FAS_PASSWORD?')
     else:
-        groups = gl['groups']
+        groups = gl[1]['groups']
         for group in groups:
             _new_group(group)
         if verbosity > 0:
