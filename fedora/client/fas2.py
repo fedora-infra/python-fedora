@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2008-2009  Ricky Zhou, Red Hat, Inc.
+# Copyright (C) 2008-2010  Ricky Zhou, Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
@@ -176,6 +176,8 @@ class AccountSystem(BaseClient):
                 109863: 'taljurf@fedoraproject.org',
                 # Josh Kayse: jokajak@gmail.com
                 148243: 'jokajak@fedoraproject.org',
+                # Behdad Esfahbod: fedora@behdad.org
+                100102: 'behdad@fedoraproject.org',
                 }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email
