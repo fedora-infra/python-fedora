@@ -55,6 +55,8 @@ email address specified in FAS instead of <username>``@fedoraproject.org``.
 
 Add ``fedora.django.auth`` to ``INSTALLED_APPS``.
 
+Finally, run ``python manage.py syncdb`` to add the models for the added app to the database.
+
 .. warning::
     The ``User.first_name`` and ``User.last_name`` attributes are always
     empty since FAS does not have any equivalents. The ``name``
