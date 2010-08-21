@@ -9,14 +9,16 @@ msgstr ""
 "Project-Id-Version: python-fedora 0.3.13\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2010-05-18 04:24-0400\n"
-"PO-Revision-Date: 2010-08-18 14:41+0900\n"
+"PO-Revision-Date: 2010-08-21 12:09+0900\n"
 "Last-Translator: Casey Jones <nahareport@yahoo.com>\n"
-"Language-Team: ja <LL@li.org>\n"
+"Language-Team: japanese <trans-ja@lists.fedoraproject.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
 "Generated-By: Babel 0.9.5\n"
+"X-Poedit-Language: Japanese\n"
+"X-Poedit-Country: JAPAN\n"
 
 #: fedora/release.py:9
 msgid "Python modules for interacting with Fedora Services"
@@ -220,7 +222,7 @@ msgstr ""
 "新名称を使用してください。collectn は0.4.xで削除予定です。"
 
 #: fedora/client/pkgdb.py:480
-#, fuzzy, python-format
+#, python-format
 msgid "Collection shortname %(collctn)s is unknown."
 msgstr "略称 %(collctn)s は不明です。"
 
@@ -314,7 +316,6 @@ msgstr ""
 "全ての変更リストを入手することはできません。"
 
 #: fedora/client/wiki.py:100
-#, fuzzy
 msgid ""
 "\n"
 "== Most active wiki users =="
@@ -386,9 +387,8 @@ msgid "Error logging in %(user)s: %(error)s"
 msgstr " %(user)s: %(error)s をログ中にエラーが発生しました。"
 
 #: fedora/tg/identity/jsonfasprovider2.py:60
-#, fuzzy
 msgid "Cannot enable ssl certificate auth via identity.ssl without setting fas.usernamme and fas.password for authorization"
-msgstr "認証のために  fas.usernamme と fas.password をセットしないで identity.ssl を使って、ssl 証明書認証はできません。"
+msgstr "fas.usernamme と fas.password をセットしないで identity.ssl を使っても、ssl 証明書認証はできません。"
 
 #: fedora/tg/identity/jsonfasprovider2.py:155
 #, python-format
@@ -486,7 +486,7 @@ msgid "clean_environ(%s)"
 msgstr "clean_environ(%s)"
 
 #: fedora/wsgi/csrf.py:129
-#, fuzzy, python-format
+#, python-format
 msgid "Deleting %(key)s from environ"
 msgstr "%(key)s をenvironから削除しています。"
 
@@ -500,7 +500,6 @@ msgid "User supplied CSRF token matches environ!"
 msgstr "ユーザは environ とマッチした CSRF を提示しました。"
 
 #: fedora/wsgi/csrf.py:151
-#, fuzzy
 msgid "Clearing identity"
 msgstr "identity をクリアしています。"
 
@@ -529,7 +528,6 @@ msgid "session_id = %(s_id)r"
 msgstr "session_id = %(s_id)r"
 
 #: fedora/wsgi/csrf.py:251
-#, fuzzy
 msgid "Identity updated with CSRF token"
 msgstr "CSRF により Identity がアップデートされました。"
 
@@ -552,17 +550,16 @@ msgid "Invalid session cookie %(s_id)r, not setting CSRF token!"
 msgstr "cookie %(s_id)r は不正なセッションです。CSRF がセットされていません!"
 
 #: fedora/wsgi/csrf.py:283
-#, fuzzy, python-format
+#, python-format
 msgid "%(token)s in GET"
 msgstr "%(token)s in GET"
 
 #: fedora/wsgi/csrf.py:290
-#, fuzzy, python-format
+#, python-format
 msgid "%(token)s in POST"
 msgstr "%(token)s in POST"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:110
-#, fuzzy
 msgid "Keep alive cache miss"
 msgstr "キャッシュミスを有効にする"
 
