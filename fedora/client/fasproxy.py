@@ -152,7 +152,9 @@ class FasProxyClient(ProxyClient):
         request = self.send_request('/json/person_by_id',
                 req_params={'person_id': person_id}, auth_params=auth_params)
         if request[1]['success']:
-            # In the new FAS, membership info is returned separately
+            # In a devel version of FAS, membership info was returned separately
+            # This has been corrected in a later version
+            # Can remove this code at some point
             if 'approved' in request[1]:
                 request[1]['person']['approved_memberships'] = \
                         request[1]['approved']

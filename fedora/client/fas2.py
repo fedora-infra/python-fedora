@@ -261,7 +261,8 @@ class AccountSystem(BaseClient):
                         self.__bugzilla_email[person_id]
             else:
                 request['person']['bugzilla_email'] = request['person']['email']
-            # In the new FAS, membership info is returned separately
+            # In a devel version of FAS, membership info was returned separately
+            # This was later corrected (can remove this code at some point)
             if 'approved' in request:
                 request['person']['approved_memberships'] = request['approved']
             if 'unapproved' in request:
@@ -283,7 +284,8 @@ class AccountSystem(BaseClient):
                 person['bugzilla_email'] = self.__bugzilla_email[person['id']]
             else:
                 person['bugzilla_email'] = person['email']
-            # In the new FAS, membership info is returned separately
+            # In a devel version of FAS, membership info was returned separately
+            # This was later corrected (can remove this code at some point)
             if 'approved' in request:
                 request['person']['approved_memberships'] = request['approved']
             if 'unapproved' in request:
