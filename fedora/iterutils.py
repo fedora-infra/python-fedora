@@ -22,11 +22,28 @@ Functions to manipulate iterables
 
 .. versionadded:: 0.3.17
 
+.. versionchanged:: 0.3.21
+    Deprecated in favor of the kitchen.iterutils module
+
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
+import warnings
+
+from kitchen.iterutils import isiterable as _isiterable
+
+from fedora import _
+
+warnings.warn(_('fedora.iterutils is deprecated.  Use kitchen.iterutils'
+    ' instead'), DeprecationWarning, stacklevel=2)
 
 def isiterable(obj, include_string=True):
-    '''Check whether an object is an iterable.
+    '''*Deprecated* Use kitchen.iterutils.isiterable instead.
+
+    .. warning::
+        kitchen.iterutils.isiterable uses False as the default value for
+        :attr:`include_string` instead of True.
+
+    Check whether an object is an iterable.
 
     :arg obj: Object to test whether it is an iterable
     :include_string: If True (default), if `obj` is a str or unicode this
@@ -34,13 +51,9 @@ def isiterable(obj, include_string=True):
         cause this function to return False.
     :returns: True if `obj` is iterable, otherwise False.
     '''
-    if include_string or not isinstance(obj, basestring):
-        try:
-            iter(obj)
-        except TypeError:
-            return False
-        else:
-            return True
-    return False
+    warnings.warn(_('fedora.iterutils.isiterable is deprecated, use'
+        ' kitchen.iterutils.isiterable instead'), DeprecationWarning,
+        stacklevel=2)
+    return _isiterable(obj, include_string)
 
 __all__ = ['isiterable']

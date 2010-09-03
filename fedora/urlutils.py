@@ -28,7 +28,7 @@ Functions to manipulate urls.
 from urlparse import urlparse, urlunparse
 from urllib import urlencode
 
-from fedora.iterutils import isiterable
+from kitchen.iterutils import isiterable
 
 try:
     from urlparse import parse_qs
@@ -61,7 +61,7 @@ def update_qs(uri, new_params, overwrite=True):
         for key in new_params:
             # If the entry already is present
             if key in query_dict:
-                if isiterable(new_params[key], include_string=False):
+                if isiterable(new_params[key]):
                     # If the new entry is a non-string iterable
                     try:
                         # Try to add the new values to the existing entry
@@ -83,7 +83,7 @@ def update_qs(uri, new_params, overwrite=True):
     # seems that we have to sanitize a bit here
     query_list = []
     for key, value in query_dict.items():
-        if isiterable(value, include_string=False):
+        if isiterable(value):
             for item in value:
                 query_list.append((key, item))
             continue
