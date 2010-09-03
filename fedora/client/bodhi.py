@@ -385,3 +385,15 @@ class BodhiClient(BaseClient):
         return session
 
     koji_session = property(fget=get_koji_session)
+
+    def get_releases(self):
+        """ Return a list of bodhi releases.
+
+        This method returns a dictionary in the following format::
+
+            {"releases": [
+		{"dist_tag": "dist-f12", "id_prefix": "FEDORA",
+		 "locked": false, "name": "F12", "long_name": "Fedora 12"}]}
+        """
+        return self.send_request('releases')
+
