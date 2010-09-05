@@ -46,7 +46,7 @@ from decorator import decorator
 # We're exporting this here
 from fedora.tg._utils import fedora_template
 
-from fedora import _
+from fedora import b_
 
 # Save this for people who need the original url() function
 tg_url = turbogears.url
@@ -97,7 +97,7 @@ def url(tgpath, tgparams=None, **kwargs):
             tgparams.update(kwargs)
         except AttributeError:
             raise TypeError(
-                    _('url() expects a dictionary for query parameters'))
+                    b_('url() expects a dictionary for query parameters'))
     args = []
     # Add the _csrf_token
     try:

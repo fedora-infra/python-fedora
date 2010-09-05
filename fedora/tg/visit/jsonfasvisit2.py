@@ -29,10 +29,11 @@ import threading
 
 from turbogears import config
 from turbogears.visit.api import Visit, BaseVisitManager
+from kitchen.text.converters import to_bytes
 
 from fedora.client import FasProxyClient
 
-from fedora import _, __version__
+from fedora import b_, __version__
 
 import logging
 log = logging.getLogger("turbogears.identity.jsonfasvisit")
@@ -131,7 +132,7 @@ class JsonFasVisitManager(BaseVisitManager):
         self.log.debug('JsonFasVisitManager.update_queued_visits: %s' % len(queue))
         # Hit any URL in fas with each visit_key to update the sessions
         for visit_key in queue:
-            self.log.info(_('updating visit (%s)'), visit_key)
+            self.log.info(b_('updating visit (%s)'), to_bytes(visit_key))
             try:
                 self.fas.refresh_session(visit_key)
             except Exception:
