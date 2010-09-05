@@ -28,7 +28,7 @@ import kitchen
 # Remember -- _() is for marking most messages
 # b_() is for marking messages that are used in exceptions
 (_, N_) = kitchen.i18n.easy_gettext_setup('python-fedora')
-(b_, bN_) = kitchen.i18n.eay_gettext_setup('python-fedora', use_unicode=False)
+(b_, bN_) = kitchen.i18n.easy_gettext_setup('python-fedora', use_unicode=False)
 
 from fedora import release
 __version__ = release.VERSION
