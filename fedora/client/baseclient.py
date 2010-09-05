@@ -30,13 +30,15 @@ import cPickle as pickle
 import Cookie
 import warnings
 
+from kitchen import to_bytes
+
 from fedora import __version__
-from fedora import _
+from fedora import b_
 
 log = logging.getLogger(__name__)
 
-SESSION_DIR = path.join(path.expanduser('~'), '.fedora')
-SESSION_FILE = path.join(SESSION_DIR, '.fedora_session')
+b_SESSION_DIR = path.join(path.expanduser('~'), '.fedora')
+b_SESSION_FILE = path.join(b_SESSION_DIR, '.fedora_session')
 
 from fedora.client import AuthError, ProxyClient
 
@@ -82,8 +84,8 @@ class BaseClient(ProxyClient):
         if session_id:
             self.session_id = session_id
         elif session_cookie:
-            warnings.warn(_("session_cookie is deprecated, use session_id"
-                    " instead"), DeprecationWarning, stacklevel=2)
+            warnings.warn(b_('session_cookie is deprecated, use session_id'
+                    ' instead'), DeprecationWarning, stacklevel=2)
             session_id = session_cookie.get(self.session_name, '')
             if session_id:
                 self.session_id = session_id.value
@@ -95,13 +97,13 @@ class BaseClient(ProxyClient):
         '''
         saved_session = {}
         session_file = None
-        if path.isfile(SESSION_FILE):
+        if path.isfile(b_SESSION_FILE):
             try:
-                session_file = file(SESSION_FILE, 'r')
+                session_file = file(b_SESSION_FILE, 'r')
                 saved_session = pickle.load(session_file)
             except (IOError, EOFError):
-                self.log.info(_('Unable to load session from %(file)s') % \
-                        {'file': SESSION_FILE})
+                self.log.info(b_('Unable to load session from %(file)s') %
+                        {'file': b_SESSION_FILE})
             if session_file:
                 session_file.close()
 
@@ -113,24 +115,25 @@ class BaseClient(ProxyClient):
         :arg save: The dict of usernames to ids to save.
         '''
         # Make sure the directory exists
-        if not path.isdir(SESSION_DIR):
+        if not path.isdir(b_SESSION_DIR):
             try:
-                os.mkdir(SESSION_DIR, 0755)
+                os.mkdir(b_SESSION_DIR, 0755)
             except OSError, e:
-                self.log.warning(_('Unable to create %(dir)s: %(error)s') %
-                    {'dir': SESSION_DIR, 'error': str(e)})
+                self.log.warning(b_('Unable to create %(dir)s: %(error)s') %
+                    {'dir': b_SESSION_DIR, 'error': to_bytes(e)})
 
         try:
-            session_file = file(SESSION_FILE, 'w')
-            os.chmod(SESSION_FILE, stat.S_IRUSR | stat.S_IWUSR)
+            session_file = file(b_SESSION_FILE, 'w')
+            os.chmod(b_SESSION_FILE, stat.S_IRUSR | stat.S_IWUSR)
             pickle.dump(save, session_file)
             session_file.close()
         except Exception, e: # pylint: disable-msg=W0703
             # If we can't save the file, issue a warning but go on.  The
             # session just keeps you from having to type your password over
             # and over.
-            self.log.warning(_('Unable to write to session file %(session)s:' \
-                    ' %(error)s') % {'session': SESSION_FILE, 'error': str(e)})
+            self.log.warning(b_('Unable to write to session file %(session)s:'
+                    ' %(error)s') % {'session': b_SESSION_FILE, 'error':
+                        to_bytes(e)})
 
     def _get_session_id(self):
         '''Attempt to retrieve the session id from the filesystem.
@@ -151,7 +154,8 @@ class BaseClient(ProxyClient):
             self._session_id = ''
 
         if not self._session_id:
-            self.log.debug(_('No session cached for "%s"') % self.username)
+            self.log.debug(b_('No session cached for "%s"')
+                    % to_bytes(self.username))
 
         return self._session_id
 
@@ -201,7 +205,7 @@ class BaseClient(ProxyClient):
 
         :Returns: user's session cookie
         '''
-        warnings.warn(_('session_cookie is deprecated, use session_id'
+        warnings.warn(b_('session_cookie is deprecated, use session_id'
             ' instead'), DeprecationWarning, stacklevel=2)
         session_id = self.session_id
         if not session_id:
@@ -220,7 +224,7 @@ class BaseClient(ProxyClient):
         current user's cookie.  This allows us to retain cookies for
         multiple users.
         '''
-        warnings.warn(_('session_cookie is deprecated, use session_id'
+        warnings.warn(b_('session_cookie is deprecated, use session_id'
             ' instead'), DeprecationWarning, stacklevel=2)
         session_id = session_cookie.get(self.session_name, '')
         if session_id:
@@ -232,7 +236,7 @@ class BaseClient(ProxyClient):
 
         Delete the session cookie from the filesystem.
         '''
-        warnings.warn(_('session_cookie is deprecated, use session_id'
+        warnings.warn(b_('session_cookie is deprecated, use session_id'
             ' instead'), DeprecationWarning, stacklevel=2)
         del(self.session_id)
 
@@ -276,19 +280,19 @@ class BaseClient(ProxyClient):
             for arg in kwargs:
                 # If we have extra args, raise an error
                 if arg != 'input':
-                    raise TypeError(_('send_request() got an unexpected' \
-                            ' keyword argument "%s"') % arg)
+                    raise TypeError(b_('send_request() got an unexpected'
+                            ' keyword argument "%(arg)s"') % {'arg': to_bytes(arg)})
             if req_params:
                 # We don't want to allow input if req_params was already given
-                raise TypeError(_('send_request() got an unexpected keyword' \
+                raise TypeError(b_('send_request() got an unexpected keyword'
                         ' argument "input"'))
             if len(kwargs) > 1:
                 # We shouldn't get here
-                raise TypeError(_('send_request() got an unexpected keyword' \
+                raise TypeError(b_('send_request() got an unexpected keyword'
                         ' argument'))
 
             # Error checking over, set req_params to the value in input
-            warnings.warn(_('send_request(input) is deprecated.  Use' \
+            warnings.warn(b_('send_request(input) is deprecated.  Use'
                     ' send_request(req_params) instead'), DeprecationWarning,
                     stacklevel=2)
             req_params = kwargs['input']
@@ -304,9 +308,9 @@ class BaseClient(ProxyClient):
                 # No?  Check for session_id
                 if not self.session_id:
                     # Not enough information to auth
-                    raise AuthError(_('Auth was requested but no way to' \
-                            ' perform auth was given.  Please set username' \
-                            ' and password or session_id before calling' \
+                    raise AuthError(b_('Auth was requested but no way to'
+                            ' perform auth was given.  Please set username'
+                            ' and password or session_id before calling'
                             ' this function with auth=True'))
 
         # Remove empty params

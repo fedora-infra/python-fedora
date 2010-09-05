@@ -27,10 +27,11 @@ import urllib
 import warnings
 
 from bunch import Bunch, bunchify
+from kitchen.text.converters import to_bytes
 
 from fedora.client import AppError, BaseClient, FasProxyClient, \
         FedoraClientError, FedoraServiceError
-from fedora import __version__, _
+from fedora import __version__, b_
 
 ### FIXME: To merge:
 # /usr/bin/fasClient from fas
@@ -221,8 +222,9 @@ class AccountSystem(BaseClient):
         if request['success']:
             return request['group']
         else:
-            raise AppError(message=_('FAS server unable to retrieve group %s')
-                    % groupname, name='FASError')
+            raise AppError(message=b_('FAS server unable to retrieve group'
+                ' %(group)s') % {'group': to_bytes(groupname)},
+                name='FASError')
 
     def group_members(self, groupname):
         '''Return a list of people approved for a group.
@@ -352,14 +354,15 @@ class AccountSystem(BaseClient):
         '''
         # Make sure we have a valid key value
         if key not in ('id', 'username', 'email'):
-            raise KeyError(_('key must be one of "id", "username", or "email"'))
+            raise KeyError(b_('key must be one of "id", "username", or'
+                ' "email"'))
 
         if fields:
             fields = list(fields)
             for field in fields:
                 if field not in USERFIELDS:
-                    raise KeyError(_('%(field)s is not a valid field to filter')
-                            % {'field': field})
+                    raise KeyError(b_('%(field)s is not a valid field to'
+                        ' filter') % {'field': to_bytes(field)})
         else:
             fields = USERFIELDS
 
@@ -410,7 +413,7 @@ class AccountSystem(BaseClient):
         .. versionchanged:: 0.3.21
             Return a Bunch instead of a DictContainer
         '''
-        warnings.warn(_("people_by_id() is deprecated and will be removed in"
+        warnings.warn(b_("people_by_id() is deprecated and will be removed in"
             " 0.4.  Please port your code to use people_by_key(key='id',"
             " fields=['human_name', 'email', 'username', 'bugzilla_email'])"
             " instead"), DeprecationWarning, stacklevel=2)
@@ -592,8 +595,8 @@ class AccountSystem(BaseClient):
             if request['success']:
                 return request['data']
             else:
-                raise AppError(message=_('FAS server unable to retrieve group'
-                    ' members'), name='FASError')
+                raise AppError(message=b_('FAS server unable to retrieve'
+                    ' group members'), name='FASError')
         except FedoraServiceError:
             raise
 
@@ -614,7 +617,7 @@ class AccountSystem(BaseClient):
             if request['success']:
                 return request['data']
             else:
-                raise AppError(message=_('FAS server unable to retrieve user'
+                raise AppError(message=b_('FAS server unable to retrieve user'
                     ' information'), name='FASError')
         except FedoraServiceError:
             raise

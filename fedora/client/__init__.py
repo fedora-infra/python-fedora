@@ -26,8 +26,11 @@ fedora.client is used to interact with Fedora Services.
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
+import warnings
 
 from bunch import Bunch
+
+from fedora import b_
 
 class FedoraClientError(Exception):
     '''Base Exception for problems which originate within the Clients.
@@ -83,7 +86,7 @@ class AppError(FedoraServiceError):
 # Backwards compatibility
 class DictContainer(Bunch):
     def __init__(self, *args, **kwargs):
-        warnings.warn(_('DictContainer is deprecated.  Use the Bunch class'
+        warnings.warn(b_('DictContainer is deprecated.  Use the Bunch class'
             ' from python-bunch instead.'), DeprecationWarning, stacklevel=2)
         Bunch.__init__(self, *args, **kwargs)
  

@@ -38,9 +38,10 @@ except ImportError:
     from sha import new as sha_constructor
 
 from bunch import bunchify
+from kitchen.text.converters import to_bytes
 
-from fedora import __version__
-from fedora import _
+from fedora import __version__, b_
+from fedora.client import AppError, AuthError, ServerError
 
 log = logging.getLogger(__name__)
 
@@ -99,7 +100,7 @@ class ProxyClient(object):
         self._log_handler.setFormatter(format)
         self.log.addHandler(self._log_handler)
 
-        self.log.debug(_('proxyclient.__init__:entered'))
+        self.log.debug(b_('proxyclient.__init__:entered'))
         if base_url[-1] != '/':
             base_url = base_url +'/'
         self.base_url = base_url
@@ -108,13 +109,13 @@ class ProxyClient(object):
         self.session_name = session_name
         self.session_as_cookie = session_as_cookie
         if session_as_cookie:
-            warnings.warn(_('Returning cookies from send_request() is'
+            warnings.warn(b_('Returning cookies from send_request() is'
                 ' deprecated and will be removed in 0.4.  Please port your'
                 ' code to use a session_id instead by calling the ProxyClient'
                 ' constructor with session_as_cookie=False'),
                 DeprecationWarning, stacklevel=2)
         self.insecure = insecure
-        self.log.debug(_('proxyclient.__init__:exited'))
+        self.log.debug(b_('proxyclient.__init__:exited'))
 
     def __get_debug(self):
         '''Return whether we have debug logging turned on.
@@ -187,7 +188,7 @@ class ProxyClient(object):
         .. versionchanged:: 0.3.21
             Return data as a Bunch instead of a DictContainer
         '''
-        self.log.debug(_('proxyclient.send_request: entered'))
+        self.log.debug(b_('proxyclient.send_request: entered'))
         # Check whether we need to authenticate for this request
         session_id = None
         username = None
@@ -196,7 +197,7 @@ class ProxyClient(object):
             if 'session_id' in auth_params:
                 session_id = auth_params['session_id']
             elif 'cookie' in auth_params:
-                warnings.warn(_('Giving a cookie to send_request() to'
+                warnings.warn(b_('Giving a cookie to send_request() to'
                 ' authenticate is deprecated and will be removed in 0.4.'
                 ' Please port your code to use session_id instead.'),
                 DeprecationWarning, stacklevel=2)
@@ -206,12 +207,12 @@ class ProxyClient(object):
                 username = auth_params['username']
                 password = auth_params['password']
             elif 'username' in auth_params or 'password' in auth_params:
-                raise AuthError(_('username and password must both be set in'
+                raise AuthError(b_('username and password must both be set in'
                         ' auth_params'))
             if not (session_id or username):
-                raise AuthError(_('No known authentication methods specified:'
-                        ' set "cookie" in auth_params or set both username and'
-                        ' password in auth_params'))
+                raise AuthError(b_('No known authentication methods'
+                    ' specified: set "cookie" in auth_params or set both'
+                    'username and password in auth_params'))
 
         # urljoin is slightly different than os.path.join().  Make sure method
         # will work with it.
@@ -266,12 +267,15 @@ class ProxyClient(object):
             request.setopt(pycurl.POSTFIELDS, req_data)
 
         # If debug, give people our debug info
-        self.log.debug(_('Creating request %(url)s') % {'url': url})
-        self.log.debug(_('Headers: %(header)s') % {'header': headers})
+        self.log.debug(b_('Creating request %(url)s') %
+                {'url': to_bytes(url)})
+        self.log.debug(b_('Headers: %(header)s') %
+                {'header': to_bytes(headers)})
         if self.debug and req_data:
             debug_data = re.sub(r'(&?)password[^&]+(&?)',
                     '\g<1>password=xxxxxxx\g<2>', req_data)
-            self.log.debug(_('Data: %(data)s') % {'data': debug_data})
+            self.log.debug(b_('Data: %(data)s') %
+                    {'data': to_bytes(debug_data)})
 
         # run the request
         request.perform()
@@ -283,14 +287,14 @@ class ProxyClient(object):
         http_status = request.getinfo(pycurl.HTTP_CODE)
         if http_status in (401, 403):
             # Wrong username or password
-            self.log.debug(_('Authentication failed logging in'))
-            raise AuthError(_('Unable to log into server.  Invalid'
+            self.log.debug(b_('Authentication failed logging in'))
+            raise AuthError(b_('Unable to log into server.  Invalid'
                     ' authentication tokens.  Send new username and password'))
         elif http_status >= 400:
             try:
                 msg = httplib.responses[http_status]
             except (KeyError, AttributeError):
-                msg = _('Unknown HTTP Server Response')
+                msg = b_('Unknown HTTP Server Response')
             raise ServerError(url, http_status, msg)
 
         # In case the server returned a new session cookie to us
@@ -310,9 +314,9 @@ class ProxyClient(object):
             data = simplejson.loads(json_string)
         except ValueError, e:
             # The response wasn't JSON data
-            raise ServerError(url, http_status, _('Error returned from'
+            raise ServerError(url, http_status, b_('Error returned from'
                     ' simplejson while processing %(url)s: %(err)s') %
-                    {'url': url, 'err': str(e)})
+                    {'url': to_bytes(url), 'err': to_bytes(e)})
 
         if 'exc' in data:
             name = data.pop('exc')
@@ -326,7 +330,7 @@ class ProxyClient(object):
             new_session = cookie
 
         request.close()
-        self.log.debug(_('proxyclient.send_request: exited'))
+        self.log.debug(b_('proxyclient.send_request: exited'))
         data = bunchify(data)
         return new_session, data
 

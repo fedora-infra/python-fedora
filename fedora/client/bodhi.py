@@ -30,7 +30,7 @@ from textwrap import wrap
 from os.path import join, expanduser, exists
 
 from fedora.client import BaseClient, FedoraClientError
-from fedora import _
+from fedora import b_
 
 __version__ = '0.5.1'
 log = logging.getLogger(__name__)
@@ -188,7 +188,7 @@ class BodhiClient(BaseClient):
         could potentially be pushed as updates.
         """
         if not self.username:
-            raise BodhiClientException(_('You must specify a username'))
+            raise BodhiClientException(b_('You must specify a username'))
         data = self.send_request('candidate_tags')
         koji = self.get_koji_session(login=False)
         for tag in data['tags']:
@@ -258,7 +258,7 @@ class BodhiClient(BaseClient):
 
         """
         from iniparse.compat import ConfigParser
-        self.log.info(_('Reading from %s ') % input_file)
+        self.log.info(b_('Reading from %s ') % input_file)
         input_file = expanduser(input_file)
         if exists(input_file):
             defaults = {
