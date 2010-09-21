@@ -54,7 +54,8 @@ class JsonFasVisitManager(BaseVisitManager):
             JsonFasVisitManager.fas = FasProxyClient(self.fas_url,
                     debug=self.debug,
                     session_name=config.get('visit.cookie.name', 'tg-visit'),
-                    useragent='JsonFasVisitManager/%s' % __version__)
+                    useragent='JsonFasVisitManager/%s' % __version__,
+                    retries=3)
         BaseVisitManager.__init__(self, timeout)
         self.log.debug('JsonFasVisitManager.__init__: exit')
 

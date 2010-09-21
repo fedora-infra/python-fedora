@@ -29,6 +29,7 @@ import httplib
 import pycurl
 import logging
 import simplejson
+import time
 import warnings
 from urlparse import urljoin
 
@@ -70,11 +71,49 @@ class ProxyClient(object):
 
     If you want something that can manage one user's connection to a Fedora
     Service, then look into using BaseClient instead.
+
+    This class has several attributes.  These may be changed after
+    instantiation however, please note that this class is intended to be
+    threadsafe.  Changing these values when another thread may affect more
+    than just the thread that you are making the change in.  (For instance,
+    changing the debug option could cause other threads to start logging debug
+    messages in the middle of a method.)
+
+    .. attribute:: base_url
+        Initial portion of the url to contact the server.  It is highly
+        recommended not to change this value unless you know that no other
+        threads are accessing this :class:`ProxyClient instance.
+
+    .. attribute:: useragent
+        Changes the useragent string that is reported to the web server.
+
+    .. attribute:: session_name
+        Name of the cookie that holds the authentication value.
+
+    .. attribute:: session_as_cookie
+        If :data:`True`, then the session information is saved locally as
+        a cookie.  This is here for backwards compatibility.  New code should
+        set this to :data:`False` when constructing the :class:`ProxyClient`.
+
+    .. attribute:: debug
+        If :data:`True`, then more verbose logging is performed to aid in
+        debugging issues.
+
+    .. attribute:: insecure
+        If :data:`True` then the connection to the server is not checked to be
+        sure that any SSL certificate information is valid.  That means that
+        a remote host can lie about who it is.  Useful for development but
+        should not be used in production code.
+
+    .. attribute:: retries
+        Setting this to a positive integer will retry failed requests to the
+        web server this many times.  Setting to a negative integer will retry
+        forever.
     '''
     log = log
 
     def __init__(self, base_url, useragent=None, session_name='tg-visit',
-            session_as_cookie=True, debug=False, insecure=False):
+            session_as_cookie=True, debug=False, insecure=False, retries=0):
         '''Create a client configured for a particular service.
 
         :arg base_url: Base of every URL used to contact the server
@@ -92,6 +131,10 @@ class ProxyClient(object):
             possible against the `BaseClient`. You might turn this option on
             for testing against a local version of a server with a self-signed
             certificate but it should be off in production.
+        :kwarg retries: if we get an unknown or possibly transient error from
+            the server, retry this many times.  Setting this to a negative
+            number makes it try forever.  Defaults to zero, no retries.
+
         '''
         # Setup our logger
         self._log_handler = logging.StreamHandler()
@@ -115,6 +158,7 @@ class ProxyClient(object):
                 ' constructor with session_as_cookie=False'),
                 DeprecationWarning, stacklevel=2)
         self.insecure = insecure
+        self.retries = retries
         self.log.debug(b_('proxyclient.__init__:exited'))
 
     def __get_debug(self):
@@ -144,7 +188,8 @@ class ProxyClient(object):
     errors.
     ''')
 
-    def send_request(self, method, req_params=None, auth_params=None):
+    def send_request(self, method, req_params=None, auth_params=None,
+            retries=None):
         '''Make an HTTP request to a server method.
 
         The given method is called with any parameters set in ``req_params``.
@@ -175,7 +220,11 @@ class ProxyClient(object):
             if it wants and all of them will be sent to the server.  Be careful
             of sending cookies that do not match with the username in this
             case as the server can decide what to do in this case.
-
+        :kwarg retries: if we get an unknown or possibly transient error from
+            the server, retry this many times.  Setting this to a negative
+            number makes it try forever.  Defaults to zero, no retries.
+            number makes it try forever.  Default to use the :attr:`retries`
+            value set on the instance or in :meth:`__init__`.
         :returns: If ProxyClient is created with session_as_cookie=True (the
             default), a tuple of session cookie and data from the server.
             If ProxyClient was created with session_as_cookie=False, a tuple
@@ -277,25 +326,35 @@ class ProxyClient(object):
             self.log.debug(b_('Data: %(data)s') %
                     {'data': to_bytes(debug_data)})
 
-        # run the request
-        request.perform()
+        num_retries = 0
+        if retries is None:
+            retries = self.retries
+        while True:
+            # run the request
+            request.perform()
 
-        # Check for auth failures
-        # Note: old TG apps returned 403 Forbidden on authentication failures.
-        # Updated apps return 401 Unauthorized
-        # We need to accept both until all apps are updated to return 401.
-        http_status = request.getinfo(pycurl.HTTP_CODE)
-        if http_status in (401, 403):
-            # Wrong username or password
-            self.log.debug(b_('Authentication failed logging in'))
-            raise AuthError(b_('Unable to log into server.  Invalid'
-                    ' authentication tokens.  Send new username and password'))
-        elif http_status >= 400:
-            try:
-                msg = httplib.responses[http_status]
-            except (KeyError, AttributeError):
-                msg = b_('Unknown HTTP Server Response')
-            raise ServerError(url, http_status, msg)
+            # Check for auth failures
+            # Note: old TG apps returned 403 Forbidden on authentication failures.
+            # Updated apps return 401 Unauthorized
+            # We need to accept both until all apps are updated to return 401.
+            http_status = request.getinfo(pycurl.HTTP_CODE)
+            if http_status in (401, 403):
+                # Wrong username or password
+                self.log.debug(b_('Authentication failed logging in'))
+                raise AuthError(b_('Unable to log into server.  Invalid'
+                        ' authentication tokens.  Send new username and password'))
+            elif http_status >= 400:
+                if retries < 0 or num_retries < retries:
+                    # Retry the request
+                    num_retries += 1
+                    time.sleep(0.5)
+                    continue
+                # Fail and raise an error
+                try:
+                    msg = httplib.responses[http_status]
+                except (KeyError, AttributeError):
+                    msg = b_('Unknown HTTP Server Response')
+                raise ServerError(url, http_status, msg)
 
         # In case the server returned a new session cookie to us
         new_session = ''

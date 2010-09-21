@@ -48,10 +48,10 @@ class BaseClient(ProxyClient):
     '''
     def __init__(self, base_url, useragent=None, debug=False, insecure=False,
             username=None, password=None, session_cookie=None,
-            session_id=None, session_name='tg-visit', cache_session=True):
+            session_id=None, session_name='tg-visit', cache_session=True,
+            retries=None):
         '''
         :arg base_url: Base of every URL used to contact the server
-
         :kwarg useragent: Useragent string to use.  If not given, default to
             "Fedora BaseClient/VERSION"
         :kwarg session_name: name of the cookie to use with session handling
@@ -69,13 +69,16 @@ class BaseClient(ProxyClient):
         :kwarg session_id: id of the user's session
         :kwarg cache_session: If set to true, cache the user's session data on
             the filesystem between runs
+        :kwarg retries: if we get an unknown or possibly transient error from
+            the server, retry this many times.  Setting this to a negative
+            number makes it try forever.  Defaults to zero, no retries.
         '''
         self.log = log
         self.useragent = useragent or 'Fedora BaseClient/%(version)s' % {
                 'version': __version__}
         super(BaseClient, self).__init__(base_url, useragent=self.useragent,
                 session_name=session_name, session_as_cookie=False,
-                debug=debug, insecure=insecure)
+                debug=debug, insecure=insecure, retries=retries)
 
         self.username = username
         self.password = password
@@ -269,8 +272,8 @@ class BaseClient(ProxyClient):
             comes after the base_url set in __init__().
         :kwarg req_params: Extra parameters to send to the server.
         :kwarg auth: If True perform auth to the server, else do not.
-        :returns: The data from the server
         :rtype: Bunch
+        :returns: The data from the server
 
         .. versionchanged:: 0.3.21
             Return data as a Bunch instead of a DictContainer

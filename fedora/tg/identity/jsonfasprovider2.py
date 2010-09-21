@@ -58,7 +58,7 @@ if config.get('identity.ssl', False):
     __url = config.get('fas.url', None)
     if __url:
         fas = AccountSystem(__url, username=config.get('fas.username'),
-                password=config.get('fas.password'))
+                password=config.get('fas.password'), retries=3)
 
 
 class JsonFasIdentity(BaseClient):
@@ -94,7 +94,8 @@ class JsonFasIdentity(BaseClient):
         super(JsonFasIdentity, self).__init__(self.fas_url,
                 useragent=self.useragent, debug=debug,
                 username=username, password=password,
-                session_id=session_id, cache_session=self.cache_session)
+                session_id=session_id, cache_session=self.cache_session,
+                retries=3)
 
         if self.debug:
             import inspect
@@ -121,7 +122,7 @@ class JsonFasIdentity(BaseClient):
             cherrypy.response.simple_cookie[self.cookie_name] = self.visit_key
         self.log.debug('leaving jsonfas send_request')
         return super(JsonFasIdentity, self).send_request(method, req_params,
-                auth)
+                auth, retries=3)
 
     def __retrieve_user(self):
         '''Attempt to load the user from the visit_key.

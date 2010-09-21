@@ -12,6 +12,9 @@ NEWS
 * Port from DictContainer to python-bunch
 * Fix how we're using data from FasProxy.group_list() in the django auth
   provider
+* Port to kitchen for things that have moved there.
+* Add retry capability to BaseClient and ProxyClient.
+* Have identity and visit managers retry 3 times.
 
 ------
 0.3.20
