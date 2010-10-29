@@ -261,7 +261,7 @@ class BaseClient(ProxyClient):
             pass
         del(self.session_id)
 
-    def send_request(self, method, req_params=None, auth=False, **kwargs):
+    def send_request(self, method, req_params=None, auth=False, retries=None, **kwargs):
         '''Make an HTTP request to a server method.
 
         The given method is called with any parameters set in req_params.  If
@@ -272,6 +272,11 @@ class BaseClient(ProxyClient):
             comes after the base_url set in __init__().
         :kwarg req_params: Extra parameters to send to the server.
         :kwarg auth: If True perform auth to the server, else do not.
+        :kwarg retries: if we get an unknown or possibly transient error from
+            the server, retry this many times.  Setting this to a negative
+            number makes it try forever.  Defaults to zero, no retries.
+            number makes it try forever.  Default to use the :attr:`retries`
+            value set on the instance or in :meth:`__init__`.
         :rtype: Bunch
         :returns: The data from the server
 
@@ -323,7 +328,8 @@ class BaseClient(ProxyClient):
         # pylint: enable-msg=W0104
 
         session_id, data = super(BaseClient, self).send_request(method,
-                req_params = req_params, auth_params = auth_params)
+                req_params=req_params, auth_params=auth_params,
+                retries=retries)
         # In case the server returned a new session id to us
         if self.session_id != session_id:
             self.session_id = session_id
