@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2007  Red Hat, Inc.
+# Copyright (C) 2010  Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@ import cPickle as pickle
 import Cookie
 import warnings
 
-from kitchen import to_bytes
+from kitchen.text.converters import to_bytes
 
 from fedora import __version__
 from fedora import b_

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009  Red Hat, Inc.
+# Copyright (C) 2009-2010  Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
