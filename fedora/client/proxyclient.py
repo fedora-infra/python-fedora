@@ -158,7 +158,7 @@ class ProxyClient(object):
                 ' constructor with session_as_cookie=False'),
                 DeprecationWarning, stacklevel=2)
         self.insecure = insecure
-        self.retries = retries
+        self.retries = retries or 0
         self.log.debug(b_('proxyclient.__init__:exited'))
 
     def __get_debug(self):
@@ -326,7 +326,7 @@ class ProxyClient(object):
             self.log.debug(b_('Data: %(data)s') %
                     {'data': to_bytes(debug_data)})
 
-        num_retries = 0
+        num_tries = 0
         if retries is None:
             retries = self.retries
         while True:
@@ -344,9 +344,10 @@ class ProxyClient(object):
                 raise AuthError(b_('Unable to log into server.  Invalid'
                         ' authentication tokens.  Send new username and password'))
             elif http_status >= 400:
-                if retries < 0 or num_retries < retries:
+                if retries < 0 or num_tries < retries:
                     # Retry the request
-                    num_retries += 1
+                    num_tries += 1
+                    self.log.debug(b_('Attempt #%(try)s failed') % {'try': num_tries})
                     time.sleep(0.5)
                     continue
                 # Fail and raise an error
