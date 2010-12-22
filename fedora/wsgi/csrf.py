@@ -33,6 +33,7 @@ import logging
 
 from kitchen.text.converters import to_bytes
 from webob import Request
+from webob.headerdict import HeaderDict
 from paste.httpexceptions import HTTPFound
 from paste.response import replace_header
 from repoze.who.interfaces import IMetadataProvider
@@ -267,10 +268,17 @@ class CSRFMetadataProvider(object):
                 if isinstance(app, HTTPFound) and environ.get(self.auth_state):
                     log.debug(b_('Got HTTPFound(302) from'
                         ' repoze.who.application'))
-                    loc = update_qs(app.location(), {self.csrf_token_id:
+                    # What possessed people to make this a string or
+                    # a function?
+                    location = app.location
+                    if hasattr(location, '__call__'):
+                        location = location()
+                    loc = update_qs(location, {self.csrf_token_id:
                         str(token)})
 
-                    replace_header(app.headers, 'location', loc)
+                    headers = app.header.items()
+                    replace_header(headers, 'location', loc)
+                    app.headers = HeaderDict(headers)
                     log.debug(b_('Altered headers: %(headers)s') % {'headers':
                         to_bytes(app.headers)})
         else:
