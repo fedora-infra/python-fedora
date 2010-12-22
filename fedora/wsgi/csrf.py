@@ -276,7 +276,7 @@ class CSRFMetadataProvider(object):
                     loc = update_qs(location, {self.csrf_token_id:
                         str(token)})
 
-                    headers = app.header.items()
+                    headers = app.headers.items()
                     replace_header(headers, 'location', loc)
                     app.headers = HeaderDict(headers)
                     log.debug(b_('Altered headers: %(headers)s') % {'headers':
