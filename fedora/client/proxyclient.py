@@ -28,10 +28,14 @@ import urllib
 import httplib
 import pycurl
 import logging
-import simplejson
 import time
 import warnings
 from urlparse import urljoin
+
+try:
+    import simplejson as json
+except ImportError:
+    import json as json
 
 try:
     from hashlib import sha1 as sha_constructor
@@ -270,7 +274,7 @@ class ProxyClient(object):
         url = urljoin(self.base_url, urllib.quote(method))
 
         response = _PyCurlData() # The data we get back from the server
-        data = None     # decoded JSON via simplejson.load()
+        data = None     # decoded JSON via json.load()
 
         request = pycurl.Curl()
         request.setopt(pycurl.URL, url)
@@ -371,11 +375,11 @@ class ProxyClient(object):
         json_string = response.data
 
         try:
-            data = simplejson.loads(json_string)
+            data = json.loads(json_string)
         except ValueError, e:
             # The response wasn't JSON data
             raise ServerError(url, http_status, b_('Error returned from'
-                    ' simplejson while processing %(url)s: %(err)s') %
+                    ' json module while processing %(url)s: %(err)s') %
                     {'url': to_bytes(url), 'err': to_bytes(e)})
 
         if 'exc' in data:

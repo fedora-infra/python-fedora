@@ -32,7 +32,10 @@
 import warnings
 
 from kitchen.text.converters import to_bytes
-import simplejson
+try:
+    import simplejson as json
+except ImportError:
+    import json as json
 
 from fedora import __version__, b_
 from fedora.client import BaseClient, FedoraClientError, AppError
@@ -198,13 +201,13 @@ class PackageDB(BaseClient):
                 % {'pkg': to_bytes(pkg), 'msg': to_bytes(response['message'])})
 
         if cc_list:
-            data['ccList'] = simplejson.dumps(cc_list)
+            data['ccList'] = json.dumps(cc_list)
         if comaintainers:
-            data['comaintList'] = simplejson.dumps(comaintainers)
+            data['comaintList'] = json.dumps(comaintainers)
 
         # Parse the groups information
         if groups:
-            data['groups'] = simplejson.dumps(groups)
+            data['groups'] = json.dumps(groups)
 
         # Parse the Branch abbreviations into collections
         if branches:
@@ -256,13 +259,13 @@ class PackageDB(BaseClient):
         if description:
             data['summary'] = description
         if cc_list:
-            data['ccList'] = simplejson.dumps(cc_list)
+            data['ccList'] = json.dumps(cc_list)
         if comaintainers:
-            data['comaintList'] = simplejson.dumps(comaintainers)
+            data['comaintList'] = json.dumps(comaintainers)
 
         # Parse the groups information
         if groups:
-            data['groups'] = simplejson.dumps(groups)
+            data['groups'] = json.dumps(groups)
 
         # Parse the Branch abbreviations into collections
         if branches:

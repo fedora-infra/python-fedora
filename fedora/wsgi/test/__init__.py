@@ -17,7 +17,10 @@
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 
 import os
-import simplejson
+try:
+    import simplejson as json
+except ImportError:
+    import json
 
 from tg import config as tg_config
 from paste.deploy import loadapp
@@ -60,4 +63,4 @@ class TestTG2App(object):
 
     def test_tg2_app(self):
         """ Ensure our dummy TG2 app actually works """
-        eq_(simplejson.loads(self.app.get('/').body), {'foo': 'bar'})
+        eq_(json.loads(self.app.get('/').body), {'foo': 'bar'})
