@@ -43,6 +43,7 @@ except ImportError:
     from sha import new as sha_constructor
 
 from bunch import bunchify
+from kitchen.iterutils import isiterable
 from kitchen.text.converters import to_bytes
 
 from fedora import __version__, b_
@@ -193,7 +194,7 @@ class ProxyClient(object):
     ''')
 
     def send_request(self, method, req_params=None, auth_params=None,
-            retries=None):
+            file_params=None, retries=None):
         '''Make an HTTP request to a server method.
 
         The given method is called with any parameters set in ``req_params``.
@@ -224,6 +225,10 @@ class ProxyClient(object):
             if it wants and all of them will be sent to the server.  Be careful
             of sending cookies that do not match with the username in this
             case as the server can decide what to do in this case.
+        :kwarg file_params: dict of files where the key is the name of the
+            file field used in the remote method and the value is the local
+            path of the file to be uploaded.  If you want to pass multiple
+            files to a single file field, pass the paths as a list of paths.
         :kwarg retries: if we get an unknown or possibly transient error from
             the server, retry this many times.  Setting this to a negative
             number makes it try forever.  Defaults to zero, no retries.
@@ -239,7 +244,8 @@ class ProxyClient(object):
             No longer send tg_format=json parameter.  We rely solely on the
             Accept: application/json header now.
         .. versionchanged:: 0.3.21
-            Return data as a Bunch instead of a DictContainer
+            * Return data as a Bunch instead of a DictContainer
+            * Add file_params to allow uploading files
         '''
         self.log.debug(b_('proxyclient.send_request: entered'))
         # Check whether we need to authenticate for this request
@@ -295,6 +301,25 @@ class ProxyClient(object):
         headers = ['User-agent: %s' % self.useragent,
                 'Accept: application/json']
         request.setopt(pycurl.HTTPHEADER, headers)
+
+        # Files to upload
+        if file_params:
+            # pycurl wants files to be uploaded in a specific format.  That
+            # format is:
+            #
+            # [(file form field name, [(FORM_FILE, 'file local path'), ]),
+            #  (file form field name2, [(FORM_FILE, 'file2 local path'), ])
+            # ]
+            file_data = []
+            for field_name, field_value in file_params.iteritems():
+                files = []
+                if isiterable(field_value):
+                    for filename in field_value:
+                        files.append((pycurl.FORM_FILE, filename))
+                else:
+                    files = [(pycurl.FORM_FILE, field_value)]
+                file_data.append((field_name, files))
+            request.setopt(pycurl.HTTPPOST, file_data)
 
         # If we have a session_id, send it
         if session_id:
