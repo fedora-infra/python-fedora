@@ -360,6 +360,8 @@ class ProxyClient(object):
                 except (KeyError, AttributeError):
                     msg = b_('Unknown HTTP Server Response')
                 raise ServerError(url, http_status, msg)
+            # Successfully returned data
+            break
 
         # In case the server returned a new session cookie to us
         new_session = ''
