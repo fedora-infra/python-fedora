@@ -341,6 +341,11 @@ class ProxyClient(object):
 
         req_data = None
         if complete_params:
+            # set None params to empty string otherwise the string 'None' gets
+            # sent.
+            for i in complete_params.iteritems():
+                if i[1] is None:
+                    complete_params[i[0]] = ''
             req_data = urllib.urlencode(complete_params, doseq=True)
             request.setopt(pycurl.POSTFIELDS, req_data)
 
