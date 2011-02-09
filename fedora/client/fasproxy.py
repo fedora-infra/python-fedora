@@ -130,8 +130,9 @@ class FasProxyClient(ProxyClient):
 
         :arg auth_params: Auth information for a particular user.  For
             instance, this can be a username/password pair or a session_id.
-            Refer to fedora.client.proxyclient.ProxyClient.send_request for
-            all the legal values for this.
+            Refer to
+            :meth:`fedora.client.proxyclient.ProxyClient.send_request` for all
+            the legal values for this.
         :returns: a tuple of session_id and information about the user.
         :raises AuthError: if the auth_params do not give access
         '''
@@ -143,8 +144,9 @@ class FasProxyClient(ProxyClient):
 
         :arg auth_params: Auth information for a particular user.  For
             instance, this can be a username/password pair or a session_id.
-            Refer to fedora.client.proxyclient.ProxyClient.send_request for
-            all the legal values for this.
+            Refer to
+            :meth:`fedora.client.proxyclient.ProxyClient.send_request` for all
+            the legal values for this.
         :returns: a tuple of session_id and information about the user.
         :raises AppError: if the server returns an exception
         :raises AuthError: if the auth_params do not give access
@@ -171,8 +173,9 @@ class FasProxyClient(ProxyClient):
 
         :arg auth_params: Auth information for a particular user.  For
             instance, this can be a username/password pair or a session_id.
-            Refer to fedora.client.proxyclient.ProxyClient.send_request for
-            all the legal values for this.
+            Refer to
+            :meth:`fedora.client.proxyclient.ProxyClient.send_request` for all
+            the legal values for this.
         :returns: a tuple of session_id and information about groups.  The
             groups information is in two fields:
 
