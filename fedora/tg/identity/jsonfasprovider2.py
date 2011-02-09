@@ -121,8 +121,8 @@ class JsonFasIdentity(BaseClient):
             self.visit_key = self.session_id
             cherrypy.response.simple_cookie[self.cookie_name] = self.visit_key
         self.log.debug('leaving jsonfas send_request')
-        return super(JsonFasIdentity, self).send_request(method, req_params,
-                auth, retries=3)
+        return super(JsonFasIdentity, self).send_request(method,
+                req_params=req_params, auth=auth, retries=3)
 
     def __retrieve_user(self):
         '''Attempt to load the user from the visit_key.
