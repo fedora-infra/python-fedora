@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2008-2010  Red Hat, Inc.
+# Copyright (C) 2008-2011  Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
@@ -21,6 +21,7 @@
 .. moduleauthor:: Toshio Kuratomi <toshio@fedoraproject.org>
 .. moduleauthor:: Mike Watters <valholla@fedoraproject.org>
 .. moduleauthor:: Dmitry Kolesov <kolesovdv@fedoraproject.org>
+.. moduleauthor:: Frank Chiulli <fchiulli@fedoraproject.org>
 
 .. versionadded:: 0.3.6
    Merge from CLI pkgdb-client
@@ -28,6 +29,7 @@
 .. data:: COLLECTIONMAP
 
     Maps short names to Collections.  For instance, FC => Fedora
+
 '''
 import warnings
 
@@ -639,3 +641,26 @@ class PackageDB(BaseClient):
 
         self.send_request('/acls/dispatcher/set_critpath', req_params=params,
                 auth=True)
+
+    def add_comaintainers(self, maintainer, comaintainers, pkg_pattern, 
+                          collectn_name, collectn_ver=None):
+        '''Add comaintainers to all packagelistings that the maintainer either
+        is the owner or has approveacls on.  Then email comaintainers/owners
+        on those packages that the maintainer has changed the acls.
+                        
+        :arg maintainer: the maintainer's username
+        :arg comaintainers: a list of new comaintainers
+        :arg pkg_pattern: a simple pattern for package names
+        :arg collectn_name: limit packages to branches for this distribution.
+        :kwarg collectn_ver: If given, limit information to this
+            particular version of a distribution.
+        '''
+
+        params = {'maintainer': maintainer, 'comaintainers': comaintainers,
+                  'pkg_pattern': pkg_pattern, 'collectn_name': collectn_name}
+        if collectn_ver:
+            params['collectn_ver'] = collectn_ver
+
+        return self.send_request('/massacls/add_comaintainers',
+                                 req_params=params, auth=True)
+
