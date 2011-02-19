@@ -353,7 +353,7 @@ class ProxyClient(object):
         self.log.debug(b_('Creating request %(url)s') %
                 {'url': to_bytes(url)})
         self.log.debug(b_('Headers: %(header)s') %
-                {'header': to_bytes(headers, non_string='simplerepr')})
+                {'header': to_bytes(headers, nonstring='simplerepr')})
         if self.debug and req_data:
             debug_data = re.sub(r'(&?)password[^&]+(&?)',
                     '\g<1>password=xxxxxxx\g<2>', req_data)
