@@ -10,7 +10,7 @@ Summary:        Python modules for talking to Fedora Infrastructure Services
 Group:          Development/Languages
 License:        LGPLv2+
 URL:            https://fedorahosted.org/python-fedora/
-Source0:        https://fedorahosted.org/releases/p/y/%{name}/%{name}-%{version}%{prerel}.tar.gz
+Source0:        https://fedorahosted.org/releases/p/y/%{name}/%{name}-%{version}%{?prerel}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
@@ -49,7 +49,7 @@ be used to build programs that communicate with Fedora Infrastructure's
 TurboGears Applications such as Bodhi, PackageDB, MirrorManager, and FAS2.
 
 %prep
-%setup -q -n %{name}-%{version}%{prerel}
+%setup -q -n %{name}-%{version}%{?prerel}
 
 %build
 paver build
