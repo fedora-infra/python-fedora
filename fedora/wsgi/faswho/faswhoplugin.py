@@ -39,6 +39,7 @@ from repoze.who.middleware import PluggableAuthenticationMiddleware
 from repoze.who.classifiers import default_request_classifier
 from repoze.who.classifiers import default_challenge_decider
 from repoze.who.interfaces import IChallenger, IIdentifier
+from repoze.who.plugins.basicauth import BasicAuthPlugin
 from repoze.who.plugins.friendlyform import FriendlyFormPlugin
 from paste.request import parse_dict_querystring, parse_formvars
 import webob
@@ -55,12 +56,20 @@ FAS_CACHE_TIMEOUT = 900 # 15 minutes (FAS visits timeout after 20)
 
 fas_cache = Cache('fas_repozewho_cache', type='memory')
 
+def fas_request_classifier(environ): 
+    classifier = default_request_classifier(environ) 
+    if classifier == 'browser': 
+        request = webob.Request(environ) 
+        if not request.accept.best_match(['application/xhtml+xml','text/html']): 
+            classifier = 'app' 
+    return classifier 
+
 def make_faswho_middleware(app, log_stream, login_handler='/login_handler',
         login_form_url='/login', logout_handler='/logout_handler',
         post_login_url='/post_login', post_logout_url=None):
 
     faswho = FASWhoPlugin(FAS_URL)
-    csrf_mdprovider = CSRFMetadataProvider(login_handler=login_handler)
+    csrf_mdprovider = CSRFMetadataProvider()
 
     form = FriendlyFormPlugin(login_form_url,
                               login_handler,
@@ -72,9 +81,11 @@ def make_faswho_middleware(app, log_stream, login_handler='/login_handler',
     form.classifications = { IIdentifier: ['browser'],
                              IChallenger: ['browser'] } # only for browser
 
-    identifiers = [('form', form), ('fasident', faswho)]
+    basicauth = BasicAuthPlugin('repoze.who')
+
+    identifiers = [('form', form), ('fasident', faswho), ('basicauth', basicauth)]
     authenticators = [('fasauth', faswho)]
-    challengers = [('form', form)]
+    challengers = [('form', form), ('basicauth', basicauth)]
     mdproviders = [('fasmd', faswho), ('csrfmd', csrf_mdprovider)]
 
     if os.environ.get('FAS_WHO_LOG'):
@@ -87,7 +98,7 @@ def make_faswho_middleware(app, log_stream, login_handler='/login_handler',
             authenticators,
             challengers,
             mdproviders,
-            default_request_classifier,
+            fas_request_classifier,
             default_challenge_decider,
             log_stream = log_stream,
             )
@@ -288,9 +299,9 @@ class FASWhoPlugin(object):
         cookie = req.cookies.get(self.session_cookie)
 
         if cookie is None:
-            # @@ Should we resort to this?
-            #cookie = environ.get('CSRF_AUTH_SESSION_ID')
-            return None
+            cookie = environ.get('CSRF_AUTH_SESSION_ID')
+            if cookie is None:
+                return None
 
         log.info(b_('Request metadata for cookie %(cookie)s') %
                 {'cookie': to_bytes(cookie)})

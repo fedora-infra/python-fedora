@@ -47,7 +47,7 @@ class BaseClient(ProxyClient):
         A client for interacting with web services.
     '''
     def __init__(self, base_url, useragent=None, debug=False, insecure=False,
-            username=None, password=None, session_cookie=None,
+            username=None, password=None, httpauth=None, session_cookie=None,
             session_id=None, session_name='tg-visit', cache_session=True,
             retries=None):
         '''
@@ -63,6 +63,9 @@ class BaseClient(ProxyClient):
             certificate but it should be off in production.
         :kwarg username: Username for establishing authenticated connections
         :kwarg password: Password to use with authenticated connections
+        :kwarg httpauth: If this is set to ``basic`` then use HTTP Basic
+            Authentication to send the username and password.  Default: None,
+            means do not use HTTP Authentication.
         :kwarg session_cookie: *Deprecated* Use session_id instead.  If both
             session_id and session_cookie is given, only session_id will be
             used.  User's session_cookie to connect to the server.
@@ -82,6 +85,7 @@ class BaseClient(ProxyClient):
 
         self.username = username
         self.password = password
+        self.httpauth = httpauth
         self.cache_session = cache_session
         self._session_id = None
         if session_id:
@@ -318,6 +322,8 @@ class BaseClient(ProxyClient):
                 # Add the username and password and we're all set
                 auth_params['username'] = self.username
                 auth_params['password'] = self.password
+                if self.httpauth:
+                    auth_params['httpauth'] = self.httpauth
             else:
                 # No?  Check for session_id
                 if not self.session_id:
