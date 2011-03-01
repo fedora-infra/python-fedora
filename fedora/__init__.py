@@ -23,13 +23,14 @@ Python Fedora
 
 Modules to communicate with and help implement Fedora Services.
 '''
-import gettext
-translation = gettext.translation('python-fedora', '/usr/share/locale',
-        fallback=True)
-_ = translation.ugettext
+import kitchen
+# Setup gettext for all of kitchen.
+# Remember -- _() is for marking most messages
+# b_() is for marking messages that are used in exceptions
+(_, N_) = kitchen.i18n.easy_gettext_setup('python-fedora')
+(b_, bN_) = kitchen.i18n.easy_gettext_setup('python-fedora', use_unicode=False)
 
 from fedora import release
 __version__ = release.VERSION
 
-__all__ = ('_', 'release', '__version__',
-        'accounts', 'client', 'tg')
+__all__ = ('__version__', 'accounts', 'client', 'release', 'tg')

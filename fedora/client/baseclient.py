@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2007  Red Hat, Inc.
+# Copyright (C) 2010  Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
@@ -30,13 +30,15 @@ import cPickle as pickle
 import Cookie
 import warnings
 
+from kitchen.text.converters import to_bytes
+
 from fedora import __version__
-from fedora import _
+from fedora import b_
 
 log = logging.getLogger(__name__)
 
-SESSION_DIR = path.join(path.expanduser('~'), '.fedora')
-SESSION_FILE = path.join(SESSION_DIR, '.fedora_session')
+b_SESSION_DIR = path.join(path.expanduser('~'), '.fedora')
+b_SESSION_FILE = path.join(b_SESSION_DIR, '.fedora_session')
 
 from fedora.client import AuthError, ProxyClient
 
@@ -45,11 +47,11 @@ class BaseClient(ProxyClient):
         A client for interacting with web services.
     '''
     def __init__(self, base_url, useragent=None, debug=False, insecure=False,
-            username=None, password=None, session_cookie=None,
-            session_id=None, session_name='tg-visit', cache_session=True):
+            username=None, password=None, httpauth=None, session_cookie=None,
+            session_id=None, session_name='tg-visit', cache_session=True,
+            retries=None):
         '''
         :arg base_url: Base of every URL used to contact the server
-
         :kwarg useragent: Useragent string to use.  If not given, default to
             "Fedora BaseClient/VERSION"
         :kwarg session_name: name of the cookie to use with session handling
@@ -61,29 +63,36 @@ class BaseClient(ProxyClient):
             certificate but it should be off in production.
         :kwarg username: Username for establishing authenticated connections
         :kwarg password: Password to use with authenticated connections
+        :kwarg httpauth: If this is set to ``basic`` then use HTTP Basic
+            Authentication to send the username and password.  Default: None,
+            means do not use HTTP Authentication.
         :kwarg session_cookie: *Deprecated* Use session_id instead.  If both
             session_id and session_cookie is given, only session_id will be
             used.  User's session_cookie to connect to the server.
         :kwarg session_id: id of the user's session
         :kwarg cache_session: If set to true, cache the user's session data on
             the filesystem between runs
+        :kwarg retries: if we get an unknown or possibly transient error from
+            the server, retry this many times.  Setting this to a negative
+            number makes it try forever.  Defaults to zero, no retries.
         '''
         self.log = log
         self.useragent = useragent or 'Fedora BaseClient/%(version)s' % {
                 'version': __version__}
         super(BaseClient, self).__init__(base_url, useragent=self.useragent,
                 session_name=session_name, session_as_cookie=False,
-                debug=debug, insecure=insecure)
+                debug=debug, insecure=insecure, retries=retries)
 
         self.username = username
         self.password = password
+        self.httpauth = httpauth
         self.cache_session = cache_session
         self._session_id = None
         if session_id:
             self.session_id = session_id
         elif session_cookie:
-            warnings.warn(_("session_cookie is deprecated, use session_id"
-                    " instead"), DeprecationWarning, stacklevel=2)
+            warnings.warn(b_('session_cookie is deprecated, use session_id'
+                    ' instead'), DeprecationWarning, stacklevel=2)
             session_id = session_cookie.get(self.session_name, '')
             if session_id:
                 self.session_id = session_id.value
@@ -95,13 +104,13 @@ class BaseClient(ProxyClient):
         '''
         saved_session = {}
         session_file = None
-        if path.isfile(SESSION_FILE):
+        if path.isfile(b_SESSION_FILE):
             try:
-                session_file = file(SESSION_FILE, 'r')
+                session_file = file(b_SESSION_FILE, 'r')
                 saved_session = pickle.load(session_file)
             except (IOError, EOFError):
-                self.log.info(_('Unable to load session from %(file)s') % \
-                        {'file': SESSION_FILE})
+                self.log.info(b_('Unable to load session from %(file)s') %
+                        {'file': b_SESSION_FILE})
             if session_file:
                 session_file.close()
 
@@ -113,24 +122,25 @@ class BaseClient(ProxyClient):
         :arg save: The dict of usernames to ids to save.
         '''
         # Make sure the directory exists
-        if not path.isdir(SESSION_DIR):
+        if not path.isdir(b_SESSION_DIR):
             try:
-                os.mkdir(SESSION_DIR, 0755)
+                os.mkdir(b_SESSION_DIR, 0755)
             except OSError, e:
-                self.log.warning(_('Unable to create %(dir)s: %(error)s') %
-                    {'dir': SESSION_DIR, 'error': str(e)})
+                self.log.warning(b_('Unable to create %(dir)s: %(error)s') %
+                    {'dir': b_SESSION_DIR, 'error': to_bytes(e)})
 
         try:
-            session_file = file(SESSION_FILE, 'w')
-            os.chmod(SESSION_FILE, stat.S_IRUSR | stat.S_IWUSR)
+            session_file = file(b_SESSION_FILE, 'w')
+            os.chmod(b_SESSION_FILE, stat.S_IRUSR | stat.S_IWUSR)
             pickle.dump(save, session_file)
             session_file.close()
         except Exception, e: # pylint: disable-msg=W0703
             # If we can't save the file, issue a warning but go on.  The
             # session just keeps you from having to type your password over
             # and over.
-            self.log.warning(_('Unable to write to session file %(session)s:' \
-                    ' %(error)s') % {'session': SESSION_FILE, 'error': str(e)})
+            self.log.warning(b_('Unable to write to session file %(session)s:'
+                    ' %(error)s') % {'session': b_SESSION_FILE, 'error':
+                        to_bytes(e)})
 
     def _get_session_id(self):
         '''Attempt to retrieve the session id from the filesystem.
@@ -151,7 +161,8 @@ class BaseClient(ProxyClient):
             self._session_id = ''
 
         if not self._session_id:
-            self.log.debug(_('No session cached for "%s"') % self.username)
+            self.log.debug(b_('No session cached for "%s"')
+                    % to_bytes(self.username))
 
         return self._session_id
 
@@ -201,7 +212,7 @@ class BaseClient(ProxyClient):
 
         :Returns: user's session cookie
         '''
-        warnings.warn(_('session_cookie is deprecated, use session_id'
+        warnings.warn(b_('session_cookie is deprecated, use session_id'
             ' instead'), DeprecationWarning, stacklevel=2)
         session_id = self.session_id
         if not session_id:
@@ -220,7 +231,7 @@ class BaseClient(ProxyClient):
         current user's cookie.  This allows us to retain cookies for
         multiple users.
         '''
-        warnings.warn(_('session_cookie is deprecated, use session_id'
+        warnings.warn(b_('session_cookie is deprecated, use session_id'
             ' instead'), DeprecationWarning, stacklevel=2)
         session_id = session_cookie.get(self.session_name, '')
         if session_id:
@@ -232,7 +243,7 @@ class BaseClient(ProxyClient):
 
         Delete the session cookie from the filesystem.
         '''
-        warnings.warn(_('session_cookie is deprecated, use session_id'
+        warnings.warn(b_('session_cookie is deprecated, use session_id'
             ' instead'), DeprecationWarning, stacklevel=2)
         del(self.session_id)
 
@@ -254,7 +265,8 @@ class BaseClient(ProxyClient):
             pass
         del(self.session_id)
 
-    def send_request(self, method, req_params=None, auth=False, **kwargs):
+    def send_request(self, method, req_params=None, file_params=None,
+            auth=False, retries=0, **kwargs):
         '''Make an HTTP request to a server method.
 
         The given method is called with any parameters set in req_params.  If
@@ -264,28 +276,41 @@ class BaseClient(ProxyClient):
         :arg method: Method to call on the server.  It's a url fragment that
             comes after the base_url set in __init__().
         :kwarg req_params: Extra parameters to send to the server.
+        :kwarg file_params: dict of files where the key is the name of the
+            file field used in the remote method and the value is the local
+            path of the file to be uploaded.  If you want to pass multiple
+            files to a single file field, pass the paths as a list of paths.
         :kwarg auth: If True perform auth to the server, else do not.
+        :kwarg retries: if we get an unknown or possibly transient error from
+            the server, retry this many times.  Setting this to a negative
+            number makes it try forever.  Defaults to zero, no retries.
+            number makes it try forever.  Default to use the :attr:`retries`
+            value set on the instance or in :meth:`__init__`.
+        :rtype: Bunch
         :returns: The data from the server
-        :rtype: DictContainer
+
+        .. versionchanged:: 0.3.21
+            * Return data as a Bunch instead of a DictContainer
+            * Add file_params to allow uploading files
         '''
         # Check for deprecated arguments.  This section can go once we hit 0.4
         if len(kwargs) >= 1:
             for arg in kwargs:
                 # If we have extra args, raise an error
                 if arg != 'input':
-                    raise TypeError(_('send_request() got an unexpected' \
-                            ' keyword argument "%s"') % arg)
+                    raise TypeError(b_('send_request() got an unexpected'
+                            ' keyword argument "%(arg)s"') % {'arg': to_bytes(arg)})
             if req_params:
                 # We don't want to allow input if req_params was already given
-                raise TypeError(_('send_request() got an unexpected keyword' \
+                raise TypeError(b_('send_request() got an unexpected keyword'
                         ' argument "input"'))
             if len(kwargs) > 1:
                 # We shouldn't get here
-                raise TypeError(_('send_request() got an unexpected keyword' \
+                raise TypeError(b_('send_request() got an unexpected keyword'
                         ' argument'))
 
             # Error checking over, set req_params to the value in input
-            warnings.warn(_('send_request(input) is deprecated.  Use' \
+            warnings.warn(b_('send_request(input) is deprecated.  Use'
                     ' send_request(req_params) instead'), DeprecationWarning,
                     stacklevel=2)
             req_params = kwargs['input']
@@ -297,13 +322,15 @@ class BaseClient(ProxyClient):
                 # Add the username and password and we're all set
                 auth_params['username'] = self.username
                 auth_params['password'] = self.password
+                if self.httpauth:
+                    auth_params['httpauth'] = self.httpauth
             else:
                 # No?  Check for session_id
                 if not self.session_id:
                     # Not enough information to auth
-                    raise AuthError(_('Auth was requested but no way to' \
-                            ' perform auth was given.  Please set username' \
-                            ' and password or session_id before calling' \
+                    raise AuthError(b_('Auth was requested but no way to'
+                            ' perform auth was given.  Please set username'
+                            ' and password or session_id before calling'
                             ' this function with auth=True'))
 
         # Remove empty params
@@ -313,7 +340,8 @@ class BaseClient(ProxyClient):
         # pylint: enable-msg=W0104
 
         session_id, data = super(BaseClient, self).send_request(method,
-                req_params = req_params, auth_params = auth_params)
+                req_params=req_params, file_params=file_params,
+                auth_params=auth_params, retries=retries)
         # In case the server returned a new session id to us
         if self.session_id != session_id:
             self.session_id = session_id

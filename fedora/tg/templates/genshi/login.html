@@ -80,7 +80,7 @@
   <li py:if="tg.identity.anonymous and not tg.identity.only_token"
     id="login-toolitem" class="toolitem">
     ${_('You are not logged in')}
-    <form action="${tg.url('/login')}" method="GET">
+    <form action="${tg.url('/login')}" method="POST">
       <input type="submit" value="${_('Login')}" class="button" />
     </form>
   </li>
@@ -93,7 +93,7 @@
   </li>
   <li py:if="not tg.identity.anonymous or tg.identity.only_token"
     id="login-toolitem" class="toolitem">
-    <form action="${tg.url('/logout')}" method="GET">
+    <form action="${tg.url('/logout')}" method="POST">
       <input type="submit" value="${_('Logout')}" class="button" />
     </form>
   </li>

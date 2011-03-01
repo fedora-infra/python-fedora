@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2008-2009  Ricky Zhou, Red Hat, Inc.
+# Copyright (C) 2008-2010  Ricky Zhou, Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
@@ -26,9 +26,12 @@ Provide a client module for talking to the Fedora Account System.
 import urllib
 import warnings
 
-from fedora.client import DictContainer, BaseClient, FasProxyClient, \
-        AppError, FedoraServiceError, FedoraClientError
-from fedora import __version__, _
+from bunch import Bunch, bunchify
+from kitchen.text.converters import to_bytes
+
+from fedora.client import AppError, BaseClient, FasProxyClient, \
+        FedoraClientError, FedoraServiceError
+from fedora import __version__, b_
 
 ### FIXME: To merge:
 # /usr/bin/fasClient from fas
@@ -172,8 +175,14 @@ class AccountSystem(BaseClient):
                 131739: 'gholms@fedoraproject.org',
                 # Tareq Al Jurf: taljurf.fedora@gmail.com
                 109863: 'taljurf@fedoraproject.org',
-		# Beth Lynn Eicher: bethlynneicher@gmail.com
-		148706: 'bethlynn@fedoraproject.org',
+                # Josh Kayse: jokajak@gmail.com
+                148243: 'jokajak@fedoraproject.org',
+                # Behdad Esfahbod: fedora@behdad.org
+                100102: 'behdad@fedoraproject.org',
+                # Daniel Bruno: danielbrunos@gmail.com
+                101608: 'dbruno@fedoraproject.org',
+                # Beth Lynn Eicher: bethlynneicher@gmail.com
+                148706: 'bethlynn@fedoraproject.org',
                 }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email
@@ -217,8 +226,9 @@ class AccountSystem(BaseClient):
         if request['success']:
             return request['group']
         else:
-            raise AppError(message=_('FAS server unable to retrieve group %s')
-                    % groupname, name='FASError')
+            raise AppError(message=b_('FAS server unable to retrieve group'
+                ' %(group)s') % {'group': to_bytes(groupname)},
+                name='FASError')
 
     def group_members(self, groupname):
         '''Return a list of people approved for a group.
@@ -233,11 +243,13 @@ class AccountSystem(BaseClient):
         role_type can be one of 'user', 'sponsor', or 'administrator'.
 
         .. versionadded:: 0.3.2
+        .. versionchanged:: 0.3.21
+            Return a Bunch instead of a DictContainer
         '''
         request = self.send_request('/group/dump/%s' %
                 urllib.quote(groupname), auth=True)
 
-        return [DictContainer(username=user[0], role_type=user[3])
+        return [bunchify(username=user[0], role_type=user[3])
                     for user in request['people']]
 
     ### People ###
@@ -255,7 +267,8 @@ class AccountSystem(BaseClient):
                         self.__bugzilla_email[person_id]
             else:
                 request['person']['bugzilla_email'] = request['person']['email']
-            # In the new FAS, membership info is returned separately
+            # In a devel version of FAS, membership info was returned separately
+            # This was later corrected (can remove this code at some point)
             if 'approved' in request:
                 request['person']['approved_memberships'] = request['approved']
             if 'unapproved' in request:
@@ -277,7 +290,8 @@ class AccountSystem(BaseClient):
                 person['bugzilla_email'] = self.__bugzilla_email[person['id']]
             else:
                 person['bugzilla_email'] = person['email']
-            # In the new FAS, membership info is returned separately
+            # In a devel version of FAS, membership info was returned separately
+            # This was later corrected (can remove this code at some point)
             if 'approved' in request:
                 request['person']['approved_memberships'] = request['approved']
             if 'unapproved' in request:
@@ -338,17 +352,21 @@ class AccountSystem(BaseClient):
             Note that for most users who access this data, many of these
             fields will be set to None due to security or privacy settings.
         :returns: a dict relating the key value to the fields.
+
+        .. versionchanged:: 0.3.21
+            Return a Bunch instead of a DictContainer
         '''
         # Make sure we have a valid key value
         if key not in ('id', 'username', 'email'):
-            raise KeyError(_('key must be one of "id", "username", or "email"'))
+            raise KeyError(b_('key must be one of "id", "username", or'
+                ' "email"'))
 
         if fields:
             fields = list(fields)
             for field in fields:
                 if field not in USERFIELDS:
-                    raise KeyError(_('%(field)s is not a valid field to filter')
-                            % {'field': field})
+                    raise KeyError(b_('%(field)s is not a valid field to'
+                        ' filter') % {'field': to_bytes(field)})
         else:
             fields = USERFIELDS
 
@@ -369,7 +387,7 @@ class AccountSystem(BaseClient):
         request = self.send_request('/user/list', req_params={'search': search,
             'fields': [f for f in fields if f != 'bugzilla_email']}, auth=True)
 
-        people = DictContainer()
+        people = Bunch()
         for person in request['people']:
             # Retrieve bugzilla_email from our list if necessary
             if 'bugzilla_email' in fields:
@@ -395,15 +413,18 @@ class AccountSystem(BaseClient):
 
         Returns a dict relating user IDs to human_name, email, username,
         and bugzilla email
+
+        .. versionchanged:: 0.3.21
+            Return a Bunch instead of a DictContainer
         '''
-        warnings.warn(_("people_by_id() is deprecated and will be removed in"
+        warnings.warn(b_("people_by_id() is deprecated and will be removed in"
             " 0.4.  Please port your code to use people_by_key(key='id',"
             " fields=['human_name', 'email', 'username', 'bugzilla_email'])"
             " instead"), DeprecationWarning, stacklevel=2)
 
         request = self.send_request('/json/user_id', auth=True)
         user_to_id = {}
-        people = DictContainer()
+        people = Bunch()
         for person_id, username in request['people'].items():
             person_id = int(person_id)
             # change userids from string back to integer
@@ -578,8 +599,8 @@ class AccountSystem(BaseClient):
             if request['success']:
                 return request['data']
             else:
-                raise AppError(message=_('FAS server unable to retrieve group'
-                    ' members'), name='FASError')
+                raise AppError(message=b_('FAS server unable to retrieve'
+                    ' group members'), name='FASError')
         except FedoraServiceError:
             raise
 
@@ -600,7 +621,7 @@ class AccountSystem(BaseClient):
             if request['success']:
                 return request['data']
             else:
-                raise AppError(message=_('FAS server unable to retrieve user'
+                raise AppError(message=b_('FAS server unable to retrieve user'
                     ' information'), name='FASError')
         except FedoraServiceError:
             raise

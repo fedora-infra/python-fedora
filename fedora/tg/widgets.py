@@ -25,7 +25,10 @@ Proof-of-concept Fedora TurboGears widgets
 import re
 import urllib2
 import feedparser
-import simplejson
+try:
+    import simplejson as json
+except ImportError:
+    import json as json
 
 from bugzilla import Bugzilla
 from turbogears.widgets import Widget
@@ -76,7 +79,7 @@ class FedoraMaintainerWidget(Widget):
         self.widget_id = widget_id
         page = urllib2.urlopen('https://admin.fedoraproject.org/pkgdb/' \
                 'users/packages/%s/?tg_format=json' % username)
-        self.packages = simplejson.load(page)['pkgs']
+        self.packages = json.load(page)['pkgs']
 
     def __json__(self):
         return {'id': self.widget_id, 'packages': self.packages}

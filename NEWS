@@ -3,8 +3,29 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 22 Apr 2010
+:Date: 28 Feb 2011
 :Version: 0.3.x
+
+--------
+0.3.21a1
+--------
+
+* Add support for uploading files in BaseClient and ProxyClient.
+* Add retry capability to BaseClient and ProxyClient.
+* Have identity and visit managers retry 3 times.
+* Fix some errors in the wsgi csrf middleware.
+* Fix wsgi csrf middleware to work with webob >= 1.0
+* Fix how we're using data from FasProxy.group_list() in the django auth
+  provider
+
+Internal Cleanups
+=================
+
+* Port to kitchen for things that have moved there.
+* Port from DictContainer to python-bunch
+* Add code to fallback to the stdlib json library so that simplejson is no
+  longer required
+
 
 ------
 0.3.20

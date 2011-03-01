@@ -28,22 +28,18 @@ This plugin provides integration with the Fedora Account System using
 
 from cherrypy import response
 from turbogears import config, identity
+from kitchen.text.converters import to_bytes
+from kitchen.pycompat24 import sets
+sets.add_builtin_set()
 
 from fedora.client import BaseClient, FedoraServiceError
 
-from fedora import _, __version__
+from fedora import b_, __version__
 
 import crypt
 
 import logging
 log = logging.getLogger('turbogears.identity.safasprovider')
-
-try:
-    # pylint: disable-msg=W0104
-    set, frozenset
-except NameError:
-    from sets import Set as set                 # pylint: disable-msg=W0622
-    from sets import ImmutableSet as frozenset  # pylint: disable-msg=W0622
 
 class JsonFasIdentity(BaseClient):
     '''
@@ -100,8 +96,8 @@ class JsonFasIdentity(BaseClient):
             self.visit_key = self.session_id
             response.simple_cookie[self.cookie_name] = self.visit_key
         log.debug('Leaving jsonfas send_request')
-        return super(JsonFasIdentity, self).send_request(method, req_params,
-                auth)
+        return super(JsonFasIdentity, self).send_request(method,
+                req_params=req_params, auth=auth)
 
     def _get_user(self):
         '''Retrieve information about the user from cache or network.'''
@@ -224,8 +220,8 @@ class JsonFasIdentityProvider(object):
             user = JsonFasIdentity(visit_key, username = user_name,
                     password = password)
         except FedoraServiceError, e:
-            log.warning(_('Error logging in %(user)s: %(error)s') % {
-                'user': user_name, 'error': e})
+            log.warning(b_('Error logging in %(user)s: %(error)s') % {
+                'user': to_bytes(user_name), 'error': to_bytes(e)})
             return None
 
         return user

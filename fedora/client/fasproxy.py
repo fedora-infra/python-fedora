@@ -27,7 +27,7 @@
 
 from fedora.client import AuthError, AppError
 from fedora.client.proxyclient import ProxyClient
-from fedora import __version__, _
+from fedora import __version__, b_
 
 import logging
 log = logging.getLogger(__name__)
@@ -64,7 +64,7 @@ class FasProxyClient(ProxyClient):
         if 'session_as_cookie' in kwargs and kwargs['session_as_cookie']:
             # No need to allow this in FasProxyClient as it's deprecated in
             # ProxyClient
-            raise TypeError(_('FasProxyClient() got an unexpected keyword'
+            raise TypeError(b_('FasProxyClient() got an unexpected keyword'
                 ' argument \'session_as_cookie\''))
         kwargs['session_as_cookie'] = False
         super(FasProxyClient, self).__init__(base_url, *args, **kwargs)
@@ -130,8 +130,9 @@ class FasProxyClient(ProxyClient):
 
         :arg auth_params: Auth information for a particular user.  For
             instance, this can be a username/password pair or a session_id.
-            Refer to fedora.client.proxyclient.ProxyClient.send_request for
-            all the legal values for this.
+            Refer to
+            :meth:`fedora.client.proxyclient.ProxyClient.send_request` for all
+            the legal values for this.
         :returns: a tuple of session_id and information about the user.
         :raises AuthError: if the auth_params do not give access
         '''
@@ -143,8 +144,9 @@ class FasProxyClient(ProxyClient):
 
         :arg auth_params: Auth information for a particular user.  For
             instance, this can be a username/password pair or a session_id.
-            Refer to fedora.client.proxyclient.ProxyClient.send_request for
-            all the legal values for this.
+            Refer to
+            :meth:`fedora.client.proxyclient.ProxyClient.send_request` for all
+            the legal values for this.
         :returns: a tuple of session_id and information about the user.
         :raises AppError: if the server returns an exception
         :raises AuthError: if the auth_params do not give access
@@ -152,7 +154,9 @@ class FasProxyClient(ProxyClient):
         request = self.send_request('/json/person_by_id',
                 req_params={'person_id': person_id}, auth_params=auth_params)
         if request[1]['success']:
-            # In the new FAS, membership info is returned separately
+            # In a devel version of FAS, membership info was returned separately
+            # This has been corrected in a later version
+            # Can remove this code at some point
             if 'approved' in request[1]:
                 request[1]['person']['approved_memberships'] = \
                         request[1]['approved']
@@ -169,8 +173,9 @@ class FasProxyClient(ProxyClient):
 
         :arg auth_params: Auth information for a particular user.  For
             instance, this can be a username/password pair or a session_id.
-            Refer to fedora.client.proxyclient.ProxyClient.send_request for
-            all the legal values for this.
+            Refer to
+            :meth:`fedora.client.proxyclient.ProxyClient.send_request` for all
+            the legal values for this.
         :returns: a tuple of session_id and information about groups.  The
             groups information is in two fields:
 

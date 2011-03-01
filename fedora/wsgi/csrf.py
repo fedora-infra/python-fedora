@@ -31,7 +31,14 @@ http://en.wikipedia.org/wiki/Cross-site_request_forgery
 
 import logging
 
+from kitchen.text.converters import to_bytes
 from webob import Request
+try:
+    # webob > 1.0
+    from webob.headers import ResponseHeaders
+except ImportError:
+    # webob < 1.0
+    from webob.headerdict import HeaderDict as ResponseHeaders
 from paste.httpexceptions import HTTPFound
 from paste.response import replace_header
 from repoze.who.interfaces import IMetadataProvider
@@ -43,7 +50,7 @@ except ImportError:
     from sha import sha as sha1
 
 from fedora.urlutils import update_qs
-from fedora import _
+from fedora import b_
 
 log = logging.getLogger(__name__)
 
@@ -114,7 +121,7 @@ class CSRFProtectionMiddleware(object):
         :token_env: The name of the token variable in the environ
         :auth_state: The environ key that will be set when we are logging in
         '''
-        log.info(_('Creating CSRFProtectionMiddleware'))
+        log.info(b_('Creating CSRFProtectionMiddleware'))
         self.application = application
         self.csrf_token_id = csrf_token_id
         self.clear_env = clear_env.split()
@@ -123,10 +130,11 @@ class CSRFProtectionMiddleware(object):
 
     def _clean_environ(self, environ):
         ''' Delete the ``keys`` from the supplied ``environ`` '''
-        log.debug(_('clean_environ(%s)') % self.clear_env)
+        log.debug(b_('clean_environ(%s)') % to_bytes(self.clear_env))
         for key in self.clear_env:
             if key in environ:
-                log.debug(_('Deleting %(key)s from environ') % {'key': key})
+                log.debug(b_('Deleting %(key)s from environ') %
+                    {'key': to_bytes(key)})
                 del(environ[key])
 
     def __call__(self, environ, start_response):
@@ -138,35 +146,36 @@ class CSRFProtectionMiddleware(object):
         user from the ``environ``, based on the ``clear_env`` setting.
         '''
         request = Request(environ)
-        log.debug(_('CSRFProtectionMiddleware(%(r_path)s)') %
-                {'r_path': request.path})
+        log.debug(b_('CSRFProtectionMiddleware(%(r_path)s)') %
+                {'r_path': to_bytes(request.path)})
 
         token = environ.get('repoze.who.identity', {}).get(self.csrf_token_id)
         csrf_token = environ.get(self.token_env)
 
         if token and csrf_token and token == csrf_token:
-            log.debug(_('User supplied CSRF token matches environ!'))
+            log.debug(b_('User supplied CSRF token matches environ!'))
         else:
             if not environ.get(self.auth_state):
-                log.debug(_('Clearing identity'))
+                log.debug(b_('Clearing identity'))
                 self._clean_environ(environ)
                 if csrf_token:
-                    log.warning(_('Invalid CSRF token.  User supplied'
+                    log.warning(b_('Invalid CSRF token.  User supplied'
                             ' (%(u_token)s) does not match what\'s in our'
                             ' environ (%(e_token)s)') %
-                            {'u_token': csrf_token, 'e_token': token})
+                            {'u_token': to_bytes(csrf_token),
+                            'e_token': to_bytes(token)})
 
         response = request.get_response(self.application)
 
         if environ.get(self.auth_state):
-            log.debug(_('CSRF_AUTH_STATE; rewriting headers'))
+            log.debug(b_('CSRF_AUTH_STATE; rewriting headers'))
             token = environ.get('repoze.who.identity', {})\
                     .get(self.csrf_token_id)
 
             loc = update_qs(response.location, {self.csrf_token_id: str(token)})
             response.location = loc
-            log.debug(_('response.location = %(r_loc)s') %
-                    {'r_loc': response.location})
+            log.debug(b_('response.location = %(r_loc)s') %
+                    {'r_loc': to_bytes(response.location)})
             environ[self.auth_state] = None
 
         return response(environ, start_response)
@@ -237,21 +246,22 @@ class CSRFMetadataProvider(object):
 
     def add_metadata(self, environ, identity):
         request = Request(environ)
-        log.debug(_('CSRFMetadataProvider.add_metadata(%(r_path)s)')
-                % {'r_path': request.path})
+        log.debug(b_('CSRFMetadataProvider.add_metadata(%(r_path)s)')
+                % {'r_path': to_bytes(request.path)})
 
         session_id = environ.get(self.auth_session_id)
         if not session_id:
             session_id = request.cookies.get(self.session_cookie)
-        log.debug(_('session_id = %(s_id)r') % {'s_id': session_id})
+        log.debug(b_('session_id = %(s_id)r') % {'s_id':
+                to_bytes(session_id)})
 
         if session_id and session_id != 'Set-Cookie:':
             token = sha1(session_id).hexdigest()
             identity.update({self.csrf_token_id: token})
-            log.debug(_('Identity updated with CSRF token'))
+            log.debug(b_('Identity updated with CSRF token'))
             path = self.strip_script(environ, request.path)
             if path == self.login_handler:
-                log.debug(_('Setting CSRF_AUTH_STATE'))
+                log.debug(b_('Setting CSRF_AUTH_STATE'))
                 environ[self.auth_state] = True
                 environ[self.token_env] = token
             else:
@@ -261,17 +271,24 @@ class CSRFMetadataProvider(object):
             if app:
                 # This occurs during login in some application configurations
                 if isinstance(app, HTTPFound) and environ.get(self.auth_state):
-                    log.debug(_('Got HTTPFound(302) from'
+                    log.debug(b_('Got HTTPFound(302) from'
                         ' repoze.who.application'))
-                    loc = update_qs(app.location(), {self.csrf_token_id:
+                    # What possessed people to make this a string or
+                    # a function?
+                    location = app.location
+                    if hasattr(location, '__call__'):
+                        location = location()
+                    loc = update_qs(location, {self.csrf_token_id:
                         str(token)})
 
-                    replace_header(app.headers, 'location', loc)
-                    log.debug(_('Altered headers: %(headers)s') % {'headers':
-                        str(app.headers)})
+                    headers = app.headers.items()
+                    replace_header(headers, 'location', loc)
+                    app.headers = ResponseHeaders(headers)
+                    log.debug(b_('Altered headers: %(headers)s') % {'headers':
+                        to_bytes(app.headers)})
         else:
-            log.warning(_('Invalid session cookie %(s_id)r, not setting CSRF'
-                ' token!') % {'s_id': session_id})
+            log.warning(b_('Invalid session cookie %(s_id)r, not setting CSRF'
+                ' token!') % {'s_id': to_bytes(session_id)})
 
     def extract_csrf_token(self, request):
         '''Extract and remove the CSRF token from a given
@@ -280,14 +297,16 @@ class CSRFMetadataProvider(object):
         csrf_token = None
 
         if self.csrf_token_id in request.GET:
-            log.debug(_("%(token)s in GET") % {'token': self.csrf_token_id})
+            log.debug(b_("%(token)s in GET") % {'token':
+                to_bytes(self.csrf_token_id)})
             csrf_token = request.GET[self.csrf_token_id]
             del(request.GET[self.csrf_token_id])
             request.query_string = '&'.join(['%s=%s' % (k, v) for k, v in
                                              request.GET.items()])
 
         if self.csrf_token_id in request.POST:
-            log.debug(_("%(token)s in POST") % {'token': self.csrf_token_id})
+            log.debug(b_("%(token)s in POST") % {'token':
+                to_bytes(self.csrf_token_id)})
             csrf_token = request.POST[self.csrf_token_id]
             del(request.POST[self.csrf_token_id])
 

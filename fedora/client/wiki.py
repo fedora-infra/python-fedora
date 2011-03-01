@@ -26,9 +26,12 @@ A Wiki Client
 '''
 
 from datetime import datetime, timedelta
-from fedora.client import BaseClient, AuthError
-from fedora import _
 import time
+
+from kitchen.text.converters import to_bytes
+
+from fedora.client import BaseClient, AuthError
+from fedora import _, b_
 
 MEDIAWIKI_DATEFORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
@@ -61,7 +64,8 @@ class Wiki(BaseClient):
                 'lgpassword': password,
                 })
         if 'lgtoken' not in data.get('login', {}):
-            raise AuthError(_('Login failed: %s') % data)
+            raise AuthError(b_('Login failed: %(data)s') %
+                    {'data':to_bytes(data)})
         #self.session_id = data['login']['lgtoken']
         #self.username = data['login']['lgusername']
         self.check_api_limits()
@@ -82,12 +86,12 @@ class Wiki(BaseClient):
     def print_recent_changes(self, days=7, show=10):
         now = datetime.utcnow()
         then = now - timedelta(days=days)
-        print _("From %(then)s to %(now)s") % {'then': then, 'now': now}
+        print _(u"From %(then)s to %(now)s") % {'then': then, 'now': now}
         changes = self.get_recent_changes(now=now, then=then)
         num_changes = len(changes)
-        print _("%d wiki changes in the past week") % num_changes
+        print _(u"%d wiki changes in the past week") % num_changes
         if num_changes == 500:
-            print _("""Warning: Number of changes reaches the API return limit.
+            print _(u"""Warning: Number of changes reaches the API return limit.
 You will not get the complete list of changes unless
 you run this script using a 'bot' account.""")
 
@@ -97,18 +101,18 @@ you run this script using a 'bot' account.""")
             users.setdefault(change['user'], []).append(change['title'])
             pages[change['title']] = pages.setdefault(change['title'], 0) + 1
 
-        print _('\n== Most active wiki users ==')
+        print _(u'\n== Most active wiki users ==')
         for user, changes in sorted(users.items(),
                                     cmp=lambda x, y: cmp(len(x[1]), len(y[1])),
                                     reverse=True)[:show]:
-            print ' %-50s %d' % (('%s' % user).ljust(50, '.'),
+            print u' %-50s %d' % (('%s' % user).ljust(50, '.'),
                                   len(changes))
 
-        print _('\n== Most edited pages ==')
+        print _(u'\n== Most edited pages ==')
         for page, num in sorted(pages.items(),
                                 cmp=lambda x, y: cmp(x[1], y[1]),
                                 reverse=True)[:show]:
-            print ' %-50s %d' % (('%s' % page).ljust(50, '.'), num)
+            print u' %-50s %d' % (('%s' % page).ljust(50, '.'), num)
 
     def fetch_all_revisions(self, start=1, flags=True, timestamp=True,
                             user=True, size=False, comment=True, content=False,

@@ -36,33 +36,29 @@ except ImportError:
 from turbogears import config, identity
 from turbogears.identity import set_login_attempted
 import cherrypy
+from kitchen.pycompat24 import sets
+from kitchen.text.converters import to_bytes
+
+sets.add_builtin_set()
 
 from fedora.client import BaseClient, AccountSystem, FedoraServiceError
-from fedora import _, __version__
+from fedora import b_, __version__
 
 import logging
 log = logging.getLogger('turbogears.identity.jsonfasprovider')
-
-try:
-    # pylint: disable-msg=W0104
-    # :W0104: we need to figure out if we have a native set type
-    set, frozenset
-except NameError:
-    # :W0622: We need a set type on earlier pythons.
-    from sets import Set as set # pylint: disable-msg=W0622
-    from sets import ImmutableSet as frozenset # pylint: disable-msg=W0622
 
 if config.get('identity.ssl', False):
     fas_user = config.get('fas.username', None)
     fas_password = config.get('fas.password', None)
     if not (fas_user and fas_password):
         raise identity.IdentityConfigurationException(
-                _('Cannot enable ssl certificate auth via identity.ssl without'
-                ' setting fas.usernamme and fas.password for authorization'))
+                b_('Cannot enable ssl certificate auth via identity.ssl'
+                    ' without setting fas.usernamme and fas.password for'
+                    ' authorization'))
     __url = config.get('fas.url', None)
     if __url:
         fas = AccountSystem(__url, username=config.get('fas.username'),
-                password=config.get('fas.password'))
+                password=config.get('fas.password'), retries=3)
 
 
 class JsonFasIdentity(BaseClient):
@@ -98,7 +94,8 @@ class JsonFasIdentity(BaseClient):
         super(JsonFasIdentity, self).__init__(self.fas_url,
                 useragent=self.useragent, debug=debug,
                 username=username, password=password,
-                session_id=session_id, cache_session=self.cache_session)
+                session_id=session_id, cache_session=self.cache_session,
+                retries=3)
 
         if self.debug:
             import inspect
@@ -124,8 +121,8 @@ class JsonFasIdentity(BaseClient):
             self.visit_key = self.session_id
             cherrypy.response.simple_cookie[self.cookie_name] = self.visit_key
         self.log.debug('leaving jsonfas send_request')
-        return super(JsonFasIdentity, self).send_request(method, req_params,
-                auth)
+        return super(JsonFasIdentity, self).send_request(method,
+                req_params=req_params, auth=auth, retries=3)
 
     def __retrieve_user(self):
         '''Attempt to load the user from the visit_key.
@@ -152,8 +149,8 @@ class JsonFasIdentity(BaseClient):
             except Exception, e: # pylint: disable-msg=W0703
                 # :W0703: Any errors have to result in no user being set.  The
                 # rest of the framework doesn't know what to do otherwise.
-                self.log.warning(_('jsonfasprovider, ssl, returned errors'
-                    ' from send_request: %s') % e)
+                self.log.warning(b_('jsonfasprovider, ssl, returned errors'
+                    ' from send_request: %s') % to_bytes(e))
                 person = None
             self._retrieved_user = person or None
             return self._retrieved_user
@@ -163,8 +160,8 @@ class JsonFasIdentity(BaseClient):
         except Exception, e: # pylint: disable-msg=W0703
             # :W0703: Any errors have to result in no user being set.  The rest
             # of the framework doesn't know what to do otherwise.
-            self.log.warning(_('jsonfasprovider returned errors from'
-                ' send_request: %s') % e)
+            self.log.warning(b_('jsonfasprovider returned errors from'
+                ' send_request: %s') % to_bytes(e))
             return None
         # pylint: enable-msg=W0702
 
@@ -386,8 +383,8 @@ class JsonFasIdentityProvider(object):
             user = JsonFasIdentity(visit_key, username=user_name,
                     password=password, using_ssl=using_ssl)
         except FedoraServiceError, e:
-            self.log.warning(_('Error logging in %(user)s: %(error)s') % {
-                'user': user_name, 'error': e})
+            self.log.warning(b_('Error logging in %(user)s: %(error)s') % {
+                'user': to_bytes(user_name), 'error': to_bytes(e)})
             return None
 
         return user

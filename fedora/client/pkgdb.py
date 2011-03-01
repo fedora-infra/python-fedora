@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2008-2010  Red Hat, Inc.
+# Copyright (C) 2008-2011  Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
@@ -21,6 +21,7 @@
 .. moduleauthor:: Toshio Kuratomi <toshio@fedoraproject.org>
 .. moduleauthor:: Mike Watters <valholla@fedoraproject.org>
 .. moduleauthor:: Dmitry Kolesov <kolesovdv@fedoraproject.org>
+.. moduleauthor:: Frank Chiulli <fchiulli@fedoraproject.org>
 
 .. versionadded:: 0.3.6
    Merge from CLI pkgdb-client
@@ -28,12 +29,17 @@
 .. data:: COLLECTIONMAP
 
     Maps short names to Collections.  For instance, FC => Fedora
-'''
 
-import simplejson
+'''
 import warnings
 
-from fedora import __version__, _
+from kitchen.text.converters import to_bytes
+try:
+    import simplejson as json
+except ImportError:
+    import json as json
+
+from fedora import __version__, b_
 from fedora.client import BaseClient, FedoraClientError, AppError
 
 COLLECTIONMAP = {'F': 'Fedora',
@@ -62,6 +68,11 @@ class PackageDBError(FedoraClientError):
 # need to be changed.
 
 class PackageDB(BaseClient):
+    '''
+
+    .. versionchanged:: 0.3.21
+        Added :meth:`PackageDB.add_comaintainers`
+    '''
 
     def __init__(self, base_url='https://admin.fedoraproject.org/pkgdb/',
             *args, **kwargs):
@@ -114,7 +125,10 @@ class PackageDB(BaseClient):
             Allowed branches are listed in :data:`COLLECTIONMAP`
         :raises AppError: If the server returns an exceptiom
         :returns: Package ownership information
-        :rtype: fedora.client.DictContainer
+        :rtype: Bunch
+
+        .. versionchanged:: 0.3.21
+            Return Bunch instead of DictContainer
         '''
         data = None
         if branch:
@@ -179,9 +193,9 @@ class PackageDB(BaseClient):
         # See if we have the information to
         # create it
         if not owner:
-            raise AppError(name='AppError', message=_('We do not have '
+            raise AppError(name='AppError', message=b_('We do not have '
                     'enough information to create package %(pkg)s. '
-                    'Need version owner.') % {'pkg': pkg})
+                    'Need version owner.') % {'pkg': to_bytes(pkg)})
 
         data = {'owner': owner, 'summary': description}
         # This call creates the package and an initial branch for
@@ -190,17 +204,17 @@ class PackageDB(BaseClient):
             % pkg, auth=True, req_params=data)
         if 'status' in response and not response['status']:
             raise AppError(name='PackageDBError', message=
-                _('PackageDB returned an error creating %(pkg)s:'
-                ' %(msg)s') % {'pkg': pkg, 'msg': response['message']})
-            
+                b_('PackageDB returned an error creating %(pkg)s:' ' %(msg)s')
+                % {'pkg': to_bytes(pkg), 'msg': to_bytes(response['message'])})
+
         if cc_list:
-            data['ccList'] = simplejson.dumps(cc_list)
+            data['ccList'] = json.dumps(cc_list)
         if comaintainers:
-            data['comaintList'] = simplejson.dumps(comaintainers)
+            data['comaintList'] = json.dumps(comaintainers)
 
         # Parse the groups information
         if groups:
-            data['groups'] = simplejson.dumps(groups)
+            data['groups'] = json.dumps(groups)
 
         # Parse the Branch abbreviations into collections
         if branches:
@@ -213,9 +227,9 @@ class PackageDB(BaseClient):
                     'edit_package/%s' % pkg, auth=True, req_params=data)
             if 'status' in response and not response['status']:
                 raise AppError(name='PackageDBError', 
-                    message=_('Unable to save all information for'
-                        ' %(pkg)s: %(msg)s') % {'pkg': pkg,
-                        'msg': response['message']})
+                    message=b_('Unable to save all information for'
+                        ' %(pkg)s: %(msg)s') % {'pkg': to_bytes(pkg), 'msg':
+                            to_bytes(response['message'])})
 
     def edit_package(self, pkg, owner=None, description=None,
             branches=None, cc_list=None, comaintainers=None, groups=None):
@@ -252,13 +266,13 @@ class PackageDB(BaseClient):
         if description:
             data['summary'] = description
         if cc_list:
-            data['ccList'] = simplejson.dumps(cc_list)
+            data['ccList'] = json.dumps(cc_list)
         if comaintainers:
-            data['comaintList'] = simplejson.dumps(comaintainers)
+            data['comaintList'] = json.dumps(comaintainers)
 
         # Parse the groups information
         if groups:
-            data['groups'] = simplejson.dumps(groups)
+            data['groups'] = json.dumps(groups)
 
         # Parse the Branch abbreviations into collections
         if branches:
@@ -269,9 +283,10 @@ class PackageDB(BaseClient):
         response = self.send_request('/acls/dispatcher/edit_package/%s'
                 % pkg, auth=True, req_params=data)
         if 'status' in response and not response['status']:
-            raise AppError(name='PackageDBError', message=_('Unable to save'
-                ' all information for %(pkg)s: %(msg)s') % {'pkg': pkg,
-                    'msg': response['message']})
+            raise AppError(name='PackageDBError', message=b_('Unable to save'
+                ' all information for %(pkg)s: %(msg)s') %
+                    {'pkg': to_bytes(pkg), 'msg':
+                        to_bytes(response['message'])})
 
     def canonical_branch_name(self, branch):
         '''Change a branch abbreviation into a name and version.
@@ -292,7 +307,7 @@ class PackageDB(BaseClient):
         #try:
         #    collection = self.branches[branch]
         #except KeyError:
-        #    raise PackageDBError(_('Collection %(branch)s does not exist in'
+        #    raise PackageDBError(b_('Collection %(branch)s does not exist in'
         #        ' the packagedb') % {'branch': branch})
         #return collection['name'], collection['version']
 
@@ -304,9 +319,9 @@ class PackageDB(BaseClient):
             try:
                 collection = COLLECTIONMAP[collection]
             except KeyError:
-                raise PackageDBError(_('Collection abbreviation'
+                raise PackageDBError(b_('Collection abbreviation'
                         ' %(collection)s is unknown.  Use F, FC, EL, or OLPC')
-                        % {'collection': collection})
+                        % {'collection': to_bytes(collection)})
 
         return collection, version
 
@@ -322,27 +337,29 @@ class PackageDB(BaseClient):
         :kwarg collection: old/deprecated argument; use collctn_name
         :kward collection_ver: old/deprecated argument; use collctn_ver
         :raises AppError: If the server returns an error
-        :rtype: DictContainer
+        :rtype: Bunch
         :return: dict of ownership information for the package
 
         .. versionchanged:: 0.3.17
             Rename collection and collection_ver to collctn_name and collctn_ver
+        .. versionchanged:: 0.3.21
+            Return Bunch instead of DictContainer
         '''
         if (collctn_name and collection) or (collctn_ver and collection_ver):
-            warnings.warn(_('collection and collection_ver are deprecated'
+            warnings.warn(b_('collection and collection_ver are deprecated'
                 ' names for collctn_name and collctn_ver respectively.'
                 '  Ignoring the values given in them.'), DeprecationWarning,
                 stacklevel=2)
 
         if collection and not collctn_name:
-            warnings.warn(_('collection has been renamed to collctn_name.\n'
+            warnings.warn(b_('collection has been renamed to collctn_name.\n'
                 'Please start using the new name.  collection will go '
                 'away in 0.4.x.'), DeprecationWarning, stacklevel=2)
             collctn_name = collection
 
         if collection_ver and not collctn_ver:
-            warnings.warn(_('collection_ver has been renamed to collctn_ver.\n'
-                'Please start using the new name.  collection_ver will go '
+            warnings.warn(b_('collection_ver has been renamed to collctn_ver.'
+                '\nPlease start using the new name.  collection_ver will go '
                 'away in 0.4.x.'), DeprecationWarning, stacklevel=2)
             collctn_ver = collection_ver
 
@@ -378,13 +395,13 @@ class PackageDB(BaseClient):
             Rename collectn_list to collctn_list
         '''
         if (collctn_list and collectn_list):
-            warnings.warn(_('collectn_list is a deprecated name for'
+            warnings.warn(b_('collectn_list is a deprecated name for'
                     ' collctn_list.\nIgnoring the value of collectn_list.'),
                     DeprecationWarning, stacklevel=2)
 
         if collectn_list and not collctn_list:
-            warnings.warn(_('collectn_list has been renamed to collctn_list.\n'
-                    'Please start using the new name.  collectn_list will go'
+            warnings.warn(b_('collectn_list has been renamed to collctn_list.'
+                    '\nPlease start using the new name.  collectn_list will go'
                     ' away in 0.4.x.'), DeprecationWarning, stacklevel=2)
             collctn_list = collectn_list
 
@@ -457,12 +474,12 @@ class PackageDB(BaseClient):
             Rename collectn to collctn
         '''
         if (collctn and collectn):
-            warnings.warn(_('collectn is a deprecated name for'
+            warnings.warn(b_('collectn is a deprecated name for'
                     ' collctn.\nIgnoring the value of collectn.'),
                     DeprecationWarning, stacklevel=2)
 
         if collectn and not collctn:
-            warnings.warn(_('collectn has been renamed to collctn.\n'
+            warnings.warn(b_('collectn has been renamed to collctn.\n'
                     'Please start using the new name.  collectn will go'
                     ' away in 0.4.x.'), DeprecationWarning, stacklevel=2)
             collctn = collectn
@@ -472,8 +489,8 @@ class PackageDB(BaseClient):
             try:
                 collctn_id = self.branches[collctn]['id']
             except KeyError:
-                raise PackageDBError(_('Collection shortname %(collctn)s'
-                    ' is unknown.') % {'collctn': collctn})
+                raise PackageDBError(b_('Collection shortname %(collctn)s'
+                    ' is unknown.') % {'collctn': to_bytes(collctn)})
             data = self.send_request('/collections/name/%s/' % collctn, params)
         else:
             data = self.send_request('/acls/list/*', params)
@@ -489,8 +506,8 @@ class PackageDB(BaseClient):
             data[pkg][branch].people
             data[pkg][branch].groups
 
-        :rtype: DictContainer
-        :returns: `DictContainer` representing the vcs acls for every person.
+        :rtype: Bunch
+        :returns: `Bunch` representing the vcs acls for every person.
             It looks like this: data[pkg][branch]['commit'].people list of
             users who can commit to the package.  Example::
 
@@ -500,6 +517,8 @@ class PackageDB(BaseClient):
                 ['provenpackager']
 
         .. versionadded:: 0.3.15
+        .. versionchanged:: 0.3.21
+            Return Bunch instead of DictContainer
         '''
         data = self.send_request('/lists/vcs')
         if 'exc' in data:
@@ -510,8 +529,8 @@ class PackageDB(BaseClient):
     def get_bugzilla_acls(self):
         '''Return the package attributes used by bugzilla.
 
-        :rtype: DictContainer
-        :returns: `DictContainer` contains information needed to setup bugzilla
+        :rtype: Bunch
+        :returns: `Bunch` contains information needed to setup bugzilla
             for every collection.  It looks like this:
             data[collctn][pkg][attribute] where attribute is one of:
             :owner: FAS username for the owner
@@ -532,6 +551,8 @@ class PackageDB(BaseClient):
                 ['Fedora OLPC', 'Fedora', 'Fedora EPEL']
 
         .. versionadded:: 0.3.15
+        .. versionchanged:: 0.3.21
+            Return Bunch instead of DictContainer
         '''
         data = self.send_request('/lists/bugzilla')
         if 'exc' in data:
@@ -553,11 +574,13 @@ class PackageDB(BaseClient):
             List of roles that the user must have the acls for in order to be
             included.  Valid roles are: owner, comaintainer, committer,
             bzwatcher, and vcswatcher
-        :rtype: DictContainer
-        :returns: `DictContainer` keyed on package name.  Each entry has a list
+        :rtype: Bunch
+        :returns: `Bunch` keyed on package name.  Each entry has a list
             of people to be notified for this package.
 
         .. versionadded:: 0.3.15
+        .. versionchanged:: 0.3.21
+            Return Bunch instead of DictContainer
         '''
         method = '/lists/notify' 
         if collctn_name:
@@ -579,11 +602,13 @@ class PackageDB(BaseClient):
             retrieve packages which are marked critpath in any of the
             collections.  Defaults to retrieving critpath packages in all
             non-EOL releases
-        :rtype: DictContainer
+        :rtype: Bunch
         :returns: Keys of the returned dict are collection simple names.  The
             values are lists of package names that are marked critpath
 
         .. versionadded:: 0.3.17
+        .. versionchanged:: 0.3.21
+            Return Bunch instead of DictContainer
         '''
         if collctn_list:
             params = {'collctn_list': collctn_list}
@@ -621,3 +646,28 @@ class PackageDB(BaseClient):
 
         self.send_request('/acls/dispatcher/set_critpath', req_params=params,
                 auth=True)
+
+    def add_comaintainers(self, maintainer, comaintainers, pkg_pattern, 
+                          collectn_name, collectn_ver=None):
+        '''Add comaintainers to all packagelistings that the maintainer either
+        is the owner or has approveacls on.  Then email comaintainers/owners
+        on those packages that the maintainer has changed the acls.
+                        
+        :arg maintainer: the maintainer's username
+        :arg comaintainers: a list of new comaintainers
+        :arg pkg_pattern: a simple pattern for package names
+        :arg collectn_name: limit packages to branches for this distribution.
+        :kwarg collectn_ver: If given, limit information to this
+            particular version of a distribution.
+
+        .. versionadded:: 0.3.21
+        '''
+
+        params = {'maintainer': maintainer, 'comaintainers': comaintainers,
+                  'pkg_pattern': pkg_pattern, 'collectn_name': collectn_name}
+        if collectn_ver:
+            params['collectn_ver'] = collectn_ver
+
+        return self.send_request('/massacls/add_comaintainers',
+                                 req_params=params, auth=True)
+

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2009  Red Hat, Inc.
+# Copyright (C) 2009-2010  Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
@@ -28,19 +28,26 @@ import urllib
 import httplib
 import pycurl
 import logging
-import simplejson
+import time
 import warnings
 from urlparse import urljoin
+
+try:
+    import simplejson as json
+except ImportError:
+    import json as json
 
 try:
     from hashlib import sha1 as sha_constructor
 except ImportError:
     from sha import new as sha_constructor
 
-from fedora import __version__
-from fedora import _
+from bunch import bunchify
+from kitchen.iterutils import isiterable
+from kitchen.text.converters import to_bytes
 
-from fedora.client import AuthError, ServerError, AppError, DictContainer
+from fedora import __version__, b_
+from fedora.client import AppError, AuthError, ServerError
 
 log = logging.getLogger(__name__)
 
@@ -69,11 +76,49 @@ class ProxyClient(object):
 
     If you want something that can manage one user's connection to a Fedora
     Service, then look into using BaseClient instead.
+
+    This class has several attributes.  These may be changed after
+    instantiation however, please note that this class is intended to be
+    threadsafe.  Changing these values when another thread may affect more
+    than just the thread that you are making the change in.  (For instance,
+    changing the debug option could cause other threads to start logging debug
+    messages in the middle of a method.)
+
+    .. attribute:: base_url
+        Initial portion of the url to contact the server.  It is highly
+        recommended not to change this value unless you know that no other
+        threads are accessing this :class:`ProxyClient instance.
+
+    .. attribute:: useragent
+        Changes the useragent string that is reported to the web server.
+
+    .. attribute:: session_name
+        Name of the cookie that holds the authentication value.
+
+    .. attribute:: session_as_cookie
+        If :data:`True`, then the session information is saved locally as
+        a cookie.  This is here for backwards compatibility.  New code should
+        set this to :data:`False` when constructing the :class:`ProxyClient`.
+
+    .. attribute:: debug
+        If :data:`True`, then more verbose logging is performed to aid in
+        debugging issues.
+
+    .. attribute:: insecure
+        If :data:`True` then the connection to the server is not checked to be
+        sure that any SSL certificate information is valid.  That means that
+        a remote host can lie about who it is.  Useful for development but
+        should not be used in production code.
+
+    .. attribute:: retries
+        Setting this to a positive integer will retry failed requests to the
+        web server this many times.  Setting to a negative integer will retry
+        forever.
     '''
     log = log
 
     def __init__(self, base_url, useragent=None, session_name='tg-visit',
-            session_as_cookie=True, debug=False, insecure=False):
+            session_as_cookie=True, debug=False, insecure=False, retries=0):
         '''Create a client configured for a particular service.
 
         :arg base_url: Base of every URL used to contact the server
@@ -91,6 +136,10 @@ class ProxyClient(object):
             possible against the `BaseClient`. You might turn this option on
             for testing against a local version of a server with a self-signed
             certificate but it should be off in production.
+        :kwarg retries: if we get an unknown or possibly transient error from
+            the server, retry this many times.  Setting this to a negative
+            number makes it try forever.  Defaults to zero, no retries.
+
         '''
         # Setup our logger
         self._log_handler = logging.StreamHandler()
@@ -99,7 +148,7 @@ class ProxyClient(object):
         self._log_handler.setFormatter(format)
         self.log.addHandler(self._log_handler)
 
-        self.log.debug(_('proxyclient.__init__:entered'))
+        self.log.debug(b_('proxyclient.__init__:entered'))
         if base_url[-1] != '/':
             base_url = base_url +'/'
         self.base_url = base_url
@@ -108,13 +157,14 @@ class ProxyClient(object):
         self.session_name = session_name
         self.session_as_cookie = session_as_cookie
         if session_as_cookie:
-            warnings.warn(_('Returning cookies from send_request() is'
+            warnings.warn(b_('Returning cookies from send_request() is'
                 ' deprecated and will be removed in 0.4.  Please port your'
                 ' code to use a session_id instead by calling the ProxyClient'
                 ' constructor with session_as_cookie=False'),
                 DeprecationWarning, stacklevel=2)
         self.insecure = insecure
-        self.log.debug(_('proxyclient.__init__:exited'))
+        self.retries = retries or 0
+        self.log.debug(b_('proxyclient.__init__:exited'))
 
     def __get_debug(self):
         '''Return whether we have debug logging turned on.
@@ -143,7 +193,8 @@ class ProxyClient(object):
     errors.
     ''')
 
-    def send_request(self, method, req_params=None, auth_params=None):
+    def send_request(self, method, req_params=None, auth_params=None,
+            file_params=None, retries=None):
         '''Make an HTTP request to a server method.
 
         The given method is called with any parameters set in ``req_params``.
@@ -168,13 +219,25 @@ class ProxyClient(object):
                 for the server
             :username: Username to send to the server
             :password: Password to use with username to send to the server
+            :httpauth: If set to ``basic`` then use HTTP Basic Authentication
+                to send the username and password to the server.  This may be
+                extended in the future to support other httpauth types than
+                ``basic``.
 
             Note that cookie can be sent alone but if one of username or
             password is set the other must as well.  Code can set all of these
             if it wants and all of them will be sent to the server.  Be careful
             of sending cookies that do not match with the username in this
             case as the server can decide what to do in this case.
-
+        :kwarg file_params: dict of files where the key is the name of the
+            file field used in the remote method and the value is the local
+            path of the file to be uploaded.  If you want to pass multiple
+            files to a single file field, pass the paths as a list of paths.
+        :kwarg retries: if we get an unknown or possibly transient error from
+            the server, retry this many times.  Setting this to a negative
+            number makes it try forever.  Defaults to zero, no retries.
+            number makes it try forever.  Default to use the :attr:`retries`
+            value set on the instance or in :meth:`__init__`.
         :returns: If ProxyClient is created with session_as_cookie=True (the
             default), a tuple of session cookie and data from the server.
             If ProxyClient was created with session_as_cookie=False, a tuple
@@ -184,8 +247,11 @@ class ProxyClient(object):
         .. versionchanged:: 0.3.17
             No longer send tg_format=json parameter.  We rely solely on the
             Accept: application/json header now.
+        .. versionchanged:: 0.3.21
+            * Return data as a Bunch instead of a DictContainer
+            * Add file_params to allow uploading files
         '''
-        self.log.debug(_('proxyclient.send_request: entered'))
+        self.log.debug(b_('proxyclient.send_request: entered'))
         # Check whether we need to authenticate for this request
         session_id = None
         username = None
@@ -194,7 +260,7 @@ class ProxyClient(object):
             if 'session_id' in auth_params:
                 session_id = auth_params['session_id']
             elif 'cookie' in auth_params:
-                warnings.warn(_('Giving a cookie to send_request() to'
+                warnings.warn(b_('Giving a cookie to send_request() to'
                 ' authenticate is deprecated and will be removed in 0.4.'
                 ' Please port your code to use session_id instead.'),
                 DeprecationWarning, stacklevel=2)
@@ -204,12 +270,12 @@ class ProxyClient(object):
                 username = auth_params['username']
                 password = auth_params['password']
             elif 'username' in auth_params or 'password' in auth_params:
-                raise AuthError(_('username and password must both be set in'
+                raise AuthError(b_('username and password must both be set in'
                         ' auth_params'))
             if not (session_id or username):
-                raise AuthError(_('No known authentication methods specified:'
-                        ' set "cookie" in auth_params or set both username and'
-                        ' password in auth_params'))
+                raise AuthError(b_('No known authentication methods'
+                    ' specified: set "cookie" in auth_params or set both'
+                    'username and password in auth_params'))
 
         # urljoin is slightly different than os.path.join().  Make sure method
         # will work with it.
@@ -218,7 +284,7 @@ class ProxyClient(object):
         url = urljoin(self.base_url, urllib.quote(method))
 
         response = _PyCurlData() # The data we get back from the server
-        data = None     # decoded JSON via simplejson.load()
+        data = None     # decoded JSON via json.load()
 
         request = pycurl.Curl()
         request.setopt(pycurl.URL, url)
@@ -240,6 +306,25 @@ class ProxyClient(object):
                 'Accept: application/json']
         request.setopt(pycurl.HTTPHEADER, headers)
 
+        # Files to upload
+        if file_params:
+            # pycurl wants files to be uploaded in a specific format.  That
+            # format is:
+            #
+            # [(file form field name, [(FORM_FILE, 'file local path'), ]),
+            #  (file form field name2, [(FORM_FILE, 'file2 local path'), ])
+            # ]
+            file_data = []
+            for field_name, field_value in file_params.iteritems():
+                files = []
+                if isiterable(field_value):
+                    for filename in field_value:
+                        files.append((pycurl.FORM_FILE, filename))
+                else:
+                    files = [(pycurl.FORM_FILE, field_value)]
+                file_data.append((field_name, files))
+            request.setopt(pycurl.HTTPPOST, file_data)
+
         # If we have a session_id, send it
         if session_id:
             # Anytime the session_id exists, send it so that visit tracking
@@ -253,43 +338,71 @@ class ProxyClient(object):
             token = sha_constructor(session_id)
             complete_params.update({'_csrf_token': token.hexdigest()})
         if username and password:
-            # Adding this to the request data prevents it from being logged by
-            # apache.
-            complete_params.update({'user_name': username,
-                    'password': password, 'login': 'Login'})
+            if auth_params.get('httpauth', '').lower() == 'basic':
+                # HTTP Basic auth login
+                userpwd = '%s:%s' % (username, password)
+                request.setopt(pycurl.HTTPAUTH, pycurl.HTTPAUTH_BASIC)
+                request.setopt(pycurl.USERPWD, userpwd)
+            else:
+                # TG login
+                # Adding this to the request data prevents it from being logged by
+                # apache.
+                complete_params.update({'user_name': username,
+                        'password': password, 'login': 'Login'})
 
         req_data = None
         if complete_params:
+            # set None params to empty string otherwise the string 'None' gets
+            # sent.
+            for i in complete_params.iteritems():
+                if i[1] is None:
+                    complete_params[i[0]] = ''
             req_data = urllib.urlencode(complete_params, doseq=True)
             request.setopt(pycurl.POSTFIELDS, req_data)
 
         # If debug, give people our debug info
-        self.log.debug(_('Creating request %(url)s') % {'url': url})
-        self.log.debug(_('Headers: %(header)s') % {'header': headers})
+        self.log.debug(b_('Creating request %(url)s') %
+                {'url': to_bytes(url)})
+        self.log.debug(b_('Headers: %(header)s') %
+                {'header': to_bytes(headers, nonstring='simplerepr')})
         if self.debug and req_data:
             debug_data = re.sub(r'(&?)password[^&]+(&?)',
                     '\g<1>password=xxxxxxx\g<2>', req_data)
-            self.log.debug(_('Data: %(data)s') % {'data': debug_data})
+            self.log.debug(b_('Data: %(data)s') %
+                    {'data': to_bytes(debug_data)})
 
-        # run the request
-        request.perform()
+        num_tries = 0
+        if retries is None:
+            retries = self.retries
+        while True:
+            # run the request
+            request.perform()
 
-        # Check for auth failures
-        # Note: old TG apps returned 403 Forbidden on authentication failures.
-        # Updated apps return 401 Unauthorized
-        # We need to accept both until all apps are updated to return 401.
-        http_status = request.getinfo(pycurl.HTTP_CODE)
-        if http_status in (401, 403):
-            # Wrong username or password
-            self.log.debug(_('Authentication failed logging in'))
-            raise AuthError(_('Unable to log into server.  Invalid'
-                    ' authentication tokens.  Send new username and password'))
-        elif http_status >= 400:
-            try:
-                msg = httplib.responses[http_status]
-            except (KeyError, AttributeError):
-                msg = _('Unknown HTTP Server Response')
-            raise ServerError(url, http_status, msg)
+            # Check for auth failures
+            # Note: old TG apps returned 403 Forbidden on authentication failures.
+            # Updated apps return 401 Unauthorized
+            # We need to accept both until all apps are updated to return 401.
+            http_status = request.getinfo(pycurl.HTTP_CODE)
+            if http_status in (401, 403):
+                # Wrong username or password
+                self.log.debug(b_('Authentication failed logging in'))
+                raise AuthError(b_('Unable to log into server.  Invalid'
+                        ' authentication tokens.  Send new username and password'))
+            elif http_status >= 400:
+                if retries < 0 or num_tries < retries:
+                    # Retry the request
+                    num_tries += 1
+                    self.log.debug(b_('Attempt #%(try)s failed') % {'try': num_tries})
+                    time.sleep(0.5)
+                    continue
+                # Fail and raise an error
+                try:
+                    msg = httplib.responses[http_status]
+                except (KeyError, AttributeError):
+                    msg = b_('Unknown HTTP Server Response')
+                raise ServerError(url, http_status, msg)
+            # Successfully returned data
+            break
 
         # In case the server returned a new session cookie to us
         new_session = ''
@@ -305,12 +418,12 @@ class ProxyClient(object):
         json_string = response.data
 
         try:
-            data = simplejson.loads(json_string)
+            data = json.loads(json_string)
         except ValueError, e:
             # The response wasn't JSON data
-            raise ServerError(url, http_status, _('Error returned from'
-                    ' simplejson while processing %(url)s: %(err)s') %
-                    {'url': url, 'err': str(e)})
+            raise ServerError(url, http_status, b_('Error returned from'
+                    ' json module while processing %(url)s: %(err)s') %
+                    {'url': to_bytes(url), 'err': to_bytes(e)})
 
         if 'exc' in data:
             name = data.pop('exc')
@@ -324,7 +437,8 @@ class ProxyClient(object):
             new_session = cookie
 
         request.close()
-        self.log.debug(_('proxyclient.send_request: exited'))
-        return new_session, DictContainer(data)
+        self.log.debug(b_('proxyclient.send_request: exited'))
+        data = bunchify(data)
+        return new_session, data
 
 __all__ = (ProxyClient,)
