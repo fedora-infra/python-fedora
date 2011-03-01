@@ -1,14 +1,16 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
+%global prerel a1
+
 Name:           python-fedora
 Version:        0.3.21
-Release:        0.a1%{?dist}
+Release:        0.%{prerel}%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
 Group:          Development/Languages
 License:        LGPLv2+
 URL:            https://fedorahosted.org/python-fedora/
-Source0:        https://fedorahosted.org/releases/p/y/%{name}/%{name}-%{version}.tar.gz
+Source0:        https://fedorahosted.org/releases/p/y/%{name}/%{name}-%{version}%{prerel}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
@@ -47,7 +49,7 @@ be used to build programs that communicate with Fedora Infrastructure's
 TurboGears Applications such as Bodhi, PackageDB, MirrorManager, and FAS2.
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}%{prerel}
 
 %build
 paver build
