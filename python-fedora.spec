@@ -1,8 +1,8 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.3.20
-Release:        1%{?dist}
+Version:        0.3.21
+Release:        0.a1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
 Group:          Development/Languages
@@ -12,8 +12,8 @@ Source0:        https://fedorahosted.org/releases/p/y/%{name}/%{name}-%{version}
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
-BuildRequires:  python-devel
-BuildRequires:  python-setuptools-devel
+BuildRequires:  python2-devel
+BuildRequires:  python-setuptools
 BuildRequires:  python-paver >= 1.0
 BuildRequires:  python-sphinx
 %if 0%{?fedora} >= 9 || 0%{?rhel} > 5
@@ -31,6 +31,7 @@ Requires:       python-feedparser
 Requires:       python-sqlalchemy
 Requires:       python-decorator
 Requires:       python-pycurl
+Requires:       python-kitchen
 # These are now optional dependencies.  Some bodhi methods will not work if
 # they aren't installed but they aren't needed for most functionality of the
 # module.
@@ -64,10 +65,13 @@ rm -rf %{buildroot}
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
-%doc README COPYING AUTHORS ChangeLog doc
+%doc NEWS README COPYING AUTHORS ChangeLog doc
 %{python_sitelib}/*
 
 %changelog
+* Thu Apr 22 2010 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.21-0.a1
+- 0.3.21 alpha1 release.
+
 * Thu Apr 22 2010 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.20-1
 - 0.3.20 release
 
