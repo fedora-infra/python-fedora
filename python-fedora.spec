@@ -26,6 +26,8 @@ BuildRequires:  python-cherrypy
 BuildRequires:  python-babel
 BuildRequires:  TurboGears2
 BuildRequires:  python-nose
+BuildRequires:  python-kitchen
+BuildRequires:  python-bunch
 Requires:       python-simplejson
 Requires:       python-bugzilla
 Requires:       python-bunch
