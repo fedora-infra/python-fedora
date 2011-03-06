@@ -219,6 +219,10 @@ class ProxyClient(object):
                 for the server
             :username: Username to send to the server
             :password: Password to use with username to send to the server
+            :httpauth: If set to ``basic`` then use HTTP Basic Authentication
+                to send the username and password to the server.  This may be
+                extended in the future to support other httpauth types than
+                ``basic``.
 
             Note that cookie can be sent alone but if one of username or
             password is set the other must as well.  Code can set all of these
@@ -334,10 +338,17 @@ class ProxyClient(object):
             token = sha_constructor(session_id)
             complete_params.update({'_csrf_token': token.hexdigest()})
         if username and password:
-            # Adding this to the request data prevents it from being logged by
-            # apache.
-            complete_params.update({'user_name': username,
-                    'password': password, 'login': 'Login'})
+            if auth_params.get('httpauth', '').lower() == 'basic':
+                # HTTP Basic auth login
+                userpwd = '%s:%s' % (username, password)
+                request.setopt(pycurl.HTTPAUTH, pycurl.HTTPAUTH_BASIC)
+                request.setopt(pycurl.USERPWD, userpwd)
+            else:
+                # TG login
+                # Adding this to the request data prevents it from being logged by
+                # apache.
+                complete_params.update({'user_name': username,
+                        'password': password, 'login': 'Login'})
 
         req_data = None
         if complete_params:

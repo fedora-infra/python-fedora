@@ -33,7 +33,12 @@ import logging
 
 from kitchen.text.converters import to_bytes
 from webob import Request
-from webob.headerdict import HeaderDict
+try:
+    # webob > 1.0
+    from webob.headers import ResponseHeaders
+except ImportError:
+    # webob < 1.0
+    from webob.headerdict import HeaderDict as ResponseHeaders
 from paste.httpexceptions import HTTPFound
 from paste.response import replace_header
 from repoze.who.interfaces import IMetadataProvider
@@ -278,7 +283,7 @@ class CSRFMetadataProvider(object):
 
                     headers = app.headers.items()
                     replace_header(headers, 'location', loc)
-                    app.headers = HeaderDict(headers)
+                    app.headers = ResponseHeaders(headers)
                     log.debug(b_('Altered headers: %(headers)s') % {'headers':
                         to_bytes(app.headers)})
         else:

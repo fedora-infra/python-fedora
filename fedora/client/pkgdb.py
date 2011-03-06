@@ -68,6 +68,11 @@ class PackageDBError(FedoraClientError):
 # need to be changed.
 
 class PackageDB(BaseClient):
+    '''
+
+    .. versionchanged:: 0.3.21
+        Added :meth:`PackageDB.add_comaintainers`
+    '''
 
     def __init__(self, base_url='https://admin.fedoraproject.org/pkgdb/',
             *args, **kwargs):
