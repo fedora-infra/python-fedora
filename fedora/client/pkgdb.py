@@ -642,25 +642,55 @@ class PackageDB(BaseClient):
         self.send_request('/acls/dispatcher/set_critpath', req_params=params,
                 auth=True)
 
-    def add_comaintainers(self, maintainer, comaintainers, pkg_pattern, 
-                          collectn_name, collectn_ver=None):
-        '''Add comaintainers to all packagelistings that the maintainer either
+    def add_comaintainers(self, owner, comaintainers, pkg_pattern, 
+                          collectn_name, collectn_ver=None, if_comaint=False):
+        '''Add comaintainers to all packagelistings that the owner either
         is the owner or has approveacls on.  Then email comaintainers/owners
         on those packages that the maintainer has changed the acls.
                         
-        :arg maintainer: the maintainer's username
+        :arg owner: the owner's username
         :arg comaintainers: a list of new comaintainers
         :arg pkg_pattern: a simple pattern for package names
         :arg collectn_name: limit packages to branches for this distribution.
-        :kwarg collectn_ver: If given, limit information to this
-            particular version of a distribution.
+        :kwarg collectn_ver: If given, limit information to this particular
+            version of a distribution.
+        :kwarg if_comaint: Boolean.  If True, then process packagelistings for
+            which owner is also a co-maintainer (i.e., has approveacls).
+
         '''
 
-        params = {'maintainer': maintainer, 'comaintainers': comaintainers,
-                  'pkg_pattern': pkg_pattern, 'collectn_name': collectn_name}
+        params = {'owner': owner, 'comaintainers': comaintainers,
+                  'pkg_pattern': pkg_pattern, 'collectn_name': collectn_name,
+                  'if_comaint': if_comaint}
         if collectn_ver:
             params['collectn_ver'] = collectn_ver
 
         return self.send_request('/massacls/add_comaintainers',
                                  req_params=params, auth=True)
+
+    def change_owner(self, owner, new_owner, pkg_pattern, collectn_name,
+                     collectn_ver=None, if_comaint=False):
+        '''Change the owner of all packagelistings that the owner either is
+        the owner or has approveacls on.  Then email comaintainers/owners
+        on those packages that the owner has changed the owner.
+                        
+        :arg owner: the current owner's username
+        :arg new_owner: the new owner's username
+        :arg pkg_pattern: a simple pattern for package names
+        :arg collectn_name: limit packages to branches for this distribution.
+        :kwarg collectn_ver: If given, limit information to this
+            particular version of a distribution.
+        :kwarg if_comaint: Boolean.  If True, then process packagelistings for
+            which owner is also a co-maintainer (i.e., has approveacls).
+
+        '''
+
+        params = {'owner': owner, 'new_owner': new_owner,
+                  'pkg_pattern': pkg_pattern, 'collectn_name': collectn_name,
+                  'if_comaint': if_comaint}
+        if collectn_ver:
+            params['collectn_ver'] = collectn_ver
+
+        return self.send_request('/massacls/change_owner', req_params=params,
+                                 auth=True)
 
