@@ -61,6 +61,8 @@ options(
                 'main = fedora.wsgi.test.testapp:make_app'),
             'paste.app_install' : (
                 'main = pylons.util:PylonsInstaller'),
+	    'paste.filter_app_factory': (
+		'faswho = fedora.wsgi.faswho:make_faswho_middleware')
             },
         message_extractors = {
             'fedora': [('**.py', 'python', None),
