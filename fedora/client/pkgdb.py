@@ -72,6 +72,7 @@ class PackageDB(BaseClient):
 
     .. versionchanged:: 0.3.21
         Added :meth:`PackageDB.add_comaintainers`
+        Added :meth:`PackageDB.change_owner`
     '''
 
     def __init__(self, base_url='https://admin.fedoraproject.org/pkgdb/',
@@ -652,7 +653,7 @@ class PackageDB(BaseClient):
         '''Add comaintainers to all packagelistings that the owner either
         is the owner or has approveacls on.  Then email comaintainers/owners
         on those packages that the maintainer has changed the acls.
-                        
+
         :arg owner: the owner's username
         :arg comaintainers: a list of new comaintainers
         :arg pkg_pattern: a simple pattern for package names
@@ -662,6 +663,7 @@ class PackageDB(BaseClient):
         :kwarg if_comaint: Boolean.  If True, then process packagelistings for
             which owner is also a co-maintainer (i.e., has approveacls).
 
+        .. versionadded:: 0.3.21
         '''
 
         params = {'owner': owner, 'comaintainers': comaintainers,
@@ -688,6 +690,7 @@ class PackageDB(BaseClient):
         :kwarg if_comaint: Boolean.  If True, then process packagelistings for
             which owner is also a co-maintainer (i.e., has approveacls).
 
+        .. versionadded:: 0.3.21
         '''
 
         params = {'owner': owner, 'new_owner': new_owner,
