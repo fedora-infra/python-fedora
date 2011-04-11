@@ -1,10 +1,8 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
-%global prerel a1
-
 Name:           python-fedora
 Version:        0.3.21
-Release:        0.%{prerel}%{?dist}
+Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
 Group:          Development/Languages
@@ -73,7 +71,10 @@ rm -rf %{buildroot}
 %{python_sitelib}/*
 
 %changelog
-* Thu Apr 22 2010 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.21-0.a1
+* Mon Apr 11 2011 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.21-1
+- Upstream 0.3.21 release
+
+* Mon Feb 28 2010 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.21-0.a1
 - 0.3.21 alpha1 release.
 
 * Thu Apr 22 2010 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.20-1
