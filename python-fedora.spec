@@ -74,7 +74,7 @@ rm -rf %{buildroot}
 * Mon Apr 11 2011 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.21-1
 - Upstream 0.3.21 release
 
-* Mon Feb 28 2010 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.21-0.a1
+* Mon Feb 28 2011 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.21-0.a1
 - 0.3.21 alpha1 release.
 
 * Thu Apr 22 2010 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.20-1
