@@ -3,12 +3,13 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 28 Feb 2011
+:Date: 11 Apr 2011
 :Version: 0.3.x
 
---------
-0.3.21a1
---------
+
+------
+0.3.21
+------
 
 * Add support for uploading files in BaseClient and ProxyClient.
 * Add retry capability to BaseClient and ProxyClient.
@@ -17,6 +18,8 @@ NEWS
 * Fix wsgi csrf middleware to work with webob >= 1.0
 * Fix how we're using data from FasProxy.group_list() in the django auth
   provider
+* New PackageDB() methods, :meth:`~fedora.client.PackageDB.add_comaintainers`
+  and :meth:`~fedora.client.PackageDB.change_owner`
 
 Internal Cleanups
 =================
