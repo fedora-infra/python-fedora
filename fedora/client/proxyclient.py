@@ -287,7 +287,8 @@ class ProxyClient(object):
         data = None     # decoded JSON via json.load()
 
         request = pycurl.Curl()
-        request.setopt(pycurl.URL, url)
+        # Fix encoding issue related to pycurl bug#1831680
+        request.setopt(pycurl.URL, to_bytes(url))
         # Boilerplate so pycurl processes cookies
         request.setopt(pycurl.COOKIEFILE, '/dev/null')
         # Associate with the response to accumulate data
