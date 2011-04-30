@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright 2007-2008  Red Hat, Inc.
+# Copyright 2007-2011  Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
@@ -158,18 +158,20 @@ class BodhiClient(BaseClient):
                 'action': request,
                 })
 
-    def comment(self, update, comment, karma=0):
+    def comment(self, update, comment, karma=0, email=True):
         """ Add a comment to an update.
 
         :arg update: The title of the update comment on.
         :arg comment: The text of the comment.
         :kwarg karma: The karma of this comment (-1, 0, 1)
+        :kwarg email: Whether or not to trigger email notifications
 
         """
         return self.send_request('comment', auth=True, req_params={
                 'karma': karma,
                 'title': update,
                 'text': comment,
+                'email': email,
                 })
 
     def delete(self, update):
@@ -392,8 +394,8 @@ class BodhiClient(BaseClient):
         This method returns a dictionary in the following format::
 
             {"releases": [
-		{"dist_tag": "dist-f12", "id_prefix": "FEDORA",
-		 "locked": false, "name": "F12", "long_name": "Fedora 12"}]}
+                {"dist_tag": "dist-f12", "id_prefix": "FEDORA",
+                 "locked": false, "name": "F12", "long_name": "Fedora 12"}]}
         """
         return self.send_request('releases')
 

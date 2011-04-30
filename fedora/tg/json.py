@@ -22,6 +22,7 @@ implemented via the __json__() methods in model.py.  These methods define
 methods of transforming a class into json for a few common types.
 
 A JSON-based API(view) for your app.  Most rules would look like::
+
     @jsonify.when("isinstance(obj, YourClass)")
     def jsonify_yourclass(obj):
         return [obj.val1, obj.val2]

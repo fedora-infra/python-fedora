@@ -3,9 +3,17 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 11 Apr 2011
+:Date: 29 Apr 2011
 :Version: 0.3.x
 
+------
+0.3.22
+------
+
+* Bodhi.comment() adds an email parameter to control whether to send email for
+  a comment
+* Fix ProxyClient issue when using unicode type for a URL
+* Fix for AccountSystem.group_members() bug with the Bunch port
 
 ------
 0.3.21
