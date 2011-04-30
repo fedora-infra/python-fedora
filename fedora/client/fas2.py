@@ -26,7 +26,7 @@ Provide a client module for talking to the Fedora Account System.
 import urllib
 import warnings
 
-from bunch import Bunch, bunchify
+from bunch import Bunch
 from kitchen.text.converters import to_bytes
 
 from fedora.client import AppError, BaseClient, FasProxyClient, \
@@ -249,7 +249,7 @@ class AccountSystem(BaseClient):
         request = self.send_request('/group/dump/%s' %
                 urllib.quote(groupname), auth=True)
 
-        return [bunchify(username=user[0], role_type=user[3])
+        return [Bunch(username=user[0], role_type=user[3])
                     for user in request['people']]
 
     ### People ###

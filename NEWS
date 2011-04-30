@@ -11,6 +11,7 @@ NEWS
 -------------------
 
 * Fix ProxyClient issue when using unicode type for a URL
+* Fix for AccountSystem.group_members() bug with the Bunch port
 
 ------
 0.3.21
