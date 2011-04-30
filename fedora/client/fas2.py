@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2008-2010  Ricky Zhou, Red Hat, Inc.
+# Copyright (C) 2008-2011  Ricky Zhou, Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or

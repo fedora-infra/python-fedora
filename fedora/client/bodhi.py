@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright 2007-2008  Red Hat, Inc.
+# Copyright 2007-2011  Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
@@ -394,8 +394,8 @@ class BodhiClient(BaseClient):
         This method returns a dictionary in the following format::
 
             {"releases": [
-		{"dist_tag": "dist-f12", "id_prefix": "FEDORA",
-		 "locked": false, "name": "F12", "long_name": "Fedora 12"}]}
+                {"dist_tag": "dist-f12", "id_prefix": "FEDORA",
+                 "locked": false, "name": "F12", "long_name": "Fedora 12"}]}
         """
         return self.send_request('releases')
 
