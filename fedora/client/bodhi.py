@@ -158,7 +158,7 @@ class BodhiClient(BaseClient):
                 'action': request,
                 })
 
-    def comment(self, update, comment, karma=0, email=True):
+    def comment(self, update, comment, karma=0, email=None):
         """ Add a comment to an update.
 
         :arg update: The title of the update comment on.
@@ -167,12 +167,14 @@ class BodhiClient(BaseClient):
         :kwarg email: Whether or not to trigger email notifications
 
         """
-        return self.send_request('comment', auth=True, req_params={
-                'karma': karma,
-                'title': update,
-                'text': comment,
-                'email': email,
-                })
+        params = {
+            'karma': karma,
+            'title': update,
+            'text': comment,
+        }
+        if email is not None:
+            params['email'] = email
+        return self.send_request('comment', auth=True, req_params=params)
 
     def delete(self, update):
         """ Delete an update.
