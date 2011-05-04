@@ -71,7 +71,7 @@ rm -rf %{buildroot}
 %{python_sitelib}/*
 
 %changelog
-* Tue May 03 2011 Luke Macken <lmacken@redhat.com> - 0.3.23-2
+* Tue May 03 2011 Luke Macken <lmacken@redhat.com> - 0.3.23-1
 - Upstream 0.3.23 bugfix release
 
 * Fri Apr 29 2011 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.22-1
