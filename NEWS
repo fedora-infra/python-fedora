@@ -7,6 +7,11 @@ NEWS
 :Version: 0.3.x
 
 ------
+0.3.23
+------
+* Get BodhiClient.comment() working with older version of bodhi
+
+------
 0.3.22
 ------
 
