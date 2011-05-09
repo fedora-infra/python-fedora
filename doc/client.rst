@@ -283,4 +283,4 @@ Here's an example of the exceptions in action::
                     e.name, e.message)
 
         for collection in collectionData['collections']:
-            print collection['name'], collection['version']
+            print collection[0]['name'], collection[0]['version']
