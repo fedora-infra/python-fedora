@@ -183,6 +183,8 @@ class AccountSystem(BaseClient):
                 101608: 'dbruno@fedoraproject.org',
                 # Beth Lynn Eicher: bethlynneicher@gmail.com
                 148706: 'bethlynn@fedoraproject.org',
+                # Andre Robatino: andre.robatino@verizon.net
+                114970: 'robatino@fedoraproject.org',
                 }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email
