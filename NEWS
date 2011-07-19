@@ -6,6 +6,13 @@ NEWS
 :Date: 29 Apr 2011
 :Version: 0.3.x
 
+----------
+Pre:0.3.24
+----------
+
+* Fix tg.tg2utils._enable_csrf so that redirect() appends the CSRF token
+  in TG2.
+
 ------
 0.3.23
 ------
