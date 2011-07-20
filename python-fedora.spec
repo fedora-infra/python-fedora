@@ -1,7 +1,7 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.3.23
+Version:        0.3.24
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -71,6 +71,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/*
 
 %changelog
+* Wed Jul 20 2011 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.24-1
+- Upstream 0.3.24 release bugfixing TG2 server utils
+
 * Tue May 03 2011 Luke Macken <lmacken@redhat.com> - 0.3.23-1
 - Upstream 0.3.23 bugfix release
 
