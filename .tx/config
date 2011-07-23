@@ -1,0 +1,8 @@
+[main]
+host = https://www.transifex.net
+
+[python-fedora.python-fedorapot]
+file_filter = translations/python-fedora.python-fedorapot/<lang>.po
+source_file = po/python-fedora.pot
+source_lang = en
+
