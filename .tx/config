@@ -2,7 +2,7 @@
 host = https://www.transifex.net
 
 [python-fedora.python-fedorapot]
-file_filter = translations/python-fedora.python-fedorapot/<lang>.po
+file_filter = translations/<lang>.po
 source_file = translations/python-fedora.pot
 source_lang = en
 
