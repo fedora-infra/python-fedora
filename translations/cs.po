@@ -1,22 +1,23 @@
-# Czech translations for python-fedora.
-# Copyright (C) 2010 ORGANIZATION
+# Translations template for python-fedora.
+# Copyright (C) 2011 ORGANIZATION
 # This file is distributed under the same license as the python-fedora
 # project.
-#
+# 
 # Jan Varta <jan.varta@atlas.cz>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version:  python-fedora\n"
+"Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2011-07-23 11:41-0700\n"
-"PO-Revision-Date: 2011-05-23 22:53+0000\n"
-"Last-Translator: fazovec <jan.varta@atlas.cz>\n"
-"Language-Team: cs <LL@li.org>\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
+"PO-Revision-Date: 2011-07-23 18:46+0000\n"
+"Last-Translator: toshio <a.badger@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
+"Language: cs\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
 #: fedora/iterutils.py:36
 msgid "fedora.iterutils is deprecated.  Use kitchen.iterutils instead"
@@ -24,8 +25,8 @@ msgstr ""
 
 #: fedora/iterutils.py:54
 msgid ""
-"fedora.iterutils.isiterable is deprecated, use "
-"kitchen.iterutils.isiterable instead"
+"fedora.iterutils.isiterable is deprecated, use kitchen.iterutils.isiterable "
+"instead"
 msgstr ""
 
 #: fedora/release.py:9
@@ -35,10 +36,8 @@ msgstr "Moduly pro interakci Pythonu se službami Fedory"
 #: fedora/release.py:10
 msgid ""
 "\n"
-"The Fedora Project runs many different services.  These services help us "
-"to\n"
-"package software, develop new programs, and generally put together the "
-"distro.\n"
+"The Fedora Project runs many different services.  These services help us to\n"
+"package software, develop new programs, and generally put together the distro.\n"
 "This package contains software that helps us do that.\n"
 msgstr ""
 
@@ -48,14 +47,13 @@ msgstr ""
 
 #: fedora/accounts/fas2.py:8
 msgid ""
-"fedora.accounts.fas2 has moved to fedora.client.fas2.  This location will"
-" disappear in 0.4"
+"fedora.accounts.fas2 has moved to fedora.client.fas2.  This location will "
+"disappear in 0.4"
 msgstr ""
 
 #: fedora/client/__init__.py:89
 msgid ""
-"DictContainer is deprecated.  Use the Bunch class from python-bunch "
-"instead."
+"DictContainer is deprecated.  Use the Bunch class from python-bunch instead."
 msgstr ""
 
 #: fedora/client/baseclient.py:94 fedora/client/baseclient.py:215
@@ -97,7 +95,8 @@ msgid "send_request() got an unexpected keyword argument"
 msgstr ""
 
 #: fedora/client/baseclient.py:313
-msgid "send_request(input) is deprecated.  Use send_request(req_params) instead"
+msgid ""
+"send_request(input) is deprecated.  Use send_request(req_params) instead"
 msgstr ""
 
 #: fedora/client/baseclient.py:331
@@ -132,8 +131,8 @@ msgstr ""
 
 #: fedora/client/fas2.py:422
 msgid ""
-"people_by_id() is deprecated and will be removed in 0.4.  Please port "
-"your code to use people_by_key(key='id', fields=['human_name', 'email', "
+"people_by_id() is deprecated and will be removed in 0.4.  Please port your "
+"code to use people_by_key(key='id', fields=['human_name', 'email', "
 "'username', 'bugzilla_email']) instead"
 msgstr ""
 
@@ -146,14 +145,15 @@ msgid "FAS server unable to retrieve user information"
 msgstr ""
 
 #: fedora/client/fasproxy.py:67
-msgid "FasProxyClient() got an unexpected keyword argument 'session_as_cookie'"
+msgid ""
+"FasProxyClient() got an unexpected keyword argument 'session_as_cookie'"
 msgstr ""
 
 #: fedora/client/pkgdb.py:197
 #, python-format
 msgid ""
-"We do not have enough information to create package %(pkg)s. Need version"
-" owner."
+"We do not have enough information to create package %(pkg)s. Need version "
+"owner."
 msgstr ""
 
 #: fedora/client/pkgdb.py:208
@@ -168,7 +168,8 @@ msgstr ""
 
 #: fedora/client/pkgdb.py:323
 #, python-format
-msgid "Collection abbreviation %(collection)s is unknown.  Use F, FC, EL, or OLPC"
+msgid ""
+"Collection abbreviation %(collection)s is unknown.  Use F, FC, EL, or OLPC"
 msgstr ""
 
 #: fedora/client/pkgdb.py:350
@@ -224,9 +225,9 @@ msgstr ""
 
 #: fedora/client/proxyclient.py:160
 msgid ""
-"Returning cookies from send_request() is deprecated and will be removed "
-"in 0.4.  Please port your code to use a session_id instead by calling the"
-" ProxyClient constructor with session_as_cookie=False"
+"Returning cookies from send_request() is deprecated and will be removed in "
+"0.4.  Please port your code to use a session_id instead by calling the "
+"ProxyClient constructor with session_as_cookie=False"
 msgstr ""
 
 #: fedora/client/proxyclient.py:167
@@ -239,8 +240,8 @@ msgstr ""
 
 #: fedora/client/proxyclient.py:263
 msgid ""
-"Giving a cookie to send_request() to authenticate is deprecated and will "
-"be removed in 0.4. Please port your code to use session_id instead."
+"Giving a cookie to send_request() to authenticate is deprecated and will be "
+"removed in 0.4. Please port your code to use session_id instead."
 msgstr ""
 
 #: fedora/client/proxyclient.py:273
@@ -249,8 +250,8 @@ msgstr ""
 
 #: fedora/client/proxyclient.py:276
 msgid ""
-"No known authentication methods specified: set \"cookie\" in auth_params "
-"or set both username and password in auth_params"
+"No known authentication methods specified: set \"cookie\" in auth_params or "
+"set both username and password in auth_params"
 msgstr ""
 
 #: fedora/client/proxyclient.py:365
@@ -346,14 +347,14 @@ msgstr ""
 
 #: fedora/django/auth/models.py:63
 msgid ""
-"FAS groups loaded. Don't forget to set FAS_USERNAME and FAS_PASSWORD to a"
-" low-privilege account."
+"FAS groups loaded. Don't forget to set FAS_USERNAME and FAS_PASSWORD to a "
+"low-privilege account."
 msgstr ""
 
 #: fedora/tg/client.py:8
 msgid ""
-"fedora.tg.client has moved to fedora.client.  This location will "
-"disappear in 0.4"
+"fedora.tg.client has moved to fedora.client.  This location will disappear "
+"in 0.4"
 msgstr ""
 
 #: fedora/tg/controllers.py:60
@@ -385,9 +386,9 @@ msgstr ""
 
 #: fedora/tg/util.py:40
 msgid ""
-"fedora.tg.util is deprecated.  Switch to one of these instead:   TG1 "
-"apps: fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils.  This file will "
-"disappear in 0.4"
+"fedora.tg.util is deprecated.  Switch to one of these instead:   TG1 apps: "
+"fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils.  This file will disappear"
+" in 0.4"
 msgstr ""
 
 #: fedora/tg/identity/jsonfasprovider1.py:223
@@ -436,12 +437,9 @@ msgstr ""
 #: fedora/tg/templates/genshi/login.html:29
 msgid ""
 " are a means for a malicious website to make a request of another\n"
-"        web server as the user who contacted the malicious web site.  The"
-"\n"
-"        purpose of this page is to help protect your account and this "
-"server\n"
-"        from attacks from such malicious web sites.  By clicking below, "
-"you are\n"
+"        web server as the user who contacted the malicious web site.  The\n"
+"        purpose of this page is to help protect your account and this server\n"
+"        from attacks from such malicious web sites.  By clicking below, you are\n"
 "        proving that you are a person rather than just the web browser\n"
 "        forwarding your authentication cookies on behalf of a malicious\n"
 "        website."
@@ -514,8 +512,8 @@ msgstr ""
 #: fedora/wsgi/csrf.py:162
 #, python-format
 msgid ""
-"Invalid CSRF token.  User supplied (%(u_token)s) does not match what's in"
-" our environ (%(e_token)s)"
+"Invalid CSRF token.  User supplied (%(u_token)s) does not match what's in "
+"our environ (%(e_token)s)"
 msgstr ""
 
 #: fedora/wsgi/csrf.py:171
@@ -637,36 +635,4 @@ msgstr ""
 msgid "We hope to see you soon!"
 msgstr ""
 
-#~ msgid ""
-#~ "to_unicode was given \"%(obj)s\" which "
-#~ "is neither a byte string (str) or"
-#~ " a unicode string"
-#~ msgstr ""
-
-#~ msgid "non_string value, %(param)s, is not set to a valid action"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "to_bytes was given \"%(obj)s\" which is"
-#~ " neither a unicode string or a "
-#~ "byte string (str)"
-#~ msgstr ""
-
-#~ msgid "send_request() got an unexpected keyword argument \"%s\""
-#~ msgstr ""
-
-#~ msgid "FAS server unable to retrieve group %s"
-#~ msgstr ""
-
-#~ msgid "Error returned from simplejson while processing %(url)s: %(err)s"
-#~ msgstr ""
-
-#~ msgid "Login failed: %s"
-#~ msgstr ""
-
-#~ msgid "First argument must be callable"
-#~ msgstr ""
-
-#~ msgid "An unknown error happened when trying to log you in.  Please try again."
-#~ msgstr ""
 

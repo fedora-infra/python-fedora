@@ -1,23 +1,24 @@
-# Hungarian translations for python-fedora.
-# Copyright (C) 2010 ORGANIZATION
+# Translations template for python-fedora.
+# Copyright (C) 2011 ORGANIZATION
 # This file is distributed under the same license as the python-fedora
 # project.
-#
+# 
 # Sulyok Péter <peti@fedoraproject.org>, 2009.
 # Zoltan Hoppár <hopparz@gmail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version:  python-fedora\n"
+"Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2011-07-23 11:41-0700\n"
-"PO-Revision-Date: 2011-07-23 17:24+0000\n"
+"PO-Revision-Date: 2011-07-23 18:46+0000\n"
 "Last-Translator: toshio <a.badger@gmail.com>\n"
-"Language-Team: hu <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
+"Language: hu\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: fedora/iterutils.py:36
 msgid "fedora.iterutils is deprecated.  Use kitchen.iterutils instead"
@@ -25,8 +26,8 @@ msgstr ""
 
 #: fedora/iterutils.py:54
 msgid ""
-"fedora.iterutils.isiterable is deprecated, use "
-"kitchen.iterutils.isiterable instead"
+"fedora.iterutils.isiterable is deprecated, use kitchen.iterutils.isiterable "
+"instead"
 msgstr ""
 
 #: fedora/release.py:9
@@ -36,17 +37,13 @@ msgstr "Python modulok a Fedora Szolgáltatások együttműködéséhez"
 #: fedora/release.py:10
 msgid ""
 "\n"
-"The Fedora Project runs many different services.  These services help us "
-"to\n"
-"package software, develop new programs, and generally put together the "
-"distro.\n"
+"The Fedora Project runs many different services.  These services help us to\n"
+"package software, develop new programs, and generally put together the distro.\n"
 "This package contains software that helps us do that.\n"
 msgstr ""
 "\n"
-"A Fedora Project több különféle szolgáltatást működtet.  Ezek a "
-"szolgáltatások segítenek számunkra\n"
-"hogy szoftvereket csomagoljunk, új programokat fejlesszünk, és egyáltalán"
-" új kiadást rakjunk össze.\n"
+"A Fedora Project több különféle szolgáltatást működtet.  Ezek a szolgáltatások segítenek számunkra\n"
+"hogy szoftvereket csomagoljunk, új programokat fejlesszünk, és egyáltalán új kiadást rakjunk össze.\n"
 "Ez a csomag ezekhez a feladatokhoz nyújt segítséget.\n"
 
 #: fedora/textutils.py:33
@@ -55,16 +52,15 @@ msgstr ""
 
 #: fedora/accounts/fas2.py:8
 msgid ""
-"fedora.accounts.fas2 has moved to fedora.client.fas2.  This location will"
-" disappear in 0.4"
+"fedora.accounts.fas2 has moved to fedora.client.fas2.  This location will "
+"disappear in 0.4"
 msgstr ""
-"fedora.accounts.fas2 elköltözött fedora.client.fas2 helyre.  E hely el "
-"fog tűnni 0.4-ben"
+"fedora.accounts.fas2 elköltözött fedora.client.fas2 helyre.  E hely el fog "
+"tűnni 0.4-ben"
 
 #: fedora/client/__init__.py:89
 msgid ""
-"DictContainer is deprecated.  Use the Bunch class from python-bunch "
-"instead."
+"DictContainer is deprecated.  Use the Bunch class from python-bunch instead."
 msgstr ""
 
 #: fedora/client/baseclient.py:94 fedora/client/baseclient.py:215
@@ -93,9 +89,9 @@ msgid "No session cached for \"%s\""
 msgstr "Nincs betárazva munkafolyamat „%s” azonosítóval"
 
 #: fedora/client/baseclient.py:301
-#, fuzzy, python-format
+#, python-format
 msgid "send_request() got an unexpected keyword argument \"%(arg)s\""
-msgstr "send_request() váratlan „%s” kulcsszó argumentumot kapott"
+msgstr ""
 
 #: fedora/client/baseclient.py:305
 msgid "send_request() got an unexpected keyword argument \"input\""
@@ -106,10 +102,11 @@ msgid "send_request() got an unexpected keyword argument"
 msgstr "send_request() váratlan kulcsszó argumentumot kapott"
 
 #: fedora/client/baseclient.py:313
-msgid "send_request(input) is deprecated.  Use send_request(req_params) instead"
+msgid ""
+"send_request(input) is deprecated.  Use send_request(req_params) instead"
 msgstr ""
-"send_request(input) elavult.  Használja inkább a send_request(req_params)"
-" hívást"
+"send_request(input) elavult.  Használja inkább a send_request(req_params) "
+"hívást"
 
 #: fedora/client/baseclient.py:331
 msgid ""
@@ -118,8 +115,8 @@ msgid ""
 "auth=True"
 msgstr ""
 "Hitelesítést kértek, de nem adták meg milyen módon.  Kérem adja meg a "
-"használót és a jelszót, vagy a munkafolyamat azonosítót mielőtt auth=True"
-" argumentummal hívja e függvényt."
+"használót és a jelszót, vagy a munkafolyamat azonosítót mielőtt auth=True "
+"argumentummal hívja e függvényt."
 
 #: fedora/client/bodhi.py:195
 msgid "You must specify a username"
@@ -131,9 +128,9 @@ msgid "Reading from %s "
 msgstr "Olvasás %s fájlból "
 
 #: fedora/client/fas2.py:231
-#, fuzzy, python-format
+#, python-format
 msgid "FAS server unable to retrieve group %(group)s"
-msgstr "FAS szolgálónak nem sikerült %s csoportot lekérdeznie"
+msgstr ""
 
 #: fedora/client/fas2.py:363
 msgid "key must be one of \"id\", \"username\", or \"email\""
@@ -146,14 +143,13 @@ msgstr "%(field)s érvénytelen mint szűrendő mező"
 
 #: fedora/client/fas2.py:422
 msgid ""
-"people_by_id() is deprecated and will be removed in 0.4.  Please port "
-"your code to use people_by_key(key='id', fields=['human_name', 'email', "
+"people_by_id() is deprecated and will be removed in 0.4.  Please port your "
+"code to use people_by_key(key='id', fields=['human_name', 'email', "
 "'username', 'bugzilla_email']) instead"
 msgstr ""
 "people_by_id() elavult, és 0.4-ben már nem lesz.  Kérem változtasson a "
-"kódon, hogy inkább a people_by_key(key='id', "
-"fields=['human_name',·'email', 'username', 'bugzilla_email']) hívást "
-"használja."
+"kódon, hogy inkább a people_by_key(key='id', fields=['human_name',·'email', "
+"'username', 'bugzilla_email']) hívást használja."
 
 #: fedora/client/fas2.py:604
 msgid "FAS server unable to retrieve group members"
@@ -164,15 +160,17 @@ msgid "FAS server unable to retrieve user information"
 msgstr "FAS szolgáló képtelen használó adatokat lekérni"
 
 #: fedora/client/fasproxy.py:67
-msgid "FasProxyClient() got an unexpected keyword argument 'session_as_cookie'"
+msgid ""
+"FasProxyClient() got an unexpected keyword argument 'session_as_cookie'"
 msgstr ""
 
 #: fedora/client/pkgdb.py:197
 #, python-format
 msgid ""
-"We do not have enough information to create package %(pkg)s. Need version"
-" owner."
-msgstr "Nincs elég adat %(pkg)s csomag elkészítéséhez. Változat tulajdonos kell."
+"We do not have enough information to create package %(pkg)s. Need version "
+"owner."
+msgstr ""
+"Nincs elég adat %(pkg)s csomag elkészítéséhez. Változat tulajdonos kell."
 
 #: fedora/client/pkgdb.py:208
 #, python-format
@@ -186,7 +184,8 @@ msgstr "Nem sikerült %(pkg)s minden adatát elmenteni: %(msg)s"
 
 #: fedora/client/pkgdb.py:323
 #, python-format
-msgid "Collection abbreviation %(collection)s is unknown.  Use F, FC, EL, or OLPC"
+msgid ""
+"Collection abbreviation %(collection)s is unknown.  Use F, FC, EL, or OLPC"
 msgstr ""
 "%(collection)s gyűjtemény rövidítés ismeretlen.  Használja F, FC, EL, \"\n"
 "\"vagy OLPC rövidítések valamelyikét."
@@ -244,12 +243,12 @@ msgstr "proxyclient.__init__:belépve"
 
 #: fedora/client/proxyclient.py:160
 msgid ""
-"Returning cookies from send_request() is deprecated and will be removed "
-"in 0.4.  Please port your code to use a session_id instead by calling the"
-" ProxyClient constructor with session_as_cookie=False"
+"Returning cookies from send_request() is deprecated and will be removed in "
+"0.4.  Please port your code to use a session_id instead by calling the "
+"ProxyClient constructor with session_as_cookie=False"
 msgstr ""
-"A send_request() hívásból visszatérő sütik használata elavult, és 0.4-től"
-" már nem lesz.  Kérem változtasson, hogy inkább munkafolyamat azonosítót "
+"A send_request() hívásból visszatérő sütik használata elavult, és 0.4-től "
+"már nem lesz.  Kérem változtasson, hogy inkább munkafolyamat azonosítót "
 "használjon a ProxyClient építő hívásakor session_as_cookie=False "
 "argumentummal."
 
@@ -263,12 +262,11 @@ msgstr "proxyclient.send_request: belépve"
 
 #: fedora/client/proxyclient.py:263
 msgid ""
-"Giving a cookie to send_request() to authenticate is deprecated and will "
-"be removed in 0.4. Please port your code to use session_id instead."
+"Giving a cookie to send_request() to authenticate is deprecated and will be "
+"removed in 0.4. Please port your code to use session_id instead."
 msgstr ""
-"Süti megadása send_request() hívásnak hitelesítéshez elavult, és 0.4-től "
-"már nem lesz. Kérem változtasson: használjon inkább munkafolyamat "
-"azonosítót."
+"Süti megadása send_request() hívásnak hitelesítéshez elavult, és 0.4-től már"
+" nem lesz. Kérem változtasson: használjon inkább munkafolyamat azonosítót."
 
 #: fedora/client/proxyclient.py:273
 msgid "username and password must both be set in auth_params"
@@ -276,8 +274,8 @@ msgstr "használó nevet és jelszót is meg kell adni auth_params paraméterben
 
 #: fedora/client/proxyclient.py:276
 msgid ""
-"No known authentication methods specified: set \"cookie\" in auth_params "
-"or set both username and password in auth_params"
+"No known authentication methods specified: set \"cookie\" in auth_params or "
+"set both username and password in auth_params"
 msgstr ""
 "Nincs megadva ismert hitelesítő eljárás: használó nevet és jelszót "
 "auth_params paraméterben"
@@ -319,18 +317,18 @@ msgid "Unknown HTTP Server Response"
 msgstr "Ismeretlen HTTP szolgáló válasz"
 
 #: fedora/client/proxyclient.py:425
-#, fuzzy, python-format
+#, python-format
 msgid "Error returned from json module while processing %(url)s: %(err)s"
-msgstr "Hiba tért vissza simplejsonból %(url)s helyet feldolgozván: %(err)s"
+msgstr ""
 
 #: fedora/client/proxyclient.py:441
 msgid "proxyclient.send_request: exited"
 msgstr "proxyclient.send_request: kilépve"
 
 #: fedora/client/wiki.py:67
-#, fuzzy, python-format
+#, python-format
 msgid "Login failed: %(data)s"
-msgstr "Elbukott bejelentkezés: %s"
+msgstr ""
 
 #: fedora/client/wiki.py:89
 #, python-format
@@ -386,14 +384,14 @@ msgstr ""
 
 #: fedora/django/auth/models.py:63
 msgid ""
-"FAS groups loaded. Don't forget to set FAS_USERNAME and FAS_PASSWORD to a"
-" low-privilege account."
+"FAS groups loaded. Don't forget to set FAS_USERNAME and FAS_PASSWORD to a "
+"low-privilege account."
 msgstr ""
 
 #: fedora/tg/client.py:8
 msgid ""
-"fedora.tg.client has moved to fedora.client.  This location will "
-"disappear in 0.4"
+"fedora.tg.client has moved to fedora.client.  This location will disappear "
+"in 0.4"
 msgstr ""
 "fedora.tg.client elköltözött fedora.client helyre.  E hely el fog tűnni "
 "0.4-ben"
@@ -429,9 +427,9 @@ msgstr "url() python szótár típusú argumentumot vár a kérés paramétereik
 
 #: fedora/tg/util.py:40
 msgid ""
-"fedora.tg.util is deprecated.  Switch to one of these instead:   TG1 "
-"apps: fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils.  This file will "
-"disappear in 0.4"
+"fedora.tg.util is deprecated.  Switch to one of these instead:   TG1 apps: "
+"fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils.  This file will disappear"
+" in 0.4"
 msgstr ""
 
 #: fedora/tg/identity/jsonfasprovider1.py:223
@@ -482,12 +480,9 @@ msgstr "CSRF támadások"
 #: fedora/tg/templates/genshi/login.html:29
 msgid ""
 " are a means for a malicious website to make a request of another\n"
-"        web server as the user who contacted the malicious web site.  The"
-"\n"
-"        purpose of this page is to help protect your account and this "
-"server\n"
-"        from attacks from such malicious web sites.  By clicking below, "
-"you are\n"
+"        web server as the user who contacted the malicious web site.  The\n"
+"        purpose of this page is to help protect your account and this server\n"
+"        from attacks from such malicious web sites.  By clicking below, you are\n"
 "        proving that you are a person rather than just the web browser\n"
 "        forwarding your authentication cookies on behalf of a malicious\n"
 "        website."
@@ -567,8 +562,8 @@ msgstr ""
 #: fedora/wsgi/csrf.py:162
 #, python-format
 msgid ""
-"Invalid CSRF token.  User supplied (%(u_token)s) does not match what's in"
-" our environ (%(e_token)s)"
+"Invalid CSRF token.  User supplied (%(u_token)s) does not match what's in "
+"our environ (%(e_token)s)"
 msgstr ""
 
 #: fedora/wsgi/csrf.py:171
@@ -690,24 +685,4 @@ msgstr ""
 msgid "We hope to see you soon!"
 msgstr ""
 
-#~ msgid ""
-#~ "to_unicode was given \"%(obj)s\" which "
-#~ "is neither a byte string (str) or"
-#~ " a unicode string"
-#~ msgstr ""
-
-#~ msgid "non_string value, %(param)s, is not set to a valid action"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "to_bytes was given \"%(obj)s\" which is"
-#~ " neither a unicode string or a "
-#~ "byte string (str)"
-#~ msgstr ""
-
-#~ msgid "First argument must be callable"
-#~ msgstr "Az első argumentum hívható kell legyen"
-
-#~ msgid "An unknown error happened when trying to log you in.  Please try again."
-#~ msgstr ""
 
