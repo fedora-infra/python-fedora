@@ -1,25 +1,24 @@
-# Russian translations for python-fedora.
-# Copyright (C) 2009 ORGANIZATION
+# Translations template for python-fedora.
+# Copyright (C) 2010 ORGANIZATION
 # This file is distributed under the same license as the python-fedora
 # project.
+# 
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
 # Olykainen Andrey <andreyjktl@gmail.com>, 2010.
 msgid ""
 msgstr ""
-"Project-Id-Version: python-fedora 0.3.13\n"
+"Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2010-05-18 04:24-0400\n"
-"PO-Revision-Date: 2010-12-08 17:42+0600\n"
-"Last-Translator: Olykainen Andrey <andreyjktl@gmail.com>\n"
-"Language-Team: Translation CVS Commit Group\n"
-"Language: ru\n"
+"PO-Revision-Date: 2011-07-23 17:23+0000\n"
+"Last-Translator: toshio <a.badger@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Virtaal 0.5.2\n"
 "Generated-By: Babel 0.9.5\n"
+"Language: ru\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: fedora/release.py:9
 msgid "Python modules for interacting with Fedora Services"
@@ -29,8 +28,7 @@ msgstr ""
 msgid ""
 "\n"
 "The Fedora Project runs many different services.  These services help us to\n"
-"package software, develop new programs, and generally put together the "
-"distro.\n"
+"package software, develop new programs, and generally put together the distro.\n"
 "This package contains software that helps us do that.\n"
 msgstr ""
 
@@ -70,14 +68,14 @@ msgid "session_cookie is deprecated, use session_id instead"
 msgstr ""
 
 #: fedora/client/baseclient.py:103
-#, python-format, fuzzy
+#, python-format
 msgid "Unable to load session from %(file)s"
-msgstr "Ошибка загрузки сессии из %(file)s"
+msgstr ""
 
 #: fedora/client/baseclient.py:120
-#, python-format, fuzzy
+#, python-format
 msgid "Unable to create %(dir)s: %(error)s"
-msgstr "Ошибка создания %(dir)s: %(error)s"
+msgstr ""
 
 #: fedora/client/baseclient.py:132
 #, python-format
@@ -153,7 +151,8 @@ msgid "FAS server unable to retrieve user information"
 msgstr ""
 
 #: fedora/client/fasproxy.py:67
-msgid "FasProxyClient() got an unexpected keyword argument 'session_as_cookie'"
+msgid ""
+"FasProxyClient() got an unexpected keyword argument 'session_as_cookie'"
 msgstr ""
 
 #: fedora/client/pkgdb.py:185
@@ -389,8 +388,8 @@ msgstr ""
 #: fedora/tg/util.py:40
 msgid ""
 "fedora.tg.util is deprecated.  Switch to one of these instead:   TG1 apps: "
-"fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils.  This file will disappear "
-"in 0.4"
+"fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils.  This file will disappear"
+" in 0.4"
 msgstr ""
 
 #: fedora/tg/identity/jsonfasprovider1.py:227
@@ -401,8 +400,8 @@ msgstr ""
 
 #: fedora/tg/identity/jsonfasprovider2.py:60
 msgid ""
-"Cannot enable ssl certificate auth via identity.ssl without setting fas."
-"usernamme and fas.password for authorization"
+"Cannot enable ssl certificate auth via identity.ssl without setting "
+"fas.usernamme and fas.password for authorization"
 msgstr ""
 
 #: fedora/tg/identity/jsonfasprovider2.py:155
@@ -440,10 +439,8 @@ msgstr ""
 msgid ""
 " are a means for a malicious website to make a request of another\n"
 "        web server as the user who contacted the malicious web site.  The\n"
-"        purpose of this page is to help protect your account and this "
-"server\n"
-"        from attacks from such malicious web sites.  By clicking below, you "
-"are\n"
+"        purpose of this page is to help protect your account and this server\n"
+"        from attacks from such malicious web sites.  By clicking below, you are\n"
 "        proving that you are a person rather than just the web browser\n"
 "        forwarding your authentication cookies on behalf of a malicious\n"
 "        website."
@@ -606,7 +603,8 @@ msgid "Authentication failed, setting error"
 msgstr ""
 
 #: fedora/wsgi/faswho/faswhoplugin.py:237
-msgid "An unknown error happened when trying to log you in.  Please try again."
+msgid ""
+"An unknown error happened when trying to log you in.  Please try again."
 msgstr ""
 
 #: fedora/wsgi/faswho/faswhoplugin.py:248
@@ -631,10 +629,12 @@ msgid "Wrong credentials"
 msgstr ""
 
 #: fedora/wsgi/test/controllers/root.py:46
-#, python-format, fuzzy
+#, python-format
 msgid "Welcome back, %s!"
-msgstr "С возвращением, %s!"
+msgstr ""
 
 #: fedora/wsgi/test/controllers/root.py:56
 msgid "We hope to see you soon!"
 msgstr "До скорой встречи!"
+
+

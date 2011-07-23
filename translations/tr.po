@@ -31,9 +31,9 @@ msgid ""
 "package software, develop new programs, and generally put together the distro.\n"
 "This package contains software that helps us do that.\n"
 msgstr ""
-"\\nFedora Projesi birçok farklı hizmet yürütür.  Bu hizmetler, \n"
-"yazılım paketlemeye, yeni yazılımlar geliştirmeye ve genel olarak dağıtımı bir araya getirmeye yardım eder.\\n Bu paket buna yardımcı olacak paketi içerir.\n"
 "\n"
+"Fedora Projesi birçok farklı hizmet yürütür.  Bu hizmetler, \n"
+"yazılım paketlemeye, yeni yazılımlar geliştirmeye ve genel olarak dağıtımı bir araya getirmeye yardım eder.\\n Bu paket buna yardımcı olacak paketi içerir.\n"
 
 #: fedora/textutils.py:79
 #, python-format
@@ -334,13 +334,13 @@ msgstr ""
 msgid ""
 "\n"
 "== Most active wiki users =="
-msgstr "\\n== En aktif wiki kullanıcıları =="
+msgstr "\n== En aktif wiki kullanıcıları =="
 
 #: fedora/client/wiki.py:107
 msgid ""
 "\n"
 "== Most edited pages =="
-msgstr "\\n==En çok düzenlenen sayfalar =="
+msgstr "\n==En çok düzenlenen sayfalar =="
 
 #: fedora/compat25/defaultdict.py:40
 msgid "First argument must be callable"

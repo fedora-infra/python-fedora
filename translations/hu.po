@@ -2,6 +2,7 @@
 # Copyright (C) 2010 ORGANIZATION
 # This file is distributed under the same license as the python-fedora
 # project.
+# 
 # Sulyok Péter <peti@fedoraproject.org>, 2009.
 # Zoltan Hoppár <hopparz@gmail.com>, 2011.
 msgid ""
@@ -9,8 +10,8 @@ msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2010-05-18 04:24-0400\n"
-"PO-Revision-Date: 2011-05-22 11:25+0000\n"
-"Last-Translator: zoltanh721 <hopparz@gmail.com>\n"
+"PO-Revision-Date: 2011-07-23 17:24+0000\n"
+"Last-Translator: toshio <a.badger@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -59,8 +60,8 @@ msgid ""
 "fedora.accounts.fas2 has moved to fedora.client.fas2.  This location will "
 "disappear in 0.4"
 msgstr ""
-"fedora.accounts.fas2 elköltözött fedora.client.fas2 helyre.  E hely el "
-"fog tűnni 0.4-ben"
+"fedora.accounts.fas2 elköltözött fedora.client.fas2 helyre.  E hely el fog "
+"tűnni 0.4-ben"
 
 #: fedora/client/__init__.py:86
 msgid ""
@@ -106,10 +107,11 @@ msgid "send_request() got an unexpected keyword argument"
 msgstr "send_request() váratlan kulcsszó argumentumot kapott"
 
 #: fedora/client/baseclient.py:291
-msgid "send_request(input) is deprecated.  Use send_request(req_params) instead"
+msgid ""
+"send_request(input) is deprecated.  Use send_request(req_params) instead"
 msgstr ""
-"send_request(input) elavult.  Használja inkább a send_request(req_params)"
-" hívást"
+"send_request(input) elavult.  Használja inkább a send_request(req_params) "
+"hívást"
 
 #: fedora/client/baseclient.py:307
 msgid ""
@@ -118,8 +120,8 @@ msgid ""
 "auth=True"
 msgstr ""
 "Hitelesítést kértek, de nem adták meg milyen módon.  Kérem adja meg a "
-"használót és a jelszót, vagy a munkafolyamat azonosítót mielőtt auth=True"
-" argumentummal hívja e függvényt."
+"használót és a jelszót, vagy a munkafolyamat azonosítót mielőtt auth=True "
+"argumentummal hívja e függvényt."
 
 #: fedora/client/bodhi.py:191
 msgid "You must specify a username"
@@ -151,9 +153,8 @@ msgid ""
 "'username', 'bugzilla_email']) instead"
 msgstr ""
 "people_by_id() elavult, és 0.4-ben már nem lesz.  Kérem változtasson a "
-"kódon, hogy inkább a people_by_key(key='id', "
-"fields=['human_name',·'email', 'username', 'bugzilla_email']) hívást "
-"használja."
+"kódon, hogy inkább a people_by_key(key='id', fields=['human_name',·'email', "
+"'username', 'bugzilla_email']) hívást használja."
 
 #: fedora/client/fas2.py:589
 msgid "FAS server unable to retrieve group members"
@@ -164,16 +165,17 @@ msgid "FAS server unable to retrieve user information"
 msgstr "FAS szolgáló képtelen használó adatokat lekérni"
 
 #: fedora/client/fasproxy.py:67
-#, fuzzy
-msgid "FasProxyClient() got an unexpected keyword argument 'session_as_cookie'"
-msgstr "send_request() váratlan „%s” kulcsszó argumentumot kapott"
+msgid ""
+"FasProxyClient() got an unexpected keyword argument 'session_as_cookie'"
+msgstr ""
 
 #: fedora/client/pkgdb.py:185
 #, python-format
 msgid ""
 "We do not have enough information to create package %(pkg)s. Need version "
 "owner."
-msgstr "Nincs elég adat %(pkg)s csomag elkészítéséhez. Változat tulajdonos kell."
+msgstr ""
+"Nincs elég adat %(pkg)s csomag elkészítéséhez. Változat tulajdonos kell."
 
 #: fedora/client/pkgdb.py:196
 #, python-format
@@ -187,7 +189,8 @@ msgstr "Nem sikerült %(pkg)s minden adatát elmenteni: %(msg)s"
 
 #: fedora/client/pkgdb.py:310
 #, python-format
-msgid "Collection abbreviation %(collection)s is unknown.  Use F, FC, EL, or OLPC"
+msgid ""
+"Collection abbreviation %(collection)s is unknown.  Use F, FC, EL, or OLPC"
 msgstr ""
 "%(collection)s gyűjtemény rövidítés ismeretlen.  Használja F, FC, EL, \"\n"
 "\"vagy OLPC rövidítések valamelyikét."
@@ -235,11 +238,9 @@ msgid ""
 msgstr ""
 
 #: fedora/client/pkgdb.py:480
-#, fuzzy, python-format
+#, python-format
 msgid "Collection shortname %(collctn)s is unknown."
 msgstr ""
-"%(collctn)s gyűjtemény rövidítés ismeretlen.  Használja F, FC, EL, \"\n"
-"\"vagy OLPC rövidítések valamelyikét."
 
 #: fedora/client/proxyclient.py:102
 msgid "proxyclient.__init__:entered"
@@ -251,8 +252,8 @@ msgid ""
 "0.4.  Please port your code to use a session_id instead by calling the "
 "ProxyClient constructor with session_as_cookie=False"
 msgstr ""
-"A send_request() hívásból visszatérő sütik használata elavult, és 0.4-től"
-" már nem lesz.  Kérem változtasson, hogy inkább munkafolyamat azonosítót "
+"A send_request() hívásból visszatérő sütik használata elavult, és 0.4-től "
+"már nem lesz.  Kérem változtasson, hogy inkább munkafolyamat azonosítót "
 "használjon a ProxyClient építő hívásakor session_as_cookie=False "
 "argumentummal."
 
@@ -269,9 +270,8 @@ msgid ""
 "Giving a cookie to send_request() to authenticate is deprecated and will be "
 "removed in 0.4. Please port your code to use session_id instead."
 msgstr ""
-"Süti megadása send_request() hívásnak hitelesítéshez elavult, és 0.4-től "
-"már nem lesz. Kérem változtasson: használjon inkább munkafolyamat "
-"azonosítót."
+"Süti megadása send_request() hívásnak hitelesítéshez elavult, és 0.4-től már"
+" nem lesz. Kérem változtasson: használjon inkább munkafolyamat azonosítót."
 
 #: fedora/client/proxyclient.py:209
 msgid "username and password must both be set in auth_params"
@@ -596,9 +596,9 @@ msgid "Got HTTPFound(302) from repoze.who.application"
 msgstr ""
 
 #: fedora/wsgi/csrf.py:270
-#, fuzzy, python-format
+#, python-format
 msgid "Altered headers: %(headers)s"
-msgstr "Fejlécek: %(headers)s"
+msgstr ""
 
 #: fedora/wsgi/csrf.py:273
 #, python-format
@@ -646,12 +646,12 @@ msgid "In authenticate()"
 msgstr ""
 
 #: fedora/wsgi/faswho/faswhoplugin.py:216
-#, fuzzy
 msgid "Authentication failed, setting error"
-msgstr "Hitelesítésen bukott a bejelentkezés"
+msgstr ""
 
 #: fedora/wsgi/faswho/faswhoplugin.py:237
-msgid "An unknown error happened when trying to log you in.  Please try again."
+msgid ""
+"An unknown error happened when trying to log you in.  Please try again."
 msgstr ""
 
 #: fedora/wsgi/faswho/faswhoplugin.py:248
@@ -676,14 +676,12 @@ msgid "Wrong credentials"
 msgstr ""
 
 #: fedora/wsgi/test/controllers/root.py:46
-#, fuzzy, python-format
+#, python-format
 msgid "Welcome back, %s!"
-msgstr "Üdvözlöm, %s"
+msgstr ""
 
 #: fedora/wsgi/test/controllers/root.py:56
 msgid "We hope to see you soon!"
 msgstr ""
 
-#~ msgid "FAS groups loaded. Don't forget to unset FAS_USERNAME and FAS_PASSWORD."
-#~ msgstr "Fedora csoportok betöltve. FAS_USERNAME és FAS_PASSWORD törlendő."
 
