@@ -330,8 +330,8 @@ class ProxyClient(object):
         if session_id:
             # Anytime the session_id exists, send it so that visit tracking
             # works.  Will also authenticate us if there's a need.
-            request.setopt(pycurl.COOKIE, '%s=%s;' % (self.session_name,
-                session_id))
+            request.setopt(pycurl.COOKIE, tobytes('%s=%s;' % (self.session_name,
+                session_id)))
 
         complete_params = req_params or {}
         if session_id:
