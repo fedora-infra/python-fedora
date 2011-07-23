@@ -143,7 +143,7 @@ if has_babel and PAVER_VER != '0.8':
     def make_catalogs():
         '''Compile all message catalogs for release'''
         options.order('i18n', add_rest=True)
-        for po_file in glob.glob('po/*.po'):
+        for po_file in glob.glob('translations/*.po'):
             locale, ext = os.path.splitext(os.path.basename(po_file))
             build_dir = paver_path(os.path.join(options.builddir, locale,
                 'LC_MESSAGES'))

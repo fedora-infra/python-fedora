@@ -155,7 +155,7 @@ Updating the POT File
 
 When you make changes that change the translatable strings in the package, you
 should update the POT file.  Use the following paver command to do that::
-  paver extract_messages -o po/python-fedora.pot
+  paver extract_messages -o translations/python-fedora.pot
 
 Then commit your changes to source control.
 
@@ -164,8 +164,8 @@ Updating the PO Files
 
 You should merge the new translatable strings into the PO files at the same
 time.  Until we build a single paver command for this, we want to do this::
-  for po_file in po/*.po ; do
-    paver update_catalog -D python_fedora -i po/python-fedora.pot -l `basename $po_file` -d po -o $po_file
+  for po_file in translations/*.po ; do
+    paver update_catalog -D python_fedora -i translations/python-fedora.pot -l `basename $po_file` -d translations -o $po_file
   done
 
 Creating a new PO File
@@ -174,10 +174,10 @@ Creating a new PO File
 If you are working on a translation for the first time, you'll need to create
 the PO file.  Run this paver command substituting LOCALE with the locale you
 wish to translate for::
-  paver init_catalog -D python_fedora -i po/python-fedora.pot -l LOCALE -d po -o po/$LOCALE.po
+  paver init_catalog -D python_fedora -i translations/python-fedora.pot -l LOCALE -d translations -o translations/$LOCALE.po
 
 That will initialize a new PO file from the current POT file.  The PO will be
-located in po/LOCALE/LC-MESSAGES/messages.po
+located in translations/LOCALE/LC-MESSAGES/messages.po
 
 After creation, this should be committed to the revision control system.
 
