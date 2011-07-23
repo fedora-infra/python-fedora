@@ -1,47 +1,45 @@
-# Hungarian translations of python-fedora.
-# Copyright (C) 2009 ORGANIZATION
+# Translations template for python-fedora.
+# Copyright (C) 2010 ORGANIZATION
 # This file is distributed under the same license as the python-fedora
 # project.
 # Sulyok Péter <peti@fedoraproject.org>, 2009.
-#
+# Zoltan Hoppár <hopparz@gmail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version: python-fedora 0.3.12\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-13 22:15+0700\n"
-"PO-Revision-Date: 2010-05-18 04:24-0400\n"
-"Last-Translator: Sulyok Péter <peti@fedoraproject.org>\n"
-"Language-Team: Hungarian <fedora-trans-hu@redhat.com>\n"
-"Plural-Forms: nplurals=1; plural=0\n"
+"Project-Id-Version: python-fedora\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2010-05-18 04:24-0400\n"
+"PO-Revision-Date: 2011-05-22 11:25+0000\n"
+"Last-Translator: zoltanh721 <hopparz@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.5\n"
+"Language: hu\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: fedora/release.py:9
 msgid "Python modules for interacting with Fedora Services"
-msgstr "Fedora Szolgáltatásokkal együttműködő python modulok"
+msgstr "Python modulok a Fedora Szolgáltatások együttműködéséhez"
 
 #: fedora/release.py:10
 msgid ""
 "\n"
-"The Fedora Project runs many different services.  These services help us "
-"to\n"
-"package software, develop new programs, and generally put together the "
-"distro.\n"
+"The Fedora Project runs many different services.  These services help us to\n"
+"package software, develop new programs, and generally put together the distro.\n"
 "This package contains software that helps us do that.\n"
 msgstr ""
 "\n"
-"A Fedora Terv sok különböző szolgáltatást igazgat.  E szolgáltatások "
-"segítenek szoftvert csomagolni, új programokat fejleszteni, és általában "
-"összerakni egy kiadást.\n"
-"Ezeket megtenni segít e csomagban levő szoftver.\n"
+"A Fedora Project több különféle szolgáltatást működtet.  Ezek a szolgáltatások segítenek számunkra\n"
+"hogy szoftvereket csomagoljunk, új programokat fejlesszünk, és egyáltalán új kiadást rakjunk össze.\n"
+"Ez a csomag ezekhez a feladatokhoz nyújt segítséget.\n"
 
 #: fedora/textutils.py:79
 #, python-format
 msgid ""
-"to_unicode was given \"%(obj)s\" which is neither a byte string (str) or "
-"a unicode string"
+"to_unicode was given \"%(obj)s\" which is neither a byte string (str) or a "
+"unicode string"
 msgstr ""
 
 #: fedora/textutils.py:82 fedora/textutils.py:140
@@ -52,22 +50,21 @@ msgstr ""
 #: fedora/textutils.py:137
 #, python-format
 msgid ""
-"to_bytes was given \"%(obj)s\" which is neither a unicode string or a "
-"byte string (str)"
+"to_bytes was given \"%(obj)s\" which is neither a unicode string or a byte "
+"string (str)"
 msgstr ""
 
 #: fedora/accounts/fas2.py:8
 msgid ""
-"fedora.accounts.fas2 has moved to fedora.client.fas2.  This location will"
-" disappear in 0.4"
+"fedora.accounts.fas2 has moved to fedora.client.fas2.  This location will "
+"disappear in 0.4"
 msgstr ""
 "fedora.accounts.fas2 elköltözött fedora.client.fas2 helyre.  E hely el "
 "fog tűnni 0.4-ben"
 
 #: fedora/client/__init__.py:86
 msgid ""
-"DictContainer is deprecated.  Use the Bunch class from python-bunch "
-"instead."
+"DictContainer is deprecated.  Use the Bunch class from python-bunch instead."
 msgstr ""
 
 #: fedora/client/baseclient.py:85 fedora/client/baseclient.py:204
@@ -149,8 +146,8 @@ msgstr "%(field)s érvénytelen mint szűrendő mező"
 
 #: fedora/client/fas2.py:407
 msgid ""
-"people_by_id() is deprecated and will be removed in 0.4.  Please port "
-"your code to use people_by_key(key='id', fields=['human_name', 'email', "
+"people_by_id() is deprecated and will be removed in 0.4.  Please port your "
+"code to use people_by_key(key='id', fields=['human_name', 'email', "
 "'username', 'bugzilla_email']) instead"
 msgstr ""
 "people_by_id() elavult, és 0.4-ben már nem lesz.  Kérem változtasson a "
@@ -174,8 +171,8 @@ msgstr "send_request() váratlan „%s” kulcsszó argumentumot kapott"
 #: fedora/client/pkgdb.py:185
 #, python-format
 msgid ""
-"We do not have enough information to create package %(pkg)s. Need version"
-" owner."
+"We do not have enough information to create package %(pkg)s. Need version "
+"owner."
 msgstr "Nincs elég adat %(pkg)s csomag elkészítéséhez. Változat tulajdonos kell."
 
 #: fedora/client/pkgdb.py:196
@@ -250,9 +247,9 @@ msgstr "proxyclient.__init__:belépve"
 
 #: fedora/client/proxyclient.py:111
 msgid ""
-"Returning cookies from send_request() is deprecated and will be removed "
-"in 0.4.  Please port your code to use a session_id instead by calling the"
-" ProxyClient constructor with session_as_cookie=False"
+"Returning cookies from send_request() is deprecated and will be removed in "
+"0.4.  Please port your code to use a session_id instead by calling the "
+"ProxyClient constructor with session_as_cookie=False"
 msgstr ""
 "A send_request() hívásból visszatérő sütik használata elavult, és 0.4-től"
 " már nem lesz.  Kérem változtasson, hogy inkább munkafolyamat azonosítót "
@@ -269,8 +266,8 @@ msgstr "proxyclient.send_request: belépve"
 
 #: fedora/client/proxyclient.py:199
 msgid ""
-"Giving a cookie to send_request() to authenticate is deprecated and will "
-"be removed in 0.4. Please port your code to use session_id instead."
+"Giving a cookie to send_request() to authenticate is deprecated and will be "
+"removed in 0.4. Please port your code to use session_id instead."
 msgstr ""
 "Süti megadása send_request() hívásnak hitelesítéshez elavult, és 0.4-től "
 "már nem lesz. Kérem változtasson: használjon inkább munkafolyamat "
@@ -282,8 +279,8 @@ msgstr "használó nevet és jelszót is meg kell adni auth_params paraméterben
 
 #: fedora/client/proxyclient.py:212
 msgid ""
-"No known authentication methods specified: set \"cookie\" in auth_params "
-"or set both username and password in auth_params"
+"No known authentication methods specified: set \"cookie\" in auth_params or "
+"set both username and password in auth_params"
 msgstr ""
 "Nincs megadva ismert hitelesítő eljárás: használó nevet és jelszót "
 "auth_params paraméterben"
@@ -385,14 +382,14 @@ msgstr ""
 
 #: fedora/django/auth/models.py:63
 msgid ""
-"FAS groups loaded. Don't forget to set FAS_USERNAME and FAS_PASSWORD to a"
-" low-privilege account."
+"FAS groups loaded. Don't forget to set FAS_USERNAME and FAS_PASSWORD to a "
+"low-privilege account."
 msgstr ""
 
 #: fedora/tg/client.py:8
 msgid ""
-"fedora.tg.client has moved to fedora.client.  This location will "
-"disappear in 0.4"
+"fedora.tg.client has moved to fedora.client.  This location will disappear "
+"in 0.4"
 msgstr ""
 "fedora.tg.client elköltözött fedora.client helyre.  E hely el fog tűnni "
 "0.4-ben"
@@ -428,9 +425,9 @@ msgstr "url() python szótár típusú argumentumot vár a kérés paramétereik
 
 #: fedora/tg/util.py:40
 msgid ""
-"fedora.tg.util is deprecated.  Switch to one of these instead:   TG1 "
-"apps: fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils.  This file will "
-"disappear in 0.4"
+"fedora.tg.util is deprecated.  Switch to one of these instead:   TG1 apps: "
+"fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils.  This file will disappear"
+" in 0.4"
 msgstr ""
 
 #: fedora/tg/identity/jsonfasprovider1.py:227
@@ -481,12 +478,9 @@ msgstr "CSRF támadások"
 #: fedora/tg/templates/genshi/login.html:29
 msgid ""
 " are a means for a malicious website to make a request of another\n"
-"        web server as the user who contacted the malicious web site.  The"
-"\n"
-"        purpose of this page is to help protect your account and this "
-"server\n"
-"        from attacks from such malicious web sites.  By clicking below, "
-"you are\n"
+"        web server as the user who contacted the malicious web site.  The\n"
+"        purpose of this page is to help protect your account and this server\n"
+"        from attacks from such malicious web sites.  By clicking below, you are\n"
 "        proving that you are a person rather than just the web browser\n"
 "        forwarding your authentication cookies on behalf of a malicious\n"
 "        website."
@@ -566,8 +560,8 @@ msgstr ""
 #: fedora/wsgi/csrf.py:154
 #, python-format
 msgid ""
-"Invalid CSRF token.  User supplied (%(u_token)s) does not match what's in"
-" our environ (%(e_token)s)"
+"Invalid CSRF token.  User supplied (%(u_token)s) does not match what's in "
+"our environ (%(e_token)s)"
 msgstr ""
 
 #: fedora/wsgi/csrf.py:162

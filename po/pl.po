@@ -1,19 +1,23 @@
-# translation of pl.po to Polish
-# Piotr Drąg <piotrdrag@gmail.com>, 2009.
-#
+# Translations template for python-fedora.
+# Copyright (C) 2010 ORGANIZATION
+# This file is distributed under the same license as the python-fedora
+# project.
+# 
+# Piotr Drąg <piotrdrag@gmail.com>, 2011.
 msgid ""
 msgstr ""
-"Project-Id-Version:  pl\n"
+"Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2010-05-18 04:24-0400\n"
-"PO-Revision-Date: 2010-05-29 21:19+0200\n"
-"Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
-"Language-Team: Polish <trans-pl@lists.fedoraproject.org>\n"
+"PO-Revision-Date: 2011-03-27 12:23+0000\n"
+"Last-Translator: raven <piotrdrag@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2)\n"
+"Generated-By: Babel 0.9.5\n"
+"Language: pl\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: fedora/release.py:9
 msgid "Python modules for interacting with Fedora Services"
@@ -23,8 +27,7 @@ msgstr "Moduły Pythona do współpracowania z usługami Fedory"
 msgid ""
 "\n"
 "The Fedora Project runs many different services.  These services help us to\n"
-"package software, develop new programs, and generally put together the "
-"distro.\n"
+"package software, develop new programs, and generally put together the distro.\n"
 "This package contains software that helps us do that.\n"
 msgstr ""
 "\n"
@@ -70,8 +73,8 @@ msgstr ""
 msgid ""
 "DictContainer is deprecated.  Use the Bunch class from python-bunch instead."
 msgstr ""
-"DictContainer jest przestarzałe. Należy użyć klasy Bunch z biblioteki python-"
-"bunch zamiast tego."
+"DictContainer jest przestarzałe. Należy użyć klasy Bunch z biblioteki "
+"python-bunch zamiast tego."
 
 #: fedora/client/baseclient.py:85 fedora/client/baseclient.py:204
 #: fedora/client/baseclient.py:223 fedora/client/baseclient.py:235
@@ -101,8 +104,7 @@ msgstr "Nie zapisano sesji w pamięci podręcznej dla \"%s\""
 #: fedora/client/baseclient.py:279
 #, python-format
 msgid "send_request() got an unexpected keyword argument \"%s\""
-msgstr ""
-"send_request() otrzymało nieoczekiwany parametr słowa kluczowego \"%s\""
+msgstr "send_request() otrzymało nieoczekiwany parametr słowa kluczowego \"%s\""
 
 #: fedora/client/baseclient.py:283
 msgid "send_request() got an unexpected keyword argument \"input\""
@@ -172,7 +174,8 @@ msgid "FAS server unable to retrieve user information"
 msgstr "Serwer FAS nie może pobrać informacji o użytkowniku"
 
 #: fedora/client/fasproxy.py:67
-msgid "FasProxyClient() got an unexpected keyword argument 'session_as_cookie'"
+msgid ""
+"FasProxyClient() got an unexpected keyword argument 'session_as_cookie'"
 msgstr ""
 "FasProxyClient() otrzymało nieoczekiwany parametr słowa kluczowego "
 "\"session_as_cookie\""
@@ -183,8 +186,8 @@ msgid ""
 "We do not have enough information to create package %(pkg)s. Need version "
 "owner."
 msgstr ""
-"Brak wystarczającej ilości informacji, aby utworzyć pakiet %(pkg)s. Wymagana "
-"jest wersja i właściciel."
+"Brak wystarczającej ilości informacji, aby utworzyć pakiet %(pkg)s. Wymagana"
+" jest wersja i właściciel."
 
 #: fedora/client/pkgdb.py:196
 #, python-format
@@ -413,8 +416,8 @@ msgid ""
 "fedora.tg.client has moved to fedora.client.  This location will disappear "
 "in 0.4"
 msgstr ""
-"fedora.tg.client zostało przeniesione do fedora.client. To położenie zniknie "
-"w wersji 0.4"
+"fedora.tg.client zostało przeniesione do fedora.client. To położenie zniknie"
+" w wersji 0.4"
 
 #: fedora/tg/controllers.py:60
 #, python-format
@@ -449,8 +452,8 @@ msgstr "url() oczekuje słownika dla parametrów zapytania"
 #: fedora/tg/util.py:40
 msgid ""
 "fedora.tg.util is deprecated.  Switch to one of these instead:   TG1 apps: "
-"fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils.  This file will disappear "
-"in 0.4"
+"fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils.  This file will disappear"
+" in 0.4"
 msgstr ""
 "fedora.tg.util jest przestarzałe. Proszę przełączyć na jedno z tych: "
 "aplikacje TG1: fedora.tg.tg1utils; aplikacje TG2: fedora.tg.tg2utils. Ten "
@@ -464,8 +467,8 @@ msgstr "Błąd podczas logowania %(user)s: %(error)s"
 
 #: fedora/tg/identity/jsonfasprovider2.py:60
 msgid ""
-"Cannot enable ssl certificate auth via identity.ssl without setting fas."
-"usernamme and fas.password for authorization"
+"Cannot enable ssl certificate auth via identity.ssl without setting "
+"fas.usernamme and fas.password for authorization"
 msgstr ""
 "Nie można włączyć uwierzytelniania certyfikatu SSL przez identity.ssl bez "
 "ustawiania fas.usernamme i fas.password dla upoważnienia"
@@ -505,10 +508,8 @@ msgstr "Ataki CSRF"
 msgid ""
 " are a means for a malicious website to make a request of another\n"
 "        web server as the user who contacted the malicious web site.  The\n"
-"        purpose of this page is to help protect your account and this "
-"server\n"
-"        from attacks from such malicious web sites.  By clicking below, you "
-"are\n"
+"        purpose of this page is to help protect your account and this server\n"
+"        from attacks from such malicious web sites.  By clicking below, you are\n"
 "        proving that you are a person rather than just the web browser\n"
 "        forwarding your authentication cookies on behalf of a malicious\n"
 "        website."
@@ -681,7 +682,8 @@ msgid "Authentication failed, setting error"
 msgstr "Uwierzytelnienie nie powiodło się, ustawianie błędu"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:237
-msgid "An unknown error happened when trying to log you in.  Please try again."
+msgid ""
+"An unknown error happened when trying to log you in.  Please try again."
 msgstr ""
 "Wystąpił nieznany błąd podczas próby zalogowania. Proszę spróbować ponownie."
 
@@ -714,3 +716,5 @@ msgstr "Witaj ponownie, %s"
 #: fedora/wsgi/test/controllers/root.py:56
 msgid "We hope to see you soon!"
 msgstr "Do zobaczenia niedługo."
+
+
