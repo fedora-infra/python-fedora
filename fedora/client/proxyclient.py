@@ -275,7 +275,7 @@ class ProxyClient(object):
             if not (session_id or username):
                 raise AuthError(b_('No known authentication methods'
                     ' specified: set "cookie" in auth_params or set both'
-                    'username and password in auth_params'))
+                    ' username and password in auth_params'))
 
         # urljoin is slightly different than os.path.join().  Make sure method
         # will work with it.
