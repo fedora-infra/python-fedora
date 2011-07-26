@@ -72,7 +72,8 @@ rm -rf %{buildroot}
 
 %changelog
 * Wed Jul 20 2011 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.24-1
-- Upstream 0.3.24 release bugfixing TG2 server utils
+- Upstream 0.3.24 release bugfixing TG2 server utils and clients with
+  session cookie auth.
 
 * Tue May 03 2011 Luke Macken <lmacken@redhat.com> - 0.3.23-1
 - Upstream 0.3.23 bugfix release
