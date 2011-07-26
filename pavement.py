@@ -61,8 +61,8 @@ options(
                 'main = fedora.wsgi.test.testapp:make_app'),
             'paste.app_install' : (
                 'main = pylons.util:PylonsInstaller'),
-	    'paste.filter_app_factory': (
-		'faswho = fedora.wsgi.faswho:make_faswho_middleware')
+            'paste.filter_app_factory': (
+                'faswho = fedora.wsgi.faswho:make_faswho_middleware')
             },
         message_extractors = {
             'fedora': [('**.py', 'python', None),
@@ -143,7 +143,7 @@ if has_babel and PAVER_VER != '0.8':
     def make_catalogs():
         '''Compile all message catalogs for release'''
         options.order('i18n', add_rest=True)
-        for po_file in glob.glob('po/*.po'):
+        for po_file in glob.glob('translations/*.po'):
             locale, ext = os.path.splitext(os.path.basename(po_file))
             build_dir = paver_path(os.path.join(options.builddir, locale,
                 'LC_MESSAGES'))

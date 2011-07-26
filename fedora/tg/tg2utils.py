@@ -157,6 +157,7 @@ def _enable_csrf():
     # Override the tg.url function with our own
     tg.url = url
     tg.controllers.url = url
+    tg.controllers.util.url = url
 
     # Ignore the _csrf_token parameter
     ignore = config.get('ignore_parameters', [])

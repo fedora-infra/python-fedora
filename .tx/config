@@ -1,0 +1,27 @@
+[main]
+host = https://www.transifex.net
+
+[python-fedora.python-fedorapot]
+file_filter = translations/<lang>.po
+source_file = translations/python-fedora.pot
+source_lang = en
+trans.ca = translations/ca.po
+trans.cs = translations/cs.po
+trans.da = translations/da.po
+trans.de = translations/de.po
+trans.es = translations/es.po
+trans.hu = translations/hu.po
+trans.id = translations/id.po
+trans.it = translations/it.po
+trans.ja = translations/ja.po
+trans.nl = translations/nl.po
+trans.pl = translations/pl.po
+trans.pt_BR = translations/pt_BR.po
+trans.ru = translations/ru.po
+trans.sv = translations/sv.po
+trans.th = translations/th.po
+trans.tr = translations/tr.po
+trans.uk = translations/uk.po
+trans.zh_CN = translations/zh_CN.po
+trans.zh_TW = translations/zh_TW.po
+

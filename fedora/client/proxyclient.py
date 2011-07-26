@@ -275,7 +275,7 @@ class ProxyClient(object):
             if not (session_id or username):
                 raise AuthError(b_('No known authentication methods'
                     ' specified: set "cookie" in auth_params or set both'
-                    'username and password in auth_params'))
+                    ' username and password in auth_params'))
 
         # urljoin is slightly different than os.path.join().  Make sure method
         # will work with it.
@@ -330,8 +330,8 @@ class ProxyClient(object):
         if session_id:
             # Anytime the session_id exists, send it so that visit tracking
             # works.  Will also authenticate us if there's a need.
-            request.setopt(pycurl.COOKIE, '%s=%s;' % (self.session_name,
-                session_id))
+            request.setopt(pycurl.COOKIE, to_bytes('%s=%s;' % (self.session_name,
+                session_id)))
 
         complete_params = req_params or {}
         if session_id:
