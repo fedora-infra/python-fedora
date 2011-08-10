@@ -89,7 +89,14 @@ PYTHONPATH=$path paver html
 rm -rf %{buildroot}
 paver install --skip-build --root %{buildroot}
 
+# Cleanup doc
 mv build-doc/html doc/
+rm doc/html/.buildinfo
+find doc -name 'EMPTY' -exec rm \{\} \;
+
+# Remove regression tests
+rm -rf %{buildroot}%{python_sitelib}/fedora/wsgi/test
+
 %find_lang %{name}
 
 %clean
