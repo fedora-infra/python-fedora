@@ -32,7 +32,7 @@ import tg
 from tg import config
 from repoze.what.plugins.pylonshq import booleanize_predicates
 from copy import copy
-from tg.configuration import Bunch
+from bunch import Bunch
 import logging
 
 from fedora.wsgi.faswho import make_faswho_middleware
@@ -95,6 +95,20 @@ def add_fas_auth_middleware(self, app, *args):
 
          base_config.package = myapp
 
+    The configuration of the faswho middleware is done via attributes on
+    MyAppConfig.  For instance, to change the base url for the FAS server to
+    be authenticated against, set the connection to insecure for testing, and
+    the url of the login form, do this::
+
+        from bunch import Bunch
+        class MyAppConfig(AppConfig):
+            fas_auth = Bunch(fas_url='https://fakefas.fedoraproject.org/', 
+                    insecure=True, login_form_url='/alternate/login')
+            add_auth_middleware = add_fas_auth_middleware
+
+    The complete set of values that can be set in :attr:`fas_auth` is the same
+    as the parameters that can be passed to
+    :func:`fedora.wsgi.faswho.faswhoplugin.make_faswho_middleware`
     '''
     # Set up csrf protection
     _enable_csrf()
