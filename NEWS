@@ -7,6 +7,15 @@ NEWS
 :Version: 0.3.x
 
 ------
+0.3.25
+------
+
+* Modify caching of User data in the tg1 identity provider, jsonfas2provider
+  so that anonymous page requests don't call fas excessively.
+* Make :func:`fedora.tg.tg2utils.enable_csrf` a public function so that TG2
+  users can use it without using faswho.
+
+------
 0.3.24
 ------
 

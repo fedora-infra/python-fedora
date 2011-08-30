@@ -111,7 +111,7 @@ def add_fas_auth_middleware(self, app, *args):
     :func:`fedora.wsgi.faswho.faswhoplugin.make_faswho_middleware`
     '''
     # Set up csrf protection
-    _enable_csrf()
+    enable_csrf()
 
     booleanize_predicates()
 
@@ -129,11 +129,11 @@ def add_fas_auth_middleware(self, app, *args):
     return app
 
 
-def _enable_csrf():
+def enable_csrf():
     '''A startup function to setup :ref:`CSRF-Protection`.
 
     This should be run at application startup.  It does three things:
-    
+
     1) overrides the :func:`tg.url` function with
        :func:`fedora.tg.tg2utils.url` so that :term:`CSRF` tokens are
        appended to URLs.
