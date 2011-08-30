@@ -81,33 +81,21 @@ class CSRFProtectionMiddleware(object):
             app = make_base_app(global_conf, wrap_app=CSRFProtectionMiddleware,
                                 full_stack=full_stack, **app_conf)
 
-    === From here on is broken ===
+    You then need to add the CSRF token to every url that you need to be
+    authenticated for.  When used with TurboGears2, an overridden version of
+    :func:`tg.url` is provided.  You can use it directly by calling::
 
-    The :class:`moksha.api.widgets.moksha:MokshaGlobals` widget then needs to
-    be rendered in every page, which automatically handles injecting the CSRF
-    token.  This widget is registerd as a Moksha Global Resource, and Moksha's
-    default index template handles injecting this by default, but you
-    can easily render Moksha's global resource injection widget in your own
-    applications template by doing the following in your master template::
+        from fedora.tg.tg2utils import url
+        [...]
+        url = url('/authentication_needed')
 
-        ${tmpl_context.moksha_global_resources()}
-
-    URLs can then be re-written using the ``moksha.csrf_rewrite_url`` function
-    that is in the ``moksha.js`` library, which is automatically pulled in by
-    the MokshaGlobals widget.  Here is an example of adding the CSRF token to
-    an ajax.  This example also utilizes the ``moksha.filter_resources``
-    function to strip out any duplicate javascript files.
-
-    .. code-block:: javascript
-
-        $.ajax({
-            url: moksha.csrf_rewrite_url('/widgets/%(id)s'),
-            success: function(data, status) {
-                var $panel = $('#%(id)s_panel');
-                var $stripped = moksha.filter_resources(data);
-                $panel.html($stripped);
-            }
-        });
+    An easier and more portable way to use that is from within TG2 to set this
+    up is to use :func:`fedora.tg.tg2utils.enable_csrf` when you setup your
+    application.  This function will monkeypatch TurboGears2's :func:`tg.url`
+    so that it adds a csrf token to urls.  This way, you can keep the same
+    code in your templates and controller methods whether or not you configure
+    the CSRF middleware to provide you with protection via
+    :func:`~fedora.tg.tg2utils.enable_csrf`.
     '''
 
     def __init__(self, application, csrf_token_id='_csrf_token',
