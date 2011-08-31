@@ -33,6 +33,7 @@ import logging
 import pkg_resources
 
 from beaker.cache import Cache
+from bunch import Bunch
 from kitchen.text.converters import to_bytes
 from paste.httpexceptions import HTTPFound
 from repoze.who.middleware import PluggableAuthenticationMiddleware
@@ -329,7 +330,24 @@ class FASWhoPlugin(object):
                 createfunc=lambda: self.get_metadata(environ),
                 expiretime=FAS_CACHE_TIMEOUT)
 
+        #### FIXME: Deprecate this!!!
+        # If we make a new version of fas.who middleware, get rid of saving
+        # user information directly into identity.  Instead, save it into
+        # user, as is done below
         identity.update(info)
+
+        identity['userdata'] = info
+        identity['user'] = Bunch()
+        identity['user'].created = info['creation']
+        identity['user'].display_name = info['human_name']
+        identity['user'].email_address = info['email']
+        identity['user'].groups = info['groups']
+        identity['user'].password = None
+        identity['user'].permissions = info['permissions']
+        identity['user'].user_id = info['id']
+        identity['user'].user_name = info['username']
+        identity['groups'] = info['groups']
+        identity['permissions'] = info['permissions']
 
         if 'repoze.what.credentials' not in environ:
             environ['repoze.what.credentials'] = {}
