@@ -103,7 +103,8 @@ def add_fas_auth_middleware(self, app, *args):
 
         from bunch import Bunch
         class MyAppConfig(AppConfig):
-            fas_auth = Bunch(fas_url='https://fakefas.fedoraproject.org/', 
+            fas_auth = Bunch(
+                    fas_url='https://fakefas.fedoraproject.org/accounts', 
                     insecure=True, login_form_url='/alternate/login')
             add_auth_middleware = add_fas_auth_middleware
 
