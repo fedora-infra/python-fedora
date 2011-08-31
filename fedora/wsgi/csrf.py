@@ -1,7 +1,7 @@
 #
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2008-2009  Red Hat, Inc.
+# Copyright (C) 2008-2011  Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
@@ -31,6 +31,7 @@ http://en.wikipedia.org/wiki/Cross-site_request_forgery
 
 import logging
 
+from bunch import Bunch
 from kitchen.text.converters import to_bytes
 from webob import Request
 try:
@@ -146,6 +147,8 @@ class CSRFProtectionMiddleware(object):
             if not environ.get(self.auth_state):
                 log.debug(b_('Clearing identity'))
                 self._clean_environ(environ)
+                if 'repoze.who.identity' not in environ:
+                    environ['repoze.who.identity'] = Bunch()
                 if csrf_token:
                     log.warning(b_('Invalid CSRF token.  User supplied'
                             ' (%(u_token)s) does not match what\'s in our'
