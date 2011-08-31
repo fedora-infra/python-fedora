@@ -201,11 +201,14 @@ class CSRFMetadataProvider(object):
         '''
         Create the CSRF Metadata Provider Plugin.
 
-        :kwarg csrf_token_id: The name of the CSRF token variable
+        :kwarg csrf_token_id: The name of the CSRF token variable. The
+            identity will contain an entry with this as key and the
+            computed csrf_token as the value.
         :kwarg session_cookie: The name of the session cookie
         :kwarg login_handler: The path to the login handler, used to determine
             if the user logged in during this request
-        :kwarg token_env: The name of the token variable in the environ
+        :kwarg token_env: The name of the token variable in the environ.
+            The environ will contain the token from the request
         :kwarg auth_session_id: The environ key containing an optional
             session id
         :kwarg auth_state: The environ key that indicates when we are
