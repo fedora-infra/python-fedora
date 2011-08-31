@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2008-2009  Red Hat, Inc.
+# Copyright (C) 2008-2011  Red Hat, Inc.
 # This file is part of python-fedora
 #
 # python-fedora is free software; you can redistribute it and/or
@@ -64,11 +64,31 @@ def fas_request_classifier(environ):
             classifier = 'app' 
     return classifier 
 
-def make_faswho_middleware(app, log_stream, login_handler='/login_handler',
+def make_faswho_middleware(app, log_stream=None, login_handler='/login_handler',
         login_form_url='/login', logout_handler='/logout_handler',
-        post_login_url='/post_login', post_logout_url=None):
+        post_login_url='/post_login', post_logout_url=None, fas_url=FAS_URL,
+        insecure=False):
+    '''
+    :app: WSGI app that is being wrapped
+    :log_stream: :class:`logging.Logger` to log auth messages
+    :login_handler: URL where the login form is submitted
+    :login_form_url: URL where the login form is displayed
+    :logout_handler: URL where the logout form is submitted
+    :post_login_url: URL to redirect the user to after login
+    :post_logout_url: URL to redirect the user to after logout
+    :fas_url: Base URL to the FAS server
+    :insecure: Allow connecting to a fas server without checking the server's
+        SSL certificate.  Opens you up to MITM attacks but can be useful
+        when testing.  *Do not enable this in production*
+    '''
 
-    faswho = FASWhoPlugin(FAS_URL)
+    # Because of the way we override values (via a dict in AppConfig), we
+    # need to make this a keyword arg and then check it here to make it act
+    # like a positional arg.
+    if not log_stream:
+        raise TypeError('log_stream must be set when calling make_fasauth_middleware()')
+
+    faswho = FASWhoPlugin(fas_url, insecure)
     csrf_mdprovider = CSRFMetadataProvider()
 
     form = FriendlyFormPlugin(login_form_url,
@@ -105,12 +125,12 @@ def make_faswho_middleware(app, log_stream, login_handler='/login_handler',
 
     return app
 
-
 class FASWhoPlugin(object):
 
-    def __init__(self, url, session_cookie='tg-visit'):
+    def __init__(self, url, insecure=False, session_cookie='tg-visit'):
         self.url = url
-        self.fas = FasProxyClient(url)
+        self.insecure = insecure
+        self.fas = FasProxyClient(url, insecure=insecure)
         self.session_cookie = session_cookie
         self._session_cache = {}
         self._metadata_plugins = []
