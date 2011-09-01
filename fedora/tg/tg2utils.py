@@ -64,7 +64,7 @@ def url(*args, **kwargs):
 
     # Set the current _csrf_token on the url.  It will overwrite any current
     # _csrf_token
-    identity = tg.request.environ.get('identity')
+    identity = tg.request.environ.get('repoze.who.identity')
     if identity:
         csrf_token = identity.get('_csrf_token', None)
         if csrf_token:
