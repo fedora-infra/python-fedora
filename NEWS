@@ -19,6 +19,8 @@ NEWS
 * Allow using a test fas server with :func:`make_faswho_middleware`
 * Update faswho metadata to be compatible with the default TG2 identity
   metadata for portability
+* Allow recovering authenticated state from lack of csrf_token when using the
+  TG2 csrf protecting middleware
 
 
 ------

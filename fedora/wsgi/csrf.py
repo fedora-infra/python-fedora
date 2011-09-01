@@ -250,6 +250,7 @@ class CSRFMetadataProvider(object):
                 to_bytes(session_id)})
 
         if session_id and session_id != 'Set-Cookie:':
+            environ[self.auth_session_id] = session_id
             token = sha1(session_id).hexdigest()
             identity.update({self.csrf_token_id: token})
             log.debug(b_('Identity updated with CSRF token'))

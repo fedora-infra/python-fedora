@@ -64,12 +64,17 @@ def url(*args, **kwargs):
 
     # Set the current _csrf_token on the url.  It will overwrite any current
     # _csrf_token
+    csrf_token = None
     identity = tg.request.environ.get('repoze.who.identity')
     if identity:
         csrf_token = identity.get('_csrf_token', None)
-        if csrf_token:
-            new_url = update_qs(new_url, {'_csrf_token': csrf_token},
-                    overwrite=True)
+    else:
+        session_id = tg.request.environ.get('CSRF_AUTH_SESSION_ID')
+        if session_id:
+            csrf_token = sha_constructor(session_id).hexdigest()
+    if csrf_token:
+        new_url = update_qs(new_url, {'_csrf_token': csrf_token},
+                overwrite=True)
     return new_url
 
 def add_fas_auth_middleware(self, app, *args):
