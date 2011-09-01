@@ -149,6 +149,9 @@ class CSRFProtectionMiddleware(object):
                 self._clean_environ(environ)
                 if 'repoze.who.identity' not in environ:
                     environ['repoze.who.identity'] = Bunch()
+                if 'repoze.who.logins' not in environ:
+                    # For compatibility with friendlyform
+                    environ['repoze.who.logins'] = 0
                 if csrf_token:
                     log.warning(b_('Invalid CSRF token.  User supplied'
                             ' (%(u_token)s) does not match what\'s in our'
