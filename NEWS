@@ -17,6 +17,8 @@ NEWS
 * Make :func:`fedora.tg.tg2utils.url` work with other repoze.who plugins other
   than faswho.
 * Allow using a test fas server with :func:`make_faswho_middleware`
+* Update faswho metadata to be compatible with the default TG2 identity
+  metadata for portability
 
 
 ------
