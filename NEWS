@@ -21,7 +21,9 @@ NEWS
   metadata for portability
 * Allow recovering authenticated state from lack of csrf_token when using the
   TG2 csrf protecting middleware
-
+* Split the TG1 and TG2 code into two separate directories so packagers can
+  split the dependencies even more
+* Add login template for TG2-mako
 
 ------
 0.3.24
