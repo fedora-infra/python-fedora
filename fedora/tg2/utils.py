@@ -20,26 +20,31 @@
 Miscellaneous functions of use on a TurboGears 2 Server
 
 .. versionadded:: 0.3.17
-.. versionchanged:: Moved from fedora.tg.tg2utils
+.. versionchanged:: 0.3.25
+    Moved from fedora.tg.tg2utils
+    Modified fedora_template to allow dotted lookup
 
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
+
+from copy import copy
+import logging
+import os
+
 try:
     from hashlib import sha1 as sha_constructor
 except ImportError:
     from sha import new as sha_constructor
 
+from bunch import Bunch
+from kitchen.text.converters import to_unicode
+import pkg_resources
+from repoze.what.plugins.pylonshq import booleanize_predicates
 import tg
 from tg import config
-from repoze.what.plugins.pylonshq import booleanize_predicates
-from copy import copy
-from bunch import Bunch
-import logging
 
 from fedora.wsgi.faswho import make_faswho_middleware
 from fedora.urlutils import update_qs
-# We're re-exporting this from here
-from fedora._tgutils import fedora_template
 
 tg_url = tg.url
 
@@ -77,6 +82,42 @@ def url(*args, **kwargs):
         new_url = update_qs(new_url, {'_csrf_token': csrf_token},
                 overwrite=True)
     return new_url
+
+def fedora_template(template, template_type='mako', dotted_lookup=True):
+    '''Function to return the path to a template.
+
+    :arg template: filename of the template itself.  Ex: login.mak
+    :kwarg template_type: template language we need the template written in
+        Defaults to 'mako'
+    :kwarg dotted_lookup: if True, return the resource as a dotted module path
+        If False, return the resource as a filename.  Default: True
+    :returns: filesystem path or dotted module path equivalent to the template
+
+    .. versionchanged:: 0.3.25
+        Added dotted_lookup
+        Made this work with tg2
+    '''
+    # :E1101: pkg_resources does have resource_filename
+    # pylint: disable-msg=E1101
+    resource = pkg_resources.resource_filename('fedora', os.path.join('tg2',
+        'templates', template_type, template))
+    # pylint: enable-msg=E1101
+
+    if dotted_lookup:
+        # Find the location of the base resource (fedora)
+        base = pkg_resources.resource_filename('fedora', '')
+        if resource.startswith(base):
+            # subtract that from the resource
+            resource = resource[len(base):]
+            resource = 'fedora%s' % resource
+        # Strip the filename extension
+        resource = os.path.splitext(resource)[0]
+
+        # Turn '/' into '.'
+        resource = to_unicode(resource)
+        resource = resource.translate({ord(u'/'): u'.'})
+
+    return resource
 
 def add_fas_auth_middleware(self, app, *args):
     ''' Add our FAS authentication middleware.
@@ -196,4 +237,5 @@ def enable_csrf():
         config['variable_provider'] = lambda: {'fedora_template':
                 fedora_template}
 
-__all__ = ('enable_csrf', 'fedora_template', 'tg_url', 'url')
+__all__ = ('add_fas_auth_middleware', 'enable_csrf', 'fedora_template',
+        'tg_url', 'url')

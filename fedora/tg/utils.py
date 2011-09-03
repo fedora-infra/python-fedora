@@ -26,25 +26,27 @@ Miscellaneous functions of use on a TurboGears Server
 .. versionchanged:: 0.3.17
    Renamed from fedora.tg.util
 
+.. versionchanged:: 0.3.25
+   Renamed from fedora.tg.tg1utils
+   
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 '''
 from itertools import chain
 import urlparse
 import cgi
+import os
 import urllib
 
 import cherrypy
 from cherrypy import request
+from decorator import decorator
+import pkg_resources
 import turbogears
 from turbogears import flash, redirect, config, identity
 import turbogears.util as tg_util
 from turbogears.controllers import check_app_root
 from turbogears.identity.exceptions import RequestRequiredException
-from decorator import decorator
-
-# We're exporting this here
-from fedora._tgutils import fedora_template
 
 from fedora import b_
 
@@ -399,6 +401,19 @@ if hasattr(turbogears, 'absolute_url'):
 
 if hasattr(turbogears, 'get_server_name'):
     _get_server_name = turbogears.get_server_name
+
+def fedora_template(template, template_type='genshi'):
+    '''Function to return the path to a template.
+
+    :arg template: filename of the template itself.  Ex: login.html
+    :kwarg template_type: template language we need the template written in
+        Defaults to 'genshi'
+    :returns: filesystem path to the template
+    '''
+    # :E1101: pkg_resources does have resource_filename
+    # pylint: disable-msg=E1101
+    return pkg_resources.resource_filename('fedora', os.path.join('tg',
+        'templates', template_type, template))
 
 __all__ = ('add_custom_stdvars', 'absolute_url', 'enable_csrf',
         'fedora_template', 'jsonify_validation_errors', 'json_or_redirect',
