@@ -33,10 +33,7 @@ BuildRequires: TurboGears python-repoze-who-friendlyform Django
 BuildRequires: python-pycurl
 
 Requires:       python-simplejson
-Requires:       python-bugzilla
 Requires:       python-bunch
-Requires:       python-feedparser
-Requires:       python-decorator
 Requires:       python-pycurl
 Requires:       python-kitchen
 # These are now optional dependencies.  Some bodhi methods will not work if
@@ -57,6 +54,9 @@ License:        LGPLv2+
 Requires: %{name} = %{version}-%{release}
 Requires: TurboGears
 Requires: python-sqlalchemy
+Requires: python-decorator
+Requires: python-bugzilla
+Requires: python-feedparser
 
 %description turbogears
 Python modules that help with building Fedora Services.  This package includes
