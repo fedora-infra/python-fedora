@@ -1,8 +1,10 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
+%global prerel c1
+
 Name:           python-fedora
 Version:        0.3.25
-Release:        1%{?dist}
+Release:        0.1.c1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
 Group:          Development/Languages

@@ -4,13 +4,15 @@
 # project.
 # 
 # caoyu1099 <caoyu1099@gmail.com>, 2011.
+#   <simonyan@fedoraproject.org>, 2011.
+#   <lovenemesis@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2011-07-23 11:41-0700\n"
-"PO-Revision-Date: 2011-07-23 18:46+0000\n"
-"Last-Translator: toshio <a.badger@gmail.com>\n"
+"PO-Revision-Date: 2011-09-01 09:14+0000\n"
+"Last-Translator: simonyanix <simonyan@fedoraproject.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -31,7 +33,7 @@ msgstr ""
 
 #: fedora/release.py:9
 msgid "Python modules for interacting with Fedora Services"
-msgstr "Python模块支持Fedora服务"
+msgstr "与 Fedora 服务交互的 Python 模块"
 
 #: fedora/release.py:10
 msgid ""
@@ -39,11 +41,7 @@ msgid ""
 "The Fedora Project runs many different services.  These services help us to\n"
 "package software, develop new programs, and generally put together the distro.\n"
 "This package contains software that helps us do that.\n"
-msgstr ""
-"\n"
-"The Fedora Project runs many different services.  These services help us to\n"
-"package software, develop new programs, and generally put together the distro.\n"
-"This package contains software that helps us do that.\n"
+msgstr "\n"
 
 #: fedora/textutils.py:33
 msgid "fedora.textutils is deprecated.  Use kitchen.text.converters instead"
@@ -54,39 +52,36 @@ msgid ""
 "fedora.accounts.fas2 has moved to fedora.client.fas2.  This location will "
 "disappear in 0.4"
 msgstr ""
-"fedora.accounts.fas2 已经转移到 fedora.client.fas2.  This location will disappear"
-" in 0.4"
 
 #: fedora/client/__init__.py:89
 msgid ""
 "DictContainer is deprecated.  Use the Bunch class from python-bunch instead."
 msgstr ""
-"DictContainer is deprecated.  Use the Bunch class from python-bunch instead."
 
 #: fedora/client/baseclient.py:94 fedora/client/baseclient.py:215
 #: fedora/client/baseclient.py:234 fedora/client/baseclient.py:246
 msgid "session_cookie is deprecated, use session_id instead"
-msgstr "session_cookie is deprecated, use session_id instead"
+msgstr ""
 
 #: fedora/client/baseclient.py:112
 #, python-format
 msgid "Unable to load session from %(file)s"
-msgstr "Unable to load session from %(file)s"
+msgstr ""
 
 #: fedora/client/baseclient.py:129
 #, python-format
 msgid "Unable to create %(dir)s: %(error)s"
-msgstr "Unable to create %(dir)s: %(error)s"
+msgstr ""
 
 #: fedora/client/baseclient.py:141
 #, python-format
 msgid "Unable to write to session file %(session)s: %(error)s"
-msgstr "Unable to write to session file %(session)s: %(error)s"
+msgstr ""
 
 #: fedora/client/baseclient.py:164
 #, python-format
 msgid "No session cached for \"%s\""
-msgstr "No session cached for \"%s\""
+msgstr ""
 
 #: fedora/client/baseclient.py:301
 #, python-format
@@ -95,17 +90,16 @@ msgstr ""
 
 #: fedora/client/baseclient.py:305
 msgid "send_request() got an unexpected keyword argument \"input\""
-msgstr "send_request() got an unexpected keyword argument \"input\""
+msgstr ""
 
 #: fedora/client/baseclient.py:309
 msgid "send_request() got an unexpected keyword argument"
-msgstr "send_request() got an unexpected keyword argument"
+msgstr ""
 
 #: fedora/client/baseclient.py:313
 msgid ""
 "send_request(input) is deprecated.  Use send_request(req_params) instead"
 msgstr ""
-"send_request(input) is deprecated.  Use send_request(req_params) instead"
 
 #: fedora/client/baseclient.py:331
 msgid ""
@@ -113,9 +107,6 @@ msgid ""
 "username and password or session_id before calling this function with "
 "auth=True"
 msgstr ""
-"Auth was requested but no way to perform auth was given.  Please set "
-"username and password or session_id before calling this function with "
-"auth=True"
 
 #: fedora/client/bodhi.py:195
 msgid "You must specify a username"
@@ -124,7 +115,7 @@ msgstr "您必须指定一个用户名"
 #: fedora/client/bodhi.py:265
 #, python-format
 msgid "Reading from %s "
-msgstr "Reading from %s "
+msgstr ""
 
 #: fedora/client/fas2.py:231
 #, python-format
@@ -138,7 +129,7 @@ msgstr "关键字必须是 \"id\", \"用户名\", or \"邮件\""
 #: fedora/client/fas2.py:370
 #, python-format
 msgid "%(field)s is not a valid field to filter"
-msgstr "%(field)s is not a valid field to filter"
+msgstr ""
 
 #: fedora/client/fas2.py:422
 msgid ""
@@ -146,23 +137,19 @@ msgid ""
 "code to use people_by_key(key='id', fields=['human_name', 'email', "
 "'username', 'bugzilla_email']) instead"
 msgstr ""
-"people_by_id() is deprecated and will be removed in 0.4.  Please port your "
-"code to use people_by_key(key='id', fields=['human_name', 'email', "
-"'username', 'bugzilla_email']) instead"
 
 #: fedora/client/fas2.py:604
 msgid "FAS server unable to retrieve group members"
-msgstr "FAS server unable to retrieve group members"
+msgstr ""
 
 #: fedora/client/fas2.py:626
 msgid "FAS server unable to retrieve user information"
-msgstr "FAS server unable to retrieve user information"
+msgstr ""
 
 #: fedora/client/fasproxy.py:67
 msgid ""
 "FasProxyClient() got an unexpected keyword argument 'session_as_cookie'"
 msgstr ""
-"FasProxyClient() got an unexpected keyword argument 'session_as_cookie'"
 
 #: fedora/client/pkgdb.py:197
 #, python-format
@@ -170,13 +157,11 @@ msgid ""
 "We do not have enough information to create package %(pkg)s. Need version "
 "owner."
 msgstr ""
-"We do not have enough information to create package %(pkg)s. Need version "
-"owner."
 
 #: fedora/client/pkgdb.py:208
 #, python-format
 msgid "PackageDB returned an error creating %(pkg)s: %(msg)s"
-msgstr "PackageDB returned an error creating %(pkg)s: %(msg)s"
+msgstr ""
 
 #: fedora/client/pkgdb.py:231 fedora/client/pkgdb.py:287
 #, python-format
@@ -188,72 +173,57 @@ msgstr "不能为 %(pkg)s: %(msg)s 保存所有文件"
 msgid ""
 "Collection abbreviation %(collection)s is unknown.  Use F, FC, EL, or OLPC"
 msgstr ""
-"Collection abbreviation %(collection)s is unknown.  Use F, FC, EL, or OLPC"
 
 #: fedora/client/pkgdb.py:350
 msgid ""
 "collection and collection_ver are deprecated names for collctn_name and "
 "collctn_ver respectively.  Ignoring the values given in them."
 msgstr ""
-"collection and collection_ver are deprecated names for collctn_name and "
-"collctn_ver respectively.  Ignoring the values given in them."
 
 #: fedora/client/pkgdb.py:356
 msgid ""
 "collection has been renamed to collctn_name.\n"
 "Please start using the new name.  collection will go away in 0.4.x."
 msgstr ""
-"collection has been renamed to collctn_name.\n"
-"Please start using the new name.  collection will go away in 0.4.x."
 
 #: fedora/client/pkgdb.py:362
 msgid ""
 "collection_ver has been renamed to collctn_ver.\n"
 "Please start using the new name.  collection_ver will go away in 0.4.x."
 msgstr ""
-"collection_ver has been renamed to collctn_ver.\n"
-"Please start using the new name.  collection_ver will go away in 0.4.x."
 
 #: fedora/client/pkgdb.py:399
 msgid ""
 "collectn_list is a deprecated name for collctn_list.\n"
 "Ignoring the value of collectn_list."
 msgstr ""
-"collectn_list is a deprecated name for collctn_list.\n"
-"Ignoring the value of collectn_list."
 
 #: fedora/client/pkgdb.py:404
 msgid ""
 "collectn_list has been renamed to collctn_list.\n"
 "Please start using the new name.  collectn_list will go away in 0.4.x."
 msgstr ""
-"collectn_list has been renamed to collctn_list.\n"
-"Please start using the new name.  collectn_list will go away in 0.4.x."
 
 #: fedora/client/pkgdb.py:478
 msgid ""
 "collectn is a deprecated name for collctn.\n"
 "Ignoring the value of collectn."
 msgstr ""
-"collectn is a deprecated name for collctn.\n"
-"Ignoring the value of collectn."
 
 #: fedora/client/pkgdb.py:483
 msgid ""
 "collectn has been renamed to collctn.\n"
 "Please start using the new name.  collectn will go away in 0.4.x."
 msgstr ""
-"collectn has been renamed to collctn.\n"
-"Please start using the new name.  collectn will go away in 0.4.x."
 
 #: fedora/client/pkgdb.py:493
 #, python-format
 msgid "Collection shortname %(collctn)s is unknown."
-msgstr "Collection shortname %(collctn)s is unknown."
+msgstr ""
 
 #: fedora/client/proxyclient.py:151
 msgid "proxyclient.__init__:entered"
-msgstr "proxyclient.__init__:entered"
+msgstr ""
 
 #: fedora/client/proxyclient.py:160
 msgid ""

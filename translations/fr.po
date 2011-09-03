@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2011-07-23 11:41-0700\n"
-"PO-Revision-Date: 2011-07-26 22:00+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2011-08-25 06:18+0000\n"
+"Last-Translator: dominique <chepioq@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,17 +20,19 @@ msgstr ""
 
 #: fedora/iterutils.py:36
 msgid "fedora.iterutils is deprecated.  Use kitchen.iterutils instead"
-msgstr ""
+msgstr "fedora.iterutils est obsolète. Utilisez kitchen.iterutils"
 
 #: fedora/iterutils.py:54
 msgid ""
 "fedora.iterutils.isiterable is deprecated, use kitchen.iterutils.isiterable "
 "instead"
 msgstr ""
+"fedora.iterutils.isiterable est obsolète. Utilisez "
+"kitchen.iterutils.isiterable"
 
 #: fedora/release.py:9
 msgid "Python modules for interacting with Fedora Services"
-msgstr ""
+msgstr "Modules python pour interagir avec les services de Fedora"
 
 #: fedora/release.py:10
 msgid ""
@@ -39,64 +41,72 @@ msgid ""
 "package software, develop new programs, and generally put together the distro.\n"
 "This package contains software that helps us do that.\n"
 msgstr ""
+"\n"
+"Le Projet Fedora gère de nombreux services différents. Ces services nous aident à\n"
+"empaqueter des logiciels, développer de nouveaux programmes et généralement à mettre en place la distribution.\n"
+"Ce paquet contient les logiciels qui nous aideront à le faire.\n"
 
 #: fedora/textutils.py:33
 msgid "fedora.textutils is deprecated.  Use kitchen.text.converters instead"
-msgstr ""
+msgstr "fedora.textutils est obsolète. Utilisez kitchen.text.converters"
 
 #: fedora/accounts/fas2.py:8
 msgid ""
 "fedora.accounts.fas2 has moved to fedora.client.fas2.  This location will "
 "disappear in 0.4"
 msgstr ""
+"fedora.accounts.fas2 est remplacé par fedora.client.fas2. Cet objet "
+"disparaîtra dans la 0.4"
 
 #: fedora/client/__init__.py:89
 msgid ""
 "DictContainer is deprecated.  Use the Bunch class from python-bunch instead."
 msgstr ""
+"DictContainer est obsolète. Utilisez la classe Bunch à partir de python-"
+"bunch."
 
 #: fedora/client/baseclient.py:94 fedora/client/baseclient.py:215
 #: fedora/client/baseclient.py:234 fedora/client/baseclient.py:246
 msgid "session_cookie is deprecated, use session_id instead"
-msgstr ""
+msgstr "session_cookie est obsolète. Utilisez session_id"
 
 #: fedora/client/baseclient.py:112
 #, python-format
 msgid "Unable to load session from %(file)s"
-msgstr ""
+msgstr "Impossible de charger la session à partir de %(file)s"
 
 #: fedora/client/baseclient.py:129
 #, python-format
 msgid "Unable to create %(dir)s: %(error)s"
-msgstr ""
+msgstr "Impossible de créer %(dir)s : %(error)s"
 
 #: fedora/client/baseclient.py:141
 #, python-format
 msgid "Unable to write to session file %(session)s: %(error)s"
-msgstr ""
+msgstr "Impossible d'écrire le fichier de session %(session)s : %(error)s"
 
 #: fedora/client/baseclient.py:164
 #, python-format
 msgid "No session cached for \"%s\""
-msgstr ""
+msgstr "Pas de cache de session pour « %s »"
 
 #: fedora/client/baseclient.py:301
 #, python-format
 msgid "send_request() got an unexpected keyword argument \"%(arg)s\""
-msgstr ""
+msgstr "send_request() a reçu un argument inattendu « %(arg)s »"
 
 #: fedora/client/baseclient.py:305
 msgid "send_request() got an unexpected keyword argument \"input\""
-msgstr ""
+msgstr "send_request() a reçu un argument inattendu « input »"
 
 #: fedora/client/baseclient.py:309
 msgid "send_request() got an unexpected keyword argument"
-msgstr ""
+msgstr "send_request() a reçu un argument inattendu"
 
 #: fedora/client/baseclient.py:313
 msgid ""
 "send_request(input) is deprecated.  Use send_request(req_params) instead"
-msgstr ""
+msgstr "send_request(input) est obsolète. Utilisez send_request(req_params)"
 
 #: fedora/client/baseclient.py:331
 msgid ""
@@ -104,29 +114,32 @@ msgid ""
 "username and password or session_id before calling this function with "
 "auth=True"
 msgstr ""
+"Auth est requis mais aucun moyen d'effectuer l'auth n'est donnée. Merci de "
+"donner un nom d'utilisateur et un mot de passe ou un id de session avant "
+"d'appeler cette fonction avec auth=True"
 
 #: fedora/client/bodhi.py:195
 msgid "You must specify a username"
-msgstr ""
+msgstr "Vous devez donner un nom d'utilisateur"
 
 #: fedora/client/bodhi.py:265
 #, python-format
 msgid "Reading from %s "
-msgstr ""
+msgstr "Lecture à partir de %s"
 
 #: fedora/client/fas2.py:231
 #, python-format
 msgid "FAS server unable to retrieve group %(group)s"
-msgstr ""
+msgstr "Groupe %(group)s introuvable dans le serveur FAS"
 
 #: fedora/client/fas2.py:363
 msgid "key must be one of \"id\", \"username\", or \"email\""
-msgstr ""
+msgstr "La clef doit être parmi « id », « username », ou « email »"
 
 #: fedora/client/fas2.py:370
 #, python-format
 msgid "%(field)s is not a valid field to filter"
-msgstr ""
+msgstr "%(field)s n'est pas un champ valide pour trier"
 
 #: fedora/client/fas2.py:422
 msgid ""
@@ -134,19 +147,22 @@ msgid ""
 "code to use people_by_key(key='id', fields=['human_name', 'email', "
 "'username', 'bugzilla_email']) instead"
 msgstr ""
+"people_by_id() est obsolète et sera supprimé en 0.4. Merci d'utiliser dans "
+"votre code people_by_key(key='id', fields=['human_name', 'email', "
+"'username', 'bugzilla_email'])"
 
 #: fedora/client/fas2.py:604
 msgid "FAS server unable to retrieve group members"
-msgstr ""
+msgstr "Le serveur FAS n'a pas pu trouver les membres du groupe"
 
 #: fedora/client/fas2.py:626
 msgid "FAS server unable to retrieve user information"
-msgstr ""
+msgstr "Le serveur FAS n'a pas pu trouver les informations utilisateur"
 
 #: fedora/client/fasproxy.py:67
 msgid ""
 "FasProxyClient() got an unexpected keyword argument 'session_as_cookie'"
-msgstr ""
+msgstr "FasProxyClient() a reçu un argument inattendu 'session_as_cookie'"
 
 #: fedora/client/pkgdb.py:197
 #, python-format
@@ -154,73 +170,91 @@ msgid ""
 "We do not have enough information to create package %(pkg)s. Need version "
 "owner."
 msgstr ""
+"Nous n'avons pas suffisamment d'informations pour créer le paquet %(pkg)s. "
+"Nous avons besoin de la version propriétaire."
 
 #: fedora/client/pkgdb.py:208
 #, python-format
 msgid "PackageDB returned an error creating %(pkg)s: %(msg)s"
-msgstr ""
+msgstr "PackageDB a retourné une erreur en créant %(pkg)s : %(msg)s"
 
 #: fedora/client/pkgdb.py:231 fedora/client/pkgdb.py:287
 #, python-format
 msgid "Unable to save all information for %(pkg)s: %(msg)s"
-msgstr ""
+msgstr "Impossible de sauver toutes les informations pour %(pkg)s : %(msg)s"
 
 #: fedora/client/pkgdb.py:323
 #, python-format
 msgid ""
 "Collection abbreviation %(collection)s is unknown.  Use F, FC, EL, or OLPC"
 msgstr ""
+"L'abréviation collection %(collection)s est inconnue. Utiliser F, FC, EL ou "
+"OLPC"
 
 #: fedora/client/pkgdb.py:350
 msgid ""
 "collection and collection_ver are deprecated names for collctn_name and "
 "collctn_ver respectively.  Ignoring the values given in them."
 msgstr ""
+"collection et collection_ver sont obsolètees pour collctn_name et "
+"collctn_ver, respectivement. Les valeurs entrées sont ignorées."
 
 #: fedora/client/pkgdb.py:356
 msgid ""
 "collection has been renamed to collctn_name.\n"
 "Please start using the new name.  collection will go away in 0.4.x."
 msgstr ""
+"collection a été renommé en collctn_name.\n"
+"Merci d'utiliser ce nouveau nom. collection sera supprimé en 0.4.x."
 
 #: fedora/client/pkgdb.py:362
 msgid ""
 "collection_ver has been renamed to collctn_ver.\n"
 "Please start using the new name.  collection_ver will go away in 0.4.x."
 msgstr ""
+"collection_ver a été renommé en collctn_ver.\n"
+"Merci d'utiliser ce nouveau nom. collection sera supprimé en 0.4.x."
 
 #: fedora/client/pkgdb.py:399
 msgid ""
 "collectn_list is a deprecated name for collctn_list.\n"
 "Ignoring the value of collectn_list."
 msgstr ""
+"collectn_list a été renommé en collctn_list.\n"
+"La valeur de collectn_list est ignorée."
 
 #: fedora/client/pkgdb.py:404
 msgid ""
 "collectn_list has been renamed to collctn_list.\n"
 "Please start using the new name.  collectn_list will go away in 0.4.x."
 msgstr ""
+"collection_list a été renommé en collctn_list.\n"
+"Merci d'utiliser ce nouveau nom.  collection_list sera supprimé en 0.4.x."
 
 #: fedora/client/pkgdb.py:478
 msgid ""
 "collectn is a deprecated name for collctn.\n"
 "Ignoring the value of collectn."
 msgstr ""
+"collectn est un mot obsolète pour collctn.\n"
+"La valeur de collectn est ignorée."
 
 #: fedora/client/pkgdb.py:483
 msgid ""
 "collectn has been renamed to collctn.\n"
 "Please start using the new name.  collectn will go away in 0.4.x."
 msgstr ""
+"collectn a été renommé en collctn.\n"
+"Merci d'utiliser ce nouveau nom. collectn sera supprimé en 0.4.x."
 
 #: fedora/client/pkgdb.py:493
 #, python-format
 msgid "Collection shortname %(collctn)s is unknown."
-msgstr ""
+msgstr "Le nom abrégé collection %(collctn)s est inconnu."
 
 #: fedora/client/proxyclient.py:151
 msgid "proxyclient.__init__:entered"
-msgstr ""
+msgstr "proxyclient.__init__:entered"
 
 #: fedora/client/proxyclient.py:160
 msgid ""
@@ -228,88 +262,101 @@ msgid ""
 "0.4.  Please port your code to use a session_id instead by calling the "
 "ProxyClient constructor with session_as_cookie=False"
 msgstr ""
+"Les cookies renvoyés par send_request() sont obsolètes et seront supprimés "
+"en 0.4. Merci d'utiliser dans votre code session_id en faisant appel au "
+"constructeur ProxyClient avec session_as_cookie=False"
 
 #: fedora/client/proxyclient.py:167
 msgid "proxyclient.__init__:exited"
-msgstr ""
+msgstr "proxyclient.__init__:exited"
 
 #: fedora/client/proxyclient.py:254
 msgid "proxyclient.send_request: entered"
-msgstr ""
+msgstr "proxyclient.send_request: entered"
 
 #: fedora/client/proxyclient.py:263
 msgid ""
 "Giving a cookie to send_request() to authenticate is deprecated and will be "
 "removed in 0.4. Please port your code to use session_id instead."
 msgstr ""
+"Faire passer les cookies d'authentification par send_request() est obsolète "
+"et sera supprimé en 0.4. Merci d'utiliser dans votre code session_id."
 
 #: fedora/client/proxyclient.py:273
 msgid "username and password must both be set in auth_params"
 msgstr ""
+"Le nom d'utilisateur et le mot de passe doivent être définis dans "
+"auth_params"
 
 #: fedora/client/proxyclient.py:276
 msgid ""
 "No known authentication methods specified: set \"cookie\" in auth_params or "
 "set both username and password in auth_params"
 msgstr ""
+"Aucune méthode d'authentification spécifiée : définir un « cookie » dans "
+"auth_params ou définir le nom d'utilisateur et le mot de passe dans "
+"auth_params"
 
 #: fedora/client/proxyclient.py:365
 #, python-format
 msgid "Creating request %(url)s"
-msgstr ""
+msgstr "Création de la requête %(url)s"
 
 #: fedora/client/proxyclient.py:367
 #, python-format
 msgid "Headers: %(header)s"
-msgstr ""
+msgstr "Entêtes : %(header)s"
 
 #: fedora/client/proxyclient.py:372
 #, python-format
 msgid "Data: %(data)s"
-msgstr ""
+msgstr "Données : %(data)s"
 
 #: fedora/client/proxyclient.py:389
 msgid "Authentication failed logging in"
-msgstr ""
+msgstr "Échec de l'authentification"
 
 #: fedora/client/proxyclient.py:390
 msgid ""
 "Unable to log into server.  Invalid authentication tokens.  Send new "
 "username and password"
 msgstr ""
+"Impossible de se connecter au serveur. Jetons d'authentification invalides. "
+"Envoyer un nouveau nom d'utilisateur et mot de passe"
 
 #: fedora/client/proxyclient.py:396
 #, python-format
 msgid "Attempt #%(try)s failed"
-msgstr ""
+msgstr "Essai #%(try)s échoué"
 
 #: fedora/client/proxyclient.py:403
 msgid "Unknown HTTP Server Response"
-msgstr ""
+msgstr "Réponse du serveur HTTP inconnue"
 
 #: fedora/client/proxyclient.py:425
 #, python-format
 msgid "Error returned from json module while processing %(url)s: %(err)s"
 msgstr ""
+"Une erreur est apparue dans le module json en analysant %(url)s : %(err)s"
 
 #: fedora/client/proxyclient.py:441
 msgid "proxyclient.send_request: exited"
-msgstr ""
+msgstr "proxyclient.send_request: exited"
 
 #: fedora/client/wiki.py:67
 #, python-format
 msgid "Login failed: %(data)s"
-msgstr ""
+msgstr "Connexion échouée : %(data)s"
 
 #: fedora/client/wiki.py:89
 #, python-format
 msgid "From %(then)s to %(now)s"
-msgstr ""
+msgstr "De %(then)s à %(now)s"
 
 #: fedora/client/wiki.py:92
 #, python-format
 msgid "%d wiki changes in the past week"
-msgstr ""
+msgstr "%d changements du wiki cette semaine"
 
 #: fedora/client/wiki.py:94
 msgid ""
@@ -317,71 +364,89 @@ msgid ""
 "You will not get the complete list of changes unless\n"
 "you run this script using a 'bot' account."
 msgstr ""
+"Attention : la limite de retour de l'API est atteinte.\n"
+"Vous n'aurez pas la liste complète des modifications sauf en\n"
+"exécutant ce script avec un compte « bot »."
 
 #: fedora/client/wiki.py:104
 msgid ""
 "\n"
 "== Most active wiki users =="
 msgstr ""
+"\n"
+"== Utilisateurs du wiki les plus actifs =="
 
 #: fedora/client/wiki.py:111
 msgid ""
 "\n"
 "== Most edited pages =="
 msgstr ""
+"\n"
+"== Pages les plus éditées =="
 
 #: fedora/compat25/__init__.py:9
 msgid ""
 "fedora.pycompat25.defaultdict is deprecated, use "
 "kitchen.pycompat25.collections.defaultdict instead"
 msgstr ""
+"fedora.pycompat25.defaultdict est obsolète. Utilisez "
+"kitchen.pycompat25.collections.defaultdict"
 
 #: fedora/django/auth/models.py:50
 msgid "Loading FAS groups..."
-msgstr ""
+msgstr "Chargement des groupes FAS..."
 
 #: fedora/django/auth/models.py:56
 msgid "Unable to load FAS groups. Did you set FAS_USERNAME and FAS_PASSWORD?"
 msgstr ""
+"Impossible de charger les groupes FAS. Avez-vous défini FAS_USERNAME et "
+"FAS_PASSWORD ?"
 
 #: fedora/django/auth/models.py:63
 msgid ""
 "FAS groups loaded. Don't forget to set FAS_USERNAME and FAS_PASSWORD to a "
 "low-privilege account."
 msgstr ""
+"Groupes FAS chargés. N'oubliez pas de définir FAS_USERNAME et FAS_PASSWORD "
+"sur un compte à faibles privilèges."
 
 #: fedora/tg/client.py:8
 msgid ""
 "fedora.tg.client has moved to fedora.client.  This location will disappear "
 "in 0.4"
 msgstr ""
+"fedora.tg.client est devenu fedora.client. Cette définition sera supprimée "
+"en 0.4"
 
 #: fedora/tg/controllers.py:60
 #, python-format
 msgid "Welcome, %s"
-msgstr ""
+msgstr "Bienvenue %s"
 
 #: fedora/tg/controllers.py:69
 msgid ""
 "The credentials you supplied were not correct or did not grant access to "
 "this resource."
 msgstr ""
+"Les accréditations fournies ne sont pas correctes ou ne vous permettent pas "
+"l'accès à cette ressource."
 
 #: fedora/tg/controllers.py:72
 msgid "You must provide your credentials before accessing this resource."
 msgstr ""
+"Vous devez fournir les accréditations avant d'accéder à cette ressource."
 
 #: fedora/tg/controllers.py:75
 msgid "Please log in."
-msgstr ""
+msgstr "Veuillez vous connecter."
 
 #: fedora/tg/controllers.py:100
 msgid "You have successfully logged out."
-msgstr ""
+msgstr "Vous vous êtes déconnecté avec succès."
 
 #: fedora/tg/tg1utils.py:100
 msgid "url() expects a dictionary for query parameters"
-msgstr ""
+msgstr "url() attend un dictionnaire comme paramètre de recherche"
 
 #: fedora/tg/util.py:40
 msgid ""
@@ -389,49 +454,54 @@ msgid ""
 "fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils.  This file will disappear"
 " in 0.4"
 msgstr ""
+"fedora.tg.util est obsolète. Remplacez par : TG1 apps: fedora.tg.tg1utils ou"
+" TG2 apps: fedora.tg.tg2utils. Ce fichier sera supprimé en 0.4"
 
 #: fedora/tg/identity/jsonfasprovider1.py:223
 #: fedora/tg/identity/jsonfasprovider2.py:386
 #, python-format
 msgid "Error logging in %(user)s: %(error)s"
-msgstr ""
+msgstr "Erreur de connexion pour %(user)s : %(error)s"
 
 #: fedora/tg/identity/jsonfasprovider2.py:55
 msgid ""
 "Cannot enable ssl certificate auth via identity.ssl without setting "
 "fas.usernamme and fas.password for authorization"
 msgstr ""
+"Le certificat d'authentification ssl ne peut être établi avec identity.ssl "
+"sans définir les autorisations fas.usernamme et fas.password"
 
 #: fedora/tg/identity/jsonfasprovider2.py:152
 #, python-format
 msgid "jsonfasprovider, ssl, returned errors from send_request: %s"
 msgstr ""
+"jsonfasprovider, ssl, a renvoyé une erreur à partir de send_request : %s"
 
 #: fedora/tg/identity/jsonfasprovider2.py:163
 #, python-format
 msgid "jsonfasprovider returned errors from send_request: %s"
-msgstr ""
+msgstr "jsonfasprovider a retourné une erreur à partir de send_request : %s"
 
 #: fedora/tg/templates/genshi/login.html:10
 msgid "Log In"
-msgstr ""
+msgstr "Connexion"
 
 #: fedora/tg/templates/genshi/login.html:14
 msgid "User Name:"
-msgstr ""
+msgstr "Nom d'utilisateur :"
 
 #: fedora/tg/templates/genshi/login.html:17
 msgid "Password:"
-msgstr ""
+msgstr "Mot de passe :"
 
 #: fedora/tg/templates/genshi/login.html:21
 #: fedora/tg/templates/genshi/login.html:84
 msgid "Login"
-msgstr ""
+msgstr "Se connecter"
 
 #: fedora/tg/templates/genshi/login.html:28
 msgid "CSRF attacks"
-msgstr ""
+msgstr "Attaques CSRF"
 
 #: fedora/tg/templates/genshi/login.html:29
 msgid ""
@@ -443,70 +513,76 @@ msgid ""
 "        forwarding your authentication cookies on behalf of a malicious\n"
 "        website."
 msgstr ""
+" moyen pour un site malicieux de faire une requête vers un autre serveur\n"
+"        en se faisant passer pour l'utilisateur qui a joint le site. Le but de\n"
+"        cette page est de vous aider à protéger votre compte et le serveur\n"
+"        des attaques de ces sites malicieux. En cliquant ci-dessous, vous\n"
+"        prouvez que vous êtes une personne et non pas un simple navigateur\n"
+"        qui relaie le cookie d'authentification pour le compte d'un site malicieux."
 
 #: fedora/tg/templates/genshi/login.html:36
 msgid "I am a human"
-msgstr ""
+msgstr "Je suis un humain"
 
 #: fedora/tg/templates/genshi/login.html:41
 msgid "Forgot Password?"
-msgstr ""
+msgstr "Mot de passe oublié ?"
 
 #: fedora/tg/templates/genshi/login.html:42
 msgid "Sign Up"
-msgstr ""
+msgstr "S'enregistrer"
 
 #: fedora/tg/templates/genshi/login.html:60
 msgid "Welcome"
-msgstr ""
+msgstr "Bienvenue"
 
 #: fedora/tg/templates/genshi/login.html:82
 msgid "You are not logged in"
-msgstr ""
+msgstr "Vous n'êtes pas connecté"
 
 #: fedora/tg/templates/genshi/login.html:89
 msgid "CSRF protected"
-msgstr ""
+msgstr "Protégé contre les CSRF"
 
 #: fedora/tg/templates/genshi/login.html:91
 msgid "Verify Login"
-msgstr ""
+msgstr "Vérifier l'identifiant"
 
 #: fedora/tg/templates/genshi/login.html:97
 msgid "Logout"
-msgstr ""
+msgstr "Se déconnecter"
 
 #: fedora/tg/visit/jsonfasvisit1.py:107 fedora/tg/visit/jsonfasvisit2.py:136
 #, python-format
 msgid "updating visit (%s)"
-msgstr ""
+msgstr "Mise à jour de la visite (%s)"
 
 #: fedora/wsgi/csrf.py:124
 msgid "Creating CSRFProtectionMiddleware"
-msgstr ""
+msgstr "Création de CSRFProtectionMiddleware"
 
 #: fedora/wsgi/csrf.py:133
 #, python-format
 msgid "clean_environ(%s)"
-msgstr ""
+msgstr "clean_environ(%s)"
 
 #: fedora/wsgi/csrf.py:136
 #, python-format
 msgid "Deleting %(key)s from environ"
-msgstr ""
+msgstr "Suppression de %(key)s de l'environnement"
 
 #: fedora/wsgi/csrf.py:149
 #, python-format
 msgid "CSRFProtectionMiddleware(%(r_path)s)"
-msgstr ""
+msgstr "CSRFProtectionMiddleware(%(r_path)s)"
 
 #: fedora/wsgi/csrf.py:156
 msgid "User supplied CSRF token matches environ!"
-msgstr ""
+msgstr "Le jeton CSRF fourni par l'utilisateur correspond !"
 
 #: fedora/wsgi/csrf.py:159
 msgid "Clearing identity"
-msgstr ""
+msgstr "Retour - Identité"
 
 #: fedora/wsgi/csrf.py:162
 #, python-format
@@ -514,124 +590,129 @@ msgid ""
 "Invalid CSRF token.  User supplied (%(u_token)s) does not match what's in "
 "our environ (%(e_token)s)"
 msgstr ""
+"Jeton CSRF invalide. L'utilisateur a fourni (%(u_token)s) qui ne correspond "
+"pas à l'environnement (%(e_token)s)"
 
 #: fedora/wsgi/csrf.py:171
 msgid "CSRF_AUTH_STATE; rewriting headers"
-msgstr ""
+msgstr "CSRF_AUTH_STATE; réécriture des entêtes"
 
 #: fedora/wsgi/csrf.py:177
 #, python-format
 msgid "response.location = %(r_loc)s"
-msgstr ""
+msgstr "response.location = %(r_loc)s"
 
 #: fedora/wsgi/csrf.py:249
 #, python-format
 msgid "CSRFMetadataProvider.add_metadata(%(r_path)s)"
-msgstr ""
+msgstr "CSRFMetadataProvider.add_metadata(%(r_path)s)"
 
 #: fedora/wsgi/csrf.py:255
 #, python-format
 msgid "session_id = %(s_id)r"
-msgstr ""
+msgstr "session_id = %(s_id)r"
 
 #: fedora/wsgi/csrf.py:261
 msgid "Identity updated with CSRF token"
-msgstr ""
+msgstr "Identité mise à jour à partir du jeton CSRF"
 
 #: fedora/wsgi/csrf.py:264
 msgid "Setting CSRF_AUTH_STATE"
-msgstr ""
+msgstr "Configuration CSRF_AUTH_STATE"
 
 #: fedora/wsgi/csrf.py:274
 msgid "Got HTTPFound(302) from repoze.who.application"
-msgstr ""
+msgstr "Reçu HTTPFound(302) de repoze.who.application"
 
 #: fedora/wsgi/csrf.py:287
 #, python-format
 msgid "Altered headers: %(headers)s"
-msgstr ""
+msgstr "Entêtes modifiés : %(headers)s"
 
 #: fedora/wsgi/csrf.py:290
 #, python-format
 msgid "Invalid session cookie %(s_id)r, not setting CSRF token!"
-msgstr ""
+msgstr "Cookies %(s_id)r de session invalides. Jeton CSRF non défini !"
 
 #: fedora/wsgi/csrf.py:300
 #, python-format
 msgid "%(token)s in GET"
-msgstr ""
+msgstr "%(token)s en GET"
 
 #: fedora/wsgi/csrf.py:308
 #, python-format
 msgid "%(token)s in POST"
-msgstr ""
+msgstr "%(token)s en POST"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:123
 msgid "Keep alive cache miss"
-msgstr ""
+msgstr "Envoi d'une commande anti-déconnexion"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:137
 msgid "in identify()"
-msgstr ""
+msgstr "dans identify()"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:144
 #, python-format
 msgid "Request identify for cookie %(cookie)s"
-msgstr ""
+msgstr "Requête d'identification pour le cookie %(cookie)s"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:168
 msgid "In remember()"
-msgstr ""
+msgstr "Dans remember()"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:181
 msgid "In forget()"
-msgstr ""
+msgstr "Dans forget()"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:188
 #, python-format
 msgid "Forgetting login data for cookie %(s_id)s"
-msgstr ""
+msgstr "Oubli des données de connexion pour le cookie %(s_id)s"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:205
 msgid "In authenticate()"
-msgstr ""
+msgstr "Dans authenticate()"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:229
 msgid "Authentication failed, setting error"
-msgstr ""
+msgstr "Authentification échouée, erreur de configuration"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:250
 msgid "An unknown error happened when trying to log you in. Please try again."
 msgstr ""
+"Une erreur non identifiée est intervenue en tentant de vous connecter. Merci"
+" de réessayer."
 
 #: fedora/wsgi/faswho/faswhoplugin.py:261
 msgid "Metadata cache miss - refreshing metadata"
-msgstr ""
+msgstr "Nettoyage des méta données expirées dans le cache"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:292
 msgid "In add_metadata"
-msgstr ""
+msgstr "Dans add_metadata"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:296
 msgid "Error exists in session, no need to set metadata"
 msgstr ""
+"Une erreur existe dans la session. Pas besoin de définir les métadonnées"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:306
 #, python-format
 msgid "Request metadata for cookie %(cookie)s"
-msgstr ""
+msgstr "Requête de métadonnées pour le cookie %(cookie)s"
 
 #: fedora/wsgi/test/controllers/root.py:31
 msgid "Wrong credentials"
-msgstr ""
+msgstr "Mauvaises accréditations"
 
 #: fedora/wsgi/test/controllers/root.py:46
 #, python-format
 msgid "Welcome back, %s!"
-msgstr ""
+msgstr "Bon retour %s !"
 
 #: fedora/wsgi/test/controllers/root.py:56
 msgid "We hope to see you soon!"
-msgstr ""
+msgstr "Nous espérons vous revoir bientôt !"
 
 
