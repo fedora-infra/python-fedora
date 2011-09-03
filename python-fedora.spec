@@ -107,7 +107,9 @@ paver install --skip-build --root %{buildroot}
 
 # Cleanup doc
 mv build-doc/html doc/
-rm doc/html/.buildinfo
+if test -e doc/html/.buildinfo ; then
+  rm doc/html/.buildinfo
+fi
 find doc -name 'EMPTY' -exec rm \{\} \;
 
 # Remove regression tests
@@ -129,7 +131,7 @@ rm -rf %{buildroot}
 %files turbogears
 %{python_sitelib}/fedora/tg/
 
-%files turbogear2
+%files turbogears2
 %{python_sitelib}/fedora/wsgi/
 %{python_sitelib}/fedora/tg2/
 
