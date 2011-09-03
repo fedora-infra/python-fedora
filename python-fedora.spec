@@ -1,8 +1,8 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Name:           python-fedora
-Version:        0.3.24
-Release:        3%{?dist}
+Version:        0.3.25
+Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
 Group:          Development/Languages
@@ -54,16 +54,30 @@ Group:          Development/Languages
 License:        LGPLv2+
 Requires: %{name} = %{version}-%{release}
 Requires: TurboGears
+Requires: python-sqlalchemy
+
+%description turbogears
+Python modules that help with building Fedora Services.  This package includes
+a JSON based auth provider for authenticating TurboGears1 applications against
+FAS2 over the network, a csrf protected version of the standard TG1 auth
+provider, templates to help build CSRF-protected login forms, and miscellaneous
+other helper functions for TurboGears applications.
+
+%package turbogears2
+Summary: Python modules for TurboGears applications in Fedora Infrastructure
+Group:          Development/Languages
+License:        LGPLv2+
+Requires: %{name} = %{version}-%{release}
 Requires: TurboGears2
 Requires: python-sqlalchemy
 Requires: python-repoze-who-friendlyform
 
-%description turbogears
+%description turbogears2
 Python modules that help with building Fedora Services.  This package includes
-a pair of JSON based auth providers for authenticating TurboGears1 and
-TurboGears2 applications against FAS2 over the network, a csrf protected
-version of the standard TG1 auth provider, and miscellaneous other helper
-functions for TurboGears applications.
+middleware for protecting against CSRF attacks, repoze.who authenticators for
+logging in to TurboGears2 services based on account information lp build
+CSRF-protected login forms, and miscellaneous other helper functions for
+TurboGears2 applications.
 
 %package django
 Summary: Python modules for django applications authing to Fedora Account System
@@ -112,12 +126,20 @@ rm -rf %{buildroot}
 
 %files turbogears
 %{python_sitelib}/fedora/tg/
+
+%files turbogear2
 %{python_sitelib}/fedora/wsgi/
+%{python_sitelib}/fedora/tg2/
 
 %files django
 %{python_sitelib}/fedora/django/
 
 %changelog
+* Sat Sep 3 2011 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.25-1
+- Upstream bugfix release that makes many TG2-server helper function more usable
+- Also, split the TG2 functionality into a separate subpackage from the TG1
+  functions
+
 * Tue Aug 9 2011 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.24-3
 - Get the PYTHONPATH for building docs correct
 
