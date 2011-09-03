@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-07-23 11:41-0700\n"
-"PO-Revision-Date: 2011-08-23 23:59+0000\n"
-"Last-Translator: carrotsoft <www.carrotsoft@gmail.com>\n"
+"POT-Creation-Date: 2011-09-03 16:15-0700\n"
+"PO-Revision-Date: 2011-09-03 23:17+0000\n"
+"Last-Translator: toshio <a.badger@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -418,38 +418,48 @@ msgstr "ログインしてください。"
 msgid "You have successfully logged out."
 msgstr "ログアウトに成功しました。"
 
-#: fedora/tg/tg1utils.py:100
-msgid "url() expects a dictionary for query parameters"
-msgstr "url() はquery パラメータの辞書を必要としています。"
+#: fedora/tg/tg1utils.py:38
+msgid ""
+"fedora.tg.tg1utils is deprecated.  Switch to fedora.tg.utils instead.  This "
+"file will disappear in 0.4"
+msgstr ""
+
+#: fedora/tg/tg2utils.py:38
+msgid ""
+"fedora.tg.tg2utils is deprecated.  Switch to fedora.tg2.utils instead.  This"
+" file will disappear in 0.4"
+msgstr ""
 
 #: fedora/tg/util.py:40
 msgid ""
 "fedora.tg.util is deprecated.  Switch to one of these instead:   TG1 apps: "
-"fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils.  This file will disappear"
-" in 0.4"
+"fedora.tg.utils   TG2 apps: fedora.tg2.utils.  This file will disappear in "
+"0.4"
 msgstr ""
-"fedora.tg.util は避けられています。次のいずれかを代わりに使ってください: TG1 apps: fedora.tg.tg1utils   "
-"TG2 apps: fedora.tg.tg2utils 。このファイルは0.4で削除予定です。"
+
+#: fedora/tg/utils.py:102
+msgid "url() expects a dictionary for query parameters"
+msgstr "url() はquery パラメータの辞書を必要としています。"
 
 #: fedora/tg/identity/jsonfasprovider1.py:223
-#: fedora/tg/identity/jsonfasprovider2.py:386
+#: fedora/tg/identity/jsonfasprovider2.py:404
 #, python-format
 msgid "Error logging in %(user)s: %(error)s"
 msgstr " %(user)s: %(error)s をログ中にエラーが発生しました。"
 
-#: fedora/tg/identity/jsonfasprovider2.py:55
+#: fedora/tg/identity/jsonfasprovider2.py:56
 msgid ""
 "Cannot enable ssl certificate auth via identity.ssl without setting "
 "fas.usernamme and fas.password for authorization"
 msgstr ""
 "fas.usernamme と fas.password をセットしないで identity.ssl を使っても、ssl 証明書認証はできません。"
 
-#: fedora/tg/identity/jsonfasprovider2.py:152
+#: fedora/tg/identity/jsonfasprovider2.py:166
 #, python-format
 msgid "jsonfasprovider, ssl, returned errors from send_request: %s"
 msgstr "jsonfasprovider または ssl は send_request: %s からエラーを返しました。"
 
-#: fedora/tg/identity/jsonfasprovider2.py:163
+#: fedora/tg/identity/jsonfasprovider2.py:181
 #, python-format
 msgid "jsonfasprovider returned errors from send_request: %s"
 msgstr "jsonfasprovider は send_request: %s からエラーを返しました。"
@@ -468,6 +478,7 @@ msgstr "パスワード:"
 
 #: fedora/tg/templates/genshi/login.html:21
 #: fedora/tg/templates/genshi/login.html:84
+#: fedora/tg2/templates/mako/login.mak:56
 msgid "Login"
 msgstr "ログイン"
 
@@ -509,18 +520,22 @@ msgid "Welcome"
 msgstr "ようこそ"
 
 #: fedora/tg/templates/genshi/login.html:82
+#: fedora/tg2/templates/mako/login.mak:54
 msgid "You are not logged in"
 msgstr "ログインしていません"
 
 #: fedora/tg/templates/genshi/login.html:89
+#: fedora/tg2/templates/mako/login.mak:62
 msgid "CSRF protected"
 msgstr "CSRF は保護されました"
 
 #: fedora/tg/templates/genshi/login.html:91
+#: fedora/tg2/templates/mako/login.mak:65
 msgid "Verify Login"
 msgstr "ログイン認証"
 
 #: fedora/tg/templates/genshi/login.html:97
+#: fedora/tg2/templates/mako/login.mak:72
 msgid "Logout"
 msgstr "ログアウト"
 
@@ -529,34 +544,38 @@ msgstr "ログアウト"
 msgid "updating visit (%s)"
 msgstr "(%s) の訪問をアップデートしています"
 
-#: fedora/wsgi/csrf.py:124
+#: fedora/tg2/templates/mako/login.mak:33
+msgid "Logged in:"
+msgstr ""
+
+#: fedora/wsgi/csrf.py:113
 msgid "Creating CSRFProtectionMiddleware"
 msgstr "CSRFProtectionMiddleware を作成しています"
 
-#: fedora/wsgi/csrf.py:133
+#: fedora/wsgi/csrf.py:122
 #, python-format
 msgid "clean_environ(%s)"
 msgstr "clean_environ(%s)"
 
-#: fedora/wsgi/csrf.py:136
+#: fedora/wsgi/csrf.py:125
 #, python-format
 msgid "Deleting %(key)s from environ"
 msgstr "%(key)s をenvironから削除しています。"
 
-#: fedora/wsgi/csrf.py:149
+#: fedora/wsgi/csrf.py:138
 #, python-format
 msgid "CSRFProtectionMiddleware(%(r_path)s)"
 msgstr "CSRFProtectionMiddleware(%(r_path)s)"
 
-#: fedora/wsgi/csrf.py:156
+#: fedora/wsgi/csrf.py:145
 msgid "User supplied CSRF token matches environ!"
 msgstr "ユーザは environ とマッチした CSRF を提示しました。"
 
-#: fedora/wsgi/csrf.py:159
+#: fedora/wsgi/csrf.py:148
 msgid "Clearing identity"
 msgstr "identity をクリアしています。"
 
-#: fedora/wsgi/csrf.py:162
+#: fedora/wsgi/csrf.py:156
 #, python-format
 msgid ""
 "Invalid CSRF token.  User supplied (%(u_token)s) does not match what's in "
@@ -564,108 +583,108 @@ msgid ""
 msgstr ""
 "不正な CSRF です.  ユーザが提示した (%(u_token)s) は我々の environ (%(e_token)s) とマッチしません。"
 
-#: fedora/wsgi/csrf.py:171
+#: fedora/wsgi/csrf.py:165
 msgid "CSRF_AUTH_STATE; rewriting headers"
 msgstr "CSRF_AUTH_STATE; ヘッダを更新しています"
 
-#: fedora/wsgi/csrf.py:177
+#: fedora/wsgi/csrf.py:171
 #, python-format
 msgid "response.location = %(r_loc)s"
 msgstr "response.location = %(r_loc)s"
 
-#: fedora/wsgi/csrf.py:249
+#: fedora/wsgi/csrf.py:246
 #, python-format
 msgid "CSRFMetadataProvider.add_metadata(%(r_path)s)"
 msgstr "CSRFMetadataProvider.add_metadata(%(r_path)s)"
 
-#: fedora/wsgi/csrf.py:255
+#: fedora/wsgi/csrf.py:252
 #, python-format
 msgid "session_id = %(s_id)r"
 msgstr "session_id = %(s_id)r"
 
-#: fedora/wsgi/csrf.py:261
+#: fedora/wsgi/csrf.py:259
 msgid "Identity updated with CSRF token"
 msgstr "CSRF により Identity がアップデートされました。"
 
-#: fedora/wsgi/csrf.py:264
+#: fedora/wsgi/csrf.py:262
 msgid "Setting CSRF_AUTH_STATE"
 msgstr "CSRF_AUTH_STATE を設定しています"
 
-#: fedora/wsgi/csrf.py:274
+#: fedora/wsgi/csrf.py:272
 msgid "Got HTTPFound(302) from repoze.who.application"
 msgstr "HTTPFound(302) を repoze.who.application から入手しました。"
 
-#: fedora/wsgi/csrf.py:287
+#: fedora/wsgi/csrf.py:285
 #, python-format
 msgid "Altered headers: %(headers)s"
 msgstr "変更されたヘッダ: %(headers)s"
 
-#: fedora/wsgi/csrf.py:290
+#: fedora/wsgi/csrf.py:288
 #, python-format
 msgid "Invalid session cookie %(s_id)r, not setting CSRF token!"
 msgstr "cookie %(s_id)r は不正なセッションです。CSRF がセットされていません!"
 
-#: fedora/wsgi/csrf.py:300
+#: fedora/wsgi/csrf.py:298
 #, python-format
 msgid "%(token)s in GET"
 msgstr "%(token)s in GET"
 
-#: fedora/wsgi/csrf.py:308
+#: fedora/wsgi/csrf.py:306
 #, python-format
 msgid "%(token)s in POST"
 msgstr "%(token)s in POST"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:123
+#: fedora/wsgi/faswho/faswhoplugin.py:144
 msgid "Keep alive cache miss"
 msgstr "キャッシュミスを有効にする"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:137
+#: fedora/wsgi/faswho/faswhoplugin.py:158
 msgid "in identify()"
 msgstr "in identify()"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:144
+#: fedora/wsgi/faswho/faswhoplugin.py:165
 #, python-format
 msgid "Request identify for cookie %(cookie)s"
 msgstr "cookie %(cookie)s の認証をリクエストする"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:168
+#: fedora/wsgi/faswho/faswhoplugin.py:189
 msgid "In remember()"
 msgstr "In remember()"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:181
+#: fedora/wsgi/faswho/faswhoplugin.py:202
 msgid "In forget()"
 msgstr "In forget()"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:188
+#: fedora/wsgi/faswho/faswhoplugin.py:209
 #, python-format
 msgid "Forgetting login data for cookie %(s_id)s"
 msgstr "cookie %(s_id)s のログインデータを削除しています"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:205
+#: fedora/wsgi/faswho/faswhoplugin.py:226
 msgid "In authenticate()"
 msgstr "In authenticate()"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:229
+#: fedora/wsgi/faswho/faswhoplugin.py:250
 msgid "Authentication failed, setting error"
 msgstr "認証が失敗しました。セットエラーです"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:250
+#: fedora/wsgi/faswho/faswhoplugin.py:271
 msgid "An unknown error happened when trying to log you in. Please try again."
 msgstr "ログイン中に不明なエラーが発生しました。もう一度試してください。"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:261
+#: fedora/wsgi/faswho/faswhoplugin.py:282
 msgid "Metadata cache miss - refreshing metadata"
 msgstr "metadata のキャッシュミスです - metadata を更新しています。"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:292
+#: fedora/wsgi/faswho/faswhoplugin.py:313
 msgid "In add_metadata"
 msgstr "In add_metadata"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:296
+#: fedora/wsgi/faswho/faswhoplugin.py:317
 msgid "Error exists in session, no need to set metadata"
 msgstr "セッションにエラーがあります。metadata をセットする必要はありません。"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:306
+#: fedora/wsgi/faswho/faswhoplugin.py:327
 #, python-format
 msgid "Request metadata for cookie %(cookie)s"
 msgstr "cookie %(cookie)s の metadata をリクエストする"
