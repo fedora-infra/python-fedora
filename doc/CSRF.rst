@@ -8,7 +8,7 @@ CSRF Protection
 :Date: 21 February 2009
 :For Version: 0.3.x
 
-.. currentmodule:: fedora.tg.tg1utils
+.. currentmodule:: fedora.tg.utils
 
 :term:`CSRF`, Cross-Site Request Forgery is a technique where a malicious
 website can gain access to a Fedora Service by hijacking a currently open
@@ -137,7 +137,7 @@ Getting the Token into the Page
 -------------------------------
 
 Embedding the :term:`CSRF` token into the URLs that the user can click on is
-the other half of this problem.  :mod:`fedora.tg.tg1utils` provides two
+the other half of this problem.  :mod:`fedora.tg.utils` provides two
 functions to make this easier.
 
 .. autofunction:: url
@@ -225,11 +225,11 @@ project with two new features.  The ``<loginform>`` tag in the body that's
 defined in :mod:`fedora.tg.templates.genshi` is used in the body to pull in
 the login formand the ``<xi:include>`` of :file:`login.html`
 uses :func:`tg.fedora_template` to load the template from python-fedora.
-This function resides in :mod:`fedora.tg.tg1utils` and is added to the
-``tg`` template variable when :func:`~fedora.tg.tg1utils.enable_csrf` is
+This function resides in :mod:`fedora.tg.utils` and is added to the
+``tg`` template variable when :func:`~fedora.tg.utils.enable_csrf` is
 called at startup.  It does the following:
 
-.. currentmodule:: fedora.tg.tg1utils
+.. currentmodule:: fedora.tg.utils
 
 .. autofunction:: fedora_template
 
@@ -355,11 +355,11 @@ Here's a small bit of sample code::
 Summary of Changes Per App
 --------------------------
 
- * On startup, run :func:`~fedora.tg.tg1utils.enable_csrf`.  This could be
+ * On startup, run :func:`~fedora.tg.utils.enable_csrf`.  This could be
    done in a start-APP.py and APP.wsgi scripts.  Code like this will do it::
 
     from turbogears import startup
-    from fedora.tg.tg1utils import enable_csrf
+    from fedora.tg.utils import enable_csrf
     startup.call_on_startup.append(enable_csrf)
 
  * Links to other :ref:`Fedora-Services` in the templates must be run through
@@ -380,7 +380,7 @@ Summary of Changes Per App
    :mod:`~fedora.tg.visit.jsonfasvisit2` that provide :term:`CSRF` protection.
    The original :mod:`~fedora.tg.identity.jsonfasprovider1` is provided for
    applications that have not yet started using
-   :func:`~fedora.tg.tg1utils.enable_csrf` so you have to make this change in
+   :func:`~fedora.tg.utils.enable_csrf` so you have to make this change in
    your configuration file (:file:`APPNAME/config/app.cfg`)
 
  * Get the :term:`CSRF` token into your forms and URLs.  The recommended way

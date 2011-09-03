@@ -4,13 +4,14 @@ Mako version of templates to make adding certain Fedora widgets easier.
 -----------------
 :mod:`login.mak`
 -----------------
-.. module:: login.mak
+.. module:: login
     :synopsis: Templates related to logging in and out.
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 .. versionadded:: 0.3.25
 
 
 Include this using::
+
     <%namespace name="fedora" file="${context['fedora_template']('login.mak')}" />
 
 .. function:: loginform(message='')
@@ -51,13 +52,14 @@ Typical usage looks like this::
 ---------------------
 :mod:`jsglobals.mak`
 ---------------------
-.. module:: jsglobals.mak
+.. module:: jsglobals
     :synopsis: Templates to get information into javascript
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 .. versionadded:: 0.3.25
 
 
 Include this using::
+
     <%namespace name="jsglobals" file="${context['fedora_template']('jsglobals.mak')}" />
 
 .. function:: jsglobals()
