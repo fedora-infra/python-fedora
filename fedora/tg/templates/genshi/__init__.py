@@ -48,7 +48,7 @@ Typical usage looks like this::
 :mod:`jsglobals.html`
 ---------------------
 .. module:: jsglobals.html
-    :synopsis: Templates related to logging in and out.
+    :synopsis: Templates to get information into javascript
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 .. versionadded:: 0.3.10
 
@@ -65,7 +65,8 @@ for other scripts to access:
 
     :fedora.baseurl: URL fragment to prepend to any calls to the application.
         In a :term:`TurboGears` application, this is the scheme, host, and
-        server.webpath.  Example: https://admin.fedoraproject.org/pkgdb/
+        server.webpath.  Example: https://admin.fedoraproject.org/pkgdb/.
+        This may be a relative link.
     :fedora.identity.anonymous: If ``true``, there will be no other variables
         in the `fedora.identity` namespace.  If ``false``, these variables are
         defined:
