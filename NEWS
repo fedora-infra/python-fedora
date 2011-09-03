@@ -23,7 +23,10 @@ NEWS
   TG2 csrf protecting middleware
 * Split the TG1 and TG2 code into two separate directories so packagers can
   split the dependencies even more
-* Add login template for TG2-mako
+* Add login and jsglobals template for TG2-mako
+* Modify fedora_template for TG2 -- now defaults to mako templates and returns
+  a dotted_lookup string by default.  This matches with the templates we have
+  and the default template lookup strategy in TG2.
 
 ------
 0.3.24
