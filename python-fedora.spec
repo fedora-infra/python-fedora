@@ -74,7 +74,7 @@ Requires: TurboGears2
 Requires: python-sqlalchemy
 %if 0%{?fedora}
 Requires: python-mako >= 0.3.6
-%elif 0%{?rhel} && 0%{?rhel} <= 6
+%else if 0%{?rhel} && 0%{?rhel} <= 6
 Requires: python-mako0.4 >= 0.3.6
 %endif
 Requires: python-repoze-who-friendlyform
