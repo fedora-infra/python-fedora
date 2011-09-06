@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2011-07-23 11:41-0700\n"
-"PO-Revision-Date: 2011-07-23 18:46+0000\n"
+"PO-Revision-Date: 2011-09-04 00:34+0000\n"
 "Last-Translator: toshio <a.badger@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -21,13 +21,15 @@ msgstr ""
 
 #: fedora/iterutils.py:36
 msgid "fedora.iterutils is deprecated.  Use kitchen.iterutils instead"
-msgstr ""
+msgstr "fedora.iterutils er forældet.  Brug kitchen.iterutils istedet"
 
 #: fedora/iterutils.py:54
 msgid ""
 "fedora.iterutils.isiterable is deprecated, use kitchen.iterutils.isiterable "
 "instead"
 msgstr ""
+"fedora.iterutils.isiterable er forældet, brug kitchen.iterutils.isiterable "
+"istedet"
 
 #: fedora/release.py:9
 msgid "Python modules for interacting with Fedora Services"
@@ -47,7 +49,7 @@ msgstr ""
 
 #: fedora/textutils.py:33
 msgid "fedora.textutils is deprecated.  Use kitchen.text.converters instead"
-msgstr ""
+msgstr "fedora.textutils er forældet.  Brug kitchen.text.converters istedet"
 
 #: fedora/accounts/fas2.py:8
 msgid ""
@@ -91,7 +93,7 @@ msgstr "Ingen session mellemlagret for \"%s\""
 #: fedora/client/baseclient.py:301
 #, python-format
 msgid "send_request() got an unexpected keyword argument \"%(arg)s\""
-msgstr ""
+msgstr "send_request() modtog et ikke-forventet nøgleordsargument \"%(arg)s\""
 
 #: fedora/client/baseclient.py:305
 msgid "send_request() got an unexpected keyword argument \"input\""
@@ -129,7 +131,7 @@ msgstr "Læser fra %s "
 #: fedora/client/fas2.py:231
 #, python-format
 msgid "FAS server unable to retrieve group %(group)s"
-msgstr ""
+msgstr "FAS-server kunne ikke hente gruppen %(group)s"
 
 #: fedora/client/fas2.py:363
 msgid "key must be one of \"id\", \"username\", or \"email\""
@@ -323,7 +325,7 @@ msgstr ""
 #: fedora/client/proxyclient.py:396
 #, python-format
 msgid "Attempt #%(try)s failed"
-msgstr ""
+msgstr "Forsøg #%(try)s mislykkedes"
 
 #: fedora/client/proxyclient.py:403
 msgid "Unknown HTTP Server Response"
@@ -332,7 +334,7 @@ msgstr "Ukendt HTTP-serversvar"
 #: fedora/client/proxyclient.py:425
 #, python-format
 msgid "Error returned from json module while processing %(url)s: %(err)s"
-msgstr ""
+msgstr "Fejl returnerede fra json-modul under behandling af %(url)s: %(err)s"
 
 #: fedora/client/proxyclient.py:441
 msgid "proxyclient.send_request: exited"
@@ -341,7 +343,7 @@ msgstr "proxyclient.send_request: afsluttede"
 #: fedora/client/wiki.py:67
 #, python-format
 msgid "Login failed: %(data)s"
-msgstr ""
+msgstr "Indlogning mislykkedes: %(data)s"
 
 #: fedora/client/wiki.py:89
 #, python-format
@@ -384,6 +386,8 @@ msgid ""
 "fedora.pycompat25.defaultdict is deprecated, use "
 "kitchen.pycompat25.collections.defaultdict instead"
 msgstr ""
+"fedora.pycompat25.defaultdict er forældet, brug "
+"kitchen.pycompat25.collections.defaultdict istedet"
 
 #: fedora/django/auth/models.py:50
 msgid "Loading FAS groups..."
@@ -446,8 +450,6 @@ msgid ""
 "fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils.  This file will disappear"
 " in 0.4"
 msgstr ""
-"fedora.tg.util er forældet. Skift til en af disse i stedet:   TG1 apps: "
-"fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils.  Denne vil være væk i 0.4"
 
 #: fedora/tg/identity/jsonfasprovider1.py:223
 #: fedora/tg/identity/jsonfasprovider2.py:386
@@ -671,7 +673,7 @@ msgstr "Godkendelse mislykkedes, indstillingsfejl"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:250
 msgid "An unknown error happened when trying to log you in. Please try again."
-msgstr ""
+msgstr "En ukendt fejl opstod under indlogning af dig. Prøv venligst igen."
 
 #: fedora/wsgi/faswho/faswhoplugin.py:261
 msgid "Metadata cache miss - refreshing metadata"

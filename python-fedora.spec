@@ -1,7 +1,9 @@
 %{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
+#%%global prerel c2
+
 Name:           python-fedora
-Version:        0.3.24
+Version:        0.3.25
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -16,7 +18,7 @@ BuildRequires:  python2-devel
 BuildRequires:  python-setuptools
 BuildRequires:  python-paver >= 1.0
 BuildRequires:  python-sphinx
-%if 0%{?fedora} >= 9 || 0%{?rhel} > 5
+%if 0%{?fedora} || 0%{?rhel} > 5
 BuildRequires:  python-cherrypy2
 %else
 BuildRequires:  python-cherrypy
@@ -26,40 +28,98 @@ BuildRequires:  TurboGears2
 BuildRequires:  python-nose
 BuildRequires:  python-kitchen
 BuildRequires:  python-bunch
+# Needed for tests and for the way we build docs
+BuildRequires: TurboGears python-repoze-who-friendlyform Django
+BuildRequires: python-pycurl
+
 Requires:       python-simplejson
-Requires:       python-bugzilla
 Requires:       python-bunch
-Requires:       python-feedparser
-Requires:       python-sqlalchemy
-Requires:       python-decorator
 Requires:       python-pycurl
 Requires:       python-kitchen
 # These are now optional dependencies.  Some bodhi methods will not work if
 # they aren't installed but they aren't needed for most functionality of the
 # module.
 #Requires:       koji python-iniparse yum
-Provides:       python-fedora-infrastructure = %{version}-%{release}
-Obsoletes:      python-fedora-infrastructure < %{version}-%{release}
 
 %description
-Python modules that help with building Fedora Services.  This includes a JSON
-based auth provider for authenticating against FAS2 over the network and a
-client that handles communication with the servers.  The client module can
-be used to build programs that communicate with Fedora Infrastructure's
-TurboGears Applications such as Bodhi, PackageDB, MirrorManager, and FAS2.
+Python modules that help with building Fedora Services.  The client module
+included here can be used to build programs that communicate with Fedora
+Infrastructure's TurboGears Applications such as Bodhi, PackageDB,
+MirrorManager, and FAS2.
+
+%package turbogears
+Summary: Python modules for TurboGears applications in Fedora Infrastructure
+Group:          Development/Languages
+License:        LGPLv2+
+Requires: %{name} = %{version}-%{release}
+Requires: TurboGears
+Requires: python-sqlalchemy
+Requires: python-decorator
+Requires: python-bugzilla
+Requires: python-feedparser
+
+%description turbogears
+Python modules that help with building Fedora Services.  This package includes
+a JSON based auth provider for authenticating TurboGears1 applications against
+FAS2 over the network, a csrf protected version of the standard TG1 auth
+provider, templates to help build CSRF-protected login forms, and miscellaneous
+other helper functions for TurboGears applications.
+
+%package turbogears2
+Summary: Python modules for TurboGears applications in Fedora Infrastructure
+Group:          Development/Languages
+License:        LGPLv2+
+Requires: %{name} = %{version}-%{release}
+Requires: TurboGears2
+Requires: python-sqlalchemy
+%if 0%{?fedora}
+Requires: python-mako >= 0.3.6
+%elif 0%{?rhel} && 0%{?rhel} <= 6
+Requires: python-mako0.4 >= 0.3.6
+%endif
+Requires: python-repoze-who-friendlyform
+
+%description turbogears2
+Python modules that help with building Fedora Services.  This package includes
+middleware for protecting against CSRF attacks, repoze.who authenticators for
+logging in to TurboGears2 services based on account information lp build
+CSRF-protected login forms, and miscellaneous other helper functions for
+TurboGears2 applications.
+
+%package django
+Summary: Python modules for django applications authing to Fedora Account System
+Group:          Development/Languages
+License:        LGPLv2+
+Requires: %{name} = %{version}-%{release}
+Requires: Django
+
+%description django
+Python modules that help with building Fedora Services.  This package includes
+an auth provider to let django applications authenticate against the Fedora
+Account System.
 
 %prep
 %setup -q -n %{name}-%{version}%{?prerel}
 
 %build
 paver build
-paver html
+path=$(echo %{python_sitelib}/CherryPy-2.?.?-py2.?.egg)
+PYTHONPATH=$path paver html
 
 %install
 rm -rf %{buildroot}
 paver install --skip-build --root %{buildroot}
 
+# Cleanup doc
 mv build-doc/html doc/
+if test -e doc/html/.buildinfo ; then
+  rm doc/html/.buildinfo
+fi
+find doc -name 'EMPTY' -exec rm \{\} \;
+
+# Remove regression tests
+rm -rf %{buildroot}%{python_sitelib}/fedora/wsgi/test
+
 %find_lang %{name}
 
 %clean
@@ -69,8 +129,33 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %doc NEWS README COPYING AUTHORS ChangeLog doc
 %{python_sitelib}/*
+%exclude %{python_sitelib}/fedora/tg/
+%exclude %{python_sitelib}/fedora/wsgi/
+%exclude %{python_sitelib}/fedora/django/
+
+%files turbogears
+%{python_sitelib}/fedora/tg/
+
+%files turbogears2
+%{python_sitelib}/fedora/wsgi/
+%{python_sitelib}/fedora/tg2/
+
+%files django
+%{python_sitelib}/fedora/django/
 
 %changelog
+* Sat Sep 3 2011 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.25-1
+- Upstream bugfix release that makes many TG2-server helper function more usable
+- Also, split the TG2 functionality into a separate subpackage from the TG1
+  functions
+
+* Tue Aug 9 2011 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.24-3
+- Get the PYTHONPATH for building docs correct
+
+* Tue Aug 9 2011 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.24-2
+- Rework package to provide the turbogears and django code in subpackages with
+  full dependencies for each of those.
+
 * Wed Jul 20 2011 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.24-1
 - Upstream 0.3.24 release bugfixing TG2 server utils and clients with
   session cookie auth.

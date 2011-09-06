@@ -3,8 +3,30 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 20 Jul 2011
+:Date: 3 Sep 2011
 :Version: 0.3.x
+
+------
+0.3.25
+------
+
+* Modify caching of User data in the tg1 identity provider, jsonfas2provider
+  so that anonymous page requests don't call fas excessively.
+* Make :func:`fedora.tg.tg2utils.enable_csrf` a public function so that TG2
+  users can use it without using faswho
+* Make :func:`fedora.tg.tg2utils.url` work with other repoze.who plugins other
+  than faswho.
+* Allow using a test fas server with :func:`make_faswho_middleware`
+* Update faswho metadata to be compatible with the default TG2 identity
+  metadata for portability
+* Allow recovering authenticated state from lack of csrf_token when using the
+  TG2 csrf protecting middleware
+* Split the TG1 and TG2 code into two separate directories so packagers can
+  split the dependencies even more
+* Add login and jsglobals template for TG2-mako
+* Modify fedora_template for TG2 -- now defaults to mako templates and returns
+  a dotted_lookup string by default.  This matches with the templates we have
+  and the default template lookup strategy in TG2.
 
 ------
 0.3.24

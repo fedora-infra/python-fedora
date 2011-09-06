@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2007-2008  Red Hat, Inc.
+# Copyright (C) 2007-2011  Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
@@ -41,7 +41,8 @@ from kitchen.text.converters import to_bytes
 
 sets.add_builtin_set()
 
-from fedora.client import BaseClient, AccountSystem, FedoraServiceError
+from fedora.client import AccountSystem, AuthError, BaseClient, \
+        FedoraServiceError
 from fedora import b_, __version__
 
 import logging
@@ -134,8 +135,21 @@ class JsonFasIdentity(BaseClient):
             caller = inspect.getouterframes(inspect.currentframe())[2][3]
             self.log.debug('JSONFASPROVIDER.send_request caller: %s' % caller)
 
+        # The cached value can be in four states:
+        # Holds a user: we successfully retrieved it last time, return it
+        # Holds None: we haven't yet tried to retrieve a user, do so now
+        # Holds a session_id that is the same as our session_id, we unsuccessfully
+        # tried to retrieve a session with this id already, return None
+        # Holds a session_id that is different than the current session_id:
+        # we tried with a previous session_id; try again with the new one.
         if self._retrieved_user:
-            return self._retrieved_user
+            if isinstance(self._retrieved_user, basestring):
+                if self._retrieved_user == self.session_id:
+                    return None
+                else:
+                    self._retrieved_user = None
+            else:
+                return self._retrieved_user
         # I hope this is a safe place to double-check the SSL variables.
         # TODO: Double check my logic with this - is it unnecessary to
         # check that the username matches up?
@@ -157,6 +171,10 @@ class JsonFasIdentity(BaseClient):
         # pylint: disable-msg=W0702
         try:
             data = self.send_request('user/view', auth=True)
+        except AuthError, e:
+            # Failed to login with present credentials
+            self._retrieved_user = self.session_id
+            return None
         except Exception, e: # pylint: disable-msg=W0703
             # :W0703: Any errors have to result in no user being set.  The rest
             # of the framework doesn't know what to do otherwise.

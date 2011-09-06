@@ -236,6 +236,7 @@ Currently, this is more involved.
 
 3) Publish updated docs::
      # pypi
+     paver build_sphinx
      paver upload_docs
      # fedorahosted
      paver publish_doc

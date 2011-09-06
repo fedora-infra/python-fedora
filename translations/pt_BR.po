@@ -5,13 +5,14 @@
 # 
 # Diego Búrigo Zacarão <diegobz@fedoraproject.org>, 2009.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2008, 2009.
+# Cleiton cleitonlima <cleitonlima@lavabit.com>, 2011.
 # ufa <ufa@technotroll.org>, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2011-07-23 11:41-0700\n"
-"PO-Revision-Date: 2011-07-23 18:46+0000\n"
+"PO-Revision-Date: 2011-09-04 00:34+0000\n"
 "Last-Translator: toshio <a.badger@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -24,12 +25,15 @@ msgstr ""
 #: fedora/iterutils.py:36
 msgid "fedora.iterutils is deprecated.  Use kitchen.iterutils instead"
 msgstr ""
+"fedora.iterutils está obsoleto.  Utilize kitchen.iterutils ao invés disso"
 
 #: fedora/iterutils.py:54
 msgid ""
 "fedora.iterutils.isiterable is deprecated, use kitchen.iterutils.isiterable "
 "instead"
 msgstr ""
+"fedora.iterutils.isiterable está obsoleto, utilize "
+"kitchen.iterutils.isiterable ao invés disso"
 
 #: fedora/release.py:9
 msgid "Python modules for interacting with Fedora Services"
@@ -50,6 +54,8 @@ msgstr ""
 #: fedora/textutils.py:33
 msgid "fedora.textutils is deprecated.  Use kitchen.text.converters instead"
 msgstr ""
+"fedora.textutils está obsoleto.  Utilize kitchen.text.converters ao invés "
+"disso"
 
 #: fedora/accounts/fas2.py:8
 msgid ""
@@ -95,6 +101,7 @@ msgstr "Nenhuma sessão em cache para \"%s\""
 #, python-format
 msgid "send_request() got an unexpected keyword argument \"%(arg)s\""
 msgstr ""
+"send_request() recebeu um argumento de palavra-chave inesperado \"%(arg)s\""
 
 #: fedora/client/baseclient.py:305
 msgid "send_request() got an unexpected keyword argument \"input\""
@@ -132,7 +139,7 @@ msgstr "Lendo de %s "
 #: fedora/client/fas2.py:231
 #, python-format
 msgid "FAS server unable to retrieve group %(group)s"
-msgstr ""
+msgstr "Servidor do FAS não pôde recobrar o grupo %(group)s"
 
 #: fedora/client/fas2.py:363
 msgid "key must be one of \"id\", \"username\", or \"email\""
@@ -327,7 +334,7 @@ msgstr "Não foi possível fazer login no servidor. Envie novo usuário e senha"
 #: fedora/client/proxyclient.py:396
 #, python-format
 msgid "Attempt #%(try)s failed"
-msgstr ""
+msgstr "Tentativa #%(try)s falhou"
 
 #: fedora/client/proxyclient.py:403
 msgid "Unknown HTTP Server Response"
@@ -336,7 +343,7 @@ msgstr "Reposta desconhecida do servidor HTTP"
 #: fedora/client/proxyclient.py:425
 #, python-format
 msgid "Error returned from json module while processing %(url)s: %(err)s"
-msgstr ""
+msgstr "Erro retornado pelo módulo json enquanto processava %(url)s: %(err)s"
 
 #: fedora/client/proxyclient.py:441
 msgid "proxyclient.send_request: exited"
@@ -345,7 +352,7 @@ msgstr "proxyclient.send_request: saiu"
 #: fedora/client/wiki.py:67
 #, python-format
 msgid "Login failed: %(data)s"
-msgstr ""
+msgstr "Login falhou: %(data)s"
 
 #: fedora/client/wiki.py:89
 #, python-format
@@ -388,6 +395,8 @@ msgid ""
 "fedora.pycompat25.defaultdict is deprecated, use "
 "kitchen.pycompat25.collections.defaultdict instead"
 msgstr ""
+"fedora.pycompat25.defaultdict está obsoleto, utilize "
+"kitchen.pycompat25.collections.defaultdict ao invés disso"
 
 #: fedora/django/auth/models.py:50
 msgid "Loading FAS groups..."
@@ -450,9 +459,6 @@ msgid ""
 "fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils.  This file will disappear"
 " in 0.4"
 msgstr ""
-"fedora.tg.util está obsoleto. Mude para um desses: TG1 apps: "
-"fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils. Esse arquivo desaparecerá"
-" na 0.4"
 
 #: fedora/tg/identity/jsonfasprovider1.py:223
 #: fedora/tg/identity/jsonfasprovider2.py:386
@@ -575,7 +581,7 @@ msgstr "CSRFProtectionMiddleware(%(r_path)s)"
 
 #: fedora/wsgi/csrf.py:156
 msgid "User supplied CSRF token matches environ!"
-msgstr ""
+msgstr "O token CSRF fornecido pelo usuário corresponde ao ambiente!"
 
 #: fedora/wsgi/csrf.py:159
 msgid "Clearing identity"
@@ -678,6 +684,8 @@ msgstr "Falha de autenticação, erro de configuração"
 #: fedora/wsgi/faswho/faswhoplugin.py:250
 msgid "An unknown error happened when trying to log you in. Please try again."
 msgstr ""
+"Um erro desconhecido ocorreu enquanto tentavamos fazer seu logon. Por favor,"
+" tente novamente."
 
 #: fedora/wsgi/faswho/faswhoplugin.py:261
 msgid "Metadata cache miss - refreshing metadata"

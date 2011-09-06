@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2011-07-23 11:41-0700\n"
-"PO-Revision-Date: 2011-07-23 18:46+0000\n"
+"PO-Revision-Date: 2011-09-04 00:34+0000\n"
 "Last-Translator: toshio <a.badger@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -438,8 +438,6 @@ msgid ""
 "fedora.tg.tg1utils   TG2 apps: fedora.tg.tg2utils.  This file will disappear"
 " in 0.4"
 msgstr ""
-"fedora.tg.util เลิกใช้แล้ว โปรดเปลี่ยนไปใช้ตัวใดตัวหนึ่งดังนี้: โปรแกรม TG1:"
-" fedora.tg.tg1utils โปรแกรม TG2: fedora.tg.tg2utils แฟ้มนี้จะหายไปในรุ่น 0.4"
 
 #: fedora/tg/identity/jsonfasprovider1.py:223
 #: fedora/tg/identity/jsonfasprovider2.py:386

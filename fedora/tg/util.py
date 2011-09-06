@@ -39,8 +39,8 @@ import warnings
 
 warnings.warn(b_('fedora.tg.util is deprecated.  Switch to one of these'
     ' instead:'
-    '   TG1 apps: fedora.tg.tg1utils'
-    '   TG2 apps: fedora.tg.tg2utils.  This file will disappear in 0.4'),
+    '   TG1 apps: fedora.tg.utils'
+    '   TG2 apps: fedora.tg2.utils.  This file will disappear in 0.4'),
     DeprecationWarning, stacklevel=2)
 
 __all__ = ('add_custom_stdvars', 'enable_csrf', 'fedora_template',
