@@ -109,7 +109,10 @@ def fedora_template(template, template_type='mako', dotted_lookup=True):
         if resource.startswith(base):
             # subtract that from the resource
             resource = resource[len(base):]
-            resource = 'fedora%s' % resource
+            if resource[0] == '/':
+                resource = 'fedora%s' % resource
+            else:
+                resource = 'fedora/%s' % resource
         # Strip the filename extension
         resource = os.path.splitext(resource)[0]
 
