@@ -224,7 +224,15 @@ Release
 We want to get to the place where a release can be made via a paver target.
 Currently, this is more involved.
 
+0) Have both the stable and the devel tree checked out::
+     mkdir python-fedora
+     cd python-fedora
+     bzr init-repo .
+     bzr branch bzr+ssh://bzr.fedorahosted.org/bzr/python-fedora/devel
+     bzr branch bzr+ssh://bzr.fedorahosted.org/bzr/python-fedora/stable
+
 1) Download new translations and verify they are valid::
+     cd devel
      tx pull -a
      paver make_catalogs
      # If everything checks out
@@ -232,7 +240,9 @@ Currently, this is more involved.
 
 2) Make sure that the NEWS file is accurate (use bzr log if needed),
    python-fedora.spec and fedora/release.py are updated with the new version
-   information.
+   information.  After that, push the devel branch to the server::
+     # Update files
+     bzr push bzr+ssh://bzr.fedorahosted.org/bzr/python-fedora/devel
 
 3) Publish updated docs::
      # pypi
@@ -245,14 +255,17 @@ Currently, this is more involved.
    the server.  Eventually this should be the last manual step.  Everything
    else should be automated::
 
+     cd ../stable
      bzr merge [from feature branches, devel, etc]
      bzr commit
      bzr push bzr+ssh://bzr.fedorahosted.org/bzr/python-fedora/stable
 
 5) Go to a temporary directory and checkout a copy of stable::
+     cd ..
      bzr checkout --lightweight bzr+ssh://bzr.fedorahosted.org/bzr/python-fedora/stable release
+     cd release
 
-6) Go to that directory and run::
+6) Create the tarball in this cloean checkout::
      paver sdist
 
 7) copy the dist/python-fedora-VERSION.tar.gz and python-fedora.spec files to
