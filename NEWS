@@ -6,6 +6,12 @@ NEWS
 :Date: 3 Sep 2011
 :Version: 0.3.x
 
+------------------------
+0.3.26 (not yet release)
+------------------------
+
+* Fix the tg2.utils.url handling with TG-2.0.x
+
 --------
 0.3.25.1
 --------
