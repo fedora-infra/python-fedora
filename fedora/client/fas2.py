@@ -125,8 +125,6 @@ class AccountSystem(BaseClient):
                 100460 : 'sindrepb@fedoraproject.org',
                 # Jesus M. Rodriguez: jmrodri@gmail.com
                 102180: 'jesusr@redhat.com',
-                # Jeff Sheltren: jeff@osuosl.org
-                100058: 'sheltren@fedoraproject.org',
                 # Roozbeh Pournader: roozbeh@farsiweb.info
                 100350: 'roozbeh@gmail.com',
                 # Michael DeHaan: michael.dehaan@gmail.com
