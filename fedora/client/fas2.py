@@ -88,7 +88,8 @@ class AccountSystem(BaseClient):
         # against.
         if not self.proxy:
             self.proxy = FasProxyClient(base_url, useragent=self.useragent,
-                    session_as_cookie=False, debug=self.debug)
+                    session_as_cookie=False, debug=self.debug,
+                    insecure=self.insecure)
 
         # Preseed a list of FAS accounts with bugzilla addresses
         # This allows us to specify a different email for bugzilla than is
@@ -209,6 +210,19 @@ class AccountSystem(BaseClient):
         # the only option.
 
     # TODO: Use exceptions properly
+
+    ### Set insecure properly ###
+    # When setting insecure, we have to set it both on ourselves and on
+    # self.proxy
+    def _get_insecure(self):
+        return self._insecure
+
+    def _set_insecure(self, insecure):
+        self._insecure = insecure
+        self.proxy = FasProxyClient(self.base_url, useragent=self.useragent,
+                session_as_cookie=False, debug=self.debug, insecure=insecure)
+        return insecure
+    insecure = property(_get_insecure, _set_insecure)
 
     ### Groups ###
 

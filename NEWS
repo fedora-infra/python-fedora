@@ -10,7 +10,11 @@ NEWS
 0.3.26 (not yet release)
 ------------------------
 
+* Fix the AccountSystem() class's verify_password() method so that
+  verification of server SSL certificates may be disabled by setting
+  insecure=True.
 * Fix the tg2.utils.url handling with TG-2.0.x
+* Fix a deprecation warning in fedora.tg.controllers
 
 --------
 0.3.25.1
