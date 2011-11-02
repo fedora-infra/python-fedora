@@ -27,7 +27,7 @@
       </div>
       <div py:otherwise="" py:strip="True">
         <form
-        action="${tg.url('/login_handler', params=dict(came_from=came_from.encode('utf-8'), __logins=login_counter.encode('utf-8')))})}" method="post" class="loginfields">
+        action="${tg.url('/login_handler', params=dict(came_from=came_from.encode('utf-8'), __logins=login_counter.encode('utf-8')))}" method="post" accept-charset="UTF-8" class="loginfields">
         <div class="field"><label for="user_name">${_('User Name:')}</label>
           <input type="text" id="user_name" name="user_name" />
         </div>
