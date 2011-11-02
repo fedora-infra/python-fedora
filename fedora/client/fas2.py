@@ -23,6 +23,7 @@ Provide a client module for talking to the Fedora Account System.
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
+import itertools
 import urllib
 import warnings
 
@@ -339,33 +340,41 @@ class AccountSystem(BaseClient):
             The default is to retrieve all fields.
             Valid fields are:
 
-                * username
-                * certificate_serial
-                * locale
-                * creation
-                * telephone
-                * status_change
-                * id
-                * password_changed
-                * privacy
-                * comments
-                * latitude
-                * email
-                * status
-                * gpg_keyid
-                * internal_comments
-                * postal_address
-                * unverified_email
-                * ssh_key
-                * passwordtoken
-                * ircnick
-                * password
-                * emailtoken
-                * longitude
-                * facsimile
-                * human_name
-                * last_seen
+                * affiliation
+                * alias_enabled
                 * bugzilla_email
+                * certificate_serial
+                * comments
+                * country_code
+                * creation
+                * email
+                * emailtoken
+                * facsimile
+                * gpg_keyid
+                * group_roles
+                * human_name
+                * id
+                * internal_comments
+                * ircnick
+                * last_seen
+                * latitude
+                * locale
+                * longitude
+                * memberships
+                * old_password
+                * password
+                * password_changed
+                * passwordtoken
+                * postal_address
+                * privacy
+                * roles
+                * ssh_key
+                * status
+                * status_change
+                * telephone
+                * timezone
+                * unverified_email
+                * username
 
             Note that for most users who access this data, many of these
             fields will be set to None due to security or privacy settings.
@@ -373,6 +382,9 @@ class AccountSystem(BaseClient):
 
         .. versionchanged:: 0.3.21
             Return a Bunch instead of a DictContainer
+        .. versionchanged:: 0.3.26
+            Fixed to return a list with both people who have signed the CLA
+            and have not
         '''
         # Make sure we have a valid key value
         if key not in ('id', 'username', 'email'):
@@ -406,7 +418,8 @@ class AccountSystem(BaseClient):
             'fields': [f for f in fields if f != 'bugzilla_email']}, auth=True)
 
         people = Bunch()
-        for person in request['people']:
+        for person in itertools.chain(request['people'],
+                request['unapproved_people']):
             # Retrieve bugzilla_email from our list if necessary
             if 'bugzilla_email' in fields:
                 if person['id'] in self.__bugzilla_email:
