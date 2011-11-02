@@ -130,6 +130,7 @@ rm -rf %{buildroot}
 %doc NEWS README COPYING AUTHORS ChangeLog doc
 %{python_sitelib}/*
 %exclude %{python_sitelib}/fedora/tg/
+%exclude %{python_sitelib}/fedora/tg2/
 %exclude %{python_sitelib}/fedora/wsgi/
 %exclude %{python_sitelib}/fedora/django/
 
