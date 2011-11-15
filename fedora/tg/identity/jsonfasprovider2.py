@@ -216,9 +216,14 @@ class JsonFasIdentity(BaseClient):
                 # Attempt to load the user. After this code executes, there
                 # *will* be a _user attribute, even if the value is None.
                 self._user = self.__retrieve_user()
+
+        if self._user:
             self._groups = frozenset(
-                    [g['name'] for g in self._user.approved_memberships]
-                    )
+                [g['name'] for g in self._user.approved_memberships]
+                )
+        else:
+            self._groups = frozenset()
+
         # pylint: enable-msg=W0704
         return self._user
     user = property(_get_user)
