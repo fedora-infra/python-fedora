@@ -17,6 +17,14 @@ NEWS
   have signed the CLA and have not
 * Fix the tg2.utils.url handling with TG-2.0.x
 * Fix a deprecation warning in fedora.tg.controllers
+* Fix issue in proxyclient where unicode passwords might be encoded to the
+  wrong byte sequence depending on the locale of the process running it.
+* Fix jsonfasprovider2's group handling to not traceback when assigning groups
+  if there is no record for a given username.
+* Fix a traceback in jsonfasprovider2's user_id handling.
+* Fix comparison of passwords in jsonfasprovider when unicode passwords are
+  used.  However, this method is actually not invoked under normal use as the
+  password comparison is done on the server.
 
 --------
 0.3.25.1

@@ -439,7 +439,7 @@ class JsonFasIdentityProvider(object):
 
         # pylint: disable-msg=W0613
         # :W0613: TG identity providers have this method
-        return user.password == crypt.crypt(password, user.password)
+        return to_bytes(user.password) == crypt.crypt(to_bytes(password), to_bytes(user.password))
 
     def load_identity(self, visit_key):
         '''Lookup the principal represented by visit_key.
