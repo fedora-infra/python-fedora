@@ -255,7 +255,7 @@ class JsonFasIdentity(BaseClient):
         '''
         if not self.user:
             return None
-        return self.user.user_id
+        return self.user.id
     user_id = property(_get_user_id)
 
     ### TG: Same as TG-1.0.8
