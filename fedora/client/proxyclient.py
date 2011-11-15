@@ -341,15 +341,15 @@ class ProxyClient(object):
         if username and password:
             if auth_params.get('httpauth', '').lower() == 'basic':
                 # HTTP Basic auth login
-                userpwd = '%s:%s' % (username, password)
+                userpwd = '%s:%s' % (to_bytes(username), to_bytes(password))
                 request.setopt(pycurl.HTTPAUTH, pycurl.HTTPAUTH_BASIC)
                 request.setopt(pycurl.USERPWD, userpwd)
             else:
                 # TG login
                 # Adding this to the request data prevents it from being logged by
                 # apache.
-                complete_params.update({'user_name': username,
-                        'password': password, 'login': 'Login'})
+                complete_params.update({'user_name': to_bytes(username),
+                        'password': to_bytes(password), 'login': 'Login'})
 
         req_data = None
         if complete_params:
