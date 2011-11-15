@@ -97,7 +97,8 @@ def make_faswho_middleware(app, log_stream=None, login_handler='/login_handler',
                               post_login_url,
                               logout_handler,
                               post_logout_url,
-                              rememberer_name='fasident')
+                              rememberer_name='fasident',
+                              charset='utf-8')
 
     form.classifications = { IIdentifier: ['browser'],
                              IChallenger: ['browser'] } # only for browser
