@@ -27,6 +27,8 @@ NEWS
   password comparison is done on the server.
 * Fix faswho plugin to handle unicode passwords and usernames.  Note that this
   is a different bug than affected the TG1 auth provider.
+* Fix faswho auth plugin to set session cookies as secure and httponly
+* Set the Django session cookies httponly
 
 --------
 0.3.25.1
