@@ -68,7 +68,7 @@ def fas_request_classifier(environ):
 def make_faswho_middleware(app, log_stream=None, login_handler='/login_handler',
         login_form_url='/login', logout_handler='/logout_handler',
         post_login_url='/post_login', post_logout_url=None, fas_url=FAS_URL,
-        insecure=False):
+        insecure=False, ssl_cookie=True, httponly=True):
     '''
     :app: WSGI app that is being wrapped
     :log_stream: :class:`logging.Logger` to log auth messages
@@ -81,6 +81,13 @@ def make_faswho_middleware(app, log_stream=None, login_handler='/login_handler',
     :insecure: Allow connecting to a fas server without checking the server's
         SSL certificate.  Opens you up to MITM attacks but can be useful
         when testing.  *Do not enable this in production*
+    :ssl_cookie: If :data:`True` (default), tell the browser to only send the
+        session cookie back over https.
+    :httponly: If :data:`True` (default), tell the browser that the session
+        cookie should only be read for sending to a server, not for access by
+        JavaScript or other clientside technology.  This prevents using the
+        session cookie to pass information to JavaScript clients but also
+        prevents XSS attacks from stealing the session cookie information.
     '''
 
     # Because of the way we override values (via a dict in AppConfig), we
@@ -89,7 +96,7 @@ def make_faswho_middleware(app, log_stream=None, login_handler='/login_handler',
     if not log_stream:
         raise TypeError('log_stream must be set when calling make_fasauth_middleware()')
 
-    faswho = FASWhoPlugin(fas_url, insecure)
+    faswho = FASWhoPlugin(fas_url, insecure, ssl_cookie, httponly)
     csrf_mdprovider = CSRFMetadataProvider()
 
     form = FriendlyFormPlugin(login_form_url,
@@ -129,11 +136,14 @@ def make_faswho_middleware(app, log_stream=None, login_handler='/login_handler',
 
 class FASWhoPlugin(object):
 
-    def __init__(self, url, insecure=False, session_cookie='tg-visit'):
+    def __init__(self, url, insecure=False, session_cookie='tg-visit',
+            ssl_cookie=True, httponly=True):
         self.url = url
         self.insecure = insecure
         self.fas = FasProxyClient(url, insecure=insecure)
         self.session_cookie = session_cookie
+        self.ssl_cookie = ssl_cookie
+        self.httponly = httponly
         self._session_cache = {}
         self._metadata_plugins = []
 
@@ -194,7 +204,12 @@ class FASWhoPlugin(object):
         linfo = environ.get('FAS_LOGIN_INFO')
         if isinstance(linfo, tuple):
             session_id = linfo[0]
-            set_cookie = '%s=%s; Path=/;' % (self.session_cookie, session_id)
+            set_cookie = ['%s=%s; Path=/;' % (self.session_cookie, session_id)]
+            if self.ssl_cookie:
+                set_cookie.append('Secure')
+            if self.httponly:
+                set_cookie.append('HttpOnly')
+            set_cookie = '; '.join(set_cookie)
             result.append(('Set-Cookie', set_cookie))
             return result
         return None
