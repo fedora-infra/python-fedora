@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2009  Ignacio Vazquez-Abrams
+# Copyright (C) 2011  Red Hat, Inc
 # This file is part of python-fedora
 #
 # python-fedora is free software; you can redistribute it and/or
@@ -18,6 +19,12 @@
 #
 '''
 .. moduleauthor:: Ignacio Vazquez-Abrams <ivazquez@fedoraproject.org>
+.. moduleauthor:: Toshio Kuratomi <toshio@fedoraproject.org>
+
+.. note:: Toshio only added httponly cookie support
+
+.. versionchanged:: 0.3.26
+    Made session cookies httponly
 '''
 from fedora.client import AuthError
 
@@ -71,7 +78,8 @@ class FasMiddleware(object):
             else:
                 try:
                     response.set_cookie('tg-visit',
-                            request.user.session_id, max_age=1814400, path='/', secure=True)
+                            request.user.session_id, max_age=1814400,
+                            path='/', secure=True, httponly=True)
                 except AttributeError, e:
                     # We expect that request.user.session_id won't be set
                     # if the user is logging in with a non-FAS account
