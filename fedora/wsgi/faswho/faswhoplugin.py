@@ -24,6 +24,8 @@ repoze.who plugin to authenticate against hte Fedora Account System
 .. moduleauthor:: Toshio Kuratomi <toshio@fedoraproject.org>
 
 .. versionadded:: 0.3.17
+.. versionchanged:: 0.3.26
+    Added secure and httponly as optional attributes to the session cookie
 '''
 import os
 import sys
