@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-09-03 16:15-0700\n"
-"PO-Revision-Date: 2011-09-07 00:32+0000\n"
+"POT-Creation-Date: 2011-11-20 11:37-0800\n"
+"PO-Revision-Date: 2011-11-20 19:41+0000\n"
 "Last-Translator: toshio <a.badger@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -126,21 +126,21 @@ msgstr "คุณต้องระบุชื่อผู้ใช้งาน
 msgid "Reading from %s "
 msgstr "กำลังอ่านจาก %s"
 
-#: fedora/client/fas2.py:231
+#: fedora/client/fas2.py:248
 #, python-format
 msgid "FAS server unable to retrieve group %(group)s"
 msgstr ""
 
-#: fedora/client/fas2.py:363
+#: fedora/client/fas2.py:391
 msgid "key must be one of \"id\", \"username\", or \"email\""
 msgstr "คีย์ต้องเป็น \"id\", \"username\" หรือ \"email\" อันใดอันหนึ่ง"
 
-#: fedora/client/fas2.py:370
+#: fedora/client/fas2.py:398
 #, python-format
 msgid "%(field)s is not a valid field to filter"
 msgstr "%(field)s ไม่ใช่ฟิลด์ที่ถูกต้องที่จะกรอง"
 
-#: fedora/client/fas2.py:422
+#: fedora/client/fas2.py:451
 msgid ""
 "people_by_id() is deprecated and will be removed in 0.4.  Please port your "
 "code to use people_by_key(key='id', fields=['human_name', 'email', "
@@ -150,11 +150,11 @@ msgstr ""
 "กรุณาปรับเปลี่ยนโค๊ดของคุณให้ใช้ people_by_key(key='id', "
 "fields=['human_name', 'email', 'username', 'bugzilla_email']) แทน"
 
-#: fedora/client/fas2.py:604
+#: fedora/client/fas2.py:633
 msgid "FAS server unable to retrieve group members"
 msgstr "เซิร์ฟเวอร์ FAS ไม่สามารถรับสมาชิกกลุ่ม"
 
-#: fedora/client/fas2.py:626
+#: fedora/client/fas2.py:655
 msgid "FAS server unable to retrieve user information"
 msgstr "เซิร์ฟเวอร์ FAS ไม่สามารถรับข้อมูลผู้ใช้"
 
@@ -453,7 +453,7 @@ msgid "url() expects a dictionary for query parameters"
 msgstr "url() ต้องการ dictionary สำหรับตัวแปรทาง query"
 
 #: fedora/tg/identity/jsonfasprovider1.py:223
-#: fedora/tg/identity/jsonfasprovider2.py:404
+#: fedora/tg/identity/jsonfasprovider2.py:409
 #, python-format
 msgid "Error logging in %(user)s: %(error)s"
 msgstr "เกิดข้อผิดพลาดในการเข้าระบบ %(user)s: %(error)s"
@@ -485,6 +485,7 @@ msgid "User Name:"
 msgstr "ชื่อผู้ใช้:"
 
 #: fedora/tg/templates/genshi/login.html:17
+#: fedora/tg2/templates/mako/login.mak:23
 msgid "Password:"
 msgstr "รหัสผ่าน:"
 
@@ -495,6 +496,7 @@ msgid "Login"
 msgstr "เข้าระบบ"
 
 #: fedora/tg/templates/genshi/login.html:28
+#: fedora/tg2/templates/mako/login.mak:9
 msgid "CSRF attacks"
 msgstr "การโจมตี CSRF"
 
@@ -515,6 +517,7 @@ msgstr ""
 "        เว็บไซต์ประสงค์ร้าย"
 
 #: fedora/tg/templates/genshi/login.html:36
+#: fedora/tg2/templates/mako/login.mak:18
 msgid "I am a human"
 msgstr "เราคือมนุษย์"
 
@@ -554,6 +557,21 @@ msgstr "ออกจากระบบ"
 #, python-format
 msgid "updating visit (%s)"
 msgstr "อัพเดตกรุณาเข้าที่ (%s)"
+
+#: fedora/tg2/templates/mako/login.mak:10
+msgid ""
+"are a means for a malicious website to make a request of another\n"
+"        web server as the user who contacted the malicious web site.  The\n"
+"        purpose of this page is to help protect your account and this server\n"
+"        from attacks from such malicious web sites.  By clicking below, you are\n"
+"        proving that you are a person rather than just the web browser\n"
+"        forwarding your authentication cookies on behalf of a malicious\n"
+"        website."
+msgstr ""
+
+#: fedora/tg2/templates/mako/login.mak:22
+msgid "Username:"
+msgstr ""
 
 #: fedora/tg2/templates/mako/login.mak:33
 msgid "Logged in:"
@@ -646,57 +664,57 @@ msgstr "%(token)s ใน GET"
 msgid "%(token)s in POST"
 msgstr "%(token)s ใน POST"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:144
+#: fedora/wsgi/faswho/faswhoplugin.py:157
 msgid "Keep alive cache miss"
 msgstr "พลาดแคช Keep alive"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:158
+#: fedora/wsgi/faswho/faswhoplugin.py:171
 msgid "in identify()"
 msgstr "ใน identify()"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:165
+#: fedora/wsgi/faswho/faswhoplugin.py:178
 #, python-format
 msgid "Request identify for cookie %(cookie)s"
 msgstr "กำลังร้องขอการยึนยันตนของคุกกี้ %(cookie)s"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:189
+#: fedora/wsgi/faswho/faswhoplugin.py:202
 msgid "In remember()"
 msgstr "ใน remember()"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:202
+#: fedora/wsgi/faswho/faswhoplugin.py:220
 msgid "In forget()"
 msgstr "ใน forget()"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:209
+#: fedora/wsgi/faswho/faswhoplugin.py:227
 #, python-format
 msgid "Forgetting login data for cookie %(s_id)s"
 msgstr "กำลังล้างข้อมูลการเข้าระบบของคุกกี้ %(s_id)s"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:226
+#: fedora/wsgi/faswho/faswhoplugin.py:244
 msgid "In authenticate()"
 msgstr "ใน authenticate()"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:250
+#: fedora/wsgi/faswho/faswhoplugin.py:268
 msgid "Authentication failed, setting error"
 msgstr "การยึนยันตนล้มเหลว จะกำหนด error"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:271
+#: fedora/wsgi/faswho/faswhoplugin.py:289
 msgid "An unknown error happened when trying to log you in. Please try again."
 msgstr ""
 
-#: fedora/wsgi/faswho/faswhoplugin.py:282
+#: fedora/wsgi/faswho/faswhoplugin.py:300
 msgid "Metadata cache miss - refreshing metadata"
 msgstr "พลาดแคช Metadata - กำลังรีเฟรช metadata"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:313
+#: fedora/wsgi/faswho/faswhoplugin.py:331
 msgid "In add_metadata"
 msgstr "ใน add_metadata"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:317
+#: fedora/wsgi/faswho/faswhoplugin.py:335
 msgid "Error exists in session, no need to set metadata"
 msgstr "มีข้อผิดพลาดอยู่ในวาระแล้วจึงไม่จำเป็นต้องกำหนด metadata"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:327
+#: fedora/wsgi/faswho/faswhoplugin.py:345
 #, python-format
 msgid "Request metadata for cookie %(cookie)s"
 msgstr "กำลังขอ metadata ของคุกกี้ %(cookie)s"

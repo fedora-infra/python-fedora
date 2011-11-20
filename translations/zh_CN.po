@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-09-03 16:15-0700\n"
-"PO-Revision-Date: 2011-09-19 07:34+0000\n"
-"Last-Translator: lovenemesis <lovenemesis@gmail.com>\n"
+"POT-Creation-Date: 2011-11-20 11:37-0800\n"
+"PO-Revision-Date: 2011-11-20 19:41+0000\n"
+"Last-Translator: toshio <a.badger@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -122,32 +122,32 @@ msgstr "您必须指定一个用户名"
 msgid "Reading from %s "
 msgstr "正在从 %s 读取 "
 
-#: fedora/client/fas2.py:231
+#: fedora/client/fas2.py:248
 #, python-format
 msgid "FAS server unable to retrieve group %(group)s"
 msgstr "FAS 服务器无法获取组 %(group)s"
 
-#: fedora/client/fas2.py:363
+#: fedora/client/fas2.py:391
 msgid "key must be one of \"id\", \"username\", or \"email\""
 msgstr "关键字必须是 \"id\", \"用户名\", or \"邮件\""
 
-#: fedora/client/fas2.py:370
+#: fedora/client/fas2.py:398
 #, python-format
 msgid "%(field)s is not a valid field to filter"
 msgstr "%(field)s 不是有效的筛选范围"
 
-#: fedora/client/fas2.py:422
+#: fedora/client/fas2.py:451
 msgid ""
 "people_by_id() is deprecated and will be removed in 0.4.  Please port your "
 "code to use people_by_key(key='id', fields=['human_name', 'email', "
 "'username', 'bugzilla_email']) instead"
 msgstr ""
 
-#: fedora/client/fas2.py:604
+#: fedora/client/fas2.py:633
 msgid "FAS server unable to retrieve group members"
 msgstr "FAS 服务无法获取组成员"
 
-#: fedora/client/fas2.py:626
+#: fedora/client/fas2.py:655
 msgid "FAS server unable to retrieve user information"
 msgstr "FAS 服务无法获取用户信息"
 
@@ -422,7 +422,7 @@ msgid "url() expects a dictionary for query parameters"
 msgstr "url() 需要一个 dictionary 用于查询参数"
 
 #: fedora/tg/identity/jsonfasprovider1.py:223
-#: fedora/tg/identity/jsonfasprovider2.py:404
+#: fedora/tg/identity/jsonfasprovider2.py:409
 #, python-format
 msgid "Error logging in %(user)s: %(error)s"
 msgstr "以 %(user)s 登录失败： %(error)s"
@@ -452,6 +452,7 @@ msgid "User Name:"
 msgstr "用户名:"
 
 #: fedora/tg/templates/genshi/login.html:17
+#: fedora/tg2/templates/mako/login.mak:23
 msgid "Password:"
 msgstr "密码:"
 
@@ -462,6 +463,7 @@ msgid "Login"
 msgstr "登录"
 
 #: fedora/tg/templates/genshi/login.html:28
+#: fedora/tg2/templates/mako/login.mak:9
 msgid "CSRF attacks"
 msgstr "CSRF 攻击"
 
@@ -480,6 +482,7 @@ msgstr ""
 "点击下面的内容将证明您是真实的人，而不是恶意站点转发您授权 cookies 的浏览器。"
 
 #: fedora/tg/templates/genshi/login.html:36
+#: fedora/tg2/templates/mako/login.mak:18
 msgid "I am a human"
 msgstr "我是人类"
 
@@ -519,6 +522,21 @@ msgstr "注销"
 #, python-format
 msgid "updating visit (%s)"
 msgstr "更新访问 (%s)"
+
+#: fedora/tg2/templates/mako/login.mak:10
+msgid ""
+"are a means for a malicious website to make a request of another\n"
+"        web server as the user who contacted the malicious web site.  The\n"
+"        purpose of this page is to help protect your account and this server\n"
+"        from attacks from such malicious web sites.  By clicking below, you are\n"
+"        proving that you are a person rather than just the web browser\n"
+"        forwarding your authentication cookies on behalf of a malicious\n"
+"        website."
+msgstr ""
+
+#: fedora/tg2/templates/mako/login.mak:22
+msgid "Username:"
+msgstr ""
 
 #: fedora/tg2/templates/mako/login.mak:33
 msgid "Logged in:"
@@ -609,57 +627,57 @@ msgstr ""
 msgid "%(token)s in POST"
 msgstr ""
 
-#: fedora/wsgi/faswho/faswhoplugin.py:144
+#: fedora/wsgi/faswho/faswhoplugin.py:157
 msgid "Keep alive cache miss"
 msgstr "保持活跃的缓存丢失"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:158
+#: fedora/wsgi/faswho/faswhoplugin.py:171
 msgid "in identify()"
 msgstr "在 identify() 中"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:165
+#: fedora/wsgi/faswho/faswhoplugin.py:178
 #, python-format
 msgid "Request identify for cookie %(cookie)s"
 msgstr "请求 cookie %(cookie)s 的身份 "
 
-#: fedora/wsgi/faswho/faswhoplugin.py:189
+#: fedora/wsgi/faswho/faswhoplugin.py:202
 msgid "In remember()"
 msgstr "在 remember() 中"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:202
+#: fedora/wsgi/faswho/faswhoplugin.py:220
 msgid "In forget()"
 msgstr "在 forget() 中"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:209
+#: fedora/wsgi/faswho/faswhoplugin.py:227
 #, python-format
 msgid "Forgetting login data for cookie %(s_id)s"
 msgstr "忘记 cookie %(s_id)s 的登录数据 "
 
-#: fedora/wsgi/faswho/faswhoplugin.py:226
+#: fedora/wsgi/faswho/faswhoplugin.py:244
 msgid "In authenticate()"
 msgstr "在 authenticate() 中"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:250
+#: fedora/wsgi/faswho/faswhoplugin.py:268
 msgid "Authentication failed, setting error"
 msgstr "授权失败，设置错误"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:271
+#: fedora/wsgi/faswho/faswhoplugin.py:289
 msgid "An unknown error happened when trying to log you in. Please try again."
 msgstr ""
 
-#: fedora/wsgi/faswho/faswhoplugin.py:282
+#: fedora/wsgi/faswho/faswhoplugin.py:300
 msgid "Metadata cache miss - refreshing metadata"
 msgstr "元数据缓存丢失 - 刷新元数据"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:313
+#: fedora/wsgi/faswho/faswhoplugin.py:331
 msgid "In add_metadata"
 msgstr "在 add_metadata 中"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:317
+#: fedora/wsgi/faswho/faswhoplugin.py:335
 msgid "Error exists in session, no need to set metadata"
 msgstr "进程存在错误，无须设定元数据"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:327
+#: fedora/wsgi/faswho/faswhoplugin.py:345
 #, python-format
 msgid "Request metadata for cookie %(cookie)s"
 msgstr "请求 cookie  %(cookie)s 的元数据"

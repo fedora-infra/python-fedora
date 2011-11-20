@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-09-03 16:15-0700\n"
-"PO-Revision-Date: 2011-09-14 16:00+0000\n"
-"Last-Translator: kristho <lakristho@gmail.com>\n"
+"POT-Creation-Date: 2011-11-20 11:37-0800\n"
+"PO-Revision-Date: 2011-11-20 19:41+0000\n"
+"Last-Translator: toshio <a.badger@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -129,21 +129,21 @@ msgstr "Du skal angive et brugernavn"
 msgid "Reading from %s "
 msgstr "Læser fra %s "
 
-#: fedora/client/fas2.py:231
+#: fedora/client/fas2.py:248
 #, python-format
 msgid "FAS server unable to retrieve group %(group)s"
 msgstr "FAS-server kunne ikke hente gruppen %(group)s"
 
-#: fedora/client/fas2.py:363
+#: fedora/client/fas2.py:391
 msgid "key must be one of \"id\", \"username\", or \"email\""
 msgstr "nøgle skal være en af følgende: \"id\", \"username\" eller \"email\""
 
-#: fedora/client/fas2.py:370
+#: fedora/client/fas2.py:398
 #, python-format
 msgid "%(field)s is not a valid field to filter"
 msgstr "%(field)s er ikke et gyldigt felt at filtrere"
 
-#: fedora/client/fas2.py:422
+#: fedora/client/fas2.py:451
 msgid ""
 "people_by_id() is deprecated and will be removed in 0.4.  Please port your "
 "code to use people_by_key(key='id', fields=['human_name', 'email', "
@@ -153,11 +153,11 @@ msgstr ""
 " kode til at bruge people_by_key(key='id', fields=['human_name', 'email', "
 "'username', 'bugzilla_email']) i stedet"
 
-#: fedora/client/fas2.py:604
+#: fedora/client/fas2.py:633
 msgid "FAS server unable to retrieve group members"
 msgstr "FAS-server kunne ikke modtage gruppemedlemmer"
 
-#: fedora/client/fas2.py:626
+#: fedora/client/fas2.py:655
 msgid "FAS server unable to retrieve user information"
 msgstr "FAS-server kunne ikke modtage brugerinformation"
 
@@ -472,7 +472,7 @@ msgid "url() expects a dictionary for query parameters"
 msgstr "url() forventer en ordbog for forespørgselsparametre"
 
 #: fedora/tg/identity/jsonfasprovider1.py:223
-#: fedora/tg/identity/jsonfasprovider2.py:404
+#: fedora/tg/identity/jsonfasprovider2.py:409
 #, python-format
 msgid "Error logging in %(user)s: %(error)s"
 msgstr "Fejl under indlogning af %(user)s: %(error)s"
@@ -504,6 +504,7 @@ msgid "User Name:"
 msgstr "Brugernavn:"
 
 #: fedora/tg/templates/genshi/login.html:17
+#: fedora/tg2/templates/mako/login.mak:23
 msgid "Password:"
 msgstr "Adgangskode:"
 
@@ -514,6 +515,7 @@ msgid "Login"
 msgstr "Logind"
 
 #: fedora/tg/templates/genshi/login.html:28
+#: fedora/tg2/templates/mako/login.mak:9
 msgid "CSRF attacks"
 msgstr "CSRF-angreb"
 
@@ -535,6 +537,7 @@ msgstr ""
 "        godkendelsescookie på vegne af et ondsindet websted."
 
 #: fedora/tg/templates/genshi/login.html:36
+#: fedora/tg2/templates/mako/login.mak:18
 msgid "I am a human"
 msgstr "Jeg er et menneske"
 
@@ -574,6 +577,21 @@ msgstr "Log ud"
 #, python-format
 msgid "updating visit (%s)"
 msgstr "opdaterer besøg (%s)"
+
+#: fedora/tg2/templates/mako/login.mak:10
+msgid ""
+"are a means for a malicious website to make a request of another\n"
+"        web server as the user who contacted the malicious web site.  The\n"
+"        purpose of this page is to help protect your account and this server\n"
+"        from attacks from such malicious web sites.  By clicking below, you are\n"
+"        proving that you are a person rather than just the web browser\n"
+"        forwarding your authentication cookies on behalf of a malicious\n"
+"        website."
+msgstr ""
+
+#: fedora/tg2/templates/mako/login.mak:22
+msgid "Username:"
+msgstr ""
 
 #: fedora/tg2/templates/mako/login.mak:33
 msgid "Logged in:"
@@ -666,57 +684,57 @@ msgstr "%(token)s i GET"
 msgid "%(token)s in POST"
 msgstr "%(token)s i POST"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:144
+#: fedora/wsgi/faswho/faswhoplugin.py:157
 msgid "Keep alive cache miss"
 msgstr "Hold liv i cache-forbier"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:158
+#: fedora/wsgi/faswho/faswhoplugin.py:171
 msgid "in identify()"
 msgstr "i identify()"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:165
+#: fedora/wsgi/faswho/faswhoplugin.py:178
 #, python-format
 msgid "Request identify for cookie %(cookie)s"
 msgstr "Forespørg identitet for cookie %(cookie)s"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:189
+#: fedora/wsgi/faswho/faswhoplugin.py:202
 msgid "In remember()"
 msgstr "I remember()"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:202
+#: fedora/wsgi/faswho/faswhoplugin.py:220
 msgid "In forget()"
 msgstr "I forget()"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:209
+#: fedora/wsgi/faswho/faswhoplugin.py:227
 #, python-format
 msgid "Forgetting login data for cookie %(s_id)s"
 msgstr "Glemmer indlogningsdata for cookie %(s_id)s"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:226
+#: fedora/wsgi/faswho/faswhoplugin.py:244
 msgid "In authenticate()"
 msgstr "I authenticate()"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:250
+#: fedora/wsgi/faswho/faswhoplugin.py:268
 msgid "Authentication failed, setting error"
 msgstr "Godkendelse mislykkedes, indstillingsfejl"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:271
+#: fedora/wsgi/faswho/faswhoplugin.py:289
 msgid "An unknown error happened when trying to log you in. Please try again."
 msgstr "En ukendt fejl opstod under indlogning af dig. Prøv venligst igen."
 
-#: fedora/wsgi/faswho/faswhoplugin.py:282
+#: fedora/wsgi/faswho/faswhoplugin.py:300
 msgid "Metadata cache miss - refreshing metadata"
 msgstr "Metadata-mellemlager-forbier - genopfrisker metadata"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:313
+#: fedora/wsgi/faswho/faswhoplugin.py:331
 msgid "In add_metadata"
 msgstr "I add_metadata"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:317
+#: fedora/wsgi/faswho/faswhoplugin.py:335
 msgid "Error exists in session, no need to set metadata"
 msgstr "Fejl findes i session, ingen grund til at angive metadata"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:327
+#: fedora/wsgi/faswho/faswhoplugin.py:345
 #, python-format
 msgid "Request metadata for cookie %(cookie)s"
 msgstr "Forespørg metadata for cookie %(cookie)s"
