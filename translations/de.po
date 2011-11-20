@@ -7,13 +7,14 @@
 # Fabian Affolter <fab@fedoraproject.org>, 2009.
 # Laurin  <lineak@fedoraproject.org>, 2011.
 # Mario Blättermann <mariobl@freenet.de>, 2011.
+# Tobias Portmann <tobias.portmann@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2011-09-03 16:15-0700\n"
-"PO-Revision-Date: 2011-09-07 00:32+0000\n"
-"Last-Translator: toshio <a.badger@gmail.com>\n"
+"PO-Revision-Date: 2011-10-19 05:16+0000\n"
+"Last-Translator: tobias_portmann <tobias.portmann@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -199,18 +200,24 @@ msgid ""
 "collection and collection_ver are deprecated names for collctn_name and "
 "collctn_ver respectively.  Ignoring the values given in them."
 msgstr ""
+"collection und collection_ver sind veraltete Namen für collctn_name und "
+"collctn_ver. Ignoriere die übergebenen Werte."
 
 #: fedora/client/pkgdb.py:356
 msgid ""
 "collection has been renamed to collctn_name.\n"
 "Please start using the new name.  collection will go away in 0.4.x."
 msgstr ""
+"collection wurde umbenannt zu collctn_name.\n"
+"Bitte verwenden Sie den neuen Namen. collection wird ab Version 0.4.x verschwinden."
 
 #: fedora/client/pkgdb.py:362
 msgid ""
 "collection_ver has been renamed to collctn_ver.\n"
 "Please start using the new name.  collection_ver will go away in 0.4.x."
 msgstr ""
+"collection_ver wurde umbenannt zu collctn_ver.\n"
+"Bitte verwenden Sie den neuen Namen. collection_ver wird ab Version 0.4.x verschwinden."
 
 #: fedora/client/pkgdb.py:399
 msgid ""
@@ -223,6 +230,8 @@ msgid ""
 "collectn_list has been renamed to collctn_list.\n"
 "Please start using the new name.  collectn_list will go away in 0.4.x."
 msgstr ""
+"collectn_list wurde umbenannt zu collctn_list.\n"
+"Bitte verwenden Sie den neuen Namen. collectn_list wird ab Version 0.4.x verschwinden."
 
 #: fedora/client/pkgdb.py:478
 msgid ""
@@ -235,6 +244,8 @@ msgid ""
 "collectn has been renamed to collctn.\n"
 "Please start using the new name.  collectn will go away in 0.4.x."
 msgstr ""
+"collectn wurde umbenannt zu collctn.\n"
+"Bitte verwenden Sie den neuen Namen. collectn wird ab Version 0.4.x verschwinden."
 
 #: fedora/client/pkgdb.py:493
 #, python-format

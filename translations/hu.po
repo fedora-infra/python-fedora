@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2011-09-03 16:15-0700\n"
-"PO-Revision-Date: 2011-09-07 00:32+0000\n"
-"Last-Translator: toshio <a.badger@gmail.com>\n"
+"PO-Revision-Date: 2011-10-31 04:12+0000\n"
+"Last-Translator: zoltanh721 <hopparz@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -63,6 +63,7 @@ msgstr ""
 msgid ""
 "DictContainer is deprecated.  Use the Bunch class from python-bunch instead."
 msgstr ""
+"A DictContainer elavult.  Alkalmazza a Bunch osztályt python-bunch helyett."
 
 #: fedora/client/baseclient.py:94 fedora/client/baseclient.py:215
 #: fedora/client/baseclient.py:234 fedora/client/baseclient.py:246
@@ -77,7 +78,7 @@ msgstr "Nem sikerült %(file)s fájlból munkafolyamatot betölteni"
 #: fedora/client/baseclient.py:129
 #, python-format
 msgid "Unable to create %(dir)s: %(error)s"
-msgstr "Nem sikerült megteremteni %(dir)s mappát: %(error)s"
+msgstr "Nem sikerült elkészíteni %(dir)s mappát: %(error)s"
 
 #: fedora/client/baseclient.py:141
 #, python-format
@@ -87,7 +88,7 @@ msgstr "Nem sikerült %(session)s munkafolyamat fájlba írni: %(error)s"
 #: fedora/client/baseclient.py:164
 #, python-format
 msgid "No session cached for \"%s\""
-msgstr "Nincs betárazva munkafolyamat „%s” azonosítóval"
+msgstr "Nincs betárazva munkafolyamat „%s” azonosítóhoz"
 
 #: fedora/client/baseclient.py:301
 #, python-format
@@ -106,8 +107,8 @@ msgstr "send_request() váratlan kulcsszó argumentumot kapott"
 msgid ""
 "send_request(input) is deprecated.  Use send_request(req_params) instead"
 msgstr ""
-"send_request(input) elavult.  Használja inkább a send_request(req_params) "
-"hívást"
+"send_request(input) elavult.  Alkalmazza inkább a send_request(req_params) "
+"hívást helyette"
 
 #: fedora/client/baseclient.py:331
 msgid ""
@@ -115,18 +116,18 @@ msgid ""
 "username and password or session_id before calling this function with "
 "auth=True"
 msgstr ""
-"Hitelesítést kértek, de nem adták meg milyen módon.  Kérem adja meg a "
-"használót és a jelszót, vagy a munkafolyamat azonosítót mielőtt auth=True "
-"argumentummal hívja e függvényt."
+"Auth kérés érkezett, de nem lehet végrehajtani az a megadott módon.  Kérjük,"
+" állítsa be felhasználói nevét és jelszavát, vagy session_id-jét mielőtt "
+"meghívná ezt a funkciót auth = True utasítással."
 
 #: fedora/client/bodhi.py:195
 msgid "You must specify a username"
-msgstr "Meg kell adni a használó nevét"
+msgstr "Meg kell adnod egy felhasználónevet"
 
 #: fedora/client/bodhi.py:265
 #, python-format
 msgid "Reading from %s "
-msgstr "Olvasás %s fájlból "
+msgstr "Olvasás %s -ből "
 
 #: fedora/client/fas2.py:231
 #, python-format
@@ -135,7 +136,7 @@ msgstr ""
 
 #: fedora/client/fas2.py:363
 msgid "key must be one of \"id\", \"username\", or \"email\""
-msgstr "a kulcs vagy „id” vagy „username” vagy „email” kell legyen"
+msgstr "a kulcsnak vagy „id” vagy „username” vagy „email” kell lennie"
 
 #: fedora/client/fas2.py:370
 #, python-format
@@ -148,22 +149,25 @@ msgid ""
 "code to use people_by_key(key='id', fields=['human_name', 'email', "
 "'username', 'bugzilla_email']) instead"
 msgstr ""
-"people_by_id() elavult, és 0.4-ben már nem lesz.  Kérem változtasson a "
-"kódon, hogy inkább a people_by_key(key='id', fields=['human_name',·'email', "
-"'username', 'bugzilla_email']) hívást használja."
+"people_by_id() elavult, és a 0.4-es verzióban már nem lesz elérhető.  Kérem "
+"változtasson a kódon, hogy inkább a people_by_key(key='id', "
+"fields=['human_name',·'email', 'username', 'bugzilla_email']) hívást "
+"használja."
 
 #: fedora/client/fas2.py:604
 msgid "FAS server unable to retrieve group members"
-msgstr "FAS szolgáló képtelen csoporttagokat lekérni"
+msgstr "FAS kiszolgáló képtelen csoporttagokat lekérni"
 
 #: fedora/client/fas2.py:626
 msgid "FAS server unable to retrieve user information"
-msgstr "FAS szolgáló képtelen használó adatokat lekérni"
+msgstr "FAS kiszolgáló képtelen a felhasználói adatokat lekérni"
 
 #: fedora/client/fasproxy.py:67
 msgid ""
 "FasProxyClient() got an unexpected keyword argument 'session_as_cookie'"
 msgstr ""
+"FasProxyClient() egy nem várt kulcsszó argumentumot kapott "
+"'session_as_cookie'"
 
 #: fedora/client/pkgdb.py:197
 #, python-format
@@ -171,12 +175,13 @@ msgid ""
 "We do not have enough information to create package %(pkg)s. Need version "
 "owner."
 msgstr ""
-"Nincs elég adat %(pkg)s csomag elkészítéséhez. Változat tulajdonos kell."
+"Nincs elég adat %(pkg)s csomag elkészítéséhez. Verzió tulajdonos szükséges."
 
 #: fedora/client/pkgdb.py:208
 #, python-format
 msgid "PackageDB returned an error creating %(pkg)s: %(msg)s"
-msgstr "%(pkg)s csomagot készítvén PackageDB hibával tért vissza: %(msg)s"
+msgstr ""
+"%(pkg)s csomag készítése közben a PackageDB hibával tért vissza: %(msg)s"
 
 #: fedora/client/pkgdb.py:231 fedora/client/pkgdb.py:287
 #, python-format

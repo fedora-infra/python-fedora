@@ -4,13 +4,14 @@
 # project.
 # 
 # Translators:
+# Kévin Raymond <shaiton@fedoraproject.org>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2011-09-03 16:15-0700\n"
-"PO-Revision-Date: 2011-09-07 00:32+0000\n"
-"Last-Translator: toshio <a.badger@gmail.com>\n"
+"PO-Revision-Date: 2011-11-10 12:20+0000\n"
+"Last-Translator: shaiton <shaiton@fedoraproject.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -63,7 +64,7 @@ msgstr ""
 msgid ""
 "DictContainer is deprecated.  Use the Bunch class from python-bunch instead."
 msgstr ""
-"DictContainer est obsolète. Utilisez la classe Bunch à partir de python-"
+"DictContainer est obsolète. Utilisez la classe Bunch provenant de python-"
 "bunch."
 
 #: fedora/client/baseclient.py:94 fedora/client/baseclient.py:215
@@ -116,7 +117,7 @@ msgid ""
 "auth=True"
 msgstr ""
 "Auth est requis mais aucun moyen d'effectuer l'auth n'est donnée. Merci de "
-"donner un nom d'utilisateur et un mot de passe ou un id de session avant "
+"définir un nom d'utilisateur et un mot de passe ou un id de session avant "
 "d'appeler cette fonction avec auth=True"
 
 #: fedora/client/bodhi.py:195
@@ -172,7 +173,7 @@ msgid ""
 "owner."
 msgstr ""
 "Nous n'avons pas suffisamment d'informations pour créer le paquet %(pkg)s. "
-"Nous avons besoin de la version propriétaire."
+"Nous avons besoin du propriétaire actuel."
 
 #: fedora/client/pkgdb.py:208
 #, python-format
@@ -189,7 +190,7 @@ msgstr "Impossible de sauver toutes les informations pour %(pkg)s : %(msg)s"
 msgid ""
 "Collection abbreviation %(collection)s is unknown.  Use F, FC, EL, or OLPC"
 msgstr ""
-"L'abréviation collection %(collection)s est inconnue. Utiliser F, FC, EL ou "
+"L'abréviation collection %(collection)s est inconnue. Utilisez F, FC, EL ou "
 "OLPC"
 
 #: fedora/client/pkgdb.py:350
@@ -450,12 +451,16 @@ msgid ""
 "fedora.tg.tg1utils is deprecated.  Switch to fedora.tg.utils instead.  This "
 "file will disappear in 0.4"
 msgstr ""
+"fedora.tg.tg1utils est obsolète. Utilisez plutôt fedora.tg.utils. Ce fichier"
+" disparaîtra avec la 0.4"
 
 #: fedora/tg/tg2utils.py:38
 msgid ""
 "fedora.tg.tg2utils is deprecated.  Switch to fedora.tg2.utils instead.  This"
 " file will disappear in 0.4"
 msgstr ""
+"fedora.tg.tg2utils est obsolète. Utilisez plutôt fedora.tg2.utils. Ce "
+"fichier disparaîtra avec la 0.4"
 
 #: fedora/tg/util.py:40
 msgid ""
@@ -463,6 +468,9 @@ msgid ""
 "fedora.tg.utils   TG2 apps: fedora.tg2.utils.  This file will disappear in "
 "0.4"
 msgstr ""
+"fedora.tg.util est obsolète. Utilisez plutôt un de ceux-ci : Applications "
+"TG1 : fedora.tg.utilsApplications TG2 : fedora.tg2.utils.Ce fichier "
+"disparaîtra avec la 0.4"
 
 #: fedora/tg/utils.py:102
 msgid "url() expects a dictionary for query parameters"
@@ -480,7 +488,7 @@ msgid ""
 "fas.usernamme and fas.password for authorization"
 msgstr ""
 "Le certificat d'authentification ssl ne peut être établi avec identity.ssl "
-"sans définir les autorisations fas.usernamme et fas.password"
+"sans définir les autorisations fas.usernamme ni fas.password"
 
 #: fedora/tg/identity/jsonfasprovider2.py:166
 #, python-format
@@ -575,7 +583,7 @@ msgstr "Mise à jour de la visite (%s)"
 
 #: fedora/tg2/templates/mako/login.mak:33
 msgid "Logged in:"
-msgstr ""
+msgstr "Connecté : "
 
 #: fedora/wsgi/csrf.py:113
 msgid "Creating CSRFProtectionMiddleware"
