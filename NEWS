@@ -3,17 +3,17 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 1 Nov 2011
+:Date: 20 Nov 2011
 :Version: 0.3.x
 
-------------------------
-0.3.26 (not yet release)
-------------------------
+------
+0.3.26
+------
 
 * Fix the AccountSystem() class's verify_password() method so that
   verification of server SSL certificates may be disabled by setting
   insecure=True.
-* Fixed AccountSystem.people-by_key() to return a list with both people who
+* Fixed AccountSystem.people_by_key() to return a list with both people who
   have signed the CLA and have not
 * Fix the tg2.utils.url handling with TG-2.0.x
 * Fix a deprecation warning in fedora.tg.controllers
