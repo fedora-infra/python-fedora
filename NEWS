@@ -6,9 +6,9 @@ NEWS
 :Date: 20 Nov 2011
 :Version: 0.3.x
 
-------
-0.3.26
-------
+---------
+0.3.25.90
+---------
 
 * Fix the AccountSystem() class's verify_password() method so that
   verification of server SSL certificates may be disabled by setting
@@ -29,6 +29,7 @@ NEWS
   is a different bug than affected the TG1 auth provider.
 * Fix faswho auth plugin to set session cookies as secure and httponly
 * Set the Django session cookies httponly
+* Add a genshi login template for TG2
 
 --------
 0.3.25.1

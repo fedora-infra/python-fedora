@@ -3,7 +3,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.3.25.1
+Version:        0.3.25.90
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -145,6 +145,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/fedora/django/
 
 %changelog
+* Sun Nov 20 2011 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.25.90-1
+- Beta release
+
 * Thu Oct 6 2011 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.25.1-1
 - Minor update to bugzilla email aliases
 
