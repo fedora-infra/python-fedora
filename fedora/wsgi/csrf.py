@@ -86,17 +86,17 @@ class CSRFProtectionMiddleware(object):
     authenticated for.  When used with TurboGears2, an overridden version of
     :func:`tg.url` is provided.  You can use it directly by calling::
 
-        from fedora.tg.tg2utils import url
+        from fedora.tg2.utils import url
         [...]
         url = url('/authentication_needed')
 
     An easier and more portable way to use that is from within TG2 to set this
-    up is to use :func:`fedora.tg.tg2utils.enable_csrf` when you setup your
+    up is to use :func:`fedora.tg2.utils.enable_csrf` when you setup your
     application.  This function will monkeypatch TurboGears2's :func:`tg.url`
     so that it adds a csrf token to urls.  This way, you can keep the same
     code in your templates and controller methods whether or not you configure
     the CSRF middleware to provide you with protection via
-    :func:`~fedora.tg.tg2utils.enable_csrf`.
+    :func:`~fedora.tg2.utils.enable_csrf`.
     '''
 
     def __init__(self, application, csrf_token_id='_csrf_token',
