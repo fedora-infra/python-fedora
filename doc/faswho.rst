@@ -49,6 +49,15 @@ templates:
 
 .. autofunction:: fedora.tg2.utils.fedora_template
 
-The templates themselves are:
+The templates themselves come in two flavors.  One set for use with mako and
+one set for use with genshi.
+
+Mako
+====
 
 .. automodule:: fedora.tg2.templates.mako
+
+Genshi
+======
+
+.. automodule:: fedora.tg2.templates.genshi
