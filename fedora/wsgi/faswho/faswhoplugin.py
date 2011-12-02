@@ -98,7 +98,8 @@ def make_faswho_middleware(app, log_stream=None, login_handler='/login_handler',
     if not log_stream:
         raise TypeError('log_stream must be set when calling make_fasauth_middleware()')
 
-    faswho = FASWhoPlugin(fas_url, insecure, ssl_cookie, httponly)
+    faswho = FASWhoPlugin(fas_url, insecure=insecure, ssl_cookie=ssl_cookie,
+            httponly=httponly)
     csrf_mdprovider = CSRFMetadataProvider()
 
     form = FriendlyFormPlugin(login_form_url,
