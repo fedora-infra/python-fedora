@@ -5,13 +5,12 @@
   py:strip="True">
 
 <py:match path="loginform" once="true">
-  <div class="panel">
-    <div id="login-box" class="login">
-      <h3>${_('Log In')}</h3>
-      <p py:content="str(select('*|text()'))" />
-      <div py:choose="(request.identity and '_csrf_token' in request.identity) or request.environ.get('CSRF_AUTH_SESSION_ID')">
-        <div py:when="True" py:strip="True">
-        <form action="${tg.url(came_from)}" method="post">
+<div id="loginform" class="login">
+  <h3>${_('Log In')}</h3>
+  <p py:content="str(select('*|text()'))" />
+  <div py:choose="(request.identity and '_csrf_token' in request.identity) or request.environ.get('CSRF_AUTH_SESSION_ID')" py:strip="True">
+    <div py:when="True" py:strip="True">
+      <form action="${tg.url(came_from)}" method="post">
         <p><a href="http://en.wikipedia.org/wiki/CSRF">${_('CSRF attacks')}</a>
         ${_(''' are a means for a malicious website to make a request of another
         web server as the user who contacted the malicious web site.  The
@@ -22,46 +21,28 @@
         website.''')}</p>
         <input type="submit" name="csrf_login" class="button"
           value="${_('I am a human')}" />
-          <hiddenvals />
-        </form>
-      </div>
-      <div py:otherwise="" py:strip="True">
-        <form
-        action="${tg.url('/login_handler', params=dict(came_from=came_from.encode('utf-8'), __logins=login_counter.encode('utf-8')))}" method="post" accept-charset="UTF-8" class="loginfields">
-        <div class="field"><label for="user_name">${_('User Name:')}</label>
-          <input type="text" id="user_name" name="user_name" />
-        </div>
-        <div class="field"><label for="password">${_('Password:')}</label>
-          <input type="password" id="password" name="password" />
-        </div>
-        <div class="field">
-          <input type="submit" name="login" class="button"
-            value="${_('Login')}" />
-          <hiddenvals />
-        </div>
       </form>
-      </div>
-      </div>
-      <ul>
-        <li><a href="${tg.url(tg.config('fas.url', 'https://admin.fedoraproject.org/accounts').rstrip('/') + '/user/resetpass')}">${_('Forgot Password?')}</a></li>
-        <li><a href="${tg.url(tg.config('fas.url', 'https://admin.fedoraproject.org/accounts').rstrip('/') + '/user/new')}">${_('Sign Up')}</a></li>
-      </ul>
     </div>
+    <div py:otherwise="" py:strip="True">
+      <form action="${tg.url('/login_handler', params=dict(came_from=came_from.encode('utf-8'), __logins=login_counter.encode('utf-8')))}" method="post" accept-charset="UTF-8" class="loginfields">
+        <label for="login">${_('Username:')}</label>
+        <input type="text" id="login" name="login" class="text" />
+        <br />
+        <label for="password">${_('Password:')}</label>
+        <input type="password" id="password" name="password" class="text" />
+        <input type="submit" id="submit" class="button" value="${_('Login')}" />
+      </form>
+    </div>
+    <ul>
+      <li><a href="${tg.url(tg.config.get('fas.url', 'https://admin.fedoraproject.org/accounts').rstrip('/') + '/user/resetpass')}">${_('Forgot Password?')}</a></li>
+      <li><a href="${tg.url(tg.config.get('fas.url', 'https://admin.fedoraproject.org/accounts').rstrip('/') + '/user/new')}">${_('Sign Up')}</a></li>
+    </ul>
   </div>
-</py:match>
-
-<py:match path="hiddenvals" once="true">
-  <input py:if="forward_url" type="hidden" name="forward_url"
-    value="${forward_url}" />
-  <div py:for="name,values in original_parameters.items()" py:strip="1">
-    <input py:for="value in isinstance(values, list) and values or [values]"
-      py:if="name != '_csrf_token'" type="hidden" name="${name}"
-      value="${value}"/>
-  </div>
+</div>
 </py:match>
 
 <py:match path="logintoolitem" once="true">
-  <div py:choose="">
+<div py:choose="">
   <li py:when="request.identity" class="toolitem">
     ${_('Welcome')}
     <div py:choose="str(select('@href'))" py:strip="True">
@@ -70,8 +51,7 @@
           py:replace="request.identity['user'].display_name" />
         <span py:otherwise="" py:replace="request.identity['user'].user_name" />
       </span>
-      <a py:otherwise="" href="${select('@href')}" py:choose=""
-        py:strip="True">
+      <a py:otherwise="" href="${select('@href')}" py:choose="">
         <span py:when="hasattr(request.identity['user'], 'display_name')"
           py:replace="request.identity['user'].display_name" />
         <span py:otherwise=""
@@ -97,7 +77,7 @@
     <form action="${tg.url('/logout_handler')}" method="POST">
       <input type="submit" value="${_('Logout')}" class="button" />
     </form>
-    </li>
-  </div>
+  </li>
+</div>
 </py:match>
 </html>

@@ -11,7 +11,7 @@ Genshi version of templates to make adding certain Fedora widgets easier.
 
 
 Include this using::
-    <xi:include href="${tg.fedora_template('login.html')}" />
+    <xi:include href="${fedora_template('login.html', template_type='genshi')}" />
 
 .. function:: loginform([message])
 
@@ -54,7 +54,7 @@ Typical usage looks like this::
 
 
 Include this using::
-    <xi:include href="${tg.fedora_template('jsglobals.html')}" />
+    <xi:include href="${fedora_template('jsglobals.html', template_type='genshi')}" />
 
 .. function:: jsglobals()
 

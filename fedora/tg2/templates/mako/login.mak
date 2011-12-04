@@ -1,36 +1,43 @@
 <%def name="loginform(message='')">
-<div id="loginform">
-  <h2><span>Login</span></h2>
+<div id="loginform" class="login">
+  <h3><span>${_('Log In')}</span></h3>
   % if message:
     <p>${message}</p>
   % endif
   % if (request.identity and '_csrf_token' in request.identity) or request.environ.get('CSRF_AUTH_SESSION_ID'):
-    <form action="${tg.url(came_from)}" method="POST">
+    <form action="${tg.url(came_from)}" method="post">
       <p><a href="http://en.wikipedia.org/wiki/CSRF">${_('CSRF attacks')}</a>
-        ${_('''are a means for a malicious website to make a request of another
+        ${_(''' are a means for a malicious website to make a request of another
         web server as the user who contacted the malicious web site.  The
         purpose of this page is to help protect your account and this server
         from attacks from such malicious web sites.  By clicking below, you are
         proving that you are a person rather than just the web browser
         forwarding your authentication cookies on behalf of a malicious
         website.''')}</p>
-        <input type="submit" class="button"
+        <input type="submit" name="csrf_login" class="button"
           value="${_('I am a human')}" />
     </form>
   % else:
-    <form action="${tg.url('/login_handler', params=dict(came_from=came_from.encode('utf-8'), __logins=login_counter.encode('utf-8')))}" method="POST" class="loginfields">
-      <label for="login">${_('Username:')}</label><input type="text" id="login" name="login" class="text"></input><br/>
-      <label for="password">${_('Password:')}</label><input type="password" id="password" name="password" class="text"></input>
-      <input type="submit" id="submit" value="Login" />
+    <form action="${tg.url('/login_handler', params=dict(came_from=came_from.encode('utf-8'), __logins=login_counter.encode('utf-8')))}" method="post" accept-charset="UTF-8" class="loginfields">
+      <label for="login">${_('Username:')}</label>
+      <input type="text" id="login" name="login" class="text" />
+      <br />
+      <label for="password">${_('Password:')}</label>
+      <input type="password" id="password" name="password" class="text" />
+      <input type="submit" id="submit" class="button" value="${_('Login')}" />
     </form>
   % endif
+  <ul>
+    <li><a href="${tg.url(tg.config.get('fas.url', 'https://admin.fedoraproject.org/accounts').rstrip('/') + '/user/resetpass')}">${_('Forgot Password?')}</a></li>
+    <li><a href="${tg.url(tg.config.get('fas.url', 'https://admin.fedoraproject.org/accounts').rstrip('/') + '/user/new')}">${_('Sign Up')}</a></li>
+  </ul>
 </div>
 </%def>
 
 <%def name="logintoolitem(href)">
 % if request.identity:
   <li class="toolitem">
-  ${_('Logged in:')}
+  ${_('Welcome')}
   % if href:
     <a href="${href}">
       % if hasattr(request.identity['user'], 'display_name'):
