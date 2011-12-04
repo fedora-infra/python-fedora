@@ -7,7 +7,7 @@ NEWS
 :Version: 0.3.x
 
 ---------
-0.3.25.90
+0.3.25.91
 ---------
 
 * Fix the AccountSystem() class's verify_password() method so that
