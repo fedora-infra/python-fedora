@@ -28,8 +28,8 @@
     </form>
   % endif
   <ul>
-    <li><a href="${tg.url(tg.config('fas.url', 'https://admin.fedoraproject.org/accounts').rstrip('/') + '/user/resetpass')}">${_('Forgot Password?')}</a></li>
-    <li><a href="${tg.url(tg.config('fas.url', 'https://admin.fedoraproject.org/accounts').rstrip('/') + '/user/new')}">${_('Sign Up')}</a></li>
+    <li><a href="${tg.url(tg.config.get('fas.url', 'https://admin.fedoraproject.org/accounts').rstrip('/') + '/user/resetpass')}">${_('Forgot Password?')}</a></li>
+    <li><a href="${tg.url(tg.config.get('fas.url', 'https://admin.fedoraproject.org/accounts').rstrip('/') + '/user/new')}">${_('Sign Up')}</a></li>
   </ul>
 </div>
 </%def>
