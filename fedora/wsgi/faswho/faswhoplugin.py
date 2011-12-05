@@ -25,7 +25,8 @@ repoze.who plugin to authenticate against hte Fedora Account System
 
 .. versionadded:: 0.3.17
 .. versionchanged:: 0.3.26
-    Added secure and httponly as optional attributes to the session cookie
+    - Added secure and httponly as optional attributes to the session cookie
+    - Added ability to authenticate and request a page in one request
 '''
 import os
 import sys
@@ -169,9 +170,24 @@ class FASWhoPlugin(object):
         return linfo
 
     def identify(self, environ):
+        '''Extract information to identify a user
+
+        Retrieve either a username and password or a session_id that can be
+        passed on to FAS to authenticate the user.
+        '''
         log.info(b_('in identify()'))
-        req = webob.Request(environ)
+        req = webob.Request(environ, charset='utf-8')
         cookie = req.cookies.get(self.session_cookie)
+
+        # This is compatible with TG1 and it gives us a way to authenticate
+        # a user without making two requests
+        query = req.GET
+        form = Bunch(req.POST)
+        form.update(query)
+        if form.get('login', None) == 'Login' and \
+                'user_name' in form and \
+                'password' in form:
+            return {'login': form['user_name'], 'password': form['password']}
 
         if cookie is None:
             return None
@@ -190,6 +206,7 @@ class FASWhoPlugin(object):
             return None
 
         try:
+            # If we have information on the user, preauthenticate
             me = linfo[1]
             me.update({'repoze.who.userid': me['username']})
             environ['FAS_LOGIN_INFO'] = linfo
