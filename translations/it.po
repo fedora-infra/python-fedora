@@ -5,14 +5,15 @@
 # 
 # Translators:
 # Francesco D'Aluisio <fdaluisio@fedoraproject.org>, 2011.
+# Francesco Tombolini <tombo@adamantio.net>, 2011.
 # mario_santagiuliana <mario at marionline.it>, 2009.
 msgid ""
 msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2011-11-20 11:37-0800\n"
-"PO-Revision-Date: 2011-11-20 19:41+0000\n"
-"Last-Translator: toshio <a.badger@gmail.com>\n"
+"POT-Creation-Date: 2011-12-22 18:59-0800\n"
+"PO-Revision-Date: 2011-12-23 03:41+0000\n"
+"Last-Translator: Toshio Kuratomi <a.badger@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -470,8 +471,9 @@ msgid ""
 "fedora.tg.utils   TG2 apps: fedora.tg2.utils.  This file will disappear in "
 "0.4"
 msgstr ""
-"fedora.tg.util è deprecato. Passare a uno di questi invece: TG1 apps: "
-"fedora.tg.utils TG2 apps: fedora.tg2.utils. Questo file scomparirà nello 0,4"
+"fedora.tg.util è deprecato.  Passare a uno di questi invece:   TG1 apps: "
+"fedora.tg.utils   TG2 apps: fedora.tg2.utils.  Questo file scomparirà nello "
+"0,4"
 
 #: fedora/tg/utils.py:102
 msgid "url() expects a dictionary for query parameters"
@@ -502,6 +504,8 @@ msgid "jsonfasprovider returned errors from send_request: %s"
 msgstr "jsonfasprovider ritorna errori da send_request: %s"
 
 #: fedora/tg/templates/genshi/login.html:10
+#: fedora/tg2/templates/genshi/login.html:9
+#: fedora/tg2/templates/mako/login.mak:3
 msgid "Log In"
 msgstr "Log In"
 
@@ -510,22 +514,29 @@ msgid "User Name:"
 msgstr "Nome utente:"
 
 #: fedora/tg/templates/genshi/login.html:17
-#: fedora/tg2/templates/mako/login.mak:23
+#: fedora/tg2/templates/genshi/login.html:31
+#: fedora/tg2/templates/mako/login.mak:25
 msgid "Password:"
 msgstr "Password:"
 
 #: fedora/tg/templates/genshi/login.html:21
 #: fedora/tg/templates/genshi/login.html:84
-#: fedora/tg2/templates/mako/login.mak:56
+#: fedora/tg2/templates/genshi/login.html:33
+#: fedora/tg2/templates/genshi/login.html:66
+#: fedora/tg2/templates/mako/login.mak:27
+#: fedora/tg2/templates/mako/login.mak:63
 msgid "Login"
 msgstr "Entra"
 
 #: fedora/tg/templates/genshi/login.html:28
+#: fedora/tg2/templates/genshi/login.html:14
 #: fedora/tg2/templates/mako/login.mak:9
 msgid "CSRF attacks"
 msgstr "attacchi CSRF"
 
 #: fedora/tg/templates/genshi/login.html:29
+#: fedora/tg2/templates/genshi/login.html:15
+#: fedora/tg2/templates/mako/login.mak:10
 msgid ""
 " are a means for a malicious website to make a request of another\n"
 "        web server as the user who contacted the malicious web site.  The\n"
@@ -535,47 +546,59 @@ msgid ""
 "        forwarding your authentication cookies on behalf of a malicious\n"
 "        website."
 msgstr ""
-" sono un tramite per siti web malevoli per fare una richiesta di un altro\n"
-"        il web server come un utente che contatta il sito web maligno.        Lo scopo di questa pagina è di aiutare a proteggere il tuo account\n"
-"        e questo server da attacchi da questi siti web malevoli.  Cliccando\n"
-"        qui sotto, sarà provato che tu sei una persona e non solo un\n"
-"        browser web che inoltra i tuoi coockie di autenticazione a nome\n"
-"        di un sito web malevolo."
+" sono un modo per un sito web malizioso di fare una richiesta ad un altro\n"
+"        web server come se fosse l'utente che ha contattato il sito web\n"
+"        maligno. Lo scopo di questa pagina è di aiutare a proteggere il tuo \n"
+"        account e questo server da attacchi provenienti da questi siti web \n"
+"        maliziosi.  Cliccando qui sotto, proverai che tu sei una persona e non \n"
+"        solo un browser web che inoltra i tuoi cookie di autenticazione al posto\n"
+"        di un sito web malizioso."
 
 #: fedora/tg/templates/genshi/login.html:36
+#: fedora/tg2/templates/genshi/login.html:23
 #: fedora/tg2/templates/mako/login.mak:18
 msgid "I am a human"
 msgstr "Sono un uomo"
 
 #: fedora/tg/templates/genshi/login.html:41
+#: fedora/tg2/templates/genshi/login.html:37
+#: fedora/tg2/templates/mako/login.mak:31
 msgid "Forgot Password?"
 msgstr "Passowrd dimenticata?"
 
 #: fedora/tg/templates/genshi/login.html:42
+#: fedora/tg2/templates/genshi/login.html:38
+#: fedora/tg2/templates/mako/login.mak:32
 msgid "Sign Up"
 msgstr "Iscriviti"
 
 #: fedora/tg/templates/genshi/login.html:60
+#: fedora/tg2/templates/genshi/login.html:47
+#: fedora/tg2/templates/mako/login.mak:40
 msgid "Welcome"
 msgstr "Benvenuto"
 
 #: fedora/tg/templates/genshi/login.html:82
-#: fedora/tg2/templates/mako/login.mak:54
+#: fedora/tg2/templates/genshi/login.html:64
+#: fedora/tg2/templates/mako/login.mak:61
 msgid "You are not logged in"
 msgstr "Non sei autenticato"
 
 #: fedora/tg/templates/genshi/login.html:89
-#: fedora/tg2/templates/mako/login.mak:62
+#: fedora/tg2/templates/genshi/login.html:70
+#: fedora/tg2/templates/mako/login.mak:69
 msgid "CSRF protected"
 msgstr "CSRF protetto"
 
 #: fedora/tg/templates/genshi/login.html:91
-#: fedora/tg2/templates/mako/login.mak:65
+#: fedora/tg2/templates/genshi/login.html:72
+#: fedora/tg2/templates/mako/login.mak:72
 msgid "Verify Login"
 msgstr "Verifica Login"
 
 #: fedora/tg/templates/genshi/login.html:97
-#: fedora/tg2/templates/mako/login.mak:72
+#: fedora/tg2/templates/genshi/login.html:78
+#: fedora/tg2/templates/mako/login.mak:79
 msgid "Logout"
 msgstr "Uscita"
 
@@ -584,24 +607,10 @@ msgstr "Uscita"
 msgid "updating visit (%s)"
 msgstr "aggiornamento visite (%s)"
 
-#: fedora/tg2/templates/mako/login.mak:10
-msgid ""
-"are a means for a malicious website to make a request of another\n"
-"        web server as the user who contacted the malicious web site.  The\n"
-"        purpose of this page is to help protect your account and this server\n"
-"        from attacks from such malicious web sites.  By clicking below, you are\n"
-"        proving that you are a person rather than just the web browser\n"
-"        forwarding your authentication cookies on behalf of a malicious\n"
-"        website."
-msgstr ""
-
+#: fedora/tg2/templates/genshi/login.html:28
 #: fedora/tg2/templates/mako/login.mak:22
 msgid "Username:"
-msgstr ""
-
-#: fedora/tg2/templates/mako/login.mak:33
-msgid "Logged in:"
-msgstr "Loggato in:"
+msgstr "Username:"
 
 #: fedora/wsgi/csrf.py:113
 msgid "Creating CSRFProtectionMiddleware"
@@ -691,62 +700,63 @@ msgstr "%(token)s in GET"
 msgid "%(token)s in POST"
 msgstr "%(token)s in POST"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:157
-msgid "Keep alive cache miss"
-msgstr "Keep alive cache miss"
-
-#: fedora/wsgi/faswho/faswhoplugin.py:171
+#: fedora/wsgi/faswho/faswhoplugin.py:207
 msgid "in identify()"
 msgstr "in identify()"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:178
+#: fedora/wsgi/faswho/faswhoplugin.py:224
 #, python-format
 msgid "Request identify for cookie %(cookie)s"
 msgstr "Request identify for cookie %(cookie)s"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:202
+#: fedora/wsgi/faswho/faswhoplugin.py:244
 msgid "In remember()"
 msgstr "In remember()"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:220
+#: fedora/wsgi/faswho/faswhoplugin.py:264
 msgid "In forget()"
 msgstr "In forget()"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:227
+#: fedora/wsgi/faswho/faswhoplugin.py:274
 #, python-format
 msgid "Forgetting login data for cookie %(s_id)s"
 msgstr "Dimenticare i dati di login per il cookie %(s_id)s"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:244
+#: fedora/wsgi/faswho/faswhoplugin.py:288
 msgid "In authenticate()"
 msgstr "In authenticate()"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:268
-msgid "Authentication failed, setting error"
-msgstr "Autenticazione fallita, imposto l'errore"
+#: fedora/wsgi/faswho/faswhoplugin.py:320
+msgid "Parameters for authenticating not found"
+msgstr ""
 
-#: fedora/wsgi/faswho/faswhoplugin.py:289
+#: fedora/wsgi/faswho/faswhoplugin.py:326
+#, python-format
+msgid "Authentication failed: %s"
+msgstr ""
+
+#: fedora/wsgi/faswho/faswhoplugin.py:330
+#, python-format
+msgid "Unknown auth failure: %s"
+msgstr ""
+
+#: fedora/wsgi/faswho/faswhoplugin.py:339
+msgid "user information from fas not in expected format!"
+msgstr ""
+
+#: fedora/wsgi/faswho/faswhoplugin.py:343
 msgid "An unknown error happened when trying to log you in. Please try again."
 msgstr ""
 "Un errore sconosciuto è occorso mentre si cercava di eseguire il login. Si "
 "prega di riprovare."
 
-#: fedora/wsgi/faswho/faswhoplugin.py:300
-msgid "Metadata cache miss - refreshing metadata"
-msgstr "Cache Metadata mancante - refresco i metadata"
-
-#: fedora/wsgi/faswho/faswhoplugin.py:331
+#: fedora/wsgi/faswho/faswhoplugin.py:348
 msgid "In add_metadata"
 msgstr "In add_metadata"
 
-#: fedora/wsgi/faswho/faswhoplugin.py:335
+#: fedora/wsgi/faswho/faswhoplugin.py:352
 msgid "Error exists in session, no need to set metadata"
 msgstr "Errore esiste nella sessione, non è necessario impostare i metadata"
-
-#: fedora/wsgi/faswho/faswhoplugin.py:345
-#, python-format
-msgid "Request metadata for cookie %(cookie)s"
-msgstr "Richiesta metadata per il cookie %(cookie)s"
 
 #: fedora/wsgi/test/controllers/root.py:31
 msgid "Wrong credentials"
