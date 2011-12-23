@@ -205,6 +205,11 @@ class FASWhoPlugin(object):
         passed on to FAS to authenticate the user.
         '''
         log.info(b_('in identify()'))
+
+        # friendlyform compat
+        if not 'repoze.who.logins' in environ:
+            environ['repoze.who.logins'] = 0
+
         req = webob.Request(environ, charset='utf-8')
         cookie = req.cookies.get(self.session_cookie)
 
