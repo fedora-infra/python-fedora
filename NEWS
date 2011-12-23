@@ -3,11 +3,11 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 20 Nov 2011
+:Date: 22 Dec 2011
 :Version: 0.3.x
 
 ---------
-0.3.25.91
+0.3.25.92
 ---------
 
 * Fix the AccountSystem() class's verify_password() method so that
@@ -30,6 +30,17 @@ NEWS
 * Fix faswho auth plugin to set session cookies as secure and httponly
 * Set the Django session cookies httponly
 * Add a genshi login template for TG2
+* For faswho repoze.who plugin, remove caching during authenticatin (as caching
+  does not pick up on logout of a different app invalidating the session and
+  password changes).  We could use caching again if retrieving the full
+  information about a user took more time than validating their username and
+  password.
+* For the faswho repoze.who plugin, allow TG1-style authentication -- ie: if
+  all of the following are set on any URL, authenticate the user prior to
+  loading the web page::
+    login=Login&user_name=$FAS_USERNAME&password=$FAS_PASSWORD
+* Simplify implementation of the faswho plugin.  Should save on per-request
+  memory and cache.
 
 --------
 0.3.25.1

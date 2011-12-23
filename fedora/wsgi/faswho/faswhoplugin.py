@@ -26,6 +26,7 @@ repoze.who plugin to authenticate against hte Fedora Account System
 .. versionadded:: 0.3.17
 .. versionchanged:: 0.3.26
     - Added secure and httponly as optional attributes to the session cookie
+    - Removed too-aggressive caching (wouldn't detect logout from another app)
     - Added ability to authenticate and request a page in one request
 '''
 import os
@@ -37,8 +38,8 @@ import pkg_resources
 
 from beaker.cache import Cache
 from bunch import Bunch
-from kitchen.text.converters import to_bytes
-from paste.httpexceptions import HTTPFound
+from kitchen.text.converters import to_bytes, exception_to_bytes
+from paste.httpexceptions import HTTPFound, HTTPForbidden
 from repoze.who.middleware import PluggableAuthenticationMiddleware
 from repoze.who.classifiers import default_request_classifier
 from repoze.who.classifiers import default_challenge_decider
@@ -155,19 +156,47 @@ class FASWhoPlugin(object):
                 'fas.repoze.who.metadata_plugins'):
             self._metadata_plugins.append(entry.load())
 
-    def keep_alive(self, session_id):
-        log.info(b_('Keep alive cache miss'))
-        try:
-            linfo = self.fas.get_user_info({'session_id': session_id})
-        except AuthError, e:
-            log.warning(e)
+    def _retrieve_user_info(self, environ, auth_params=None):
+        ''' Retrieve information from fas and cache the results.
+
+            We need to retrieve the user fresh every time because we need to
+            know that the password hasn't changed or the session_id hasn't
+            been invalidated by the user logging out.
+        '''
+        if not auth_params:
             return None
-        try:
-            del linfo[1]['password']
-        except KeyError:
-            # Just make sure the password isn't in the info we return
-            pass
-        return linfo
+
+        user_data = self.fas.get_user_info(auth_params)
+
+        if not user_data:
+            self.forget(environ, None)
+            return None
+        if isinstance(user_data, tuple):
+            user_data = list(user_data)
+
+        # Set session_id in here so it can be found by other plugins
+        user_data[1]['session_id'] = user_data[0]
+
+        # we don't define permissions since we don't have any peruser data
+        # though other services may wish to add another metadata plugin to do
+        # so
+        if not user_data[1].has_key('permissions'):
+            user_data[1]['permissions'] = set()
+
+        # we keep the approved_memberships list because there is also an
+        # unapproved_membership field.  The groups field is for repoze.who
+        # group checking and may include other types of groups besides
+        # memberships in the future (such as special fedora community groups)
+
+        groups = set()
+        for g in user_data[1]['approved_memberships']:
+            groups.add(g['name'])
+
+        user_data[1]['groups'] = groups
+        # If we have information on the user, cache it for later
+        fas_cache.set_value(user_data[1]['username'], user_data,
+                expiretime=FAS_CACHE_TIMEOUT)
+        return user_data
 
     def identify(self, environ):
         '''Extract information to identify a user
@@ -194,77 +223,79 @@ class FASWhoPlugin(object):
 
         log.info(b_('Request identify for cookie %(cookie)s') %
                 {'cookie': to_bytes(cookie)})
-        linfo = fas_cache.get_value(key=cookie + '_identity',
-                                    createfunc=lambda: self.keep_alive(cookie),
-                                    expiretime=FAS_CACHE_TIMEOUT)
-
-        if not linfo:
-            self.forget(environ, None)
-            return None
-
-        if not isinstance(linfo, tuple):
-            return None
-
         try:
-            # If we have information on the user, preauthenticate
-            me = linfo[1]
-            me.update({'repoze.who.userid': me['username']})
-            environ['FAS_LOGIN_INFO'] = linfo
-            return me
+            user_data = self._retrieve_user_info(environ,
+                    auth_params={'session_id': cookie})
         except Exception, e: # pylint:disable-msg=W0703
             # For any exceptions, returning None means we failed to identify
             log.warning(e)
             return None
+
+        if not user_data:
+            return None
+
+        # Preauthenticated
+        identity = {'repoze.who.userid': user_data[1]['username'],
+                'login': user_data[1]['username'],
+                'password': user_data[1]['password']}
+        return identity
 
     def remember(self, environ, identity):
         log.info(b_('In remember()'))
         req = webob.Request(environ)
         result = []
 
-        linfo = environ.get('FAS_LOGIN_INFO')
-        if isinstance(linfo, tuple):
-            session_id = linfo[0]
-            set_cookie = ['%s=%s; Path=/;' % (self.session_cookie, session_id)]
-            if self.ssl_cookie:
-                set_cookie.append('Secure')
-            if self.httponly:
-                set_cookie.append('HttpOnly')
-            set_cookie = '; '.join(set_cookie)
-            result.append(('Set-Cookie', set_cookie))
-            return result
-        return None
+        user_data = fas_cache.get_value(identity['login'])
+        try:
+            session_id = user_data[0]
+        except Exception, e:
+            return None
+
+        set_cookie = ['%s=%s; Path=/;' % (self.session_cookie, session_id)]
+        if self.ssl_cookie:
+            set_cookie.append('Secure')
+        if self.httponly:
+            set_cookie.append('HttpOnly')
+        set_cookie = '; '.join(set_cookie)
+        result.append(('Set-Cookie', set_cookie))
+        return result
 
     def forget(self, environ, identity):
         log.info(b_('In forget()'))
         # return a expires Set-Cookie header
         req = webob.Request(environ)
 
-        linfo = environ.get('FAS_LOGIN_INFO')
-        if isinstance(linfo, tuple):
-            session_id = linfo[0]
-            log.info(b_('Forgetting login data for cookie %(s_id)s') %
-                    {'s_id': to_bytes(session_id)})
+        user_data = fas_cache.get_value(identity['login'])
+        try:
+            session_id = user_data[0]
+        except Exception:
+            return None
 
-            self.fas.logout(session_id)
+        log.info(b_('Forgetting login data for cookie %(s_id)s') %
+                {'s_id': to_bytes(session_id)})
 
-            result = []
-            fas_cache.remove_value(key=session_id + '_identity')
-            expired = '%s=\'\'; Path=/; Expires=Sun, 10-May-1971 11:59:00 GMT'\
-                    % self.session_cookie
-            result.append(('Set-Cookie', expired))
-            environ['FAS_LOGIN_INFO'] = None
-            return result
+        self.fas.logout(session_id)
 
-        return None
+        result = []
+        fas_cache.remove_value(key=identity['login'])
+        expired = '%s=\'\'; Path=/; Expires=Sun, 10-May-1971 11:59:00 GMT'\
+                % self.session_cookie
+        result.append(('Set-Cookie', expired))
+        return result
 
     # IAuthenticatorPlugin
     def authenticate(self, environ, identity):
         log.info(b_('In authenticate()'))
-        try:
-            login = identity['login']
-            password = identity['password']
-        except KeyError:
-            return None
+
+        def set_error(msg):
+            log.info(msg)
+            err = 1
+            environ['FAS_AUTH_ERROR'] = err
+            # HTTPForbidden ?
+            err_app = HTTPFound(err_goto + '?' +
+                                'came_from=' + quote_plus(came_from))
+            environ['repoze.who.application'] = err_app
+
 
         err_goto = '/login'
         default_came_from = '/'
@@ -278,72 +309,40 @@ class FASWhoPlugin(object):
         form.update(query)
         came_from = form.get('came_from', default_came_from)
 
-        user_data = ''
         try:
-            user_data = self.fas.get_user_info({'username': login,
-                'password': password})
+            auth_params = {'username': identity['login'],
+                    'password': identity['password']}
+        except KeyError:
+            try:
+                auth_params = {'session_id': identity['session_id']}
+            except:
+                # On error we return None which means that auth failed
+                set_error(b_('Parameters for authenticating not found'))
+                return None
+
+        try:
+            user_data = self._retrieve_user_info(environ, auth_params)
         except AuthError, e:
-            log.info(b_('Authentication failed, setting error'))
+            set_error(b_('Authentication failed: %s') % exception_to_bytes(e))
             log.warning(e)
-            err = 1
-            environ['FAS_AUTH_ERROR'] = err
-
-            err_app = HTTPFound(err_goto + '?' +
-                                'came_from=' + quote_plus(came_from))
-
-            environ['repoze.who.application'] = err_app
-
+            return None
+        except Exception, e:
+            set_error(b_('Unknown auth failure: %s') % exception_to_bytes(e))
             return None
 
         if user_data:
-            if isinstance(user_data, tuple):
+            try:
                 del user_data[1]['password']
-                environ['FAS_LOGIN_INFO'] = user_data
-                # let the csrf plugin know we just authenticated and it needs
-                # to rewrite the redirection app
-                environ['CSRF_AUTH_SESSION_ID'] = environ['FAS_LOGIN_INFO'][0]
-                return login
-
-        err = _(u'An unknown error happened when trying to log you in.'
-                ' Please try again.')
-        environ['FAS_AUTH_ERROR'] = err
-        err_app = HTTPFound(err_goto + '?' + 'came_from=' + came_from)
-                            #'&ec=login_err.UNKNOWN_AUTH_ERROR')
-
-        environ['repoze.who.application'] = err_app
-
+                environ['CSRF_AUTH_SESSION_ID'] = user_data[0]
+                return user_data[1]['username']
+            except ValueError:
+                set_error(b_('user information from fas not in expected format!'))
+                return None
+            except Exception, e:
+                pass
+        set_error(b_('An unknown error happened when trying to log you in.'
+                ' Please try again.'))
         return None
-
-    def get_metadata(self, environ):
-        log.info(b_('Metadata cache miss - refreshing metadata'))
-        info = environ.get('FAS_LOGIN_INFO')
-        identity = {}
-
-        if info is not None:
-            identity.update(info[1])
-            identity['session_id'] = info[0]
-
-        for plugin in self._metadata_plugins:
-            plugin(identity)
-
-        # we don't define permissions since we don't
-        # have any peruser data though other services
-        # may wish to add another metadata plugin to do so
-
-        if not identity.has_key('permissions'):
-            identity['permissions'] = set()
-
-        # we keep the approved_memberships list because there is also an
-        # unapproved_membership field.  The groups field is for repoze.who
-        # group checking and may include other types of groups besides
-        # memberships in the future (such as special fedora community groups)
-
-        groups = set()
-        for g in identity['approved_memberships']:
-            groups.add(g['name'])
-
-        identity['groups'] = groups
-        return identity
 
     def add_metadata(self, environ, identity):
         log.info(b_('In add_metadata'))
@@ -353,43 +352,40 @@ class FASWhoPlugin(object):
             log.info(b_('Error exists in session, no need to set metadata'))
             return 'error'
 
-        cookie = req.cookies.get(self.session_cookie)
+        plugin_user_info = {}
+        for plugin in self._metadata_plugins:
+            plugin(plugin_user_info)
+        identity.update(plugin_user_info)
+        del plugin_user_info
 
-        if cookie is None:
-            cookie = environ.get('CSRF_AUTH_SESSION_ID')
-            if cookie is None:
-                return None
-
-        log.info(b_('Request metadata for cookie %(cookie)s') %
-                {'cookie': to_bytes(cookie)})
-        info = fas_cache.get_value(key=cookie + '_metadata',
-                createfunc=lambda: self.get_metadata(environ),
+        user = identity.get('repoze.who.userid')
+        (session_id, user_info) = fas_cache.get_value(key=user,
                 expiretime=FAS_CACHE_TIMEOUT)
 
-        #### FIXME: Deprecate this!!!
+        #### FIXME: Deprecate this line!!!
         # If we make a new version of fas.who middleware, get rid of saving
         # user information directly into identity.  Instead, save it into
         # user, as is done below
-        identity.update(info)
+        identity.update(user_info)
 
-        identity['userdata'] = info
+        identity['userdata'] = user_info
         identity['user'] = Bunch()
-        identity['user'].created = info['creation']
-        identity['user'].display_name = info['human_name']
-        identity['user'].email_address = info['email']
-        identity['user'].groups = info['groups']
+        identity['user'].created = user_info['creation']
+        identity['user'].display_name = user_info['human_name']
+        identity['user'].email_address = user_info['email']
+        identity['user'].groups = user_info['groups']
         identity['user'].password = None
-        identity['user'].permissions = info['permissions']
-        identity['user'].user_id = info['id']
-        identity['user'].user_name = info['username']
-        identity['groups'] = info['groups']
-        identity['permissions'] = info['permissions']
+        identity['user'].permissions = user_info['permissions']
+        identity['user'].user_id = user_info['id']
+        identity['user'].user_name = user_info['username']
+        identity['groups'] = user_info['groups']
+        identity['permissions'] = user_info['permissions']
 
         if 'repoze.what.credentials' not in environ:
             environ['repoze.what.credentials'] = {}
 
-        environ['repoze.what.credentials']['groups'] = info['groups']
-        environ['repoze.what.credentials']['permissions'] = info['permissions']
+        environ['repoze.what.credentials']['groups'] = user_info['groups']
+        environ['repoze.what.credentials']['permissions'] = user_info['permissions']
 
         # Adding the userid:
         userid = identity['repoze.who.userid']
