@@ -189,8 +189,8 @@ be used to add the token.
 
 .. automodule:: fedora.tg.templates.genshi
 
-Using the <loginform> template will give you a login form that automatically
-does several things for you.
+Using the ``<loginform>`` template will give you a login form that
+automatically does several things for you.
 
 1. The ``forward_url`` and ``previous_url`` parameters that are passed in
    hidden form elements will be run through :func:`tg.url` in order to get the

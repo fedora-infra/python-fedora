@@ -1,10 +1,10 @@
 '''
 Mako version of templates to make adding certain Fedora widgets easier.
 
------------------
-:mod:`login.mak`
------------------
-.. module:: login
+------------------------------------------
+:mod:`fedora.tg2.templates.mako.login.mak`
+------------------------------------------
+.. module:: fedora.tg2.templates.mako.login.mak
     :synopsis: Templates related to logging in and out.
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 .. versionadded:: 0.3.25
@@ -49,10 +49,10 @@ Typical usage looks like this::
       ${fedora.logintoolitem(href=tg.url('/users/info'))}
     </ul>
 
----------------------
-:mod:`jsglobals.mak`
----------------------
-.. module:: jsglobals
+----------------------------------------------
+:mod:`fedora.tg2.templates.mako.jsglobals.mak`
+----------------------------------------------
+.. module:: fedora.tg2.templates.mako.jsglobals.mak
     :synopsis: Templates to get information into javascript
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 .. versionadded:: 0.3.25
