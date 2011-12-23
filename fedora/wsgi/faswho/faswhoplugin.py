@@ -221,7 +221,14 @@ class FASWhoPlugin(object):
         if form.get('login', None) == 'Login' and \
                 'user_name' in form and \
                 'password' in form:
-            return {'login': form['user_name'], 'password': form['password']}
+            identity = {'login': form['user_name'], 'password': form['password']}
+            keys = ('login', 'password', 'user_name')
+            for k in keys:
+                if k in req.GET:
+                    del(req.GET[k])
+                if k in req.POST:
+                    del(req.POST[k])
+            return identity
 
         if cookie is None:
             return None
