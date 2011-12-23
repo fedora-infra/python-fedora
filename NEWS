@@ -30,7 +30,7 @@ NEWS
 * Fix faswho auth plugin to set session cookies as secure and httponly
 * Set the Django session cookies httponly
 * Add a genshi login template for TG2
-* For faswho repoze.who plugin, remove caching during authenticatin (as caching
+* For faswho repoze.who plugin, remove caching during authentication (as caching
   does not pick up on logout of a different app invalidating the session and
   password changes).  We could use caching again if retrieving the full
   information about a user took more time than validating their username and
