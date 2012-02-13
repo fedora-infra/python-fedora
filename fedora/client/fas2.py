@@ -333,11 +333,23 @@ class AccountSystem(BaseClient):
                      default=None):
         ''' Returns a URL to a gravatar for a given username.
 
-        If that user has no gravatar entry, instruct gravatar.com to redirect us
-        to the Fedora logo.
+        :arg username: FAS username to construct a gravatar url for
+        :kwarg size: size of the gravatar.  Allowed sizes are 32, 64, 140.
+            Default: 64
+        :kwarg default: If gravatar does not have a gravatar image for the
+            email address, this url is returned instead.  Default:
+            the fedora logo at the specified size.
+        :raises ValueError: if the size parameter is not allowed
+        :rtype: :obj:`str`
+        :returns: url of a gravatar for the user
+
+        If that user has no gravatar entry, instruct gravatar.com to redirect
+        us to the Fedora logo.
 
         If that user has no email attribute, then make a fake request to
         gravatar.
+
+        .. versionadded:: 0.3.26
         '''
 
         valid_sizes = [32, 64, 140]
