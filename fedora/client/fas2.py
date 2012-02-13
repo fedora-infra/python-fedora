@@ -78,7 +78,7 @@ class AccountSystem(BaseClient):
     proxy = None
 
     # size that we allow to request from gravatar.com
-    valid_gravatar_sizes = (32, 64, 140)
+    _valid_gravatar_sizes = (32, 64, 140)
 
     def __init__(self, base_url='https://admin.fedoraproject.org/accounts/',
             *args, **kwargs):
@@ -363,9 +363,10 @@ class AccountSystem(BaseClient):
 
         .. versionadded:: 0.3.26
         '''
-        if size not in self.valid_gravatar_sizes:
-            raise ValueError("Size %i disallowed.  Must be in %r" % (
-                size, self.valid_gravatar_sizes))
+        if size not in self._valid_gravatar_sizes:
+            raise ValueError(b_('Size %(size)i disallowed.  Must be in'
+                ' %(valid_sizes)r') % { 'size': size,
+                    'valid_sizes': self._valid_gravatar_sizes})
 
         if not default:
             default = "http://fedoraproject.org/static/images/" + \
