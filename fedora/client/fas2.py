@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2008-2011  Ricky Zhou, Red Hat, Inc.
+# Copyright (C) 2008-2012  Ricky Zhou, Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
@@ -22,6 +22,7 @@ Provide a client module for talking to the Fedora Account System.
 
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
+.. moduleauthor:: Ralph Bean <rbean@redhat.com>
 '''
 import itertools
 import urllib
@@ -67,6 +68,9 @@ class AccountSystem(BaseClient):
     Account System.  It abstracts the http requests, cookie handling, and
     other details so you can concentrate on the methods that are important to
     your program.
+
+    .. versionchanged:: 0.3.26
+        Added :meth:`gravatar_url` that returns a url to a gravatar for a user.
     '''
     proxy = None
     def __init__(self, base_url='https://admin.fedoraproject.org/accounts/',
