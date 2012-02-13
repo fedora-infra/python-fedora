@@ -3,12 +3,12 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 22 Dec 2011
+:Date: 13 Feb 2012
 :Version: 0.3.x
 
----------
-0.3.25.92
----------
+------
+0.3.26
+------
 
 * Fix the AccountSystem() class's verify_password() method so that
   verification of server SSL certificates may be disabled by setting
@@ -35,12 +35,10 @@ NEWS
   password changes).  We could use caching again if retrieving the full
   information about a user took more time than validating their username and
   password.
-* For the faswho repoze.who plugin, allow TG1-style authentication -- ie: if
-  all of the following are set on any URL, authenticate the user prior to
-  loading the web page::
-    login=Login&user_name=$FAS_USERNAME&password=$FAS_PASSWORD
 * Simplify implementation of the faswho plugin.  Should save on per-request
   memory and cache.
+* Add AccountSystem.gravatar_url() method that will return a url to a gravatar
+  for a person.
 
 --------
 0.3.25.1
