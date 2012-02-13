@@ -72,7 +72,13 @@ class AccountSystem(BaseClient):
     .. versionchanged:: 0.3.26
         Added :meth:`gravatar_url` that returns a url to a gravatar for a user.
     '''
+    # proxy is a thread-safe connection to the fas server for verifying
+    # passwords of other users
     proxy = None
+
+    # size that we allow to request from gravatar.com
+    valid_gravatar_sizes = (32, 64, 140)
+
     def __init__(self, base_url='https://admin.fedoraproject.org/accounts/',
             *args, **kwargs):
         '''Create the AccountSystem client object.
@@ -351,11 +357,9 @@ class AccountSystem(BaseClient):
 
         .. versionadded:: 0.3.26
         '''
-
-        valid_sizes = [32, 64, 140]
-        if size not in valid_sizes:
+        if size not in self.valid_gravatar_sizes:
             raise ValueError("Size %i disallowed.  Must be in %r" % (
-                size, valid_sizes))
+                size, self.valid_gravatar_sizes))
 
         if not default:
             default = "http://fedoraproject.org/static/images/" + \
