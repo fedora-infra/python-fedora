@@ -30,6 +30,11 @@ import warnings
 from bunch import Bunch
 from kitchen.text.converters import to_bytes
 
+try:
+    from hashlib import md5
+except ImportError:
+    import md5
+
 from fedora.client import AppError, BaseClient, FasProxyClient, \
         FedoraClientError, FedoraServiceError
 from fedora import __version__, b_
@@ -319,6 +324,37 @@ class AccountSystem(BaseClient):
             return person
         else:
             return dict()
+
+    def gravatar_url(self, username, size=64,
+                     default=None):
+        ''' Returns a URL to a gravatar for a given username.
+
+        If that user has no gravatar entry, instruct gravatar.com to redirect us
+        to the Fedora logo.
+
+        If that user has no email attribute, then make a fake request to
+        gravatar.
+        '''
+
+        valid_sizes = [32, 64, 140]
+        if size not in valid_sizes:
+            raise ValueError("Size %i disallowed.  Must be in %r" % (
+                size, valid_sizes))
+
+        if not default:
+            default = "http://fedoraproject.org/static/images/" + \
+                    "fedora_infinity_%ix%i.png" % (size, size)
+
+        query_string = urllib.urlencode({
+            's': size,
+            'd': default,
+        })
+
+        person = self.person_by_username(username)
+        email = person.get('email', 'no_email')
+        hash = md5(email).hexdigest()
+
+        return "http://www.gravatar.com/avatar/%s?%s" % (hash, query_string)
 
     def user_id(self):
         '''Returns a dict relating user IDs to usernames'''
