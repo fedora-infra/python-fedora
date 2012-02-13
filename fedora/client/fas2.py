@@ -34,7 +34,7 @@ from kitchen.text.converters import to_bytes
 try:
     from hashlib import md5
 except ImportError:
-    import md5
+    from md5 import new as md5
 
 from fedora.client import AppError, BaseClient, FasProxyClient, \
         FedoraClientError, FedoraServiceError
