@@ -70,7 +70,8 @@ class AccountSystem(BaseClient):
     your program.
 
     .. versionchanged:: 0.3.26
-        Added :meth:`gravatar_url` that returns a url to a gravatar for a user.
+        Added :meth:`~fedora.client.AccountSystem.gravatar_url` that returns
+        a url to a gravatar for a user.
     '''
     # proxy is a thread-safe connection to the fas server for verifying
     # passwords of other users
@@ -238,6 +239,11 @@ class AccountSystem(BaseClient):
         self.proxy = FasProxyClient(self.base_url, useragent=self.useragent,
                 session_as_cookie=False, debug=self.debug, insecure=insecure)
         return insecure
+    #: If this attribute is set to True, do not check server certificates
+    #: against their CA's.  This means that man-in-the-middle attacks are
+    #: possible. You might turn this option on for testing against a local
+    #: version of a server with a self-signed certificate but it should be off
+    #: in production.
     insecure = property(_get_insecure, _set_insecure)
 
     ### Groups ###

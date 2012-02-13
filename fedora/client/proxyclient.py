@@ -85,32 +85,39 @@ class ProxyClient(object):
     messages in the middle of a method.)
 
     .. attribute:: base_url
+
         Initial portion of the url to contact the server.  It is highly
         recommended not to change this value unless you know that no other
-        threads are accessing this :class:`ProxyClient instance.
+        threads are accessing this :class:`ProxyClient` instance.
 
     .. attribute:: useragent
+
         Changes the useragent string that is reported to the web server.
 
     .. attribute:: session_name
+
         Name of the cookie that holds the authentication value.
 
     .. attribute:: session_as_cookie
+
         If :data:`True`, then the session information is saved locally as
         a cookie.  This is here for backwards compatibility.  New code should
         set this to :data:`False` when constructing the :class:`ProxyClient`.
 
     .. attribute:: debug
+
         If :data:`True`, then more verbose logging is performed to aid in
         debugging issues.
 
     .. attribute:: insecure
+
         If :data:`True` then the connection to the server is not checked to be
         sure that any SSL certificate information is valid.  That means that
         a remote host can lie about who it is.  Useful for development but
         should not be used in production code.
 
     .. attribute:: retries
+
         Setting this to a positive integer will retry failed requests to the
         web server this many times.  Setting to a negative integer will retry
         forever.

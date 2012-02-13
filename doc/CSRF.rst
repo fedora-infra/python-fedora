@@ -265,6 +265,7 @@ template.  Here's some snippets from a :file:`master.html` to illustrate::
   </html>
 
 .. warning::
+
     Notice that the ``<xi:include>`` of :file:`login.html` happens after the
     ``<body>`` tag?  It is important to do that because the ``<body>`` tag in
     :file:`master.html` is a match template just like ``<logintoolitem>``.  In
