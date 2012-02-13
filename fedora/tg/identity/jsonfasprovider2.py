@@ -216,9 +216,14 @@ class JsonFasIdentity(BaseClient):
                 # Attempt to load the user. After this code executes, there
                 # *will* be a _user attribute, even if the value is None.
                 self._user = self.__retrieve_user()
+
+        if self._user:
             self._groups = frozenset(
-                    [g['name'] for g in self._user.approved_memberships]
-                    )
+                [g['name'] for g in self._user.approved_memberships]
+                )
+        else:
+            self._groups = frozenset()
+
         # pylint: enable-msg=W0704
         return self._user
     user = property(_get_user)
@@ -250,7 +255,7 @@ class JsonFasIdentity(BaseClient):
         '''
         if not self.user:
             return None
-        return self.user.user_id
+        return self.user.id
     user_id = property(_get_user_id)
 
     ### TG: Same as TG-1.0.8
@@ -434,7 +439,7 @@ class JsonFasIdentityProvider(object):
 
         # pylint: disable-msg=W0613
         # :W0613: TG identity providers have this method
-        return user.password == crypt.crypt(password, user.password)
+        return to_bytes(user.password) == crypt.crypt(to_bytes(password), to_bytes(user.password))
 
     def load_identity(self, visit_key):
         '''Lookup the principal represented by visit_key.

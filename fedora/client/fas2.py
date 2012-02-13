@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2008-2011  Ricky Zhou, Red Hat, Inc.
+# Copyright (C) 2008-2012  Ricky Zhou, Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
@@ -22,12 +22,19 @@ Provide a client module for talking to the Fedora Account System.
 
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
+.. moduleauthor:: Ralph Bean <rbean@redhat.com>
 '''
+import itertools
 import urllib
 import warnings
 
 from bunch import Bunch
 from kitchen.text.converters import to_bytes
+
+try:
+    from hashlib import md5
+except ImportError:
+    from md5 import new as md5
 
 from fedora.client import AppError, BaseClient, FasProxyClient, \
         FedoraClientError, FedoraServiceError
@@ -61,8 +68,18 @@ class AccountSystem(BaseClient):
     Account System.  It abstracts the http requests, cookie handling, and
     other details so you can concentrate on the methods that are important to
     your program.
+
+    .. versionchanged:: 0.3.26
+        Added :meth:`~fedora.client.AccountSystem.gravatar_url` that returns
+        a url to a gravatar for a user.
     '''
+    # proxy is a thread-safe connection to the fas server for verifying
+    # passwords of other users
     proxy = None
+
+    # size that we allow to request from gravatar.com
+    _valid_gravatar_sizes = (32, 64, 140)
+
     def __init__(self, base_url='https://admin.fedoraproject.org/accounts/',
             *args, **kwargs):
         '''Create the AccountSystem client object.
@@ -88,7 +105,8 @@ class AccountSystem(BaseClient):
         # against.
         if not self.proxy:
             self.proxy = FasProxyClient(base_url, useragent=self.useragent,
-                    session_as_cookie=False, debug=self.debug)
+                    session_as_cookie=False, debug=self.debug,
+                    insecure=self.insecure)
 
         # Preseed a list of FAS accounts with bugzilla addresses
         # This allows us to specify a different email for bugzilla than is
@@ -125,8 +143,6 @@ class AccountSystem(BaseClient):
                 100460 : 'sindrepb@fedoraproject.org',
                 # Jesus M. Rodriguez: jmrodri@gmail.com
                 102180: 'jesusr@redhat.com',
-                # Jeff Sheltren: jeff@osuosl.org
-                100058: 'sheltren@fedoraproject.org',
                 # Roozbeh Pournader: roozbeh@farsiweb.info
                 100350: 'roozbeh@gmail.com',
                 # Michael DeHaan: michael.dehaan@gmail.com
@@ -187,6 +203,8 @@ class AccountSystem(BaseClient):
                 114970: 'robatino@fedoraproject.org',
                 # Jeff Sheltren: jeff@tag1consulting.com
                 100058: 'sheltren@fedoraproject.org',
+                # Josh Boyer: jwboyer@gmail.com
+                100115: 'jwboyer@redhat.com',
                 }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email
@@ -209,6 +227,24 @@ class AccountSystem(BaseClient):
         # the only option.
 
     # TODO: Use exceptions properly
+
+    ### Set insecure properly ###
+    # When setting insecure, we have to set it both on ourselves and on
+    # self.proxy
+    def _get_insecure(self):
+        return self._insecure
+
+    def _set_insecure(self, insecure):
+        self._insecure = insecure
+        self.proxy = FasProxyClient(self.base_url, useragent=self.useragent,
+                session_as_cookie=False, debug=self.debug, insecure=insecure)
+        return insecure
+    #: If this attribute is set to True, do not check server certificates
+    #: against their CA's.  This means that man-in-the-middle attacks are
+    #: possible. You might turn this option on for testing against a local
+    #: version of a server with a self-signed certificate but it should be off
+    #: in production.
+    insecure = property(_get_insecure, _set_insecure)
 
     ### Groups ###
 
@@ -305,6 +341,48 @@ class AccountSystem(BaseClient):
         else:
             return dict()
 
+    def gravatar_url(self, username, size=64,
+                     default=None):
+        ''' Returns a URL to a gravatar for a given username.
+
+        :arg username: FAS username to construct a gravatar url for
+        :kwarg size: size of the gravatar.  Allowed sizes are 32, 64, 140.
+            Default: 64
+        :kwarg default: If gravatar does not have a gravatar image for the
+            email address, this url is returned instead.  Default:
+            the fedora logo at the specified size.
+        :raises ValueError: if the size parameter is not allowed
+        :rtype: :obj:`str`
+        :returns: url of a gravatar for the user
+
+        If that user has no gravatar entry, instruct gravatar.com to redirect
+        us to the Fedora logo.
+
+        If that user has no email attribute, then make a fake request to
+        gravatar.
+
+        .. versionadded:: 0.3.26
+        '''
+        if size not in self._valid_gravatar_sizes:
+            raise ValueError(b_('Size %(size)i disallowed.  Must be in'
+                ' %(valid_sizes)r') % { 'size': size,
+                    'valid_sizes': self._valid_gravatar_sizes})
+
+        if not default:
+            default = "http://fedoraproject.org/static/images/" + \
+                    "fedora_infinity_%ix%i.png" % (size, size)
+
+        query_string = urllib.urlencode({
+            's': size,
+            'd': default,
+        })
+
+        person = self.person_by_username(username)
+        email = person.get('email', 'no_email')
+        hash = md5(email).hexdigest()
+
+        return "http://www.gravatar.com/avatar/%s?%s" % (hash, query_string)
+
     def user_id(self):
         '''Returns a dict relating user IDs to usernames'''
         request = self.send_request('json/user_id', auth=True)
@@ -325,33 +403,41 @@ class AccountSystem(BaseClient):
             The default is to retrieve all fields.
             Valid fields are:
 
-                * username
-                * certificate_serial
-                * locale
-                * creation
-                * telephone
-                * status_change
-                * id
-                * password_changed
-                * privacy
-                * comments
-                * latitude
-                * email
-                * status
-                * gpg_keyid
-                * internal_comments
-                * postal_address
-                * unverified_email
-                * ssh_key
-                * passwordtoken
-                * ircnick
-                * password
-                * emailtoken
-                * longitude
-                * facsimile
-                * human_name
-                * last_seen
+                * affiliation
+                * alias_enabled
                 * bugzilla_email
+                * certificate_serial
+                * comments
+                * country_code
+                * creation
+                * email
+                * emailtoken
+                * facsimile
+                * gpg_keyid
+                * group_roles
+                * human_name
+                * id
+                * internal_comments
+                * ircnick
+                * last_seen
+                * latitude
+                * locale
+                * longitude
+                * memberships
+                * old_password
+                * password
+                * password_changed
+                * passwordtoken
+                * postal_address
+                * privacy
+                * roles
+                * ssh_key
+                * status
+                * status_change
+                * telephone
+                * timezone
+                * unverified_email
+                * username
 
             Note that for most users who access this data, many of these
             fields will be set to None due to security or privacy settings.
@@ -359,6 +445,9 @@ class AccountSystem(BaseClient):
 
         .. versionchanged:: 0.3.21
             Return a Bunch instead of a DictContainer
+        .. versionchanged:: 0.3.26
+            Fixed to return a list with both people who have signed the CLA
+            and have not
         '''
         # Make sure we have a valid key value
         if key not in ('id', 'username', 'email'):
@@ -392,7 +481,8 @@ class AccountSystem(BaseClient):
             'fields': [f for f in fields if f != 'bugzilla_email']}, auth=True)
 
         people = Bunch()
-        for person in request['people']:
+        for person in itertools.chain(request['people'],
+                request['unapproved_people']):
             # Retrieve bugzilla_email from our list if necessary
             if 'bugzilla_email' in fields:
                 if person['id'] in self.__bugzilla_email:

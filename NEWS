@@ -3,8 +3,42 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 3 Sep 2011
+:Date: 13 Feb 2012
 :Version: 0.3.x
+
+------
+0.3.26
+------
+
+* Fix the AccountSystem() class's verify_password() method so that
+  verification of server SSL certificates may be disabled by setting
+  insecure=True.
+* Fixed AccountSystem.people_by_key() to return a list with both people who
+  have signed the CLA and have not
+* Fix the tg2.utils.url handling with TG-2.0.x
+* Fix a deprecation warning in fedora.tg.controllers
+* Fix issue in proxyclient where unicode passwords might be encoded to the
+  wrong byte sequence depending on the locale of the process running it.
+* Fix jsonfasprovider2's group handling to not traceback when assigning groups
+  if there is no record for a given username.
+* Fix a traceback in jsonfasprovider2's user_id handling.
+* Fix comparison of passwords in jsonfasprovider when unicode passwords are
+  used.  However, this method is actually not invoked under normal use as the
+  password comparison is done on the server.
+* Fix faswho plugin to handle unicode passwords and usernames.  Note that this
+  is a different bug than affected the TG1 auth provider.
+* Fix faswho auth plugin to set session cookies as secure and httponly
+* Set the Django session cookies httponly
+* Add a genshi login template for TG2
+* For faswho repoze.who plugin, remove caching during authentication (as caching
+  does not pick up on logout of a different app invalidating the session and
+  password changes).  We could use caching again if retrieving the full
+  information about a user took more time than validating their username and
+  password.
+* Simplify implementation of the faswho plugin.  Should save on per-request
+  memory and cache.
+* Add AccountSystem.gravatar_url() method that will return a url to a gravatar
+  for a person.
 
 --------
 0.3.25.1

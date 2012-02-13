@@ -61,7 +61,7 @@ def url(*args, **kwargs):
     The arguments and return value are the same as for :func:`tg.url`
 
     The original :func:`tg.url` is accessible as
-    :func:`fedora.tg.tg2utils.tg_url`
+    :func:`fedora.tg2.utils.tg_url`
 
     .. versionadded:: 0.3.17
        Added to enable :ref:`CSRF-Protection` for TG2
@@ -135,7 +135,7 @@ def add_fas_auth_middleware(self, app, *args):
          from myapp.lib import app_globals, helpers.
 
         -base_config = AppConfig()
-        +from fedora.tg.tg2utils import add_fas_auth_middleware
+        +from fedora.tg2.utils import add_fas_auth_middleware
         +
         +class MyAppConfig(AppConfig):
         +    add_auth_middleware = add_fas_auth_middleware
@@ -187,7 +187,7 @@ def enable_csrf():
     This should be run at application startup.  It does three things:
 
     1) overrides the :func:`tg.url` function with
-       :func:`fedora.tg.tg2utils.url` so that :term:`CSRF` tokens are
+       :func:`fedora.tg2.utils.url` so that :term:`CSRF` tokens are
        appended to URLs.
     2) tells the TG2 app to ignore `_csrf_token`.  This lets the app know not
        to throw an error if the variable is passed through to the app.
@@ -211,7 +211,7 @@ def enable_csrf():
         To run this at application startup, add
         code like the following to :file:`MYAPP/config/app_config.py`::
 
-        from fedora.tg.tg2utils import enable_csrf
+        from fedora.tg2.utils import enable_csrf
         base_config.call_on_startup = [enable_csrf]
 
     If we can get the :ref:`CSRF-Protection` into upstream :term:`TurboGears`,
@@ -223,7 +223,12 @@ def enable_csrf():
     # Override the tg.url function with our own
     tg.url = url
     tg.controllers.url = url
-    tg.controllers.util.url = url
+    try:
+        # TG-2.1+
+        tg.controllers.util.url = url
+    except AttributeError:
+        # TG-2.0.x
+        pass
 
     # Ignore the _csrf_token parameter
     ignore = config.get('ignore_parameters', [])

@@ -86,6 +86,7 @@ can catch in order to prompt for a new username and password::
         count = count + 1
 
 .. warning::
+
     Note that although you can set the ``username`` and ``password`` as shown
     above you do have to be careful in cases where your application is
     multithreaded or simply processes requests for more than one user with the
@@ -93,7 +94,8 @@ can catch in order to prompt for a new username and password::
     accidentally overwrite the ``username`` and ``password`` between two
     requests.  To avoid this, make sure you instantiate a separate
     :class:`~fedora.client.BaseClient` for every thread of control or for
-    every request you handle or use `ProxyClient` instead.
+    every request you handle or use :class:`~fedora.client.ProxyClient`
+    instead.
 
 The ``useragent`` parameter is useful for identifying in log files that your
 script is calling the server rather than another.  The default value is

@@ -85,32 +85,39 @@ class ProxyClient(object):
     messages in the middle of a method.)
 
     .. attribute:: base_url
+
         Initial portion of the url to contact the server.  It is highly
         recommended not to change this value unless you know that no other
-        threads are accessing this :class:`ProxyClient instance.
+        threads are accessing this :class:`ProxyClient` instance.
 
     .. attribute:: useragent
+
         Changes the useragent string that is reported to the web server.
 
     .. attribute:: session_name
+
         Name of the cookie that holds the authentication value.
 
     .. attribute:: session_as_cookie
+
         If :data:`True`, then the session information is saved locally as
         a cookie.  This is here for backwards compatibility.  New code should
         set this to :data:`False` when constructing the :class:`ProxyClient`.
 
     .. attribute:: debug
+
         If :data:`True`, then more verbose logging is performed to aid in
         debugging issues.
 
     .. attribute:: insecure
+
         If :data:`True` then the connection to the server is not checked to be
         sure that any SSL certificate information is valid.  That means that
         a remote host can lie about who it is.  Useful for development but
         should not be used in production code.
 
     .. attribute:: retries
+
         Setting this to a positive integer will retry failed requests to the
         web server this many times.  Setting to a negative integer will retry
         forever.
@@ -341,15 +348,15 @@ class ProxyClient(object):
         if username and password:
             if auth_params.get('httpauth', '').lower() == 'basic':
                 # HTTP Basic auth login
-                userpwd = '%s:%s' % (username, password)
+                userpwd = '%s:%s' % (to_bytes(username), to_bytes(password))
                 request.setopt(pycurl.HTTPAUTH, pycurl.HTTPAUTH_BASIC)
                 request.setopt(pycurl.USERPWD, userpwd)
             else:
                 # TG login
                 # Adding this to the request data prevents it from being logged by
                 # apache.
-                complete_params.update({'user_name': username,
-                        'password': password, 'login': 'Login'})
+                complete_params.update({'user_name': to_bytes(username),
+                        'password': to_bytes(password), 'login': 'Login'})
 
         req_data = None
         if complete_params:

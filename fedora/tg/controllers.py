@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2008-2009  Red Hat, Inc.
+# Copyright (C) 2008-2011  Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ from turbogears import flash
 from turbogears import identity, redirect
 from cherrypy import request, response
 
-from fedora.tg.tg1utils import request_format
+from fedora.tg.utils import request_format
 
 from fedora import _
 

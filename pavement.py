@@ -67,6 +67,7 @@ options(
         message_extractors = {
             'fedora': [('**.py', 'python', None),
                 ('tg2/templates/mako/**.mak', 'mako', None),
+                ('tg2/templates/genshi/**.html', 'mako', None),
                 ('tg/templates/genshi/**.html', 'genshi', None),],
             },
         classifiers = [

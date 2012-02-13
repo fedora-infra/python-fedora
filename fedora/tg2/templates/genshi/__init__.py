@@ -1,17 +1,17 @@
 '''
 Genshi version of templates to make adding certain Fedora widgets easier.
 
---------------------------------------------
-:mod:`fedora.tg.templates.genshi.login.html`
---------------------------------------------
-.. module:: fedora.tg.templates.genshi.login.html
+---------------------------------------------
+:mod:`fedora.tg2.templates.genshi.login.html`
+---------------------------------------------
+.. module:: fedora.tg2.templates.genshi.login.html
     :synopsis: Templates related to logging in and out.
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
-.. versionadded:: 0.3.10
+.. versionadded:: 0.3.26
 
 
 Include this using::
-    <xi:include href="${tg.fedora_template('login.html')}" />
+    <xi:include href="${fedora_template('login.html', template_type='genshi')}" />
 
 .. function:: loginform([message])
 
@@ -44,17 +44,17 @@ Typical usage looks like this::
       <logintoolitem href="${tg.url('/users/info')}" />
     </ul>
 
-------------------------------------------------
-:mod:`fedora.tg.templates.genshi.jsglobals.html`
-------------------------------------------------
-.. module:: fedora.tg.templates.genshi.jsglobals.html
+-------------------------------------------------
+:mod:`fedora.tg2.templates.genshi.jsglobals.html`
+-------------------------------------------------
+.. module:: fedora.tg2.templates.genshi.jsglobals.html
     :synopsis: Templates to get information into javascript
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
-.. versionadded:: 0.3.10
+.. versionadded:: 0.3.26
 
 
 Include this using::
-    <xi:include href="${tg.fedora_template('jsglobals.html')}" />
+    <xi:include href="${fedora_template('jsglobals.html', template_type='genshi')}" />
 
 .. function:: jsglobals()
 

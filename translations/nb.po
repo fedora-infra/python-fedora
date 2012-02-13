@@ -4,9 +4,7 @@
 # project.
 # 
 # Translators:
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
-# Narek Babadjanyan <babaj96@gmail.com>, 2011.
-# Olykainen Andrey <andreyjktl@gmail.com>, 2010.
+# Kjartan Maraas <kmaraas@gnome.org>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: python-fedora\n"
@@ -19,8 +17,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-"Language: ru\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Language: nb\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: fedora/iterutils.py:36
 msgid "fedora.iterutils is deprecated.  Use kitchen.iterutils instead"
@@ -34,7 +32,7 @@ msgstr ""
 
 #: fedora/release.py:9
 msgid "Python modules for interacting with Fedora Services"
-msgstr "Модули Python для связи Fedora Services"
+msgstr "Python-moduler for interaksjon med Fedora tjenester"
 
 #: fedora/release.py:10
 msgid ""
@@ -67,12 +65,12 @@ msgstr ""
 #: fedora/client/baseclient.py:112
 #, python-format
 msgid "Unable to load session from %(file)s"
-msgstr ""
+msgstr "Kan ikke laste økt fra %(file)s"
 
 #: fedora/client/baseclient.py:129
 #, python-format
 msgid "Unable to create %(dir)s: %(error)s"
-msgstr ""
+msgstr "Kan ikke opprette %(dir)s:%(error)s"
 
 #: fedora/client/baseclient.py:141
 #, python-format
@@ -111,12 +109,12 @@ msgstr ""
 
 #: fedora/client/bodhi.py:195
 msgid "You must specify a username"
-msgstr "Необходимо указать имя пользователя"
+msgstr "Du må oppgi et brukernavn"
 
 #: fedora/client/bodhi.py:265
 #, python-format
 msgid "Reading from %s "
-msgstr "Чтение из %s"
+msgstr "Leser fra %s"
 
 #: fedora/client/fas2.py:269
 #, python-format
@@ -150,7 +148,7 @@ msgstr ""
 
 #: fedora/client/fas2.py:718
 msgid "FAS server unable to retrieve user information"
-msgstr ""
+msgstr "FAS-tjener kan ikke hente brukerinformasjon"
 
 #: fedora/client/fasproxy.py:67
 msgid ""
@@ -265,17 +263,17 @@ msgstr ""
 #: fedora/client/proxyclient.py:372
 #, python-format
 msgid "Creating request %(url)s"
-msgstr "Создание запроса %(url)s"
+msgstr ""
 
 #: fedora/client/proxyclient.py:374
 #, python-format
 msgid "Headers: %(header)s"
-msgstr "Заголовки: %(header)s"
+msgstr ""
 
 #: fedora/client/proxyclient.py:379
 #, python-format
 msgid "Data: %(data)s"
-msgstr "Дата: %(data)s"
+msgstr ""
 
 #: fedora/client/proxyclient.py:396
 msgid "Authentication failed logging in"
@@ -313,7 +311,7 @@ msgstr ""
 #: fedora/client/wiki.py:89
 #, python-format
 msgid "From %(then)s to %(now)s"
-msgstr "Из %(then)s в %(now)s"
+msgstr ""
 
 #: fedora/client/wiki.py:92
 #, python-format
@@ -331,7 +329,7 @@ msgstr ""
 msgid ""
 "\n"
 "== Most active wiki users =="
-msgstr "\n== Самые активные пользователи Wiki =="
+msgstr ""
 
 #: fedora/client/wiki.py:111
 msgid ""
@@ -368,7 +366,7 @@ msgstr ""
 #: fedora/tg/controllers.py:60
 #, python-format
 msgid "Welcome, %s"
-msgstr "Добро пожаловать, %s"
+msgstr ""
 
 #: fedora/tg/controllers.py:69
 msgid ""
@@ -441,13 +439,13 @@ msgstr ""
 
 #: fedora/tg/templates/genshi/login.html:14
 msgid "User Name:"
-msgstr "Имя пользователя:"
+msgstr ""
 
 #: fedora/tg/templates/genshi/login.html:17
 #: fedora/tg2/templates/genshi/login.html:31
 #: fedora/tg2/templates/mako/login.mak:25
 msgid "Password:"
-msgstr "Пароль:"
+msgstr ""
 
 #: fedora/tg/templates/genshi/login.html:21
 #: fedora/tg/templates/genshi/login.html:84
@@ -456,7 +454,7 @@ msgstr "Пароль:"
 #: fedora/tg2/templates/mako/login.mak:27
 #: fedora/tg2/templates/mako/login.mak:63
 msgid "Login"
-msgstr "Логин"
+msgstr ""
 
 #: fedora/tg/templates/genshi/login.html:28
 #: fedora/tg2/templates/genshi/login.html:14
@@ -481,31 +479,31 @@ msgstr ""
 #: fedora/tg2/templates/genshi/login.html:23
 #: fedora/tg2/templates/mako/login.mak:18
 msgid "I am a human"
-msgstr "Я человек"
+msgstr ""
 
 #: fedora/tg/templates/genshi/login.html:41
 #: fedora/tg2/templates/genshi/login.html:37
 #: fedora/tg2/templates/mako/login.mak:31
 msgid "Forgot Password?"
-msgstr "Забыли пароль?"
+msgstr ""
 
 #: fedora/tg/templates/genshi/login.html:42
 #: fedora/tg2/templates/genshi/login.html:38
 #: fedora/tg2/templates/mako/login.mak:32
 msgid "Sign Up"
-msgstr "Войти"
+msgstr ""
 
 #: fedora/tg/templates/genshi/login.html:60
 #: fedora/tg2/templates/genshi/login.html:47
 #: fedora/tg2/templates/mako/login.mak:40
 msgid "Welcome"
-msgstr "Добро пожаловать"
+msgstr ""
 
 #: fedora/tg/templates/genshi/login.html:82
 #: fedora/tg2/templates/genshi/login.html:64
 #: fedora/tg2/templates/mako/login.mak:61
 msgid "You are not logged in"
-msgstr "Вы не вошли"
+msgstr ""
 
 #: fedora/tg/templates/genshi/login.html:89
 #: fedora/tg2/templates/genshi/login.html:70
@@ -523,7 +521,7 @@ msgstr ""
 #: fedora/tg2/templates/genshi/login.html:78
 #: fedora/tg2/templates/mako/login.mak:79
 msgid "Logout"
-msgstr "Выйти"
+msgstr ""
 
 #: fedora/tg/visit/jsonfasvisit1.py:107 fedora/tg/visit/jsonfasvisit2.py:136
 #, python-format
@@ -687,4 +685,4 @@ msgstr ""
 
 #: fedora/wsgi/test/controllers/root.py:56
 msgid "We hope to see you soon!"
-msgstr "До скорой встречи!"
+msgstr ""
