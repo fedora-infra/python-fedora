@@ -74,24 +74,25 @@ def make_faswho_middleware(app, log_stream=None, login_handler='/login_handler',
         post_login_url='/post_login', post_logout_url=None, fas_url=FAS_URL,
         insecure=False, ssl_cookie=True, httponly=True):
     '''
-    :app: WSGI app that is being wrapped
-    :log_stream: :class:`logging.Logger` to log auth messages
-    :login_handler: URL where the login form is submitted
-    :login_form_url: URL where the login form is displayed
-    :logout_handler: URL where the logout form is submitted
-    :post_login_url: URL to redirect the user to after login
-    :post_logout_url: URL to redirect the user to after logout
-    :fas_url: Base URL to the FAS server
-    :insecure: Allow connecting to a fas server without checking the server's
-        SSL certificate.  Opens you up to MITM attacks but can be useful
-        when testing.  *Do not enable this in production*
-    :ssl_cookie: If :data:`True` (default), tell the browser to only send the
-        session cookie back over https.
-    :httponly: If :data:`True` (default), tell the browser that the session
-        cookie should only be read for sending to a server, not for access by
-        JavaScript or other clientside technology.  This prevents using the
-        session cookie to pass information to JavaScript clients but also
-        prevents XSS attacks from stealing the session cookie information.
+    :arg app: WSGI app that is being wrapped
+    :kwarg log_stream: :class:`logging.Logger` to log auth messages
+    :kwarg login_handler: URL where the login form is submitted
+    :kwarg login_form_url: URL where the login form is displayed
+    :kwarg logout_handler: URL where the logout form is submitted
+    :kwarg post_login_url: URL to redirect the user to after login
+    :kwarg post_logout_url: URL to redirect the user to after logout
+    :kwarg fas_url: Base URL to the FAS server
+    :kwarg insecure: Allow connecting to a fas server without checking the
+        server's SSL certificate.  Opens you up to MITM attacks but can be
+        useful when testing.  *Do not enable this in production*
+    :kwarg ssl_cookie: If :data:`True` (default), tell the browser to only
+        send the session cookie back over https.
+    :kwarg httponly: If :data:`True` (default), tell the browser that the
+        session cookie should only be read for sending to a server, not for
+        access by JavaScript or other clientside technology.  This prevents
+        using the session cookie to pass information to JavaScript clients but
+        also prevents XSS attacks from stealing the session cookie
+        information.
     '''
 
     # Because of the way we override values (via a dict in AppConfig), we
