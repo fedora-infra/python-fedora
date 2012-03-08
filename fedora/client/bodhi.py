@@ -128,7 +128,7 @@ class BodhiClient(BaseClient):
         :kwarg limit: The maximum number of updates to display.  Default: 10.
         """
         params = {
-                'tg_paginate_limit': limit,
+                'updates_tgp_limit': limit,
                 'username': username,
                 'release': release,
                 'package': package,

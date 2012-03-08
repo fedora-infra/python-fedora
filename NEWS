@@ -7,6 +7,13 @@ NEWS
 :Version: 0.3.x
 
 ------
+0.3.27
+------
+
+* Fix problem with tg_paginate_limit no longer being available in TG-1.1.x.
+  Use FOO_tg_limit instead in various client libraries.
+
+------
 0.3.26
 ------
 
