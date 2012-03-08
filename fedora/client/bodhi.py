@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright 2007-2011  Red Hat, Inc.
+# Copyright 2007-2012  Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
@@ -128,7 +128,7 @@ class BodhiClient(BaseClient):
         :kwarg limit: The maximum number of updates to display.  Default: 10.
         """
         params = {
-                'tg_paginate_limit': limit,
+                'updates_tgp_limit': limit,
                 'username': username,
                 'release': release,
                 'package': package,

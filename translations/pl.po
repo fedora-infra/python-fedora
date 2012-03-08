@@ -4,14 +4,14 @@
 # project.
 # 
 # Translators:
-# Piotr Drąg <piotrdrag@gmail.com>, 2011.
+# Piotr Drąg <piotrdrag@gmail.com>, 2011, 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2012-02-13 14:44-0800\n"
-"PO-Revision-Date: 2012-02-13 22:45+0000\n"
-"Last-Translator: Toshio Kuratomi <a.badger@gmail.com>\n"
+"PO-Revision-Date: 2012-02-14 08:41+0000\n"
+"Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -124,7 +124,7 @@ msgstr "Serwer FAS nie może odebrać grupy %(group)s"
 #: fedora/client/fas2.py:367
 #, python-format
 msgid "Size %(size)i disallowed.  Must be in %(valid_sizes)r"
-msgstr ""
+msgstr "Rozmiar %(size)i jest niedozwolony. Musi być w %(valid_sizes)r"
 
 #: fedora/client/fas2.py:454
 msgid "key must be one of \"id\", \"username\", or \"email\""
