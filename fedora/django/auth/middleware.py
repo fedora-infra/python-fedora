@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2009  Ignacio Vazquez-Abrams
-# Copyright (C) 2011  Red Hat, Inc
+# Copyright (C) 2012  Red Hat, Inc
 # This file is part of python-fedora
 #
 # python-fedora is free software; you can redistribute it and/or
@@ -28,6 +28,7 @@
 '''
 from fedora.client import AuthError
 
+import django
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import AnonymousUser
 
@@ -77,9 +78,14 @@ class FasMiddleware(object):
                     del request.session['tg-visit']
             else:
                 try:
-                    response.set_cookie('tg-visit',
-                            request.user.session_id, max_age=1814400,
-                            path='/', secure=True, httponly=True)
+                    if django.VERSION[:2] <= (1, 3):
+                        response.set_cookie('tg-visit',
+                                request.user.session_id, max_age=1814400,
+                                path='/', secure=True)
+                    else:
+                        response.set_cookie('tg-visit',
+                                request.user.session_id, max_age=1814400,
+                                path='/', secure=True, httponly=True)
                 except AttributeError, e:
                     # We expect that request.user.session_id won't be set
                     # if the user is logging in with a non-FAS account

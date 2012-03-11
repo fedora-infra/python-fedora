@@ -6,6 +6,20 @@ NEWS
 :Date: 13 Feb 2012
 :Version: 0.3.x
 
+---------
+0.3.26.90
+---------
+* Fix Django auth provider with Django-1.2.x or less.  These versions of Django
+  do not have the API necessary to do httponly cookies so we need to not use
+  httponly if that's the version ofDjango that we're using.
+
+To finish
+---------
+* For the faswho repoze.who plugin, allow TG1-style authentication -- ie: if
+  all of the following are set on any URL, authenticate the user prior to
+  loading the web page::
+    login=Login&user_name=$FAS_USERNAME&password=$FAS_PASSWORD
+
 ------
 0.3.26
 ------
