@@ -7,7 +7,7 @@ NEWS
 :Version: 0.3.x
 
 ---------
-0.3.27.90
+0.3.28.90
 ---------
 
 To finish
@@ -18,7 +18,7 @@ To finish
     login=Login&user_name=$FAS_USERNAME&password=$FAS_PASSWORD
 
 ------
-0.3.27
+0.3.28
 ------
 
 * Fix Django auth provider with Django-1.2.x or less.  These versions of Django
