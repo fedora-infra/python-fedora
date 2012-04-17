@@ -265,7 +265,7 @@ Currently, this is more involved.
      bzr checkout --lightweight bzr+ssh://bzr.fedorahosted.org/bzr/python-fedora/stable release
      cd release
 
-6) Create the tarball in this cloean checkout::
+6) Create the tarball in this clean checkout::
      paver sdist
 
 7) copy the dist/python-fedora-VERSION.tar.gz and python-fedora.spec files to
