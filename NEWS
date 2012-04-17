@@ -3,15 +3,12 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken
-:Date: 13 Feb 2012
+:Date: 17 Apr 2012
 :Version: 0.3.x
 
 ---------
-0.3.26.90
+0.3.27.90
 ---------
-* Fix Django auth provider with Django-1.2.x or less.  These versions of Django
-  do not have the API necessary to do httponly cookies so we need to not use
-  httponly if that's the version ofDjango that we're using.
 
 To finish
 ---------
@@ -19,6 +16,18 @@ To finish
   all of the following are set on any URL, authenticate the user prior to
   loading the web page::
     login=Login&user_name=$FAS_USERNAME&password=$FAS_PASSWORD
+
+------
+0.3.27
+------
+
+* Fix Django auth provider with Django-1.2.x or less.  These versions of Django
+  do not have the API necessary to do httponly cookies so we need to not use
+  httponly if that's the version of Django that we're using.
+* Fix for a bad curl-apache < 2.2.18 interaction.  Apache < 2.2.18 has a bug in
+  processing Expect: 100-continue headers if there's data in the body that the
+  client expects apache to process.  Curl is a client that does just that.  This
+  workaround clears the Expect: header so that we do not have those issues.
 
 ------
 0.3.26
