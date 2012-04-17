@@ -312,19 +312,15 @@ class ProxyClient(object):
         # Set standard headers
         headers = ['User-agent: %s' % self.useragent,
                 'Accept: application/json',]
-        if auth_params:
-            # This is a workaround
-            # apache before 2.2.18 has a bug with Expect: continue headers
-            # https://issues.apache.org/bugzilla/show_bug.cgi?id=47087
-            # curl triggers this by setting Expect: 100-continue headers
-            # but putting data into the POST body that it expects the
-            # server to process.  Setting an empty Expect: header
-            # overrides that.  We should check whether this is still an
-            # issue with apache 2.2.18 (or a patched apache)
-            #
-            # This bug only occurs when apache needs to cancel the request
-            # (In our case, because the request is unauthorized (401 or 403).)
-            headers.append('Expect:')
+        # This is a workaround
+        # apache before 2.2.18 has a bug with Expect: continue headers
+        # https://issues.apache.org/bugzilla/show_bug.cgi?id=47087
+        # curl triggers this by setting Expect: 100-continue headers
+        # but putting data into the POST body that it expects the
+        # server to process.  Setting an empty Expect: header
+        # overrides that.  We should check whether this is still an
+        # issue with apache 2.2.18 (or a patched apache)
+        headers.append('Expect:')
         request.setopt(pycurl.HTTPHEADER, headers)
 
         # Files to upload

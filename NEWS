@@ -17,6 +17,15 @@ To finish
   loading the web page::
     login=Login&user_name=$FAS_USERNAME&password=$FAS_PASSWORD
 
+--------
+0.3.28.1
+--------
+
+* Previous  fix for curl/apache interaction was incomplete.  Apache returns a
+  417 error even if the request would have completed okay (for our case, even
+  if the request is unauthenticated).  Have to apply the workaround
+  unconditionally.
+
 ------
 0.3.28
 ------

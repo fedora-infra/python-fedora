@@ -3,7 +3,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.3.28
+Version:        0.3.28.1
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -145,8 +145,12 @@ rm -rf %{buildroot}
 %{python_sitelib}/fedora/django/
 
 %changelog
+* Tue Apr 17 2012 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.28.1-1
+- Apply the apache-curl workaround unconditionally, not just when doing
+  authenticated requests
+
 * Tue Apr 17 2012 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.28-1
-- Bugfix for a bad interactin between curl and the apache version running on
+- Bugfix for a bad interaction between curl and the apache version running on
   Fedora Infrastructure leading to Http 417 errors.
 - Bugfix for older Django installations.
 
