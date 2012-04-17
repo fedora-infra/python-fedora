@@ -7,7 +7,7 @@ NEWS
 :Version: 0.3.x
 
 ---------
-0.3.27.90
+0.3.28.90
 ---------
 
 To finish
@@ -18,7 +18,7 @@ To finish
     login=Login&user_name=$FAS_USERNAME&password=$FAS_PASSWORD
 
 ------
-0.3.27
+0.3.28
 ------
 
 * Fix Django auth provider with Django-1.2.x or less.  These versions of Django
@@ -28,6 +28,13 @@ To finish
   processing Expect: 100-continue headers if there's data in the body that the
   client expects apache to process.  Curl is a client that does just that.  This
   workaround clears the Expect: header so that we do not have those issues.
+
+------
+0.3.27
+------
+
+* Fix problem with tg_paginate_limit no longer being available in TG-1.1.x.
+  Use FOO_tg_limit instead in various client libraries.
 
 ------
 0.3.26

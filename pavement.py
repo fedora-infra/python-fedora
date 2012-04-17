@@ -47,7 +47,7 @@ options(
             'tg' : ['TurboGears >= 1.0.4', 'SQLAlchemy', 'decorator'],
             'wsgi': ['repoze.who', 'Beaker', 'Paste'],
             },
-        test_require = ['TurboGears >= 2.0', 'nose', ],
+        #test_require = ['TurboGears >= 2.0', 'nose', ],
         entry_points = {
             'turbogears.identity.provider' : (
                 'jsonfas = fedora.tg.identity.jsonfasprovider1:JsonFasIdentityProvider [tg]',

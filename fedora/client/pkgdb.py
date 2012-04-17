@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2008-2011  Red Hat, Inc.
+# Copyright (C) 2008-2012  Red Hat, Inc.
 # This file is part of python-fedora
 # 
 # python-fedora is free software; you can redistribute it and/or
@@ -429,7 +429,7 @@ class PackageDB(BaseClient):
 
         .. versionadded:: 0.3.14
         '''
-        params = {'eol': eol, 'tg_paginate_limit': 0}
+        params = {'eol': eol, 'pkgs_tgp_limit': 0}
         if acls:
             params['acls'] = acls
         return self.send_request('/users/packages/%s' % username,
@@ -440,7 +440,7 @@ class PackageDB(BaseClient):
 
         :returns: List of pkgs which are orphaned in any non-EOL release.
         '''
-        params = {'tg_paginate_limit': 0}
+        params = {'pkgs_tgp_limit': 0}
         data = self.send_request('/acls/orphans', req_params=params)
         return data.pkgs
 
@@ -485,7 +485,7 @@ class PackageDB(BaseClient):
                     ' away in 0.4.x.'), DeprecationWarning, stacklevel=2)
             collctn = collectn
 
-        params = {'tg_paginate_limit': '0'}
+        params = {'packages_tgp_limit': '0'}
         if collctn:
             try:
                 collctn_id = self.branches[collctn]['id']
@@ -589,7 +589,6 @@ class PackageDB(BaseClient):
             if collctn_ver:
                 method = method + '/' + collctn_ver
 
-#        params = {'eol': eol, 'tg_paginate_limit': 0}
         params = {'eol': eol}
         data = self.send_request(method, req_params=params)
         if 'exc' in data:

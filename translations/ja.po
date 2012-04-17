@@ -6,15 +6,15 @@
 # Translators:
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2009.
 # Hajime Taira <htaira@redhat.com>, 2011.
-# Tomoyuki KATO <tomo@dream.daynight.jp>, 2011.
+# Tomoyuki KATO <tomo@dream.daynight.jp>, 2011, 2012.
 #   <www.carrotsoft@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2012-02-13 14:44-0800\n"
-"PO-Revision-Date: 2012-02-13 22:45+0000\n"
-"Last-Translator: Toshio Kuratomi <a.badger@gmail.com>\n"
+"PO-Revision-Date: 2012-02-14 22:33+0000\n"
+"Last-Translator: Tomoyuki KATO <tomo@dream.daynight.jp>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -127,7 +127,7 @@ msgstr "FAS サーバーからグループ %(group)s を取得できません。
 #: fedora/client/fas2.py:367
 #, python-format
 msgid "Size %(size)i disallowed.  Must be in %(valid_sizes)r"
-msgstr ""
+msgstr "容量 %(size)i は許可されていません。%(valid_sizes)r にする必要があります。"
 
 #: fedora/client/fas2.py:454
 msgid "key must be one of \"id\", \"username\", or \"email\""
