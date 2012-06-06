@@ -258,8 +258,18 @@ class AccountSystem(BaseClient):
         :arg owner: The username of the FAS account which owns the new group.
         :arg group_type: The kind of group being created. Current valid options
             are git, svn, hg, shell, and tracking.
+        :kwarg invite_only: Users must be invited to the group, they cannot
+            join on their own.
+        :kwarg needs_sponsor: Users must be sponsored into the group.
+        :kwarg user_can_remove: Users can remove themselves from the group.
+        :kwarg prerequisite: Users must be in the given group (string) before
+            they can join the new group.
+        :kwarg joinmsg: A message shown to users when they apply to the group.
+        :kwarg apply_rules: Rules for applying to the group, shown to users
+            before they apply.
         :rtype: :obj:`bunch.Bunch`
-        :returns: The response from the FAS server.
+        :returns: A Bunch containing information about the group that was
+            created.
 
         .. versionadded:: 0.3.29
         '''
