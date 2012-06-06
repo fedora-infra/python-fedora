@@ -2,9 +2,16 @@
 NEWS
 ====
 
-:Authors: Toshio Kuratomi, Luke Macken
-:Date: 17 Apr 2012
+:Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod
+:Date: 6 June 2012
 :Version: 0.3.x
+
+---------
+0.3.29
+---------
+
+* Added a create_group method to AccountSystem to allow for creating FAS
+  groups.
 
 ---------
 0.3.28.90

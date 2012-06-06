@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2012-02-13 14:44-0800\n"
-"PO-Revision-Date: 2012-02-24 23:17+0000\n"
+"PO-Revision-Date: 2012-05-15 20:27+0000\n"
 "Last-Translator: Jérôme Fenal <jfenal@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -125,7 +125,7 @@ msgstr "Groupe %(group)s introuvable dans le serveur FAS"
 #: fedora/client/fas2.py:367
 #, python-format
 msgid "Size %(size)i disallowed.  Must be in %(valid_sizes)r"
-msgstr ""
+msgstr "Taille %(size)i interdite.  Doit être choisie parmi %(valid_sizes)r"
 
 #: fedora/client/fas2.py:454
 msgid "key must be one of \"id\", \"username\", or \"email\""
