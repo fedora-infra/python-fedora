@@ -145,6 +145,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/fedora/django/
 
 %changelog
+* Wed Jun 6 2012 Ricky Elrd <codeblock@fedoraproject.org> - 0.3.29-1
+- Add a create_group() method to AccountSystem.
+
 * Tue Apr 17 2012 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.28.1-1
 - Apply the apache-curl workaround unconditionally, not just when doing
   authenticated requests
