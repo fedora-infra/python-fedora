@@ -247,6 +247,40 @@ class AccountSystem(BaseClient):
     insecure = property(_get_insecure, _set_insecure)
 
     ### Groups ###
+    
+    def create_group(self, name, display_name, owner, group_type,
+                     invite_only=0, needs_sponsor=0, user_can_remove=1,
+                     prerequisite='', joinmsg='', apply_rules='None'):
+        '''Creates a FAS group.
+
+        :arg name: The short group name (alphanumeric only).
+        :arg display_name: A longer version of the group's name.
+        :arg owner: The username of the FAS account which owns the new group.
+        :arg group_type: The kind of group being created. Current valid options
+            are git, svn, hg, shell, and tracking.
+        :rtype: :obj:`bunch.Bunch`
+        :returns: The response from the FAS server.
+
+        .. versionadded:: 0.3.29
+        '''
+        req_params = {
+            'invite_only': invite_only,
+            'needs_sponsor': needs_sponsor,
+            'user_can_remove': user_can_remove,
+            'prerequisite': prerequisite,
+            'joinmsg': joinmsg,
+            'apply_rules': apply_rules
+        }
+
+        request = self.send_request('/group/create/%s/%s/%s/%s' % (
+                urllib.quote(name),
+                urllib.quote(display_name),
+                urllib.quote(owner),
+                urllib.quote(group_type)),
+                                    req_params=req_params,
+                                    auth=True)
+        return request
+        
 
     def group_by_id(self, group_id):
         '''Returns a group object based on its id'''
