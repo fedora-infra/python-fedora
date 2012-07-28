@@ -59,7 +59,8 @@ USERFIELDS = ['affiliation', 'bugzilla_email', 'certificate_serial',
         'ircnick', 'latitude', 'last_seen', 'longitude', 'password',
         'password_changed', 'passwordtoken', 'postal_address', 'privacy',
         'locale', 'ssh_key', 'status', 'status_change', 'telephone',
-        'unverified_email', 'timezone', 'username', ]
+        'unverified_email', 'timezone', 'username', 'security_question', 
+        'security_answer', ]
 
 class AccountSystem(BaseClient):
     '''An object for querying the Fedora Account System.
