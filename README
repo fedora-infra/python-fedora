@@ -37,7 +37,7 @@ from the yum repository should be as easy as::
 If you want to install from a checkout of the development branch, follow these
 procedures::
 
-    # bzr branch bzr://bzr.fedorahosted.org/bzr/python-fedora/python-fedora-devel
+    # bzr branch bzr://bzr.fedorahosted.org/bzr/python-fedora/devel
     # cd python-fedora-devel
     # paver install
 
