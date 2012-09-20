@@ -206,6 +206,8 @@ class AccountSystem(BaseClient):
                 100058: 'sheltren@fedoraproject.org',
                 # Josh Boyer: jwboyer@gmail.com
                 100115: 'jwboyer@redhat.com',
+                # Matthew Miller: mattdm@mattdm.org
+                100042: 'mattdm@fedoraproject.org'
                 }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email
