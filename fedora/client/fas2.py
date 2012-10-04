@@ -391,7 +391,7 @@ class AccountSystem(BaseClient):
             return dict()
 
     def gravatar_url(self, username, size=64,
-                     default=None):
+                     default=None, lookup_email=True):
         ''' Returns a URL to a gravatar for a given username.
 
         :arg username: FAS username to construct a gravatar url for
@@ -400,6 +400,10 @@ class AccountSystem(BaseClient):
         :kwarg default: If gravatar does not have a gravatar image for the
             email address, this url is returned instead.  Default:
             the fedora logo at the specified size.
+        :kwarg lookup_email:  If true, use the email from FAS, otherwise just
+            append @fedoraproject.org to the username.  Not that this will be
+            much slower if lookup_email is set to True since we'd have to make a
+            query against FAS itself.
         :raises ValueError: if the size parameter is not allowed
         :rtype: :obj:`str`
         :returns: url of a gravatar for the user
@@ -426,8 +430,12 @@ class AccountSystem(BaseClient):
             'd': default,
         })
 
-        person = self.person_by_username(username)
-        email = person.get('email', 'no_email')
+        if lookup_email:
+            person = self.person_by_username(username)
+            email = person.get('email', 'no_email')
+        else:
+            email = "%s@fedoraproject.org" % username
+
         hash = md5(email).hexdigest()
 
         return "http://www.gravatar.com/avatar/%s?%s" % (hash, query_string)
