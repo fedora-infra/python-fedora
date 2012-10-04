@@ -6,6 +6,13 @@ NEWS
 :Date: 6 June 2012
 :Version: 0.3.x
 
+--------------------
+0.3.20 (in progress)
+--------------------
+
+* Added a lookup_email parameter to fedora.client.AccountSystem.gravatar_url()
+  to allow generating gravaar urls without looking up email addresses in fas.
+
 ---------
 0.3.29
 ---------

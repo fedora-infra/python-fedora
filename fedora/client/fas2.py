@@ -415,6 +415,9 @@ class AccountSystem(BaseClient):
         gravatar.
 
         .. versionadded:: 0.3.26
+        .. versionchanged: 0.3.30
+            Add lookup_email parameter to control whether we generate gravatar
+            urls with the email in fas or username@fedoraproject.org
         '''
         if size not in self._valid_gravatar_sizes:
             raise ValueError(b_('Size %(size)i disallowed.  Must be in'
