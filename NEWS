@@ -3,15 +3,17 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod
-:Date: 6 June 2012
+:Date: 6 Oct 2012
 :Version: 0.3.x
 
 --------------------
-0.3.20 (in progress)
+0.3.30 (in progress)
 --------------------
 
 * Added a lookup_email parameter to fedora.client.AccountSystem.gravatar_url()
   to allow generating gravaar urls without looking up email addresses in fas.
+* Fixed a bug in fedora.tg.utils.tg_absolute_url() where it was still appending
+  the csrf_token.
 
 ---------
 0.3.29

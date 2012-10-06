@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2008-2009  Red Hat, Inc.
+# Copyright (C) 2008-2012  Red Hat, Inc.
 # Copyright (C) 2008  Ricky Zhou
 # This file is part of python-fedora
 # 
@@ -180,9 +180,9 @@ def tg_absolute_url(tgpath='/', params=None, **kw):
     * Else, if the config setting 'tg.url_scheme' is set, use its value.
     * Else, use the value of 'cherrypy.request.scheme'.
 
-    .. note:: This comes from turbogears 1.1 branch.  If we find that
-        turbogears.absolute_url() exists, we replace this function with that
-        one.
+    .. note:: This comes from turbogears 1.1 branch with one change: we
+        call tg_url() rather than turbogears.url() so that it never adds the
+        csrf_token
 
     .. versionadded:: 0.3.19
        Modified from turbogears.absolute_url() for :ref:`CSRF-Protection`
@@ -246,10 +246,10 @@ def enable_csrf():
        Added to enable :ref:`CSRF-Protection`
     '''
     # Override the turbogears.url function with our own
+    # Note, this also changes turbogears.absolute_url since that calls
+    # turbogears.url
     turbogears.url = url
     turbogears.controllers.url = url
-    if hasattr(turbogears, 'absolute_url'):
-        turbogears.absolute_url = absolute_url
 
     # Ignore the _csrf_token parameter
     ignore = config.get('tg.ignore_parameters', [])
@@ -395,9 +395,6 @@ def json_or_redirect(forward_url):
             func(*args, **kwargs)
             raise redirect(forward_url)
     return decorator(call)
-
-if hasattr(turbogears, 'absolute_url'):
-    tg_absolute_url = turbogears.absolute_url
 
 if hasattr(turbogears, 'get_server_name'):
     _get_server_name = turbogears.get_server_name
