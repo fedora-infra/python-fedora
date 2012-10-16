@@ -199,7 +199,7 @@ class AccountSystem(BaseClient):
                 # Thomas Spura: 'spurath@students.uni-mainz.de'
                 111433: 'tomspur@fedoraproject.org',
                 # Adam Miller: 'maxamillion@gmail.com'
-                110673: 'maxamillion@fedoraproject.org',
+                110673: 'admiller@redhat.com',
                 # Garrett Holmstrom: 'garrett.holmstrom@gmail.com'
                 131739: 'gholms@fedoraproject.org',
                 # Tareq Al Jurf: taljurf.fedora@gmail.com
