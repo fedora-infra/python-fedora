@@ -6,6 +6,7 @@
 # Translators:
 # caoyu1099 <caoyu1099@gmail.com>, 2011.
 #   <chongfengnx@gmail.com>, 2012.
+# Christopher Meng <cickumqt@gmail.com>, 2012.
 # Ji WenCong <whs_jwc@163.com>, 2012.
 #   <lovenemesis@gmail.com>, 2011, 2012.
 #   <simonyan@fedoraproject.org>, 2011.
@@ -14,15 +15,15 @@ msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2012-02-13 14:44-0800\n"
-"PO-Revision-Date: 2012-02-16 09:12+0000\n"
-"Last-Translator: Ji WenCong <whs_jwc@163.com>\n"
+"PO-Revision-Date: 2012-08-03 04:42+0000\n"
+"Last-Translator: Christopher Meng <cickumqt@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 "Language: zh_CN\n"
-"Plural-Forms: nplurals=1; plural=0\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #: fedora/iterutils.py:36
 msgid "fedora.iterutils is deprecated.  Use kitchen.iterutils instead"
@@ -44,7 +45,7 @@ msgid ""
 "The Fedora Project runs many different services.  These services help us to\n"
 "package software, develop new programs, and generally put together the distro.\n"
 "This package contains software that helps us do that.\n"
-msgstr "\nFedora 项目运行着许多不同的服务。  这些服务帮助我们\n打包软件、开发新程序以及将它们组合成发行版。\n该软件包内含帮助我们完成这项工作的软件。\n"
+msgstr "\nFedora 项目运行着许多不同的服务。  这些服务帮助我们\n打包软件、开发新程序以及将它们组合成发行版。\n该软件包包含帮助我们完成这项工作的软件。\n"
 
 #: fedora/textutils.py:33
 msgid "fedora.textutils is deprecated.  Use kitchen.text.converters instead"
@@ -54,7 +55,7 @@ msgstr "fedora.textutils 已被废弃。  使用 kitchen.text.converters 替代"
 msgid ""
 "fedora.accounts.fas2 has moved to fedora.client.fas2.  This location will "
 "disappear in 0.4"
-msgstr "fedora.accounts.fas2 已迁移至 fedora.client.fas2.  该地址将在 0.4 时废弃"
+msgstr "fedora.accounts.fas2 已迁移至 fedora.client.fas2。  该地址将在 0.4 版本时废弃"
 
 #: fedora/client/__init__.py:89
 msgid ""
@@ -132,7 +133,7 @@ msgstr "大小 %(size)i 不被允许，应在 %(valid_sizes)r 以内。"
 
 #: fedora/client/fas2.py:454
 msgid "key must be one of \"id\", \"username\", or \"email\""
-msgstr "关键字必须是 \"id\", \"用户名\", or \"邮件\""
+msgstr "关键字必须是 \"id\"，\"用户名\"，or \"邮件\""
 
 #: fedora/client/fas2.py:461
 #, python-format
@@ -388,7 +389,7 @@ msgstr "请登录"
 
 #: fedora/tg/controllers.py:100
 msgid "You have successfully logged out."
-msgstr "你已经注销成功。"
+msgstr "您已经注销成功。"
 
 #: fedora/tg/tg1utils.py:38
 msgid ""
@@ -507,7 +508,7 @@ msgstr "欢迎"
 #: fedora/tg2/templates/genshi/login.html:64
 #: fedora/tg2/templates/mako/login.mak:61
 msgid "You are not logged in"
-msgstr "你还没有登录"
+msgstr "您还没有登录"
 
 #: fedora/tg/templates/genshi/login.html:89
 #: fedora/tg2/templates/genshi/login.html:70
@@ -668,7 +669,7 @@ msgstr "来自 FAS 的用户信息并非期望格式！"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:362
 msgid "An unknown error happened when trying to log you in. Please try again."
-msgstr "当你尝试登陆时发生了一个未知的错误。请再次尝试。"
+msgstr "当您尝试登陆时发生了一个未知的错误。请重试。"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:367
 msgid "In add_metadata"
@@ -689,4 +690,4 @@ msgstr "欢迎回来, %s!"
 
 #: fedora/wsgi/test/controllers/root.py:56
 msgid "We hope to see you soon!"
-msgstr "希望很快见到你！"
+msgstr "希望很快会再见到您！"

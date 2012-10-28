@@ -4,21 +4,22 @@
 # project.
 # 
 # Translators:
+#   <appukonrad@gmail.com>, 2012.
 # Jan Varta <jan.varta@atlas.cz>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2012-02-13 14:44-0800\n"
-"PO-Revision-Date: 2012-02-14 08:41+0000\n"
-"Last-Translator: Toshio Kuratomi <a.badger@gmail.com>\n"
+"PO-Revision-Date: 2012-09-05 13:09+0000\n"
+"Last-Translator: jui <appukonrad@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 "Language: cs\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
 #: fedora/iterutils.py:36
 msgid "fedora.iterutils is deprecated.  Use kitchen.iterutils instead"
@@ -40,7 +41,7 @@ msgid ""
 "The Fedora Project runs many different services.  These services help us to\n"
 "package software, develop new programs, and generally put together the distro.\n"
 "This package contains software that helps us do that.\n"
-msgstr ""
+msgstr "\nProjekt Fedora provozuje mnoho různých služeb.  Tyto služby nám pomáhají\nbalíčkovat software, vytvářet nové programy, a obecně dát dohromady distro.\nTento balíček obsahuje software, který nám to pomáhá dělat.\n"
 
 #: fedora/textutils.py:33
 msgid "fedora.textutils is deprecated.  Use kitchen.text.converters instead"
@@ -50,17 +51,17 @@ msgstr ""
 msgid ""
 "fedora.accounts.fas2 has moved to fedora.client.fas2.  This location will "
 "disappear in 0.4"
-msgstr ""
+msgstr "fedora.accounts.fas2 se stěhoval do fedora.client.fas2. Toto umístění zmizí v 0.4"
 
 #: fedora/client/__init__.py:89
 msgid ""
 "DictContainer is deprecated.  Use the Bunch class from python-bunch instead."
-msgstr ""
+msgstr "DictContainer je zastaralý.  Použijte místo toho Bunch třídy z python-banch."
 
 #: fedora/client/baseclient.py:94 fedora/client/baseclient.py:215
 #: fedora/client/baseclient.py:234 fedora/client/baseclient.py:246
 msgid "session_cookie is deprecated, use session_id instead"
-msgstr ""
+msgstr "session_cookie je zastaralý, použijte místo toho session_id"
 
 #: fedora/client/baseclient.py:112
 #, python-format
@@ -75,7 +76,7 @@ msgstr "Nelze vytvořit %(dir)s: %(error)s"
 #: fedora/client/baseclient.py:141
 #, python-format
 msgid "Unable to write to session file %(session)s: %(error)s"
-msgstr ""
+msgstr "Nelze zapisovat do souboru relace %(session)s: %(error)s"
 
 #: fedora/client/baseclient.py:164
 #, python-format
@@ -109,7 +110,7 @@ msgstr ""
 
 #: fedora/client/bodhi.py:195
 msgid "You must specify a username"
-msgstr ""
+msgstr "Musíte zadat uživatelské jméno"
 
 #: fedora/client/bodhi.py:265
 #, python-format
@@ -133,7 +134,7 @@ msgstr ""
 #: fedora/client/fas2.py:461
 #, python-format
 msgid "%(field)s is not a valid field to filter"
-msgstr ""
+msgstr "%(field)s není platné pole k filtrování"
 
 #: fedora/client/fas2.py:514
 msgid ""
@@ -144,11 +145,11 @@ msgstr ""
 
 #: fedora/client/fas2.py:696
 msgid "FAS server unable to retrieve group members"
-msgstr ""
+msgstr "FAS server nemůže načíst členy skupiny"
 
 #: fedora/client/fas2.py:718
 msgid "FAS server unable to retrieve user information"
-msgstr ""
+msgstr "FAS server nemůže načíst informace o uživateli"
 
 #: fedora/client/fasproxy.py:67
 msgid ""
@@ -165,12 +166,12 @@ msgstr ""
 #: fedora/client/pkgdb.py:208
 #, python-format
 msgid "PackageDB returned an error creating %(pkg)s: %(msg)s"
-msgstr ""
+msgstr "PackageDB vrátil chybu při vytváření %(pkg)s: %(msg)s"
 
 #: fedora/client/pkgdb.py:231 fedora/client/pkgdb.py:287
 #, python-format
 msgid "Unable to save all information for %(pkg)s: %(msg)s"
-msgstr ""
+msgstr "Nelze uložit všechny informace pro %(pkg)s: %(msg)s"
 
 #: fedora/client/pkgdb.py:323
 #, python-format
@@ -252,7 +253,7 @@ msgstr ""
 
 #: fedora/client/proxyclient.py:280
 msgid "username and password must both be set in auth_params"
-msgstr ""
+msgstr "Uživatelské jméno a heslo musí být nastaveno v auth_params"
 
 #: fedora/client/proxyclient.py:283
 msgid ""
@@ -263,27 +264,27 @@ msgstr ""
 #: fedora/client/proxyclient.py:372
 #, python-format
 msgid "Creating request %(url)s"
-msgstr ""
+msgstr "Creating request %(url)s"
 
 #: fedora/client/proxyclient.py:374
 #, python-format
 msgid "Headers: %(header)s"
-msgstr ""
+msgstr "Hlavičky: %(header)s"
 
 #: fedora/client/proxyclient.py:379
 #, python-format
 msgid "Data: %(data)s"
-msgstr ""
+msgstr "Data: %(data)s"
 
 #: fedora/client/proxyclient.py:396
 msgid "Authentication failed logging in"
-msgstr ""
+msgstr "Ověření přihlášení se nezdařilo"
 
 #: fedora/client/proxyclient.py:397
 msgid ""
 "Unable to log into server.  Invalid authentication tokens.  Send new "
 "username and password"
-msgstr ""
+msgstr "Nelze se přihlásit do serveru.  Neplatné ověřovací tokeny. Odešlete nové uživatelské jméno a heslo"
 
 #: fedora/client/proxyclient.py:403
 #, python-format
@@ -345,11 +346,11 @@ msgstr ""
 
 #: fedora/django/auth/models.py:50
 msgid "Loading FAS groups..."
-msgstr ""
+msgstr "Nahrávání FAS skupin..."
 
 #: fedora/django/auth/models.py:56
 msgid "Unable to load FAS groups. Did you set FAS_USERNAME and FAS_PASSWORD?"
-msgstr ""
+msgstr "Nelze načíst FAS skupiny. Nastavili jste FAS_USERNAME a FAS_PASSWORD?"
 
 #: fedora/django/auth/models.py:63
 msgid ""
@@ -361,12 +362,12 @@ msgstr ""
 msgid ""
 "fedora.tg.client has moved to fedora.client.  This location will disappear "
 "in 0.4"
-msgstr ""
+msgstr "fedora.tg.client se přestěhoval do fedora.client. Toto umístění zmizí ve verzi 0.4"
 
 #: fedora/tg/controllers.py:60
 #, python-format
 msgid "Welcome, %s"
-msgstr ""
+msgstr "Vítejte, %s"
 
 #: fedora/tg/controllers.py:69
 msgid ""
@@ -380,11 +381,11 @@ msgstr ""
 
 #: fedora/tg/controllers.py:75
 msgid "Please log in."
-msgstr ""
+msgstr "Přihlaste se, prosím."
 
 #: fedora/tg/controllers.py:100
 msgid "You have successfully logged out."
-msgstr ""
+msgstr "Jste úspěšně odhlášeni."
 
 #: fedora/tg/tg1utils.py:38
 msgid ""
@@ -435,17 +436,17 @@ msgstr ""
 #: fedora/tg2/templates/genshi/login.html:9
 #: fedora/tg2/templates/mako/login.mak:3
 msgid "Log In"
-msgstr ""
+msgstr "Přihlášení"
 
 #: fedora/tg/templates/genshi/login.html:14
 msgid "User Name:"
-msgstr ""
+msgstr "Uživatelské jméno:"
 
 #: fedora/tg/templates/genshi/login.html:17
 #: fedora/tg2/templates/genshi/login.html:31
 #: fedora/tg2/templates/mako/login.mak:25
 msgid "Password:"
-msgstr ""
+msgstr "Heslo:"
 
 #: fedora/tg/templates/genshi/login.html:21
 #: fedora/tg/templates/genshi/login.html:84
@@ -454,13 +455,13 @@ msgstr ""
 #: fedora/tg2/templates/mako/login.mak:27
 #: fedora/tg2/templates/mako/login.mak:63
 msgid "Login"
-msgstr ""
+msgstr "Přihlásit"
 
 #: fedora/tg/templates/genshi/login.html:28
 #: fedora/tg2/templates/genshi/login.html:14
 #: fedora/tg2/templates/mako/login.mak:9
 msgid "CSRF attacks"
-msgstr ""
+msgstr "CSRF útoky"
 
 #: fedora/tg/templates/genshi/login.html:29
 #: fedora/tg2/templates/genshi/login.html:15
@@ -479,49 +480,49 @@ msgstr ""
 #: fedora/tg2/templates/genshi/login.html:23
 #: fedora/tg2/templates/mako/login.mak:18
 msgid "I am a human"
-msgstr ""
+msgstr "Jsem člověk"
 
 #: fedora/tg/templates/genshi/login.html:41
 #: fedora/tg2/templates/genshi/login.html:37
 #: fedora/tg2/templates/mako/login.mak:31
 msgid "Forgot Password?"
-msgstr ""
+msgstr "Zapomenuté heslo?"
 
 #: fedora/tg/templates/genshi/login.html:42
 #: fedora/tg2/templates/genshi/login.html:38
 #: fedora/tg2/templates/mako/login.mak:32
 msgid "Sign Up"
-msgstr ""
+msgstr "Registrace"
 
 #: fedora/tg/templates/genshi/login.html:60
 #: fedora/tg2/templates/genshi/login.html:47
 #: fedora/tg2/templates/mako/login.mak:40
 msgid "Welcome"
-msgstr ""
+msgstr "Vítejte"
 
 #: fedora/tg/templates/genshi/login.html:82
 #: fedora/tg2/templates/genshi/login.html:64
 #: fedora/tg2/templates/mako/login.mak:61
 msgid "You are not logged in"
-msgstr ""
+msgstr "Nejste přihlášeni"
 
 #: fedora/tg/templates/genshi/login.html:89
 #: fedora/tg2/templates/genshi/login.html:70
 #: fedora/tg2/templates/mako/login.mak:69
 msgid "CSRF protected"
-msgstr ""
+msgstr "CSRF chráněno"
 
 #: fedora/tg/templates/genshi/login.html:91
 #: fedora/tg2/templates/genshi/login.html:72
 #: fedora/tg2/templates/mako/login.mak:72
 msgid "Verify Login"
-msgstr ""
+msgstr "Ověřit přihlášení"
 
 #: fedora/tg/templates/genshi/login.html:97
 #: fedora/tg2/templates/genshi/login.html:78
 #: fedora/tg2/templates/mako/login.mak:79
 msgid "Logout"
-msgstr ""
+msgstr "Odhlásit"
 
 #: fedora/tg/visit/jsonfasvisit1.py:107 fedora/tg/visit/jsonfasvisit2.py:136
 #, python-format
@@ -535,7 +536,7 @@ msgstr ""
 
 #: fedora/wsgi/csrf.py:117
 msgid "Creating CSRFProtectionMiddleware"
-msgstr ""
+msgstr "Vytváření CSRF Protection Middleware"
 
 #: fedora/wsgi/csrf.py:126
 #, python-format
@@ -584,15 +585,15 @@ msgstr ""
 #: fedora/wsgi/csrf.py:256
 #, python-format
 msgid "session_id = %(s_id)r"
-msgstr ""
+msgstr "session_id = %(s_id)r"
 
 #: fedora/wsgi/csrf.py:263
 msgid "Identity updated with CSRF token"
-msgstr ""
+msgstr "Identita aktualizována s CSRF tokenem"
 
 #: fedora/wsgi/csrf.py:266
 msgid "Setting CSRF_AUTH_STATE"
-msgstr ""
+msgstr "Nastavení CSRF_AUTH_STATE"
 
 #: fedora/wsgi/csrf.py:276
 msgid "Got HTTPFound(302) from repoze.who.application"
@@ -601,7 +602,7 @@ msgstr ""
 #: fedora/wsgi/csrf.py:289
 #, python-format
 msgid "Altered headers: %(headers)s"
-msgstr ""
+msgstr "Pozměněné hlavičky: %(headers)s"
 
 #: fedora/wsgi/csrf.py:292
 #, python-format
@@ -646,12 +647,12 @@ msgstr ""
 
 #: fedora/wsgi/faswho/faswhoplugin.py:339
 msgid "Parameters for authenticating not found"
-msgstr ""
+msgstr "Parametry pro ověření nebyly nalezeny"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:345
 #, python-format
 msgid "Authentication failed: %s"
-msgstr ""
+msgstr "Ověření se nezdařilo: %s"
 
 #: fedora/wsgi/faswho/faswhoplugin.py:349
 #, python-format
@@ -681,8 +682,8 @@ msgstr ""
 #: fedora/wsgi/test/controllers/root.py:46
 #, python-format
 msgid "Welcome back, %s!"
-msgstr ""
+msgstr "Vítejte zpět, %s!"
 
 #: fedora/wsgi/test/controllers/root.py:56
 msgid "We hope to see you soon!"
-msgstr ""
+msgstr "Doufáme, že se zase brzy uvidíme!"
