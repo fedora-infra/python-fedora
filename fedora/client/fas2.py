@@ -70,7 +70,9 @@ class AccountSystem(BaseClient):
     other details so you can concentrate on the methods that are important to
     your program.
 
-    .. warning:: If your code is trying to use the AccountSystem object to
+    .. warning::
+
+        If your code is trying to use the AccountSystem object to
         connect to fas for multiple users you probably want to use
         :class:`~fedora.client.FasProxyClient` instead.  If your code is
         trying to reuse a single instance of AccountSystem for multiple users
