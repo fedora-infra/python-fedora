@@ -74,7 +74,7 @@ class FasProxyClient(ProxyClient):
 
         :arg username: username to send to FAS
         :arg password: Password to verify the username with
-        :returns" the session id FAS has associated with the user
+        :returns: the session id FAS has associated with the user
         :raises AuthError: if the username and password do not work
         '''
         return self.send_request('/login',

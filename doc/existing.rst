@@ -24,6 +24,25 @@ contributors.
     :members:
     :undoc-members:
 
+Threadsafe Account System Access
+================================
+
+It is not safe to use a single instance of the
+:class:`~fedora.client.AccountSystem` object in multiple threads.  This is
+because instance variables are used to hold some connection-specific
+information (for instance, the user who is logging in).  For this reason, we
+also provide the :class:`fedora.client.FasProxyClient` object.
+
+This is especially handy when writing authn and authz adaptors that talk to
+fas from a multithreaded webserver.
+
+.. toctree::
+    :maxdepth: 2
+
+.. autoclass:: fedora.client.FasProxyClient
+    :members:
+    :undoc-members:
+
 .. _`Package-Database`:
 .. _`Pkgdb`:
 
