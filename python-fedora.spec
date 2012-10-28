@@ -3,7 +3,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.3.29
+Version:        0.3.30
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -145,6 +145,10 @@ rm -rf %{buildroot}
 %{python_sitelib}/fedora/django/
 
 %changelog
+* Thu Oct 11 2012 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.30-1
+- Fix a bug in fedora.tg.utils.tg_absolute_url
+- Add a lookup email parameter to gravatar lookups
+
 * Wed Jun 6 2012 Ricky Elrd <codeblock@fedoraproject.org> - 0.3.29-1
 - Add a create_group() method to AccountSystem.
 
