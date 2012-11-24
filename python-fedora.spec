@@ -3,7 +3,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.3.30
+Version:        0.3.31
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -145,6 +145,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/fedora/django/
 
 %changelog
+* Sat Nov 23 2012 Xavier Lamien <laxathom@lxtnow.net> - 0.3.31-1
+- Make TG's loginFrom and CSRF's text translated from tg-apss.
+
 * Thu Oct 11 2012 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.30-1
 - Fix a bug in fedora.tg.utils.tg_absolute_url
 - Add a lookup email parameter to gravatar lookups
