@@ -1,46 +1,44 @@
+# -*- coding: utf-8 -*-
 # Flask-FAS - A Flask extension for authorizing users with FAS
+#
 # Primary maintainer: Ian Weller <ianweller@fedoraproject.org>
 #
 # Copyright (c) 2012, Red Hat, Inc.
+# This file is part of python-fedora
 #
-# All rights reserved.
+# python-fedora is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
+# python-fedora is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-# * Redistributions of source code must retain the above copyright notice, this
-# list of conditions and the following disclaimer.
-# * Redistributions in binary form must reproduce the above copyright notice,
-# this list of conditions and the following disclaimer in the documentation
-# and/or other materials provided with the distribution.
-# * Neither the name of the Red Hat, Inc. nor the names of its contributors may
-# be used to endorse or promote products derived from this software without
-# specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ''AS IS'' AND ANY
-# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-# DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
-# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# You should have received a copy of the GNU Lesser General Public
+# License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
+
+'''
+FAS authentication plugin for the flask web framework
+
+.. moduleauthor:: Ian Weller <ianweller@fedoraproject.org>
+
+..versionadded:: 0.3.30
+'''
+from functools import wraps
 
 import flask
 from flask import request
-
-from fedora.client.fasproxy import FasProxyClient
-from fedora.client import AuthError
 
 try:
     from flask import _app_ctx_stack as stack
 except ImportError:
     from flask import _request_ctx_stack as stack
 
-__version__ = '0.1.0'  # http://semver.org/
-
+from fedora import __version__
+from fedora.client.fasproxy import FasProxyClient
+from fedora.client import AuthError
 
 class FAS(object):
 
@@ -101,9 +99,15 @@ class FAS(object):
         return response
 
     def login(self, username, password):
-        """
-        Tries to log in a user. Returns True if successful, False if not. Sets
-        the session ID cookie.
+        """Tries to log in a user.
+
+        Sets the session ID cookie on :attr:`flask.g.fas_session_id` if the
+        user was authenticated successfully and the user information returned
+        from fas on :attr:`flask.g.fas_user`.
+
+        :arg username: The username to log in
+        :arg password: The password for the user logging in
+        :returns: True if successful.  False if unsuccessful.
         """
         try:
             session_id, junk = self.fasclient.login(username, password)
@@ -114,11 +118,49 @@ class FAS(object):
                 user.groups = []
         except AuthError:
             return False
+        except Exception:
+            # We don't differentiate here between types of failures.  Could
+            # log a warning here in the future
+            return False
         flask.g.fas_session_id = session_id
         flask.g.fas_user = user
         return True
 
     def logout(self):
+        '''Logout the user associated with this session
+        '''
         self.fasclient.logout(flask.g.fas_session_id)
         flask.g.fas_session_id = None
         flask.g.fas_user = None
+
+
+# This is a decorator we can use with any HTTP method (except login, obviously)
+# to require a login.
+# If the user is not logged in, it will redirect them to the login form.
+# http://flask.pocoo.org/docs/patterns/viewdecorators/#login-required-decorator
+def fas_login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if flask.g.fas_user is None:
+            return flask.redirect(flask.url_for('auth_login',
+                                                next=flask.request.url))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def cla_plus_one_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        valid = True
+        if flask.g.fas_user is None:
+            valid = False
+        else:
+            non_cla_groups = [x.name for x in flask.g.fas_user.approved_memberships
+                      if x.group_type != 'cla']
+            if len(non_cla_groups) == 0:
+                valid = False
+        if not valid:
+            return flask.redirect(flask.url_for('auth_login',
+                                                next=flask.request.url))
+        else:
+            return f(*args, **kwargs)
+    return decorated_function
