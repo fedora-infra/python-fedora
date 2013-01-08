@@ -40,6 +40,7 @@ from fedora import __version__
 from fedora.client.fasproxy import FasProxyClient
 from fedora.client import AuthError
 
+
 class FAS(object):
 
     def __init__(self, app=None):
@@ -138,23 +139,35 @@ class FAS(object):
 # to require a login.
 # If the user is not logged in, it will redirect them to the login form.
 # http://flask.pocoo.org/docs/patterns/viewdecorators/#login-required-decorator
-def fas_login_required(f):
-    @wraps(f)
+def fas_login_required(function):
+    """ Flask decorator to ensure that the user is logged in against FAS.
+    To use this decorator you need to have a function name 'auth_login' without
+    this function the redirect if the user is not logged in will not work.
+
+    """
+    @wraps(function)
     def decorated_function(*args, **kwargs):
         if flask.g.fas_user is None:
             return flask.redirect(flask.url_for('auth_login',
                                                 next=flask.request.url))
-        return f(*args, **kwargs)
+        return function(*args, **kwargs)
     return decorated_function
 
-def cla_plus_one_required(f):
-    @wraps(f)
+
+def cla_plus_one_required(function):
+    """ Flask decorator to retrict access to CLA+1.
+    To use this decorator you need to have a function name 'auth_login' without
+    this function the redirect if the user is not logged in will not work.
+
+    """
+    @wraps(function)
     def decorated_function(*args, **kwargs):
         valid = True
         if flask.g.fas_user is None:
             valid = False
         else:
-            non_cla_groups = [x.name for x in flask.g.fas_user.approved_memberships
+            non_cla_groups = [x.name
+                      for x in flask.g.fas_user.approved_memberships
                       if x.group_type != 'cla']
             if len(non_cla_groups) == 0:
                 valid = False
@@ -162,5 +175,5 @@ def cla_plus_one_required(f):
             return flask.redirect(flask.url_for('auth_login',
                                                 next=flask.request.url))
         else:
-            return f(*args, **kwargs)
+            return function(*args, **kwargs)
     return decorated_function
