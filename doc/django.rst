@@ -8,6 +8,13 @@ Fedora Django Authentication Backend
 The django.auth package provides an authentication backend for Django
 projects.
 
+.. note::
+
+    Django authentication does not provide :term:`single sign-on` with other
+    Fedora web apps.  it also does not provide :term:`CSRF` protection.  Look
+    at the way that Dango's builtin forms implement :term:`CSRF` protection
+    for guidance on how to protect against this sort of attack.
+
 ------------------
 fedora.django.auth
 ------------------
