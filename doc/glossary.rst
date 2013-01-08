@@ -43,6 +43,14 @@ Glossary
         getting a user to actively click on a link on an attacked website by
         mistake.
 
+    flask
+        A simple Python web framework that we're using in parts of Fedora
+        Infrastructure.  It provides good documentation and simplicity in its
+        design.
+
+        .. seealso:: http://flask.pocoo.org/docs/
+
+
     JSON
         `JavaScript Object Notation <http://json.org>`_ is a format for
         marshalling data.  It is based on a subset of JavaScript that is used

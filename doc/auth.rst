@@ -62,6 +62,16 @@ Django Authentication Backend
 
     django
 
+
+.. _flaskauth:
+
+Flask Auth Plugin
+=================
+.. toctree::
+    :maxdepth: 2
+
+    flask_fas
+
 .. _faswho:
 
 FAS Who Plugin for TurboGears2
