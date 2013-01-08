@@ -7,6 +7,13 @@ NEWS
 :Version: 0.3.x
 
 ------
+0.3.31
+(not yet released)
+------
+
+* Fix localization of login templates (laxathom)
+
+------
 0.3.30
 ------
 

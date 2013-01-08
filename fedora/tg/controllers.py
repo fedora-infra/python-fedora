@@ -28,7 +28,18 @@ from cherrypy import request, response
 
 from fedora.tg.utils import request_format
 
-from fedora import _
+from turbogears.i18n.utils import get_locale 
+from turbogears.i18n.tg_gettext import tg_gettext 
+ 
+def _(msg): 
+    ''' 
+    Translate given message from current tg locale 
+ 
+    Parameters 
+    :message: text to be translated 
+    Returns: Translated message string 
+    ''' 
+    return tg_gettext(msg, get_locale(), 'python-fedora')
 
 def login(forward_url=None, *args, **kwargs):
     '''Page to become authenticated to the Account System.
