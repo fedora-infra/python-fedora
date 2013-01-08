@@ -31,10 +31,11 @@ options(
         author=AUTHOR,
         author_email=EMAIL,
         license=LICENSE,
-        keywords='Fedora Python Modules',
+        keywords='Fedora Python Webservices',
         url=URL,
         download_url=DOWNLOAD_URL,
         packages=find_packages(),
+        py_modules=['flask_fas'],
         include_package_data=True,
         # non-setuptools package.  When everything we care about uses
         # python-2.5 distutils we can add these:
@@ -46,6 +47,7 @@ options(
         extras_require = {
             'tg' : ['TurboGears >= 1.0.4', 'SQLAlchemy', 'decorator'],
             'wsgi': ['repoze.who', 'Beaker', 'Paste'],
+            'flask': ['Flask', 'Flask_WTF'],
             },
         #test_require = ['TurboGears >= 2.0', 'nose', ],
         entry_points = {
@@ -76,8 +78,7 @@ options(
             'Framework :: Django',
             'Intended Audience :: Developers',
             'Intended Audience :: System Administrators',
-            'License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)',
-            'Programming Language :: Python :: 2.4',
+            'License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)',
             'Programming Language :: Python :: 2.5',
             'Programming Language :: Python :: 2.6',
             'Programming Language :: Python :: 2.7',
