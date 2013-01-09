@@ -3,7 +3,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.3.31
+Version:        0.3.30
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
