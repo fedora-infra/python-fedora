@@ -55,6 +55,7 @@ Sample Application
 The following is a sample, minimal flask application that uses fas_flask for
 authentication::
 
+    #!/usr/bin/python -tt
     # Flask-FAS - A Flask extension for authorizing users with FAS
     # Primary maintainer: Ian Weller <ianweller@fedoraproject.org>
     #
@@ -83,16 +84,13 @@ authentication::
     # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
     # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-    import os
-    from functools import wraps
-
     # This is a sample application. In addition to using Flask-FAS, it uses
     # Flask-WTF (WTForms) to handle the login form. Use of Flask-WTF is highly
     # recommended because of its CSRF checking.
 
     import flask
     from flask.ext import wtf
-    from flask.ext.fas import FAS
+    from flask.ext.fas import FAS, fas_login_required
 
     # Set up Flask application
     app = flask.Flask(__name__)
@@ -131,7 +129,7 @@ authentication::
         <a href="{{ url_for("logout") }}">Log out</a>
     {% else %}
         <p>You are not logged in &mdash;
-        <a href="{{ url_for("login") }}">Log in</a>
+        <a href="{{ url_for("auth_login", next=request.url) + '' }}">Log in</a>
     {% endif %}
     &mdash; <a href="{{ url_for("index") }}">Main page</a></p>
     """
@@ -148,7 +146,7 @@ authentication::
 
 
     @app.route('/login', methods=['GET', 'POST'])
-    def login():
+    def auth_login():
         # Your application should probably do some checking to make sure the URL
         # given in the next request argument is sane. (For example, having next set
         # to the login page will cause a redirect loop.) Some more information:
@@ -198,21 +196,19 @@ authentication::
             fas.logout()
         return flask.redirect(flask.url_for('index'))
 
-
-    # This is a decorator we can use with any HTTP method (except login, obviously)
-    # to require a login. In this application it is only used with claplusone and
-    # secret. If the user is not logged in, it will redirect them to the login form.
-    # http://flask.pocoo.org/docs/patterns/viewdecorators/#login-required-decorator
-    def login_required(f):
-        @wraps(f)
-        def decorated_function(*args, **kwargs):
-            if flask.g.fas_user is None:
-                return flask.redirect(flask.url_for('auth_login',
-                                                    next=flask.request.url))
-            return f(*args, **kwargs)
-        return decorated_function
+    # This demonstrates the use of the fas_login_required decorator. The
+    # secret message can only be viewed by those who are logged in.
+    @app.route('/secret')
+    @fas_login_required
+    def secret():
+        data = TEMPLATE_START + '<p>Be sure to drink your Ovaltine</p>'
+        return flask.render_template_string(data)
 
 
+    # This demonstrates checking for group membership inside of a function.
+    # The flask_fas adapter also provides a cla_plus_one_required decorator that
+    # can restrict a url so that you can only access it from an account that has
+    # cla +1.
     @app.route('/claplusone')
     def claplusone():
         data = TEMPLATE_START
@@ -226,15 +222,6 @@ authentication::
             data += '<p>Your account is cla+1.</p>'
         else:
             data += '<p>Your account is <em>not</em> cla+1.</p>'
-        return flask.render_template_string(data)
-
-
-    # This demonstrates the use of the login_required decorator defined above. The
-    # secret message can only be viewed by those who are logged in.
-    @app.route('/secret')
-    @login_required
-    def secret():
-        data = TEMPLATE_START + '<p>Be sure to drink your Ovaltine</p>'
         return flask.render_template_string(data)
 
 
