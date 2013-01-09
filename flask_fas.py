@@ -141,9 +141,9 @@ class FAS(object):
 # http://flask.pocoo.org/docs/patterns/viewdecorators/#login-required-decorator
 def fas_login_required(function):
     """ Flask decorator to ensure that the user is logged in against FAS.
-    To use this decorator you need to have a function name 'auth_login' without
-    this function the redirect if the user is not logged in will not work.
-
+    To use this decorator you need to have a function named 'auth_login'.
+    Without that function the redirect if the user is not logged in will not
+    work.
     """
     @wraps(function)
     def decorated_function(*args, **kwargs):
@@ -156,9 +156,9 @@ def fas_login_required(function):
 
 def cla_plus_one_required(function):
     """ Flask decorator to retrict access to CLA+1.
-    To use this decorator you need to have a function name 'auth_login' without
-    this function the redirect if the user is not logged in will not work.
-
+    To use this decorator you need to have a function named 'auth_login'.
+    Without that function the redirect if the user is not logged in will not
+    work.
     """
     @wraps(function)
     def decorated_function(*args, **kwargs):
