@@ -241,7 +241,7 @@ rm -rf %{buildroot}
 * Wed Oct 21 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.16-1
 - New release 0.3.16.
 
-* Mon Aug 06 2009 Ricky Zhou <ricky@fedoraproject.org> - 0.3.15-1
+* Thu Aug 06 2009 Ricky Zhou <ricky@fedoraproject.org> - 0.3.15-1
 - New release 0.3.15.
 - Relicensed to LGPLv2+
 
@@ -255,7 +255,7 @@ rm -rf %{buildroot}
 - New release.  Some new pkgdb API, defaultdict implementation, and a
   bugfix to response code from the shipped login controller.
 
-* Wed Jun 11 2009 Ricky Zhou <ricky@fedoraproject.org> - 0.3.12.1-2
+* Thu Jun 11 2009 Ricky Zhou <ricky@fedoraproject.org> - 0.3.12.1-2
 - Backport a patch to add a bugzilla_email entry.
 
 * Wed Jun 03 2009 Ricky Zhou <ricky@fedoraproject.org> - 0.3.12.1-1
