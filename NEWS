@@ -3,8 +3,20 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod
-:Date: 6 June 2012
+:Date: 10 January 2013
 :Version: 0.3.x
+
+------
+0.3.30
+------
+
+* Added a lookup_email parameter to fedora.client.AccountSystem.gravatar_url()
+  to allow generating gravaar urls without looking up email addresses in fas.
+* Fixed a bug in fedora.tg.utils.tg_absolute_url() where it was still appending
+  the csrf_token.
+* Add an auth adapter for flask web apps to authenticate to FAS
+* New minimum version of python: requires python-2.5 or higher
+* Fix localization of login templates (laxathom)
 
 ---------
 0.3.29

@@ -59,7 +59,8 @@ USERFIELDS = ['affiliation', 'bugzilla_email', 'certificate_serial',
         'ircnick', 'latitude', 'last_seen', 'longitude', 'password',
         'password_changed', 'passwordtoken', 'postal_address', 'privacy',
         'locale', 'ssh_key', 'status', 'status_change', 'telephone',
-        'unverified_email', 'timezone', 'username', ]
+        'unverified_email', 'timezone', 'username', 'security_question', 
+        'security_answer', ]
 
 class AccountSystem(BaseClient):
     '''An object for querying the Fedora Account System.
@@ -68,6 +69,20 @@ class AccountSystem(BaseClient):
     Account System.  It abstracts the http requests, cookie handling, and
     other details so you can concentrate on the methods that are important to
     your program.
+
+    .. warning::
+
+        If your code is trying to use the AccountSystem object to
+        connect to fas for multiple users you probably want to use
+        :class:`~fedora.client.FasProxyClient` instead.  If your code is
+        trying to reuse a single instance of AccountSystem for multiple users
+        you *definitely* want to use :class:`~fedora.client.FasProxyClient`
+        instead.  Using AccountSystem in these cases may result in a user
+        being logged in as a different user.  (This may be the case even if
+        you instantiate a new AccountSystem object for each user if
+        :attr:cache_session: is True since that creates a file on the file
+        system that can end up loading session credentials for the wrong
+        person.
 
     .. versionchanged:: 0.3.26
         Added :meth:`~fedora.client.AccountSystem.gravatar_url` that returns
@@ -186,7 +201,7 @@ class AccountSystem(BaseClient):
                 # Thomas Spura: 'spurath@students.uni-mainz.de'
                 111433: 'tomspur@fedoraproject.org',
                 # Adam Miller: 'maxamillion@gmail.com'
-                110673: 'maxamillion@fedoraproject.org',
+                110673: 'admiller@redhat.com',
                 # Garrett Holmstrom: 'garrett.holmstrom@gmail.com'
                 131739: 'gholms@fedoraproject.org',
                 # Tareq Al Jurf: taljurf.fedora@gmail.com
@@ -205,6 +220,12 @@ class AccountSystem(BaseClient):
                 100058: 'sheltren@fedoraproject.org',
                 # Josh Boyer: jwboyer@gmail.com
                 100115: 'jwboyer@redhat.com',
+                # Matthew Miller: mattdm@mattdm.org
+                100042: 'mattdm@redhat.com',
+                # Jamie Nguyen: j@jamielinux.com
+                160587: 'jamielinux@fedoraproject.org',
+                # Nikos Roussos: nikos@roussos.cc
+                144436: 'comzeradd@fedoraproject.org',
                 }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email
@@ -386,7 +407,7 @@ class AccountSystem(BaseClient):
             return dict()
 
     def gravatar_url(self, username, size=64,
-                     default=None):
+                     default=None, lookup_email=True):
         ''' Returns a URL to a gravatar for a given username.
 
         :arg username: FAS username to construct a gravatar url for
@@ -395,6 +416,10 @@ class AccountSystem(BaseClient):
         :kwarg default: If gravatar does not have a gravatar image for the
             email address, this url is returned instead.  Default:
             the fedora logo at the specified size.
+        :kwarg lookup_email:  If true, use the email from FAS, otherwise just
+            append @fedoraproject.org to the username.  Not that this will be
+            much slower if lookup_email is set to True since we'd have to make a
+            query against FAS itself.
         :raises ValueError: if the size parameter is not allowed
         :rtype: :obj:`str`
         :returns: url of a gravatar for the user
@@ -406,6 +431,9 @@ class AccountSystem(BaseClient):
         gravatar.
 
         .. versionadded:: 0.3.26
+        .. versionchanged: 0.3.30
+            Add lookup_email parameter to control whether we generate gravatar
+            urls with the email in fas or username@fedoraproject.org
         '''
         if size not in self._valid_gravatar_sizes:
             raise ValueError(b_('Size %(size)i disallowed.  Must be in'
@@ -421,8 +449,12 @@ class AccountSystem(BaseClient):
             'd': default,
         })
 
-        person = self.person_by_username(username)
-        email = person.get('email', 'no_email')
+        if lookup_email:
+            person = self.person_by_username(username)
+            email = person.get('email', 'no_email')
+        else:
+            email = "%s@fedoraproject.org" % username
+
         hash = md5(email).hexdigest()
 
         return "http://www.gravatar.com/avatar/%s?%s" % (hash, query_string)

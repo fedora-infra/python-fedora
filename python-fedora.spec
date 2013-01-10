@@ -3,7 +3,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.3.29
+Version:        0.3.30
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -98,6 +98,19 @@ Python modules that help with building Fedora Services.  This package includes
 an auth provider to let django applications authenticate against the Fedora
 Account System.
 
+%package flask
+Summary: Python modules for flask applications authing to Fedora Account System
+Group:          Development/Languages
+License:        LGPLv2+
+Requires: %{name} = %{version}-%{release}
+Requires: python-flask
+Requires: python-flask-wtf
+
+%description flask
+Python modules that help with building Fedora Services.  This package includes
+an auth provider to let flask applications authenticate against the Fedora
+Account System.
+
 %prep
 %setup -q -n %{name}-%{version}%{?prerel}
 
@@ -133,6 +146,7 @@ rm -rf %{buildroot}
 %exclude %{python_sitelib}/fedora/tg2/
 %exclude %{python_sitelib}/fedora/wsgi/
 %exclude %{python_sitelib}/fedora/django/
+%exclude %{python_sitelib}/flask_fas.py*
 
 %files turbogears
 %{python_sitelib}/fedora/tg/
@@ -144,7 +158,16 @@ rm -rf %{buildroot}
 %files django
 %{python_sitelib}/fedora/django/
 
+%files flask
+%{python_sitelib}/flask_fas.py*
+
 %changelog
+* Thu Jan 10 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.30-1
+- Make TG's loginForm and CSRF's text translated from tg-apps (laxathom).
+- Fix a bug in fedora.tg.utils.tg_absolute_url
+- Add a lookup email parameter to gravatar lookups
+- Add an auth provider for flask
+
 * Wed Jun 6 2012 Ricky Elrd <codeblock@fedoraproject.org> - 0.3.29-1
 - Add a create_group() method to AccountSystem.
 
