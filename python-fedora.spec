@@ -162,8 +162,8 @@ rm -rf %{buildroot}
 %{python_sitelib}/flask_fas.py*
 
 %changelog
-* Sat Nov 23 2012 Xavier Lamien <laxathom@lxtnow.net> - 0.3.30-1
-- Make TG's loginFrom and CSRF's text translated from tg-apss.
+* Thu Jan 10 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.30-1
+- Make TG's loginForm and CSRF's text translated from tg-apps (laxathom).
 - Fix a bug in fedora.tg.utils.tg_absolute_url
 - Add a lookup email parameter to gravatar lookups
 - Add an auth provider for flask
