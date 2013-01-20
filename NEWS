@@ -7,6 +7,12 @@ NEWS
 :Version: 0.3.x
 
 ------
+0.3.31 (not yet released)
+------
+
+* Fix a problem getting encodings in the soprovidercsrf tg1 identity provider
+
+------
 0.3.30
 ------
 
