@@ -301,7 +301,7 @@ class SqlObjectCsrfIdentityProvider(object):
             log.info("Succesfully loaded \"%s\"" % user_class_path)
         try:
             self.user_class_db_encoding = \
-                user_class.sqlmeta.columns['user_name'].dbEncoding
+                user_class.sqlmeta.columns['user_name'].dbEncoding or 'UTF-8'
         except (KeyError, AttributeError):
             self.user_class_db_encoding = 'UTF-8'
         group_class_path = get("identity.soprovider.model.group",
