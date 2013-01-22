@@ -12,7 +12,7 @@
   <div class="panel">
     <div id="login-box" class="login">
       <h3>${_('Log In')}</h3>
-      <p py:content="str(select('*|text()'))" />
+      <p py:content="unicode(select('*|text()'))" />
       <form py:if="not tg.identity.only_token"
         action="${tg.url(previous_url)}" method="post">
         <div class="field"><label for="user_name">${_('User Name:')}</label>
@@ -62,7 +62,7 @@
 <py:match path="logintoolitem" once="true">
   <li py:if="not tg.identity.anonymous" class="toolitem">
     ${_('Welcome')}
-    <div py:choose="str(select('@href'))" py:strip="True">
+    <div py:choose="unicode(select('@href'))" py:strip="True">
       <span py:when="''" py:choose="" py:strip="True">
         <span py:when="hasattr(tg.identity.user, 'display_name')"
           py:replace="tg.identity.user.display_name" />
