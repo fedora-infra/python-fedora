@@ -11,6 +11,8 @@ NEWS
 ------
 
 * Fix a problem getting encodings in the soprovidercsrf tg1 identity provider
+* Fix for login template issuing a traceback when viewed as a localized page
+  (lmacken)
 
 ------
 0.3.30
