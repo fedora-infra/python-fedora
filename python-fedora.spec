@@ -4,7 +4,7 @@
 
 Name:           python-fedora
 Version:        0.3.31
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
 Group:          Development/Languages
@@ -30,12 +30,12 @@ BuildRequires:  python-kitchen
 BuildRequires:  python-bunch
 # Needed for tests and for the way we build docs
 BuildRequires: TurboGears python-repoze-who-friendlyform Django
-BuildRequires: python-pycurl
+BuildRequires: python-requests
 
 Requires:       python-simplejson
 Requires:       python-bunch
-Requires:       python-pycurl
 Requires:       python-kitchen
+Requires:       python-requests
 # These are now optional dependencies.  Some bodhi methods will not work if
 # they aren't installed but they aren't needed for most functionality of the
 # module.
@@ -162,6 +162,7 @@ rm -rf %{buildroot}
 %{python_sitelib}/flask_fas.py*
 
 %changelog
+* Wed Jan 23 2013 Ralph Bean <rbean@redhat.com> - 0.3.31-2
 * Tue Jan 22 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.31-1
 - Minor bugfix release
 

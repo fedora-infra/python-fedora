@@ -2,17 +2,17 @@
 #
 # Copyright (C) 2009-2011  Red Hat, Inc.
 # This file is part of python-fedora
-# 
+#
 # python-fedora is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # python-fedora is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
@@ -26,8 +26,8 @@ import Cookie
 import re
 import urllib
 import httplib
-import pycurl
 import logging
+import requests
 import time
 import warnings
 from urlparse import urljoin
@@ -51,20 +51,6 @@ from fedora.client import AppError, AuthError, ServerError
 
 log = logging.getLogger(__name__)
 
-class _PyCurlData(object):
-    def __init__(self):
-        self._data = []
-
-    def write_data(self, buf):
-        self._data.append(buf)
-
-    def _read_data(self):
-        return ''.join(self._data)
-
-    def _clear_data(self):
-        self._data = []
-
-    data = property(_read_data, write_data, _clear_data)
 
 class ProxyClient(object):
     # pylint: disable-msg=R0903
@@ -259,6 +245,10 @@ class ProxyClient(object):
             * Add file_params to allow uploading files
         '''
         self.log.debug(b_('proxyclient.send_request: entered'))
+
+        # parameter mangling
+        file_params = file_params or {}
+
         # Check whether we need to authenticate for this request
         session_id = None
         username = None
@@ -290,116 +280,71 @@ class ProxyClient(object):
         # And join to make our url.
         url = urljoin(self.base_url, urllib.quote(method))
 
-        response = _PyCurlData() # The data we get back from the server
         data = None     # decoded JSON via json.load()
 
-        request = pycurl.Curl()
-        # Fix encoding issue related to pycurl bug#1831680
-        request.setopt(pycurl.URL, to_bytes(url))
-        # Boilerplate so pycurl processes cookies
-        request.setopt(pycurl.COOKIEFILE, '/dev/null')
-        # Associate with the response to accumulate data
-        request.setopt(pycurl.WRITEFUNCTION, response.write_data)
-        # Follow redirect
-        request.setopt(pycurl.FOLLOWLOCATION, True)
-        request.setopt(pycurl.MAXREDIRS, 5)
-        if self.insecure:
-            # Don't check that the server certificate is valid
-            # This flag should really only be set for debugging
-            request.setopt(pycurl.SSL_VERIFYPEER, False)
-            request.setopt(pycurl.SSL_VERIFYHOST, False)
-
         # Set standard headers
-        headers = ['User-agent: %s' % self.useragent,
-                'Accept: application/json',]
-        # This is a workaround
-        # apache before 2.2.18 has a bug with Expect: continue headers
-        # https://issues.apache.org/bugzilla/show_bug.cgi?id=47087
-        # curl triggers this by setting Expect: 100-continue headers
-        # but putting data into the POST body that it expects the
-        # server to process.  Setting an empty Expect: header
-        # overrides that.  We should check whether this is still an
-        # issue with apache 2.2.18 (or a patched apache)
-        headers.append('Expect:')
-        request.setopt(pycurl.HTTPHEADER, headers)
+        headers = {
+            'User-agent': self.useragent,
+            'Accept': 'application/json',
+        }
 
         # Files to upload
-        if file_params:
-            # pycurl wants files to be uploaded in a specific format.  That
-            # format is:
-            #
-            # [(file form field name, [(FORM_FILE, 'file local path'), ]),
-            #  (file form field name2, [(FORM_FILE, 'file2 local path'), ])
-            # ]
-            file_data = []
-            for field_name, field_value in file_params.iteritems():
-                files = []
-                if isiterable(field_value):
-                    for filename in field_value:
-                        files.append((pycurl.FORM_FILE, filename))
-                else:
-                    files = [(pycurl.FORM_FILE, field_value)]
-                file_data.append((field_name, files))
-            request.setopt(pycurl.HTTPPOST, file_data)
+        for field_name, local_file_name in file_params:
+            file_params[field_name] = open(local_file_name, 'rb')
 
+        cookies = None
         # If we have a session_id, send it
         if session_id:
-            # Anytime the session_id exists, send it so that visit tracking
-            # works.  Will also authenticate us if there's a need.
-            request.setopt(pycurl.COOKIE, to_bytes('%s=%s;' % (self.session_name,
-                session_id)))
+            cookies[self.session_name] = session_id
 
         complete_params = req_params or {}
         if session_id:
             # Add the csrf protection token
             token = sha_constructor(session_id)
             complete_params.update({'_csrf_token': token.hexdigest()})
+
+        auth = None
         if username and password:
             if auth_params.get('httpauth', '').lower() == 'basic':
-                # HTTP Basic auth login
-                userpwd = '%s:%s' % (to_bytes(username), to_bytes(password))
-                request.setopt(pycurl.HTTPAUTH, pycurl.HTTPAUTH_BASIC)
-                request.setopt(pycurl.USERPWD, userpwd)
+                auth = (username, password)
             else:
                 # TG login
                 # Adding this to the request data prevents it from being logged by
                 # apache.
-                complete_params.update({'user_name': to_bytes(username),
-                        'password': to_bytes(password), 'login': 'Login'})
-
-        req_data = None
-        if complete_params:
-            # set None params to empty string otherwise the string 'None' gets
-            # sent.
-            for i in complete_params.iteritems():
-                if i[1] is None:
-                    complete_params[i[0]] = ''
-            req_data = urllib.urlencode(complete_params, doseq=True)
-            request.setopt(pycurl.POSTFIELDS, req_data)
-
-        # If debug, give people our debug info
-        self.log.debug(b_('Creating request %(url)s') %
-                {'url': to_bytes(url)})
-        self.log.debug(b_('Headers: %(header)s') %
-                {'header': to_bytes(headers, nonstring='simplerepr')})
-        if self.debug and req_data:
-            debug_data = re.sub(r'(&?)password[^&]+(&?)',
-                    '\g<1>password=xxxxxxx\g<2>', req_data)
-            self.log.debug(b_('Data: %(data)s') %
-                    {'data': to_bytes(debug_data)})
+                complete_params.update({
+                    'user_name': to_bytes(username),
+                    'password': to_bytes(password),
+                    'login': 'Login',
+                })
 
         num_tries = 0
         if retries is None:
             retries = self.retries
         while True:
-            # run the request
-            request.perform()
+            if file_params:
+                response = requests.post(
+                    url,
+                    data=complete_params,
+                    cookies=cookies,
+                    headers=headers,
+                    auth=auth,
+                    verify=not self.insecure,
+                )
+            else:
+                response = requests.get(
+                    url,
+                    params=complete_params,
+                    cookies=cookies,
+                    headers=headers,
+                    auth=auth,
+                    verify=not self.insecure,
+                )
 
             # Check for auth failures
             # Note: old TG apps returned 403 Forbidden on authentication failures.
             # Updated apps return 401 Unauthorized
             # We need to accept both until all apps are updated to return 401.
-            http_status = request.getinfo(pycurl.HTTP_CODE)
+            http_status = response.status_code
             if http_status in (401, 403):
                 # Wrong username or password
                 self.log.debug(b_('Authentication failed logging in'))
@@ -422,20 +367,13 @@ class ProxyClient(object):
             break
 
         # In case the server returned a new session cookie to us
-        new_session = ''
-        cookies = request.getinfo(pycurl.INFO_COOKIELIST)
-        for cookie in cookies:
-            host, isdomain, path, secure, expires, name, value  = \
-                    cookie.split('\t')
-            if name == self.session_name:
-                new_session = value
-                break
-
-        # Read the response
-        json_string = response.data
+        new_session = response.cookies.get(self.session_name, '')
 
         try:
-            data = json.loads(json_string)
+            data = response.json
+            # Compatibility with newer python-requests
+            if callable(data):
+                data = data()
         except ValueError, e:
             # The response wasn't JSON data
             raise ServerError(url, http_status, b_('Error returned from'
@@ -453,7 +391,6 @@ class ProxyClient(object):
             cookie[self.session_name] = new_session
             new_session = cookie
 
-        request.close()
         self.log.debug(b_('proxyclient.send_request: exited'))
         data = bunchify(data)
         return new_session, data
