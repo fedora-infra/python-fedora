@@ -37,8 +37,8 @@ from the yum repository should be as easy as::
 If you want to install from a checkout of the development branch, follow these
 procedures::
 
-    # bzr branch bzr://bzr.fedorahosted.org/bzr/python-fedora/devel
-    # cd python-fedora-devel
+    # git clone https://github.com/fedora-infra/python-fedora.git
+    # cd python-fedora
     # ./paver install
 
 You'll need Paver 1.0 or higher for this to work.  In Fedora, this can be
@@ -66,7 +66,7 @@ servre to retrieve information about users.
 
 Note: This API is not feature complete. If you'd like to help add methods,
 document the existing methods, or otherwise aid in development of this API
-please contact us on the infrastructure list: fedora-infrastructure@redhat.com
+please contact us on the infrastructure list: infrastructure@lists.fedoraproject.org
 or on IRC: lmacken, abadger1999, and ricky in #fedora-admin, irc.freenode.net.
 
 Using the general API requires instantiating an ``AccountSystem`` object. You
@@ -83,7 +83,7 @@ Here's an example of using the ``AccountSystem``::
 
 	from fedora.accounts.fas2 import AccountSystem
 	from fedora.client import AuthError,
-
+x
 	# Get an AccountSystem object.  All AccountSystem methods need to be
 	# authenticated so you might as well give username and password here.
 	fas = AccountSystem(username='foo', password='bar')
@@ -124,7 +124,7 @@ Fedora Services
 ``python-fedora`` provides several helper classes and functions for building a
 TurboGears_ application that works well with other `Fedora Services`_.  the
 `Fedora Services`_ documentation is the best place to learn more about these.
-
+x
 TurboGears Widgets
 ==================
 
@@ -227,22 +227,20 @@ Currently, this is more involved.
 0) Have both the stable and the devel tree checked out::
      mkdir python-fedora
      cd python-fedora
-     bzr init-repo .
-     bzr branch bzr+ssh://bzr.fedorahosted.org/bzr/python-fedora/devel
-     bzr branch bzr+ssh://bzr.fedorahosted.org/bzr/python-fedora/stable
+     git clone git@github.com:fedora-infra/python-fedora.git
 
 1) Download new translations and verify they are valid::
      cd devel
      tx pull -a
      ./paver make_catalogs
      # If everything checks out
-     bzr commit -m 'Merge new translations from transifex.net'
+     git commit -m 'Merge new translations from transifex.net'
 
 2) Make sure that the NEWS file is accurate (use bzr log if needed),
    python-fedora.spec and fedora/release.py are updated with the new version
    information.  After that, push the devel branch to the server::
      # Update files
-     bzr push bzr+ssh://bzr.fedorahosted.org/bzr/python-fedora/devel
+     git push
 
 3) Publish updated docs::
      # pypi
@@ -256,13 +254,13 @@ Currently, this is more involved.
    else should be automated::
 
      cd ../stable
-     bzr merge [from feature branches, devel, etc]
-     bzr commit
-     bzr push bzr+ssh://bzr.fedorahosted.org/bzr/python-fedora/stable
+     git merge [from feature branches, devel, etc]
+     git commit
+     git push
 
 5) Go to a temporary directory and checkout a copy of stable::
      cd ..
-     bzr checkout --lightweight bzr+ssh://bzr.fedorahosted.org/bzr/python-fedora/stable release
+     git clone git@github.com:fedora-infra/python-fedora.git release
      cd release
 
 6) Create the tarball in this clean checkout::
@@ -282,8 +280,8 @@ Currently, this is more involved.
 
 9) When satisfied that the build works, tag the repository::
      popd
-     bzr tag VERSION
-     bzr push bzr+ssh://bzr.fedorahosted.org/bzr/python-fedora/python-fedora-stable
+     git tag VERSION
+     git push
 
 10) create a fresh tarball and upload to pypi::
      ./paver sdist upload --sign
