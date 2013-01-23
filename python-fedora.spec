@@ -3,7 +3,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.3.30
+Version:        0.3.31
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -162,6 +162,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/flask_fas.py*
 
 %changelog
+* Tue Jan 22 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.31-1
+- Minor bugfix release
+
 * Thu Jan 10 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.30-1
 - Make TG's loginForm and CSRF's text translated from tg-apps (laxathom).
 - Fix a bug in fedora.tg.utils.tg_absolute_url

@@ -5,7 +5,7 @@ Information about this python-fedora release
 from fedora import _
 
 NAME = 'python-fedora'
-VERSION = '0.3.30'
+VERSION = '0.3.31'
 DESCRIPTION = _('Python modules for interacting with Fedora Services')
 LONG_DESCRIPTION = _('''
 The Fedora Project runs many different services.  These services help us to
@@ -14,7 +14,7 @@ This package contains software that helps us do that.
 ''')
 AUTHOR = 'Toshio Kuratomi, Luke Macken, Ricky Elrod'
 EMAIL = 'tkuratom@redhat.com'
-COPYRIGHT = '2007-2012 Red Hat, Inc.'
+COPYRIGHT = '2007-2013 Red Hat, Inc.'
 URL = 'https://fedorahosted.org/python-fedora'
 DOWNLOAD_URL = 'https://fedorahosted.org/releases/p/y/python-fedora/'
 LICENSE = 'LGPLv2+'

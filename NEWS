@@ -3,11 +3,11 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod
-:Date: 10 January 2013
+:Date: 22 January 2013
 :Version: 0.3.x
 
 ------
-0.3.31 (not yet released)
+0.3.31
 ------
 
 * Fix a problem getting encodings in the soprovidercsrf tg1 identity provider
