@@ -3,7 +3,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.3.32
+Version:        0.3.32.1
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -162,6 +162,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/flask_fas.py*
 
 %changelog
+* Thu Jan 24 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.32.1-1
+- Fix a documentation bug that slipped through
+
 * Wed Jan 23 2013 Ralph Bean <rbean@redhat.com> - 0.3.32-1
 - Replace pyCurl with python-requests in ProxyClient.
 
