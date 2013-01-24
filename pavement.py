@@ -41,7 +41,7 @@ options(
         # python-2.5 distutils we can add these:
         #   for bodhi (koji yum)
         #   pycurl
-        install_requires=['bunch', 'kitchen'],
+        install_requires=['bunch', 'kitchen', 'requests'],
         # And these to extra_require:
         #   for widgets: (bugzilla feedparser)
         extras_require = {
