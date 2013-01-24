@@ -321,24 +321,14 @@ class ProxyClient(object):
         if retries is None:
             retries = self.retries
         while True:
-            if file_params:
-                response = requests.post(
-                    url,
-                    data=complete_params,
-                    cookies=cookies,
-                    headers=headers,
-                    auth=auth,
-                    verify=not self.insecure,
-                )
-            else:
-                response = requests.get(
-                    url,
-                    params=complete_params,
-                    cookies=cookies,
-                    headers=headers,
-                    auth=auth,
-                    verify=not self.insecure,
-                )
+            response = requests.post(
+                url,
+                data=complete_params,
+                cookies=cookies,
+                headers=headers,
+                auth=auth,
+                verify=not self.insecure,
+            )
 
             # Check for auth failures
             # Note: old TG apps returned 403 Forbidden on authentication failures.
