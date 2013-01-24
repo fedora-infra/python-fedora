@@ -304,7 +304,8 @@ class ProxyClient(object):
         # If we have a session_id, send it
         if session_id:
             cookies.set(self.session_name, session_id,
-                        secure=True, domain=self.domain)
+                        secure=True, domain=self.domain,
+                        rest={'HttpOnly': True})
 
         complete_params = req_params or {}
         if session_id:
