@@ -30,7 +30,14 @@ import logging
 import requests
 import time
 import warnings
-from urlparse import urljoin
+
+try:
+    from urlparse import urljoin
+    from urlparse import urlparse
+except ImportError:
+    # Python3 support
+    from urllib.parse import urljoin
+    from urllib.parse import urlparse
 
 try:
     import simplejson as json
@@ -145,6 +152,7 @@ class ProxyClient(object):
         if base_url[-1] != '/':
             base_url = base_url +'/'
         self.base_url = base_url
+        self.domain = urlparse(self.base_url).netloc
         self.useragent = useragent or 'Fedora ProxyClient/%(version)s' % {
                 'version': __version__}
         self.session_name = session_name
@@ -292,10 +300,11 @@ class ProxyClient(object):
         for field_name, local_file_name in file_params:
             file_params[field_name] = open(local_file_name, 'rb')
 
-        cookies = None
+        cookies = requests.cookies.RequestsCookieJar()
         # If we have a session_id, send it
         if session_id:
-            cookies[self.session_name] = session_id
+            cookies.set(self.session_name, session_id,
+                        secure=True, domain=self.domain)
 
         complete_params = req_params or {}
         if session_id:
