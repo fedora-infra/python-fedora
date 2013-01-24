@@ -1,3 +1,6 @@
+2013-01-23  Ralph Bean <ralph@fedoraproject.org> - 34602e1
+Replaced python-pycurl with python-requests.
+
 2009-07-27  Toshio Kuratomi <toshio@fedoraproject.org> - r523
 A few doc updates
 
