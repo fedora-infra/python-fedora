@@ -74,7 +74,10 @@ class FasProxyClient(ProxyClient):
 
         :arg username: username to send to FAS
         :arg password: Password to verify the username with
-        :returns: the session id FAS has associated with the user
+        :returns: a tuple of the session id FAS has associated with the user
+            and the user's account information.  This is similar to what is
+            returned by
+            :meth:`fedora.client.proxyclient.ProxyClient.get_user_info`
         :raises AuthError: if the username and password do not work
         '''
         return self.send_request('/login',

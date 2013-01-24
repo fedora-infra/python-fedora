@@ -3,8 +3,14 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod
-:Date: 22 January 2013
+:Date: 24 January 2013
 :Version: 0.3.x
+
+--------
+0.3.32.1
+--------
+
+* Update documentation on fasproxy.FasProxyClient.login()
 
 ------
 0.3.32
