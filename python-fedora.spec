@@ -140,7 +140,7 @@ rm -rf %{buildroot}
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
-%doc NEWS README COPYING AUTHORS ChangeLog doc
+%doc NEWS README COPYING AUTHORS doc
 %{python_sitelib}/*
 %exclude %{python_sitelib}/fedora/tg/
 %exclude %{python_sitelib}/fedora/tg2/

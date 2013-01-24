@@ -1,7 +1,7 @@
 include setup.py
 include paver-minilib.zip
 include *.spec
-include COPYING AUTHORS ChangeLog NEWS
+include COPYING AUTHORS NEWS
 recursive-include doc *
 include fedora/tg/templates/genshi/*.html
 include fedora/tg2/templates/mako/*.mak
