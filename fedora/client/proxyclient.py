@@ -23,7 +23,7 @@
 '''
 
 import Cookie
-import re
+import copy
 import urllib
 import httplib
 import logging
@@ -317,9 +317,23 @@ class ProxyClient(object):
                     'login': 'Login',
                 })
 
+        # If debug, give people our debug info
+        self.log.debug(b_('Creating request %(url)s') %
+                {'url': to_bytes(url)})
+        self.log.debug(b_('Headers: %(header)s') %
+                {'header': to_bytes(headers, nonstring='simplerepr')})
+        if self.debug and complete_params:
+            debug_data = copy.deepcopy(complete_params)
+
+            if 'password' in debug_data:
+                debug_data['password'] = 'xxxxxxx'
+
+            self.log.debug(b_('Data: %r') % debug_data)
+
         num_tries = 0
         if retries is None:
             retries = self.retries
+
         while True:
             response = requests.post(
                 url,
