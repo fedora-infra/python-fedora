@@ -7,6 +7,13 @@ NEWS
 :Version: 0.3.x
 
 ------
+0.3.32
+------
+
+* Replace pyCurl with python-requests in ProxyClient (ralph).
+  This was in order to fix bugs we were seeing with curl/nss in some contexts.
+
+------
 0.3.31
 ------
 

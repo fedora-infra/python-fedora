@@ -43,10 +43,10 @@ FAS_COOKIE_NAME
 
 FAS_HTTPS_REQUIRED
     When this is set to True, the session cookie will only be returned to the
-    server via ssl.(https).  If you connect to the server via plain http, the
+    server via ssl (https).  If you connect to the server via plain http, the
     cookie will not be sent.  This prevents sniffing of the cookie contents.
-    This may be set to False when testing against a local FAS server but
-    should alwsays be set to True in production.  Default is True.
+    This may be set to False when testing your application but should always
+    be set to True in production.  Default is True.
 
 ------------------
 Sample Application
