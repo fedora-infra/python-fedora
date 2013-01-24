@@ -23,6 +23,14 @@ License
 This python module is distributed under the terms of the GNU Lesser General
 Public License Version 2 or later.
 
+------------
+Dependencies
+------------
+
+``python-fedora`` requires the ``bunch``, ``kitchen``, and ``requests`` python
+modules.  It used to use ``pycurl``, but was updated to use ``requests`` as of
+version ``0.3.32``.
+
 ----------
 Installing
 ----------
