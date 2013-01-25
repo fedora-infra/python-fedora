@@ -396,6 +396,14 @@ class ProxyClient(object):
             raise ServerError(url, http_status, b_('Error returned from'
                     ' json module while processing %(url)s: %(err)s') %
                     {'url': to_bytes(url), 'err': to_bytes(e)})
+        except AttributeError, e:
+            # We must be on an *old* version of python-requests.
+            # This interface changed a lot early on.  It can be done away with
+            # after with get python-requests-0.12 or later in el6.
+            if response.text:
+                data = json.loads(response.text)
+            else:
+                data = json.loads(response.raw.read())
 
         if 'exc' in data:
             name = data.pop('exc')
