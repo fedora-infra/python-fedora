@@ -234,10 +234,10 @@ Currently, this is more involved.
 
 0) Checkout a copy of the repository and setup git flow::
      git clone git@github.com:fedora-infra/python-fedora.git
+     cd python-fedora
      git flow init
 
 1) Download new translations and verify they are valid::
-     cd devel
      tx pull -a
      ./paver make_catalogs
      # If everything checks out
@@ -276,7 +276,8 @@ Currently, this is more involved.
 7) copy the dist/python-fedora-VERSION.tar.gz and python-fedora.spec files to
    where you build Fedora RPMS.  Do a test build::
      cp dist/python-fedora-*.tar.gz python-fedora.spec /srv/cvs/python-fedora/devel/
-     pushd /srv/cvs/python-fedora/devel
+     pushd /srv/git/python-fedora/
+     fedpkg switch-branch master
      make mockbuild
 
 8) Make sure the build completes.  Run rpmlint on the results.  Install and
@@ -285,17 +286,19 @@ Currently, this is more involved.
      sudo rpm -Uvh *noarch.rpm
      [test]
 
-9) When satisfied that the build works, mark the release as finished in git::
-     popd
+9) When satisfied that the build works, create a fresh tarball and upload to
+    pypi::
+     popd   # Back to the release directory
+     ./paver sdist upload --sign
+
+10) copy the same tarball to fedorahosted.  Note: The directory is slightly
+   different if you're not a fedorahosted admin::
+     scp dist/python-fedora*tar.gz* fedorahosted.org:/srv/web/releases/p/y/python-fedora/
+
+11) mark the release as finished in git::
+     cd ../python-fedora
      git flow release finish $VERSION
      git push --all
      git push --tags
-
-10) create a fresh tarball and upload to pypi::
-     ./paver sdist upload --sign
-
-11) copy the same tarball to fedorahosted.  Note: The directory is slightly
-   different if you're not a fedorahosted admin::
-     scp dist/python-fedora*tar.gz* fedorahosted.org:/srv/web/releases/p/y/python-fedora/
 
 12) Finish building and pushing packages for Fedora.
