@@ -40,17 +40,11 @@ except ImportError:
     from urllib.parse import urlparse
 
 try:
-    import simplejson as json
-except ImportError:
-    import json as json
-
-try:
     from hashlib import sha1 as sha_constructor
 except ImportError:
     from sha import new as sha_constructor
 
 from bunch import bunchify
-from kitchen.iterutils import isiterable
 from kitchen.text.converters import to_bytes
 
 from fedora import __version__, b_
