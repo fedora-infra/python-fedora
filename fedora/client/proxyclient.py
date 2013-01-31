@@ -304,10 +304,10 @@ class ProxyClient(object):
         # If we have a session_id, send it
         if session_id:
             # Anytime the session_id exists, send it so that visit tracking
-            # works.  Will also authenticate us if there's a need.
-            cookies.set(self.session_name, session_id,
-                        secure=True, domain=self.domain,
-                        rest={'HttpOnly': True})
+            # works.  Will also authenticate us if there's a need.  Note that
+            # there's no need to set other cookie attributes because this is a
+            # cookie generated client-side.
+            cookies.set(self.session_name, session_id)
 
         complete_params = req_params or {}
         if session_id:
