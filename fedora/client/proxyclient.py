@@ -147,6 +147,8 @@ class ProxyClient(object):
             base_url = base_url +'/'
         self.base_url = base_url
         self.domain = urlparse(self.base_url).netloc
+        if self.domain == 'localhost':
+            self.domain = 'localhost.local'
         self.useragent = useragent or 'Fedora ProxyClient/%(version)s' % {
                 'version': __version__}
         self.session_name = session_name
