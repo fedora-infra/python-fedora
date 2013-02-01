@@ -40,17 +40,11 @@ except ImportError:
     from urllib.parse import urlparse
 
 try:
-    import simplejson as json
-except ImportError:
-    import json as json
-
-try:
     from hashlib import sha1 as sha_constructor
 except ImportError:
     from sha import new as sha_constructor
 
 from bunch import bunchify
-from kitchen.iterutils import isiterable
 from kitchen.text.converters import to_bytes
 
 from fedora import __version__, b_
@@ -304,10 +298,10 @@ class ProxyClient(object):
         # If we have a session_id, send it
         if session_id:
             # Anytime the session_id exists, send it so that visit tracking
-            # works.  Will also authenticate us if there's a need.
-            cookies.set(self.session_name, session_id,
-                        secure=True, domain=self.domain,
-                        rest={'HttpOnly': True})
+            # works.  Will also authenticate us if there's a need.  Note that
+            # there's no need to set other cookie attributes because this is a
+            # cookie generated client-side.
+            cookies.set(self.session_name, session_id)
 
         complete_params = req_params or {}
         if session_id:
