@@ -3,8 +3,21 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod
-:Date: 24 January 2013
+:Date: 4 February 2013
 :Version: 0.3.x
+
+--------
+0.3.32.3
+--------
+
+* Fix BodhiClient's knowledge of koji tags
+
+--------
+0.3.32.2
+--------
+
+* Stop setting cookie attributes on the cookie we generate client-side as those
+  aren't sent to the server and it provokes bugs in python-requests
 
 --------
 0.3.32.1
