@@ -3,7 +3,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.3.32.2
+Version:        0.3.32.3
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -162,6 +162,9 @@ rm -rf %{buildroot}
 %{python_sitelib}/flask_fas.py*
 
 %changelog
+* Tue Feb  5 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.32.3-1
+- Upstream update to fix BodhiClient's knowledge of koji tags
+
 * Mon Feb 04 2013 Toshio Kuratomi <toshio@fedoraproject.org> 0.3.32.2-1
 - Upstream update fixing a bug interacting with python-requests
 
