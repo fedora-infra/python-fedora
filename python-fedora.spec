@@ -163,7 +163,7 @@ rm -rf %{buildroot}
 
 %changelog
 * Tue Feb  5 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.32.3-1
-- Upstream update to fix BodhiClient's knowledge of koji tags
+- Upstream update to fix BodhiClient's knowledge of koji tags (ajax)
 
 * Mon Feb 04 2013 Toshio Kuratomi <toshio@fedoraproject.org> 0.3.32.2-1
 - Upstream update fixing a bug interacting with python-requests
