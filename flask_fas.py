@@ -147,6 +147,17 @@ def fas_login_required(function):
     """
     @wraps(function)
     def decorated_function(*args, **kwargs):
+        username = None
+        password = None
+        if 'Authorization' in flask.request.headers:
+            import base64
+            base64string = flask.request.headers['Authorization']
+            base64string = base64string.split()[1].strip()
+            userstring = base64.b64decode(base64string)
+            (username, password) = userstring.split(':')
+        if username and password:
+            fas = FAS(flask.Flask('fas-cli'))
+            fas.login(username=username, password=password):
         if flask.g.fas_user is None:
             return flask.redirect(flask.url_for('auth_login',
                                                 next=flask.request.url))
