@@ -41,7 +41,7 @@ FAS_COOKIE_NAME
     The name of the cookie used to store the session id across the Fedora
     Applications that support :term:`single sign-on`.  Default: "tg-visit"
 
-FAS_HTTPS_REQUIRED
+FAS_FLASK_COOKIE_REQUIRES_HTTPS
     When this is set to True, the session cookie will only be returned to the
     server via ssl (https).  If you connect to the server via plain http, the
     cookie will not be sent.  This prevents sniffing of the cookie contents.
@@ -106,12 +106,12 @@ authentication::
     #     FAS_BASE_URL: the base URL for the accounts system
     #         (default https://admin.fedoraproject.org/accounts/)
     #     FAS_CHECK_CERT: check the SSL certificate of FAS (default True)
-    #     FAS_HTTPS_REQUIRED: send the 'secure' option with the login cookie
-    #         (default True)
+    #     FAS_FLASK_COOKIE_REQUIRES_HTTPS: send the 'secure' option with
+    #          the login cookie (default True)
     # You should use these options' defaults for production applications!
     app.config['FAS_BASE_URL'] = 'https://fakefas.fedoraproject.org/accounts/'
     app.config['FAS_CHECK_CERT'] = False
-    app.config['FAS_HTTPS_REQUIRED'] = False
+    app.config['FAS_FLASK_COOKIE_REQUIRES_HTTPS'] = False
 
 
     # A basic login form
