@@ -54,7 +54,7 @@ class FAS(object):
         app.config.setdefault('FAS_USER_AGENT', 'Flask-FAS/%s' % __version__)
         app.config.setdefault('FAS_CHECK_CERT', True)
         app.config.setdefault('FAS_COOKIE_NAME', 'tg-visit')
-        app.config.setdefault('FAS_HTTPS_REQUIRED', True)
+        app.config.setdefault('FAS_FLASK_COOKIE_REQUIRES_HTTPS', True)
 
         app.before_request(self._check_session_cookie)
         app.after_request(self._send_session_cookie)
@@ -94,7 +94,7 @@ class FAS(object):
         response.set_cookie(
                 key=self.app.config['FAS_COOKIE_NAME'],
                 value=flask.g.fas_session_id or '',
-                secure=self.app.config['FAS_HTTPS_REQUIRED'],
+                secure=self.app.config['FAS_FLASK_COOKIE_REQUIRES_HTTPS'],
                 httponly=True,
         )
         return response
