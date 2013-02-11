@@ -56,8 +56,8 @@ class FAS(object):
 
     def _init_app(self, app):
         app.config.setdefault('FAS_OPENID_ENDPOINT',
-                              'https://id.dev.fedoraproject.org/')
-        app.config.setdefault('FAS_OPENID_CHECK_CERT', False)
+                              'https://id.fedoraproject.org/')
+        app.config.setdefault('FAS_OPENID_CHECK_CERT', True)
 
         if not self.app.config['FAS_OPENID_CHECK_CERT']:
             setDefaultFetcher(Urllib2Fetcher())
