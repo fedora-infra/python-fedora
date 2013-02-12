@@ -147,6 +147,8 @@ class ProxyClient(object):
             base_url = base_url +'/'
         self.base_url = base_url
         self.domain = urlparse(self.base_url).netloc
+        if self.domain == 'localhost':
+            self.domain = 'localhost.local'
         self.useragent = useragent or 'Fedora ProxyClient/%(version)s' % {
                 'version': __version__}
         self.session_name = session_name
@@ -350,6 +352,19 @@ class ProxyClient(object):
                 auth=auth,
                 verify=not self.insecure,
             )
+
+            # When the python-requests module gets a response, it attempts to
+            # guess the encoding using "charade", a fork of "chardet" which it
+            # bundles (and which we are in the process of unbundling:
+            # https://bugzilla.redhat.com/show_bug.cgi?id=910236).
+            # That process can take an extraordinarily long time for long
+            # response.text strings.. upwards of 30 minutes for FAS queries to
+            # /accounts/user/list JSON api!  Therefore, we cut that codepath
+            # off at the pass by assuming that the response is 'utf-8'.  We can
+            # make that assumption because we're only interfacing with servers
+            # that we run (and we know that they all return responses
+            # encoded 'utf-8').
+            response.encoding = 'utf-8'
 
             # Check for auth failures
             # Note: old TG apps returned 403 Forbidden on authentication failures.
