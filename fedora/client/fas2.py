@@ -2,17 +2,17 @@
 #
 # Copyright (C) 2008-2012  Ricky Zhou, Red Hat, Inc.
 # This file is part of python-fedora
-# 
+#
 # python-fedora is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # python-fedora is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
@@ -59,7 +59,7 @@ USERFIELDS = ['affiliation', 'bugzilla_email', 'certificate_serial',
         'ircnick', 'latitude', 'last_seen', 'longitude', 'password',
         'password_changed', 'passwordtoken', 'postal_address', 'privacy',
         'locale', 'ssh_key', 'status', 'status_change', 'telephone',
-        'unverified_email', 'timezone', 'username', 'security_question', 
+        'unverified_email', 'timezone', 'username', 'security_question',
         'security_answer', ]
 
 class AccountSystem(BaseClient):
@@ -226,6 +226,8 @@ class AccountSystem(BaseClient):
                 160587: 'jamielinux@fedoraproject.org',
                 # Nikos Roussos: nikos@roussos.cc
                 144436: 'comzeradd@fedoraproject.org',
+                # Benedikt Schäfer: benedikt@schaefer-flieden.de
+                154726: 'ib54003@fedoraproject.org',
                 }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email
@@ -268,7 +270,7 @@ class AccountSystem(BaseClient):
     insecure = property(_get_insecure, _set_insecure)
 
     ### Groups ###
-    
+
     def create_group(self, name, display_name, owner, group_type,
                      invite_only=0, needs_sponsor=0, user_can_remove=1,
                      prerequisite='', joinmsg='', apply_rules='None'):
@@ -311,7 +313,7 @@ class AccountSystem(BaseClient):
                                     req_params=req_params,
                                     auth=True)
         return request
-        
+
 
     def group_by_id(self, group_id):
         '''Returns a group object based on its id'''
