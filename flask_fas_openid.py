@@ -41,6 +41,7 @@ from openid.consumer import consumer
 from openid.fetchers import setDefaultFetcher, Urllib2Fetcher
 from openid.extensions import pape, sreg
 import openid_teams as teams
+import openid_cla as cla
 
 # A very nice class which makes everything from a dict available as attribute. So that flask.g.fas_user['key'] == flask.g.fas_user.key
 class AttributeDict(dict): 
@@ -56,13 +57,13 @@ class FAS(object):
 
     def _init_app(self, app):
         app.config.setdefault('FAS_OPENID_ENDPOINT',
-                              'https://id.fedoraproject.org/')
+                              'http://id.fedoraproject.org/')
         app.config.setdefault('FAS_OPENID_CHECK_CERT', True)
 
         if not self.app.config['FAS_OPENID_CHECK_CERT']:
             setDefaultFetcher(Urllib2Fetcher())
 
-        @app.route('/_flask_fas_openid_handler/')
+        @app.route('/_flask_fas_openid_handler/', methods=['GET', 'POST'])
         def flask_fas_openid_handler():
             return self._handle_openid_request()
 
@@ -72,7 +73,8 @@ class FAS(object):
         return_url = flask.session['FLASK_FAS_OPENID_RETURN_URL']
         cancel_url = flask.session['FLASK_FAS_OPENID_CANCEL_URL']
         oidconsumer = consumer.Consumer(flask.session, None)
-        info = oidconsumer.complete(flask.request.args, flask.request.base_url)
+        print 'values: %s' % flask.request.values
+        info = oidconsumer.complete(flask.request.values, flask.request.base_url)
         display_identifier = info.getDisplayIdentifier()
 
         if info.status == consumer.FAILURE and display_identifier:
@@ -85,13 +87,14 @@ class FAS(object):
             sreg_resp =  sreg.SRegResponse.fromSuccessResponse(info)
             pape_resp = pape.Response.fromSuccessResponse(info)
             teams_resp = teams.TeamsResponse.fromSuccessResponse(info)
+            cla_resp = cla.CLAResponse.fromSuccessResponse(info)
             user = dict()
             user['username'] = sreg_resp.get('nickname')
             user['fullname'] = sreg_resp.get('fullname')
             user['email'] = sreg_resp.get('email')
             user['timezone'] = sreg_resp.get('timezone')
             #user['locale'] = sreg_resp.get('LOCALE')
-            user['cla_done'] = False
+            user['cla_done'] = cla.CLA_URI_FEDORA_DONE in cla_resp.clas
             user['groups'] = teams_resp.teams
             flask.session['FLASK_FAS_OPENID_USER'] = user
             flask.session.modified = True
@@ -144,6 +147,7 @@ class FAS(object):
         request.addExtension(sreg.SRegRequest(required=['nickname', 'fullname', 'email', 'timezone']))
         request.addExtension(pape.Request([]))
         request.addExtension(teams.TeamsRequest(requested=['_FAS_ALL_GROUPS_'])) # Magic value which requests all groups from FAS-OpenID >= 0.2.0
+        request.addExtension(cla.CLARequest(requested=[cla.CLA_URI_FEDORA_DONE]))
         trust_root = flask.request.url_root
         return_to = flask.request.url_root + '_flask_fas_openid_handler/'
         flask.session['FLASK_FAS_OPENID_RETURN_URL'] = return_url
@@ -190,7 +194,7 @@ def cla_plus_one_required(function):
     """
     @wraps(function)
     def decorated_function(*args, **kwargs):
-        if flask.g.fas_user is None or not flask.g.fas_user.cla_done:
+        if flask.g.fas_user is None or not flask.g.fas_user.cla_done or flask.g.fas_user.groups == []:
             return flask.redirect(flask.url_for('auth_login',
                                                 next=flask.request.url))
         else:
