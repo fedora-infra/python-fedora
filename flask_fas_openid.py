@@ -29,19 +29,19 @@ FAS-OpenID authentication plugin for the flask web framework
 from functools import wraps
 
 import flask
-
 try:
     from flask import _app_ctx_stack as stack
 except ImportError:
     from flask import _request_ctx_stack as stack
 
-from fedora import __version__
 import openid
 from openid.consumer import consumer
 from openid.fetchers import setDefaultFetcher, Urllib2Fetcher
 from openid.extensions import pape, sreg
-import openid_teams as teams
-import openid_cla as cla
+
+from fedora import __version__
+import fedora._openid_extensions.openid_teams as teams
+import fedora._openid_extensions.openid_cla as cla
 
 # A very nice class which makes everything from a dict available as attribute. So that flask.g.fas_user['key'] == flask.g.fas_user.key
 class AttributeDict(dict): 
