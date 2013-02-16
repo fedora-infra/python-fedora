@@ -28,6 +28,7 @@ FAS-OpenID authentication plugin for the flask web framework
 '''
 from functools import wraps
 
+from bunch import Bunch
 import flask
 try:
     from flask import _app_ctx_stack as stack
@@ -42,11 +43,6 @@ from openid.extensions import pape, sreg
 from fedora import __version__
 import fedora._openid_extensions.openid_teams as teams
 import fedora._openid_extensions.openid_cla as cla
-
-# A very nice class which makes everything from a dict available as attribute. So that flask.g.fas_user['key'] == flask.g.fas_user.key
-class AttributeDict(dict): 
-    __getattr__ = dict.__getitem__
-    __setattr__ = dict.__setitem__
 
 class FAS(object):
 
@@ -111,10 +107,10 @@ class FAS(object):
             # New applications should only use g.fas_user.groups
             user['approved_memberships'] = []
             for group in user['groups']:
-                membership = AttributeDict()
+                membership = dict()
                 membership['name'] = group
-                user['approved_memberships'].append(membership)
-            flask.g.fas_user = AttributeDict(user)
+                user['approved_memberships'].append(Bunch.fromDict(membership))
+            flask.g.fas_user = Bunch.fromDict(user)
         flask.g.fas_session_id = 0
 
     def login(self, username=None, password=None, return_url=None, cancel_url=None):
