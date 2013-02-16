@@ -91,7 +91,7 @@ class FAS(object):
             user['timezone'] = sreg_resp.get('timezone')
             #user['locale'] = sreg_resp.get('LOCALE')
             user['cla_done'] = cla.CLA_URI_FEDORA_DONE in cla_resp.clas
-            user['groups'] = teams_resp.teams
+            user['groups'] = teams_resp.teams   # The groups do not contain the cla_ groups
             flask.session['FLASK_FAS_OPENID_USER'] = user
             flask.session.modified = True
             return flask.redirect(return_url)
@@ -190,7 +190,7 @@ def cla_plus_one_required(function):
     """
     @wraps(function)
     def decorated_function(*args, **kwargs):
-        if flask.g.fas_user is None or not flask.g.fas_user.cla_done or flask.g.fas_user.groups == []:
+        if flask.g.fas_user is None or not flask.g.fas_user.cla_done or len(flask.g.fas_user.groups) < 1:  # FAS-OpenID does not return cla_ groups
             return flask.redirect(flask.url_for('auth_login',
                                                 next=flask.request.url))
         else:
