@@ -31,11 +31,13 @@ BuildRequires:  python-bunch
 # Needed for tests and for the way we build docs
 BuildRequires: TurboGears python-repoze-who-friendlyform Django
 BuildRequires: python-requests
+BuildRequires: python-openid
 
 Requires:       python-simplejson
 Requires:       python-bunch
 Requires:       python-kitchen
 Requires:       python-requests
+Requires:       python-openid
 # These are now optional dependencies.  Some bodhi methods will not work if
 # they aren't installed but they aren't needed for most functionality of the
 # module.
