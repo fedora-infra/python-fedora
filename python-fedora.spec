@@ -3,7 +3,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.3.32.3
+Version:        0.3.32.4
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -149,6 +149,7 @@ rm -rf %{buildroot}
 %exclude %{python_sitelib}/fedora/wsgi/
 %exclude %{python_sitelib}/fedora/django/
 %exclude %{python_sitelib}/flask_fas.py*
+%exclude %{python_sitelib}/flask-fas_openid.py*
 
 %files turbogears
 %{python_sitelib}/fedora/tg/
@@ -162,8 +163,12 @@ rm -rf %{buildroot}
 
 %files flask
 %{python_sitelib}/flask_fas.py*
+%{python_sitelib}/flask_fas_openid.py
 
 %changelog
+* Sat Feb 16 2013 Patrick Uiterwijk <puiterwijk@gmail.com> - 0.3.32.4-1
+- Added flask_fas_openid
+
 * Tue Feb  5 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.32.3-1
 - Upstream update to fix BodhiClient's knowledge of koji tags (ajax)
 
