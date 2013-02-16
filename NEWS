@@ -6,9 +6,9 @@ NEWS
 :Date: 16 February 2013
 :Version: 0.3.x
 
---------
-0.3.32.4
---------
+------
+0.3.33 (in progres)
+------
 
 * Added flask_fas_openid for the migration to OpenID
 
