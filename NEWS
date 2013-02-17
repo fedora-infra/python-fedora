@@ -2,9 +2,15 @@
 NEWS
 ====
 
-:Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod
-:Date: 4 February 2013
+:Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk
+:Date: 16 February 2013
 :Version: 0.3.x
+
+------
+0.3.33 (in progres)
+------
+
+* Added flask_fas_openid for the migration to OpenID
 
 --------
 0.3.32.3
