@@ -31,11 +31,13 @@ BuildRequires:  python-bunch
 # Needed for tests and for the way we build docs
 BuildRequires: TurboGears python-repoze-who-friendlyform Django
 BuildRequires: python-requests
+BuildRequires: python-openid
 
 Requires:       python-simplejson
 Requires:       python-bunch
 Requires:       python-kitchen
 Requires:       python-requests
+Requires:       python-openid
 # These are now optional dependencies.  Some bodhi methods will not work if
 # they aren't installed but they aren't needed for most functionality of the
 # module.
@@ -147,6 +149,7 @@ rm -rf %{buildroot}
 %exclude %{python_sitelib}/fedora/wsgi/
 %exclude %{python_sitelib}/fedora/django/
 %exclude %{python_sitelib}/flask_fas.py*
+%exclude %{python_sitelib}/flask-fas_openid.py*
 
 %files turbogears
 %{python_sitelib}/fedora/tg/
@@ -160,6 +163,7 @@ rm -rf %{buildroot}
 
 %files flask
 %{python_sitelib}/flask_fas.py*
+%{python_sitelib}/flask_fas_openid.py
 
 %changelog
 * Tue Feb  5 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.32.3-1
