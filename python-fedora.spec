@@ -149,7 +149,7 @@ rm -rf %{buildroot}
 %exclude %{python_sitelib}/fedora/wsgi/
 %exclude %{python_sitelib}/fedora/django/
 %exclude %{python_sitelib}/flask_fas.py*
-%exclude %{python_sitelib}/flask-fas_openid.py*
+%exclude %{python_sitelib}/flask_fas_openid.py*
 
 %files turbogears
 %{python_sitelib}/fedora/tg/
