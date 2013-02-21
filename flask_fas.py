@@ -27,6 +27,7 @@ FAS authentication plugin for the flask web framework
 ..versionadded:: 0.3.30
 '''
 from functools import wraps
+import warnings
 
 import flask
 from flask import request
@@ -54,7 +55,11 @@ class FAS(object):
         app.config.setdefault('FAS_USER_AGENT', 'Flask-FAS/%s' % __version__)
         app.config.setdefault('FAS_CHECK_CERT', True)
         app.config.setdefault('FAS_COOKIE_NAME', 'tg-visit')
-        app.config.setdefault('FAS_FLASK_COOKIE_REQUIRES_HTTPS', True)
+        # The default value of the next line is really True.
+        # We have to set it to a sentinel value because we have to
+        # handle the user using the deprecated FAS_HTTPS_REQUIRED
+        app.config.setdefault('FAS_FLASK_COOKIE_REQUIRES_HTTPS', None)
+        app.config.setdefault('FAS_HTTPS_REQUIRED', None)
 
         app.before_request(self._check_session_cookie)
         app.after_request(self._send_session_cookie)
@@ -91,6 +96,21 @@ class FAS(object):
         flask.g.fas_user = user
 
     def _send_session_cookie(self, response):
+        # Handle the secure flag defaults here because we need to handle the
+        # deprecated config name
+        new_secure = self.app.config['FAS_FLASK_COOKIE_REQUIRES_HTTPS']
+        old_secure = self.app.config['FAS_HTTPS_REQUIRED']
+        if new_secure is None:
+            if old_secure is None:
+                new_secure = True
+            else:
+                new_secure = old_secure
+        if old_secure is not None:
+            warnings.warn('FAS_HTTPS_REQUIRED has been renamed to'
+                          ' FAS_FLASK_COOKIE_REQUIRES_HTTPS.  Please convert'
+                          ' your configuration to use the new name',
+                          DeprecationWarning, stacklevel=2)
+
         response.set_cookie(
                 key=self.app.config['FAS_COOKIE_NAME'],
                 value=flask.g.fas_session_id or '',
