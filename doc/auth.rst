@@ -78,19 +78,20 @@ Flask Auth Plugin
 Flask FAS OpenId Auth Plugin
 ============================
 
-The flask openid provider is an alternative to the flask_fas auth plugin.  It
-leverages our fas-openid server to do authn and authz (group memberships).
-Note that not every feature is available with a generic openid provider -- the
-plugin depends on the openid provider having certain extensions in order to
-provide more than basic openid auth.
+The flask_openid provider is an alternative to the flask_fas auth plugin.  It
+leverages our FAS-OpenID server to do authn and authz (group memberships).
+Note that not every feature is available with a generic OpenID provider -- the
+plugin depends on the OpenID provider having certain extensions in order to
+provide more than basic OpenID auth.
 
-* Any compliant Openid server should allow you to use the basic authn features of openid
+* Any compliant OpenID server should allow you to use the basic authn features of OpenID
   OpenID authentication core: http://openid.net/specs/openid-authentication-2_0.html
-* Retrieving simple informaion about the user such as username, human name, email
+* Retrieving simple information about the user such as username, human name, email
   is done with sreg: http://openid.net/specs/openid-simple-registration-extension-1_0.html
   which is an extension supported by many providers.
-* Advanced security features such as requiring a user to relogin to the openid provider or
-  specifying that the user login with a hardware token requires PAPE:
+* Advanced security features such as requiring a user to re-login to the OpenID
+  provider or specifying that the user login with a hardware token requires
+  the PAPE extension:
   http://openid.net/specs/openid-provider-authentication-policy-extension-1_0.html
 * To get groups information, the provider must implement the
   https://dev.launchpad.net/OpenIDTeams extension.
