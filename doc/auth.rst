@@ -80,9 +80,32 @@ Flask FAS OpenId Auth Plugin
 
 The flask openid provider is an alternative to the flask_fas auth plugin.  It
 leverages our fas-openid server to give do authn and authz (group memberships).
-Note that this is not for use with generic openid servers -- it needs to have a
-number of extensions to work (a standard teams extension and an implementation
-of the cla extension).
+Note that not every feature is available with a generic openid provider -- the
+plugin depends on the openid provider having certain extensions in order to
+provide more than basic openid auth.
+
+* Any compliant Openid server should allow you to use the basic authn features of openid
+  OpenID authentication core: http://openid.net/specs/openid-authentication-2_0.html
+* Retrieving simple informaion about the user such as username, human name, email
+  is done with sreg: http://openid.net/specs/openid-simple-registration-extension-1_0.html
+  which is an extension supported by many providers.
+* Advanced security features such as requiring a user to relogin to the openid provider or
+  specifying that the user login with a hardware token requires PAPE:
+  http://openid.net/specs/openid-provider-authentication-policy-extension-1_0.html
+* To get groups information, the provider must implement the
+  https://dev.launchpad.net/OpenIDTeams extension.
+  * We ave extended the teams extension so you can request a team name of
+    ``_FAS_ALL_GROUPS_`` to retrieve all the groups that a user belongs to.
+    Without this addition to the teams extension you will need to manually
+    configure which groups you are interested in knowing about.  See the
+    documentation for how to do so.
+* Retrieving information about whether a user has signed a CLA (For Fedora,
+  this is the Fedora Project Contributor Agreement).
+  http://fedoraproject.org/specs/open_id/cla
+
+If the provider you use does not support one of these extensions, the plugin
+should still work but naturally, it will return empty values for the
+information that the extension would have provided.
 
 .. toctree::
     :maxdepth: 2
