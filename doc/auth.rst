@@ -67,10 +67,6 @@ Django Authentication Backend
 
 Flask Auth Plugin
 =================
-This plugin is soon to be **deprecated** because the fas_flask_openid plugin
-can replace the functionality.  The fas-openid server that is the backend for
-flask_fas_openid is currently in the Fedora Infrastructure Staging environment
-and will be deployed to production soon.
 
 .. toctree::
     :maxdepth: 2
@@ -81,11 +77,12 @@ and will be deployed to production soon.
 
 Flask FAS OpenId Auth Plugin
 ============================
-The flask openid provider is a replacement for flask_fas.  It leverages our
-fas-openid server to give do authn and authz (group memberships).  Note that
-this is not for use with generic openid servers -- it needs to have a number of
-extensions to work (a standard teams extension and an implementation of the cla
-extension)
+
+The flask openid provider is an alternative to the flask_fas auth plugin.  It
+leverages our fas-openid server to give do authn and authz (group memberships).
+Note that this is not for use with generic openid servers -- it needs to have a
+number of extensions to work (a standard teams extension and an implementation
+of the cla extension).
 
 .. toctree::
     :maxdepth: 2
