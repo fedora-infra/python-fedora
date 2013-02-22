@@ -79,7 +79,7 @@ Flask FAS OpenId Auth Plugin
 ============================
 
 The flask openid provider is an alternative to the flask_fas auth plugin.  It
-leverages our fas-openid server to give do authn and authz (group memberships).
+leverages our fas-openid server to do authn and authz (group memberships).
 Note that not every feature is available with a generic openid provider -- the
 plugin depends on the openid provider having certain extensions in order to
 provide more than basic openid auth.
