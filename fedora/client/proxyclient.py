@@ -144,8 +144,9 @@ class ProxyClient(object):
 
         # When we are instantiated, go ahead and silence the python-requests
         # log.  It is kind of noisy in our app server logs.
-        requests_log = logging.getLogger("requests")
-        requests_log.setLevel(logging.WARN)
+        if not debug:
+            requests_log = logging.getLogger("requests")
+            requests_log.setLevel(logging.WARN)
 
         self.log.debug(b_('proxyclient.__init__:entered'))
         if base_url[-1] != '/':
