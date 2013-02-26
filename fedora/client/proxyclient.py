@@ -134,8 +134,9 @@ class ProxyClient(object):
         :kwarg retries: if we get an unknown or possibly transient error from
             the server, retry this many times.  Setting this to a negative
             number makes it try forever.  Defaults to zero, no retries.
-        :kwarg timeout: A float describing the timeout of the connection.
-            Defaults to 30 seconds.
+        :kwarg timeout: A float describing the timeout of the connection. The
+            timeout only effects the connection process itself, not the downloading
+            of the response body. Defaults to 30 seconds.
 
         '''
         # Setup our logger
