@@ -353,15 +353,23 @@ class ProxyClient(object):
             retries = self.retries
 
         while True:
-            response = requests.post(
-                url,
-                data=complete_params,
-                cookies=cookies,
-                headers=headers,
-                auth=auth,
-                verify=not self.insecure,
-                timeout=self.timeout,
-            )
+            try:
+                response = requests.post(
+                    url,
+                    data=complete_params,
+                    cookies=cookies,
+                    headers=headers,
+                    auth=auth,
+                    verify=not self.insecure,
+                    timeout=self.timeout,
+                )
+            except requests.Timeout:
+                self.log.debug(b_('Request timed out'))
+                if retries < 0 or num_tries < retries:
+                    num_tries += 1
+                    self.log.debug(b_('Attempt #%(try)s failed') % {'try': num_tries})
+                    time.sleep(0.5)
+                    continue
 
             # When the python-requests module gets a response, it attempts to
             # guess the encoding using "charade", a fork of "chardet" which it
