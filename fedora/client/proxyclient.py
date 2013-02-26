@@ -112,7 +112,8 @@ class ProxyClient(object):
     log = log
 
     def __init__(self, base_url, useragent=None, session_name='tg-visit',
-            session_as_cookie=True, debug=False, insecure=False, retries=0):
+            session_as_cookie=True, debug=False, insecure=False, retries=0,
+            timeout=30.0):
         '''Create a client configured for a particular service.
 
         :arg base_url: Base of every URL used to contact the server
@@ -133,6 +134,8 @@ class ProxyClient(object):
         :kwarg retries: if we get an unknown or possibly transient error from
             the server, retry this many times.  Setting this to a negative
             number makes it try forever.  Defaults to zero, no retries.
+        :kwarg timeout: A float describing the timeout of the connection.
+            Defaults to 30 seconds.
 
         '''
         # Setup our logger
@@ -165,6 +168,7 @@ class ProxyClient(object):
                 DeprecationWarning, stacklevel=2)
         self.insecure = insecure
         self.retries = retries or 0
+        self.timeout = timeout
         self.log.debug(b_('proxyclient.__init__:exited'))
 
     def __get_debug(self):
@@ -355,6 +359,7 @@ class ProxyClient(object):
                 headers=headers,
                 auth=auth,
                 verify=not self.insecure,
+                timeout=self.timeout,
             )
 
             # When the python-requests module gets a response, it attempts to
