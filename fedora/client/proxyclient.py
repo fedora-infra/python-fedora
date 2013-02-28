@@ -112,7 +112,8 @@ class ProxyClient(object):
     log = log
 
     def __init__(self, base_url, useragent=None, session_name='tg-visit',
-            session_as_cookie=True, debug=False, insecure=False, retries=0):
+            session_as_cookie=True, debug=False, insecure=False, retries=0,
+            timeout=30.0):
         '''Create a client configured for a particular service.
 
         :arg base_url: Base of every URL used to contact the server
@@ -133,6 +134,9 @@ class ProxyClient(object):
         :kwarg retries: if we get an unknown or possibly transient error from
             the server, retry this many times.  Setting this to a negative
             number makes it try forever.  Defaults to zero, no retries.
+        :kwarg timeout: A float describing the timeout of the connection. The
+            timeout only effects the connection process itself, not the downloading
+            of the response body. Defaults to 30 seconds.
 
         '''
         # Setup our logger
@@ -141,6 +145,12 @@ class ProxyClient(object):
         format = logging.Formatter("%(message)s")
         self._log_handler.setFormatter(format)
         self.log.addHandler(self._log_handler)
+
+        # When we are instantiated, go ahead and silence the python-requests
+        # log.  It is kind of noisy in our app server logs.
+        if not debug:
+            requests_log = logging.getLogger("requests")
+            requests_log.setLevel(logging.WARN)
 
         self.log.debug(b_('proxyclient.__init__:entered'))
         if base_url[-1] != '/':
@@ -159,6 +169,7 @@ class ProxyClient(object):
                 DeprecationWarning, stacklevel=2)
         self.insecure = insecure
         self.retries = retries or 0
+        self.timeout = timeout
         self.log.debug(b_('proxyclient.__init__:exited'))
 
     def __get_debug(self):
@@ -342,14 +353,23 @@ class ProxyClient(object):
             retries = self.retries
 
         while True:
-            response = requests.post(
-                url,
-                data=complete_params,
-                cookies=cookies,
-                headers=headers,
-                auth=auth,
-                verify=not self.insecure,
-            )
+            try:
+                response = requests.post(
+                    url,
+                    data=complete_params,
+                    cookies=cookies,
+                    headers=headers,
+                    auth=auth,
+                    verify=not self.insecure,
+                    timeout=self.timeout,
+                )
+            except requests.Timeout:
+                self.log.debug(b_('Request timed out'))
+                if retries < 0 or num_tries < retries:
+                    num_tries += 1
+                    self.log.debug(b_('Attempt #%(try)s failed') % {'try': num_tries})
+                    time.sleep(0.5)
+                    continue
 
             # When the python-requests module gets a response, it attempts to
             # guess the encoding using "charade", a fork of "chardet" which it

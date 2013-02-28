@@ -7,10 +7,21 @@ NEWS
 :Version: 0.3.x
 
 ------
-0.3.33 (in progres)
+0.3.33 (in progress)
 ------
 
 * Added flask_fas_openid for the migration to OpenID
+* Rename the FAS_HTTPS_REQUIRED config variable in the flask_fas auth adapter
+  to FAS_FLASK_COOKIE_REQUIRES_HTTPS.  The longer name is more cumbersome but
+  the previous name was too often mistaken to be setting whether we needed to
+  connect to the fas server with https when it really was about whether the
+  session cookie should require https to be returned to the server (the
+  cookie's secure flag).
+* Fix a performance bug in the client modules when the server returns large
+  json strings.  python-requests defaults to trying to detect the charset of
+  response strings.  This takes a very long time on large return values.
+  Since we know that all responses from the services we're talking to will be
+  utf-8, we can skip this detection step.
 
 --------
 0.3.32.3

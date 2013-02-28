@@ -24,7 +24,7 @@ FAS-OpenID authentication plugin for the flask web framework
 
 .. moduleauthor:: Patrick Uiterwijk <puiterwijk@fedoraproject.org>
 
-..versionadded:: 0.3.XX
+..versionadded:: 0.3.33
 '''
 from functools import wraps
 
