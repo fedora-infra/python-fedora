@@ -17,6 +17,8 @@ NEWS
   connect to the fas server with https when it really was about whether the
   session cookie should require https to be returned to the server (the
   cookie's secure flag).
+* Set a configurable timeout on how long a client request will wait for the
+  server to setup a connection in BaseClient and ProxyClient.
 * Fix a performance bug in the client modules when the server returns large
   json strings.  python-requests defaults to trying to detect the charset of
   response strings.  This takes a very long time on large return values.
