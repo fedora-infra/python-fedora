@@ -108,6 +108,14 @@ class ProxyClient(object):
         Setting this to a positive integer will retry failed requests to the
         web server this many times.  Setting to a negative integer will retry
         forever.
+
+    .. attribute:: timeout
+        A float describing the timeout of the connection. The timeout only
+        effects the connection process itself, not the downloading of the
+        response body. Defaults to 30 seconds.
+
+    .. versionchanged:: 0.3.33
+        Added the timeout attribute
     '''
     log = log
 
@@ -138,6 +146,8 @@ class ProxyClient(object):
             timeout only effects the connection process itself, not the downloading
             of the response body. Defaults to 30 seconds.
 
+        .. versionchanged:: 0.3.33
+            Added the timeout kwarg
         '''
         # Setup our logger
         self._log_handler = logging.StreamHandler()
@@ -169,7 +179,7 @@ class ProxyClient(object):
                 DeprecationWarning, stacklevel=2)
         self.insecure = insecure
         self.retries = retries or 0
-        self.timeout = timeout
+        self.timeout = timeout or 30.0
         self.log.debug(b_('proxyclient.__init__:exited'))
 
     def __get_debug(self):
@@ -200,7 +210,7 @@ class ProxyClient(object):
     ''')
 
     def send_request(self, method, req_params=None, auth_params=None,
-            file_params=None, retries=None):
+            file_params=None, retries=None, timeout=None):
         '''Make an HTTP request to a server method.
 
         The given method is called with any parameters set in ``req_params``.
@@ -244,6 +254,9 @@ class ProxyClient(object):
             number makes it try forever.  Defaults to zero, no retries.
             number makes it try forever.  Default to use the :attr:`retries`
             value set on the instance or in :meth:`__init__`.
+        :kwarg timeout: A float describing the timeout of the connection. The
+            timeout only effects the connection process itself, not the downloading
+            of the response body. Defaults to 30 seconds.
         :returns: If ProxyClient is created with session_as_cookie=True (the
             default), a tuple of session cookie and data from the server.
             If ProxyClient was created with session_as_cookie=False, a tuple
@@ -256,6 +269,8 @@ class ProxyClient(object):
         .. versionchanged:: 0.3.21
             * Return data as a Bunch instead of a DictContainer
             * Add file_params to allow uploading files
+        .. versionchanged:: 0.3.33
+            Added the timeout kwarg
         '''
         self.log.debug(b_('proxyclient.send_request: entered'))
 
@@ -352,6 +367,8 @@ class ProxyClient(object):
         if retries is None:
             retries = self.retries
 
+        if timeout is None:
+            timeout = self.timeout
         while True:
             try:
                 response = requests.post(
@@ -361,7 +378,7 @@ class ProxyClient(object):
                     headers=headers,
                     auth=auth,
                     verify=not self.insecure,
-                    timeout=self.timeout,
+                    timeout=timeout,
                 )
             except requests.Timeout:
                 self.log.debug(b_('Request timed out'))
