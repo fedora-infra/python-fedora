@@ -235,6 +235,7 @@ class ProxyClient(object):
                 for the server
             :username: Username to send to the server
             :password: Password to use with username to send to the server
+            :otp: OTP key to use in addition to password to send to the server.
             :httpauth: If set to ``basic`` then use HTTP Basic Authentication
                 to send the username and password to the server.  This may be
                 extended in the future to support other httpauth types than
@@ -281,6 +282,7 @@ class ProxyClient(object):
         session_id = None
         username = None
         password = None
+        otp = None
         if auth_params:
             if 'session_id' in auth_params:
                 session_id = auth_params['session_id']
@@ -297,6 +299,10 @@ class ProxyClient(object):
             elif 'username' in auth_params or 'password' in auth_params:
                 raise AuthError(b_('username and password must both be set in'
                         ' auth_params'))
+            if 'otp' in auth_params:
+                otp = auth_params['otp']
+            else:
+                self.log.debug('OTP key not set')
             if not (session_id or username):
                 raise AuthError(b_('No known authentication methods'
                     ' specified: set "cookie" in auth_params or set both'
@@ -347,6 +353,7 @@ class ProxyClient(object):
                 complete_params.update({
                     'user_name': to_bytes(username),
                     'password': to_bytes(password),
+                    'otp': to_bytes(otp),
                     'login': 'Login',
                 })
 
@@ -358,8 +365,11 @@ class ProxyClient(object):
         if self.debug and complete_params:
             debug_data = copy.deepcopy(complete_params)
 
+            # wipe password and otp
             if 'password' in debug_data:
                 debug_data['password'] = 'xxxxxxx'
+            if 'otp' in debug_data:
+                debug_data['otp'] = 'xxxxxxxxxxxxxxxxxxxxxxxx'
 
             self.log.debug(b_('Data: %r') % debug_data)
 
