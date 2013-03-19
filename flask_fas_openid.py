@@ -69,7 +69,6 @@ class FAS(object):
         return_url = flask.session['FLASK_FAS_OPENID_RETURN_URL']
         cancel_url = flask.session['FLASK_FAS_OPENID_CANCEL_URL']
         oidconsumer = consumer.Consumer(flask.session, None)
-        print 'values: %s' % flask.request.values
         info = oidconsumer.complete(flask.request.values, flask.request.base_url)
         display_identifier = info.getDisplayIdentifier()
 
