@@ -49,6 +49,7 @@ from kitchen.text.converters import to_bytes
 
 from fedora import __version__, b_
 from fedora.client import AppError, AuthError, ServerError
+from fedora.client.utils import filter_password
 
 log = logging.getLogger(__name__)
 
@@ -235,7 +236,6 @@ class ProxyClient(object):
                 for the server
             :username: Username to send to the server
             :password: Password to use with username to send to the server
-            :otp: OTP key to use in addition to password to send to the server.
             :httpauth: If set to ``basic`` then use HTTP Basic Authentication
                 to send the username and password to the server.  This may be
                 extended in the future to support other httpauth types than
@@ -282,7 +282,6 @@ class ProxyClient(object):
         session_id = None
         username = None
         password = None
-        otp = None
         if auth_params:
             if 'session_id' in auth_params:
                 session_id = auth_params['session_id']
@@ -342,6 +341,7 @@ class ProxyClient(object):
             complete_params.update({'_csrf_token': token.hexdigest()})
 
         auth = None
+        password, otp = filter_password(password)
         if username and password:
             if auth_params.get('httpauth', '').lower() == 'basic':
                 # HTTP Basic auth login
