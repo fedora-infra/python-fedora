@@ -95,7 +95,7 @@ provide more than basic OpenID auth.
   http://openid.net/specs/openid-provider-authentication-policy-extension-1_0.html
 * To get groups information, the provider must implement the
   https://dev.launchpad.net/OpenIDTeams extension.
-  * We ave extended the teams extension so you can request a team name of
+  * We have extended the teams extension so you can request a team name of
     ``_FAS_ALL_GROUPS_`` to retrieve all the groups that a user belongs to.
     Without this addition to the teams extension you will need to manually
     configure which groups you are interested in knowing about.  See the
