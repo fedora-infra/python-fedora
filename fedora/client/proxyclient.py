@@ -255,8 +255,9 @@ class ProxyClient(object):
             number makes it try forever.  Default to use the :attr:`retries`
             value set on the instance or in :meth:`__init__`.
         :kwarg timeout: A float describing the timeout of the connection. The
-            timeout only effects the connection process itself, not the downloading
-            of the response body. Defaults to 30 seconds.
+            timeout only effects the connection process itself, not the
+            downloading of the response body. Defaults to the :attr:`timeout`
+            value set on the instance or in :meth:`__init__`.
         :returns: If ProxyClient is created with session_as_cookie=True (the
             default), a tuple of session cookie and data from the server.
             If ProxyClient was created with session_as_cookie=False, a tuple
