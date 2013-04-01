@@ -63,7 +63,7 @@ Django Authentication Backend
     django
 
 
-.. _flaskauth:
+.. _flask_fas:
 
 Flask Auth Plugin
 =================
