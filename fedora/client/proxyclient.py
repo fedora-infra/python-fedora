@@ -251,7 +251,6 @@ class ProxyClient(object):
             files to a single file field, pass the paths as a list of paths.
         :kwarg retries: if we get an unknown or possibly transient error from
             the server, retry this many times.  Setting this to a negative
-            number makes it try forever.  Defaults to zero, no retries.
             number makes it try forever.  Default to use the :attr:`retries`
             value set on the instance or in :meth:`__init__`.
         :kwarg timeout: A float describing the timeout of the connection. The
@@ -363,12 +362,13 @@ class ProxyClient(object):
 
             self.log.debug(b_('Data: %r') % debug_data)
 
-        num_tries = 0
         if retries is None:
             retries = self.retries
 
         if timeout is None:
             timeout = self.timeout
+
+        num_tries = 0
         while True:
             try:
                 response = requests.post(
