@@ -352,7 +352,7 @@ class BaseClient(ProxyClient):
 
         session_id, data = super(BaseClient, self).send_request(method,
                 req_params=req_params, file_params=file_params,
-                auth_params=auth_params, retries=retries)
+                auth_params=auth_params, retries=retries, timeout=timeout)
         # In case the server returned a new session id to us
         if self.session_id != session_id:
             self.session_id = session_id
