@@ -76,7 +76,7 @@ class BaseClient(ProxyClient):
             the server, retry this many times.  Setting this to a negative
             number makes it try forever.  Defaults to zero, no retries.
         :kwarg timeout: A float describing the timeout of the connection. The
-            timeout only effects the connection process itself, not the
+            timeout only affects the connection process itself, not the
             downloading of the response body. Defaults to 30 seconds.
 
         .. versionchanged:: 0.3.33
@@ -293,7 +293,7 @@ class BaseClient(ProxyClient):
             value set on the instance or in :meth:`__init__` (which defaults
             to zero, no retries).
         :kwarg timeout: A float describing the timeout of the connection. The
-            timeout only effects the connection process itself, not the
+            timeout only affects the connection process itself, not the
             downloading of the response body. Defaults to 30 seconds.
         :rtype: Bunch
         :returns: The data from the server
@@ -352,7 +352,7 @@ class BaseClient(ProxyClient):
 
         session_id, data = super(BaseClient, self).send_request(method,
                 req_params=req_params, file_params=file_params,
-                auth_params=auth_params, retries=retries)
+                auth_params=auth_params, retries=retries, timeout=timeout)
         # In case the server returned a new session id to us
         if self.session_id != session_id:
             self.session_id = session_id
