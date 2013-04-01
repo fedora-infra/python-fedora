@@ -19,6 +19,8 @@ NEWS
   cookie's secure flag).
 * Set a configurable timeout on how long a client request will wait for the
   server to setup a connection in BaseClient and ProxyClient.
+* Fix instance-wide default retries in BaseClient (and subclasses) being
+  overridden by the default value of retries in BaseClient.send_request()
 * Fix a performance bug in the client modules when the server returns large
   json strings.  python-requests defaults to trying to detect the charset of
   response strings.  This takes a very long time on large return values.
