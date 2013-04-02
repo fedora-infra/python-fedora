@@ -49,6 +49,7 @@ from kitchen.text.converters import to_bytes
 
 from fedora import __version__, b_
 from fedora.client import AppError, AuthError, ServerError
+from fedora.client.utils import filter_password
 
 log = logging.getLogger(__name__)
 
@@ -297,6 +298,10 @@ class ProxyClient(object):
             elif 'username' in auth_params or 'password' in auth_params:
                 raise AuthError(b_('username and password must both be set in'
                         ' auth_params'))
+            if 'otp' in auth_params:
+                otp = auth_params['otp']
+            else:
+                self.log.debug('OTP key not set')
             if not (session_id or username):
                 raise AuthError(b_('No known authentication methods'
                     ' specified: set "cookie" in auth_params or set both'
@@ -336,6 +341,7 @@ class ProxyClient(object):
             complete_params.update({'_csrf_token': token.hexdigest()})
 
         auth = None
+        password, otp = filter_password(password)
         if username and password:
             if auth_params.get('httpauth', '').lower() == 'basic':
                 # HTTP Basic auth login
@@ -347,6 +353,7 @@ class ProxyClient(object):
                 complete_params.update({
                     'user_name': to_bytes(username),
                     'password': to_bytes(password),
+                    'otp': to_bytes(otp),
                     'login': 'Login',
                 })
 
@@ -358,8 +365,11 @@ class ProxyClient(object):
         if self.debug and complete_params:
             debug_data = copy.deepcopy(complete_params)
 
+            # wipe password and otp
             if 'password' in debug_data:
                 debug_data['password'] = 'xxxxxxx'
+            if 'otp' in debug_data:
+                debug_data['otp'] = 'xxxxxxxxxxxxxxxxxxxxxxxx'
 
             self.log.debug(b_('Data: %r') % debug_data)
 

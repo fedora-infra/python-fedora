@@ -41,6 +41,7 @@ b_SESSION_DIR = path.join(path.expanduser('~'), '.fedora')
 b_SESSION_FILE = path.join(b_SESSION_DIR, '.fedora_session')
 
 from fedora.client import AuthError, ProxyClient
+from fedora.client.utils import filter_password
 
 class BaseClient(ProxyClient):
     '''
@@ -329,10 +330,13 @@ class BaseClient(ProxyClient):
         auth_params = {'session_id': self.session_id}
         if auth == True:
             # We need something to do auth.  Check user/pass
-            if self.username and self.password:
+            password, otp = filter_password(self.password)
+            if self.username and password:
                 # Add the username and password and we're all set
                 auth_params['username'] = self.username
-                auth_params['password'] = self.password
+                auth_params['password'] = password
+                if otp:
+                    auth_params['otp'] = otp
                 if self.httpauth:
                     auth_params['httpauth'] = self.httpauth
             else:
