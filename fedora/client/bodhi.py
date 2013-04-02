@@ -241,7 +241,7 @@ class BodhiClient(BaseClient):
 
     def push(self):
         """ Return a list of requests """
-        return self.send_request('admin/push', auth=True)
+        return self.send_request('admin/push', auth=True, timeout=120)
 
     def push_updates(self, updates):
         """ Push a list of updates.
@@ -249,7 +249,7 @@ class BodhiClient(BaseClient):
         :arg updates: A list of update titles to ``push``.
 
         """
-        return self.send_request('admin/mash', auth=True,
+        return self.send_request('admin/mash', auth=True, timeout=120,
                                  req_params={'updates': updates})
 
     def parse_file(self, input_file):
