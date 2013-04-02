@@ -62,6 +62,13 @@ Glossary
     model
         In MVC design, the layer that deals directly with the data.
 
+    OpenID
+        A specification for single sign on to web services where the
+        authentication server and the application seeking to have the user
+        authenticated do not need to have complete trust in each other.
+
+        .. seealso:: http://openid.net/get-an-openid/what-is-openid/
+
     Same Origin Policy
         A web browser security policy that prevents one website from reading:
         1) the cookies from another website
