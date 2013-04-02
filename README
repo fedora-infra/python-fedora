@@ -244,13 +244,14 @@ Currently, this is more involved.
      git commit -m 'Merge new translations from transifex.net'
 
 2) Make sure that the NEWS file is accurate (use git log if needed).
-   After that, push the devel branch to the server::
+   After that, push the develop branch to the server::
      # Update files
      git push
 
-3) Publish updated docs::
+3) Make sure the docs are proper and publish them::
+    # Build docs and check for errors
+    ./paver build_sphinx
      # pypi
-     ./paver build_sphinx
      ./paver upload_docs
      # fedorahosted
      ./paver publish_doc
