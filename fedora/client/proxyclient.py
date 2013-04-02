@@ -418,9 +418,6 @@ class ProxyClient(object):
                 # implementation detail of requests vs pycurl vs urllib
                 raise ServerError(url, -1, 'Request timed out after %s seconds' % timeout)
 
-                # Fail and raise the timeout error in its original context
-                raise
-
             # When the python-requests module gets a response, it attempts to
             # guess the encoding using chardet (or a fork)
             # That process can take an extraordinarily long time for long
