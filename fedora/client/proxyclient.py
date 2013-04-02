@@ -381,21 +381,43 @@ class ProxyClient(object):
                     verify=not self.insecure,
                     timeout=timeout,
                 )
-            except requests.Timeout:
+            except (requests.Timeout, requests.exceptions.SSLError) as e:
+                if isinstance(e, requests.exceptions.SSLError):
+                    # And now we know how not to code a library exception
+                    # hierarchy...  We're expecting that requests is raising
+                    # the following stupidity:
+                    # requests.exceptions.SSLError(
+                    #   urllib3.exceptions.SSLError(
+                    #     ssl.SSLError('The read operation timed out')))
+                    # If we weren't interested in reraising the exception with
+                    # full tracdeback we could use a try: except instead of
+                    # this gross conditional.  But we need to code defensively
+                    # because we don't want to raise an unrelated exception
+                    # here and if requests/urllib3 can do this sort of
+                    # nonsense, they may change the nonsense in the future
+                    if not (e.args and isinstance(e.args[0], urllib3.SSLError)
+                            and e.args[0].args
+                            and isinstance(e.args[0].args[0])
+                            and e.args[0].args[0].args
+                            and 'timed out' in e.args[0].args[0].args[0]):
+                        # We're only interested in timeouts here
+                        raise
                 self.log.debug(b_('Request timed out'))
                 if retries < 0 or num_tries < retries:
                     num_tries += 1
                     self.log.debug(b_('Attempt #%(try)s failed') % {'try': num_tries})
                     time.sleep(0.5)
                     continue
+                # Fail and raise an error
+                # Raising our own exception protects the user from the
+                # implementation detail of requests vs pycurl vs urllib
+                raise ServerError(url, -1, 'Request timed out after %s seconds' % timeout)
 
                 # Fail and raise the timeout error in its original context
                 raise
 
             # When the python-requests module gets a response, it attempts to
-            # guess the encoding using "charade", a fork of "chardet" which it
-            # bundles (and which we are in the process of unbundling:
-            # https://bugzilla.redhat.com/show_bug.cgi?id=910236).
+            # guess the encoding using chardet (or a fork)
             # That process can take an extraordinarily long time for long
             # response.text strings.. upwards of 30 minutes for FAS queries to
             # /accounts/user/list JSON api!  Therefore, we cut that codepath
