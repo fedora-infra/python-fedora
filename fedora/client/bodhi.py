@@ -96,7 +96,7 @@ class BodhiClient(BaseClient):
             editing.
 
         """
-        return self.send_request('save', auth=True, req_params={
+        return self.send_request('save', auth=True, timeout=120, req_params={
                 'suggest_reboot': suggest_reboot,
                 'close_bugs': close_bugs,
                 'unstable_karma': unstable_karma,
