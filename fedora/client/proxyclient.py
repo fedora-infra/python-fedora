@@ -27,7 +27,8 @@ import copy
 import urllib
 import httplib
 import logging
-import requests
+# For handling an exception that's coming from requests:
+import ssl
 import time
 import warnings
 
@@ -46,6 +47,9 @@ except ImportError:
 
 from bunch import bunchify
 from kitchen.text.converters import to_bytes
+import requests
+# For handling an exception that's coming from requests:
+import urllib3
 
 from fedora import __version__, b_
 from fedora.client import AppError, AuthError, ServerError
@@ -395,9 +399,10 @@ class ProxyClient(object):
                     # because we don't want to raise an unrelated exception
                     # here and if requests/urllib3 can do this sort of
                     # nonsense, they may change the nonsense in the future
-                    if not (e.args and isinstance(e.args[0], urllib3.SSLError)
+                    if not (e.args and isinstance(e.args[0],
+                                                  urllib3.exceptions.SSLError)
                             and e.args[0].args
-                            and isinstance(e.args[0].args[0])
+                            and isinstance(e.args[0].args[0], ssl.SSLError)
                             and e.args[0].args[0].args
                             and 'timed out' in e.args[0].args[0].args[0]):
                         # We're only interested in timeouts here
