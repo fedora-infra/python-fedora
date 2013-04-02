@@ -389,6 +389,9 @@ class ProxyClient(object):
                     time.sleep(0.5)
                     continue
 
+                # Fail and raise the timeout error in its original context
+                raise
+
             # When the python-requests module gets a response, it attempts to
             # guess the encoding using "charade", a fork of "chardet" which it
             # bundles (and which we are in the process of unbundling:
