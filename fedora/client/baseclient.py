@@ -77,7 +77,7 @@ class BaseClient(ProxyClient):
             number makes it try forever.  Defaults to zero, no retries.
         :kwarg timeout: A float describing the timeout of the connection. The
             timeout only affects the connection process itself, not the
-            downloading of the response body. Defaults to 30 seconds.
+            downloading of the response body. Defaults to 120 seconds.
 
         .. versionchanged:: 0.3.33
             Added the timeout kwarg
@@ -294,7 +294,10 @@ class BaseClient(ProxyClient):
             to zero, no retries).
         :kwarg timeout: A float describing the timeout of the connection. The
             timeout only affects the connection process itself, not the
-            downloading of the response body. Defaults to 30 seconds.
+            downloading of the response body. Default to use the
+            :attr:`timeout` value set on the instance or in :meth:`__init__`
+            (which defaults to 120s).
+
         :rtype: Bunch
         :returns: The data from the server
 
