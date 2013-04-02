@@ -113,7 +113,7 @@ class ProxyClient(object):
     .. attribute:: timeout
         A float describing the timeout of the connection. The timeout only
         affects the connection process itself, not the downloading of the
-        response body. Defaults to 30 seconds.
+        response body. Defaults to 120 seconds.
 
     .. versionchanged:: 0.3.33
         Added the timeout attribute
@@ -121,8 +121,8 @@ class ProxyClient(object):
     log = log
 
     def __init__(self, base_url, useragent=None, session_name='tg-visit',
-            session_as_cookie=True, debug=False, insecure=False, retries=0,
-            timeout=30.0):
+            session_as_cookie=True, debug=False, insecure=False, retries=None,
+            timeout=None):
         '''Create a client configured for a particular service.
 
         :arg base_url: Base of every URL used to contact the server
@@ -145,7 +145,7 @@ class ProxyClient(object):
             number makes it try forever.  Defaults to zero, no retries.
         :kwarg timeout: A float describing the timeout of the connection. The
             timeout only affects the connection process itself, not the downloading
-            of the response body. Defaults to 30 seconds.
+            of the response body. Defaults to 120 seconds.
 
         .. versionchanged:: 0.3.33
             Added the timeout kwarg
@@ -179,8 +179,17 @@ class ProxyClient(object):
                 ' constructor with session_as_cookie=False'),
                 DeprecationWarning, stacklevel=2)
         self.insecure = insecure
-        self.retries = retries or 0
-        self.timeout = timeout or 30.0
+
+        # Have to do retries and timeout default values this way as BaseClient
+        # sends None for these values if not overridden by the user.
+        if retries is None:
+            retries = 0
+        else:
+            self.retries = retries
+        if timeout is None:
+            self.timeout = 120.0
+        else:
+            self.timeout = timeout
         self.log.debug(b_('proxyclient.__init__:exited'))
 
     def __get_debug(self):
