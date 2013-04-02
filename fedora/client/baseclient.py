@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2010  Red Hat, Inc.
+# Copyright (C) 2013  Red Hat, Inc.
 # This file is part of python-fedora
-# 
+#
 # python-fedora is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # python-fedora is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
@@ -49,7 +49,7 @@ class BaseClient(ProxyClient):
     def __init__(self, base_url, useragent=None, debug=False, insecure=False,
             username=None, password=None, httpauth=None, session_cookie=None,
             session_id=None, session_name='tg-visit', cache_session=True,
-            retries=None):
+            retries=None, timeout=None):
         '''
         :arg base_url: Base of every URL used to contact the server
         :kwarg useragent: Useragent string to use.  If not given, default to
@@ -75,13 +75,19 @@ class BaseClient(ProxyClient):
         :kwarg retries: if we get an unknown or possibly transient error from
             the server, retry this many times.  Setting this to a negative
             number makes it try forever.  Defaults to zero, no retries.
+        :kwarg timeout: A float describing the timeout of the connection. The
+            timeout only affects the connection process itself, not the
+            downloading of the response body. Defaults to 30 seconds.
+
+        .. versionchanged:: 0.3.33
+            Added the timeout kwarg
         '''
         self.log = log
         self.useragent = useragent or 'Fedora BaseClient/%(version)s' % {
                 'version': __version__}
         super(BaseClient, self).__init__(base_url, useragent=self.useragent,
                 session_name=session_name, session_as_cookie=False,
-                debug=debug, insecure=insecure, retries=retries)
+                debug=debug, insecure=insecure, retries=retries, timeout=timeout)
 
         self.username = username
         self.password = password
@@ -247,7 +253,7 @@ class BaseClient(ProxyClient):
             ' instead'), DeprecationWarning, stacklevel=2)
         del(self.session_id)
 
-    session_cookie = property(_get_session_cookie, _set_session_cookie, 
+    session_cookie = property(_get_session_cookie, _set_session_cookie,
             _del_session_cookie, '''*Deprecated*, use session_id instead.
 
         The session cookie is saved in a file in case it is needed in
@@ -266,7 +272,7 @@ class BaseClient(ProxyClient):
         del(self.session_id)
 
     def send_request(self, method, req_params=None, file_params=None,
-            auth=False, retries=0, **kwargs):
+            auth=False, retries=None, timeout=None, **kwargs):
         '''Make an HTTP request to a server method.
 
         The given method is called with any parameters set in req_params.  If
@@ -283,15 +289,20 @@ class BaseClient(ProxyClient):
         :kwarg auth: If True perform auth to the server, else do not.
         :kwarg retries: if we get an unknown or possibly transient error from
             the server, retry this many times.  Setting this to a negative
-            number makes it try forever.  Defaults to zero, no retries.
             number makes it try forever.  Default to use the :attr:`retries`
-            value set on the instance or in :meth:`__init__`.
+            value set on the instance or in :meth:`__init__` (which defaults
+            to zero, no retries).
+        :kwarg timeout: A float describing the timeout of the connection. The
+            timeout only affects the connection process itself, not the
+            downloading of the response body. Defaults to 30 seconds.
         :rtype: Bunch
         :returns: The data from the server
 
         .. versionchanged:: 0.3.21
             * Return data as a Bunch instead of a DictContainer
             * Add file_params to allow uploading files
+        .. versionchanged:: 0.3.33
+            * Added the timeout kwarg
         '''
         # Check for deprecated arguments.  This section can go once we hit 0.4
         if len(kwargs) >= 1:
@@ -341,7 +352,7 @@ class BaseClient(ProxyClient):
 
         session_id, data = super(BaseClient, self).send_request(method,
                 req_params=req_params, file_params=file_params,
-                auth_params=auth_params, retries=retries)
+                auth_params=auth_params, retries=retries, timeout=timeout)
         # In case the server returned a new session id to us
         if self.session_id != session_id:
             self.session_id = session_id

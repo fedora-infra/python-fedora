@@ -1,52 +1,37 @@
-=====================
-FAS Flask Auth Plugin
-=====================
+============================
+FAS Flask OpenID Auth Plugin
+============================
 
-:Authors: Toshio Kuratomi, Ian Weller
-:Date: 29 October 2012
+:Authors: Patrick Uiterwjk
+:Date: 18 February 2013
 :For Version: 0.3.x
 
-The :ref:`Fedora-Account-System` has a :term:`JSON` interface that we make use
-of to authenticate users in our web apps.  For our :term:`Flask` applications
-we have an identity provider that has :term:`single sign-on` with our
-:term:`TurboGears` 1 and 2 applications.  It does not protect against
-:term:`CSRF` attacks in the identity layer.  The flask-wtf forms package
-should be used to provide that.
+The :ref:`Fedora-Account-System` has a :term:`OpenID` provider that applications
+can use to authenticate users in web apps. For our :term:`Flask` applications
+we have an identity provider that uses this OpenID service to authenticate users.
+It is almost completely compatible with :ref:`flask_fas` except that it does not
+use the username/password provided by the client application (it is silently
+ignored). It can be configured to use any OpenID authentication service that
+implements the OpenID Teams Extension, Simple Registration Extension and
+CLA Extension.
 
 -------------
 Configuration
 -------------
 
-The FAS auth plugin has several config values that can be used to control how
-the auth plugin functions.  You can set these in your application's config
+The FAS OpenID auth plugin has several config values that can be used to control
+how the auth plugin functions.  You can set these in your application's config
 file.
 
-FAS_BASE_URL
-    Set this to the URL of the FAS server you are authenticating against.
-    Default is "https://admin.fedoraproject.org/accounts/"
-
-FAS_USER_AGENT
-    User agent string to be used when connecting to FAS.  You can set this to
-    something specific to your application to aid in debugging a connection to
-    the FAS server as it will show up in the FAS server's logs.  Default is
-    "Flask-FAS/|version|"
+FAS_OPENID_ENDPOINT
+    Set this to the OpenID endpoint url you are authenticating against.
+    Default is "http://id.fedoraproject.org/"
 
 FAS_CHECK_CERT
     When set, this will check the SSL Certificate for the FAS server to make
     sure that it is who it claims to be.  This is useful to set to False when
     testing against a local FAS server but should always be set to True in
     production.  Default: True
-
-FAS_COOKIE_NAME
-    The name of the cookie used to store the session id across the Fedora
-    Applications that support :term:`single sign-on`.  Default: "tg-visit"
-
-FAS_FLASK_COOKIE_REQUIRES_HTTPS
-    When this is set to True, the session cookie will only be returned to the
-    server via ssl (https).  If you connect to the server via plain http, the
-    cookie will not be sent.  This prevents sniffing of the cookie contents.
-    This may be set to False when testing your application but should always
-    be set to True in production.  Default is True.
 
 ------------------
 Sample Application
@@ -56,10 +41,10 @@ The following is a sample, minimal flask application that uses fas_flask for
 authentication::
 
     #!/usr/bin/python -tt
-    # Flask-FAS - A Flask extension for authorizing users with FAS
-    # Primary maintainer: Ian Weller <ianweller@fedoraproject.org>
+    # Flask-FAS-OpenID - A Flask extension for authorizing users with OpenID
+    # Primary maintainer: Patrick Uiterwijk <puiterwijk@fedoraproject.org>
     #
-    # Copyright (c) 2012, Red Hat, Inc.
+    # Copyright (c) 2012-2013, Red Hat, Inc., Patrick Uiterwijk
     #
     # Redistribution and use in source and binary forms, with or without
     # modification, are permitted provided that the following conditions are met:
@@ -84,13 +69,11 @@ authentication::
     # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
     # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-    # This is a sample application. In addition to using Flask-FAS, it uses
-    # Flask-WTF (WTForms) to handle the login form. Use of Flask-WTF is highly
-    # recommended because of its CSRF checking.
+    # This is a sample application.
 
     import flask
-    from flask.ext import wtf
     from flask.ext.fas import FAS, fas_login_required
+    from flask_fas_openid import fas_login_required, cla_plus_one_required, FAS
 
     # Set up Flask application
     app = flask.Flask(__name__)
@@ -98,32 +81,23 @@ authentication::
     fas = FAS(app)
 
     # Application configuration
-    # SECRET_KEY is necessary to CSRF in WTForms.  It nees to be secret to
-    # make the csrf tokens unguessable but if you have multiple servers behind
+    # SECRET_KEY is necessary for the Flask session system.  It nees to be secret to
+    # make the sessions secret but if you have multiple servers behind
     # a load balancer, the key needs to be the same on each.
     app.config['SECRET_KEY'] = 'change me!'
-    # Other configuration options for Flask-FAS:
-    #     FAS_BASE_URL: the base URL for the accounts system
-    #         (default https://admin.fedoraproject.org/accounts/)
+    # Other configuration options for Flask-FAS-OpenID:
+    #     FAS_OPENID_ENDPOINT: the OpenID endpoint URL
+    #         (default http://id.fedoraproject.org/)
     #     FAS_CHECK_CERT: check the SSL certificate of FAS (default True)
-    #     FAS_FLASK_COOKIE_REQUIRES_HTTPS: send the 'secure' option with
-    #          the login cookie (default True)
     # You should use these options' defaults for production applications!
-    app.config['FAS_BASE_URL'] = 'https://fakefas.fedoraproject.org/accounts/'
-    app.config['FAS_CHECK_CERT'] = False
-    app.config['FAS_FLASK_COOKIE_REQUIRES_HTTPS'] = False
-
-
-    # A basic login form
-    class LoginForm(wtf.Form):
-        username = wtf.TextField('Username', [wtf.validators.Required()])
-        password = wtf.PasswordField('Password', [wtf.validators.Required()])
+    app.config['FAS_OPENID_ENDPOINT'] = 'http://id.fedoraproject.org/'
+    app.config['FAS_CHECK_CERT'] = True
 
 
     # Inline templates keep this test application all in one file. Don't do this in
     # a real application. Please.
     TEMPLATE_START = """
-    <h1>Flask-FAS test app</h1>
+    <h1>Flask-FAS-OpenID test app</h1>
     {% if g.fas_user %}
         <p>Hello, {{ g.fas_user.username }} &mdash;
         <a href="{{ url_for("logout") }}">Log out</a>
@@ -158,37 +132,7 @@ authentication::
         # If user is already logged in, return them to where they were last
         if flask.g.fas_user:
             return flask.redirect(next_url)
-        # Init login form
-        form = LoginForm()
-        # Init template
-        data = TEMPLATE_START
-        data += ('<p>Log into the <a href="{{ config.FAS_BASE_URL }}">'
-                 'Fedora Accounts System</a>:')
-        # If this is POST, process the form
-        if form.validate_on_submit():
-            if fas.login(form.username.data, form.password.data):
-                # Login successful, return
-                return flask.redirect(next_url)
-            else:
-                # Login unsuccessful
-                data += '<p style="color:red">Invalid login</p>'
-        data += """
-    <form action="" method="POST">
-    {% for field in [form.username, form.password] %}
-        <p>{{ field.label }}: {{ field|safe }}</p>
-        {% if field.errors %}
-            <ul style="color:red">
-            {% for error in field.errors %}
-                <li>{{ error }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endfor %}
-    <input type="submit" value="Log in">
-    {{ form.csrf_token }}
-    </form>"""
-        return flask.render_template_string(data, form=form)
-
+        return fas.login(return_url=next_url)
 
     @app.route('/logout')
     def logout():
@@ -210,18 +154,10 @@ authentication::
     # can restrict a url so that you can only access it from an account that has
     # cla +1.
     @app.route('/claplusone')
+    @cla_plus_one_required
     def claplusone():
         data = TEMPLATE_START
-        if not flask.g.fas_user:
-            # Not logged in
-            return flask.render_template_string(data +
-                    '<p>You must log in to check your cla +1 status</p>')
-        non_cla_groups = [x.name for x in flask.g.fas_user.approved_memberships
-                          if x.group_type != 'cla']
-        if len(non_cla_groups) > 0:
-            data += '<p>Your account is cla+1.</p>'
-        else:
-            data += '<p>Your account is <em>not</em> cla+1.</p>'
+        data += '<p>Your account is cla+1.</p>'
         return flask.render_template_string(data)
 
 

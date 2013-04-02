@@ -35,7 +35,7 @@ options(
         url=URL,
         download_url=DOWNLOAD_URL,
         packages=find_packages(),
-        py_modules=['flask_fas'],
+        py_modules=['flask_fas', 'flask_fas_openid'],
         include_package_data=True,
         # non-setuptools package.  When everything we care about uses
         # python-2.5 distutils we can add these:

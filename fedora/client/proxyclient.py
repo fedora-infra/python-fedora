@@ -108,11 +108,20 @@ class ProxyClient(object):
         Setting this to a positive integer will retry failed requests to the
         web server this many times.  Setting to a negative integer will retry
         forever.
+
+    .. attribute:: timeout
+        A float describing the timeout of the connection. The timeout only
+        affects the connection process itself, not the downloading of the
+        response body. Defaults to 30 seconds.
+
+    .. versionchanged:: 0.3.33
+        Added the timeout attribute
     '''
     log = log
 
     def __init__(self, base_url, useragent=None, session_name='tg-visit',
-            session_as_cookie=True, debug=False, insecure=False, retries=0):
+            session_as_cookie=True, debug=False, insecure=False, retries=0,
+            timeout=30.0):
         '''Create a client configured for a particular service.
 
         :arg base_url: Base of every URL used to contact the server
@@ -133,7 +142,12 @@ class ProxyClient(object):
         :kwarg retries: if we get an unknown or possibly transient error from
             the server, retry this many times.  Setting this to a negative
             number makes it try forever.  Defaults to zero, no retries.
+        :kwarg timeout: A float describing the timeout of the connection. The
+            timeout only affects the connection process itself, not the downloading
+            of the response body. Defaults to 30 seconds.
 
+        .. versionchanged:: 0.3.33
+            Added the timeout kwarg
         '''
         # Setup our logger
         self._log_handler = logging.StreamHandler()
@@ -141,6 +155,12 @@ class ProxyClient(object):
         format = logging.Formatter("%(message)s")
         self._log_handler.setFormatter(format)
         self.log.addHandler(self._log_handler)
+
+        # When we are instantiated, go ahead and silence the python-requests
+        # log.  It is kind of noisy in our app server logs.
+        if not debug:
+            requests_log = logging.getLogger("requests")
+            requests_log.setLevel(logging.WARN)
 
         self.log.debug(b_('proxyclient.__init__:entered'))
         if base_url[-1] != '/':
@@ -159,6 +179,7 @@ class ProxyClient(object):
                 DeprecationWarning, stacklevel=2)
         self.insecure = insecure
         self.retries = retries or 0
+        self.timeout = timeout or 30.0
         self.log.debug(b_('proxyclient.__init__:exited'))
 
     def __get_debug(self):
@@ -189,7 +210,7 @@ class ProxyClient(object):
     ''')
 
     def send_request(self, method, req_params=None, auth_params=None,
-            file_params=None, retries=None):
+            file_params=None, retries=None, timeout=None):
         '''Make an HTTP request to a server method.
 
         The given method is called with any parameters set in ``req_params``.
@@ -230,8 +251,11 @@ class ProxyClient(object):
             files to a single file field, pass the paths as a list of paths.
         :kwarg retries: if we get an unknown or possibly transient error from
             the server, retry this many times.  Setting this to a negative
-            number makes it try forever.  Defaults to zero, no retries.
             number makes it try forever.  Default to use the :attr:`retries`
+            value set on the instance or in :meth:`__init__`.
+        :kwarg timeout: A float describing the timeout of the connection. The
+            timeout only affects the connection process itself, not the
+            downloading of the response body. Defaults to the :attr:`timeout`
             value set on the instance or in :meth:`__init__`.
         :returns: If ProxyClient is created with session_as_cookie=True (the
             default), a tuple of session cookie and data from the server.
@@ -245,6 +269,8 @@ class ProxyClient(object):
         .. versionchanged:: 0.3.21
             * Return data as a Bunch instead of a DictContainer
             * Add file_params to allow uploading files
+        .. versionchanged:: 0.3.33
+            Added the timeout kwarg
         '''
         self.log.debug(b_('proxyclient.send_request: entered'))
 
@@ -337,19 +363,31 @@ class ProxyClient(object):
 
             self.log.debug(b_('Data: %r') % debug_data)
 
-        num_tries = 0
         if retries is None:
             retries = self.retries
 
+        if timeout is None:
+            timeout = self.timeout
+
+        num_tries = 0
         while True:
-            response = requests.post(
-                url,
-                data=complete_params,
-                cookies=cookies,
-                headers=headers,
-                auth=auth,
-                verify=not self.insecure,
-            )
+            try:
+                response = requests.post(
+                    url,
+                    data=complete_params,
+                    cookies=cookies,
+                    headers=headers,
+                    auth=auth,
+                    verify=not self.insecure,
+                    timeout=timeout,
+                )
+            except requests.Timeout:
+                self.log.debug(b_('Request timed out'))
+                if retries < 0 or num_tries < retries:
+                    num_tries += 1
+                    self.log.debug(b_('Attempt #%(try)s failed') % {'try': num_tries})
+                    time.sleep(0.5)
+                    continue
 
             # When the python-requests module gets a response, it attempts to
             # guess the encoding using "charade", a fork of "chardet" which it
