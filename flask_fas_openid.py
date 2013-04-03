@@ -126,8 +126,8 @@ class FAS(object):
         :raises: Might raise an redirect to the OpenID endpoint
         """
         if return_url is None:
-            if 'next' in args.values:
-                return_url = args.values['next']
+            if 'next' in flask.request.args.values:
+                return_url = flask.request.args.values['next']
             else:
                 return_url = flask.request.url
         oidconsumer = consumer.Consumer(flask.session, None)
