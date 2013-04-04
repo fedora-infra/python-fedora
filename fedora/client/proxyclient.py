@@ -187,7 +187,7 @@ class ProxyClient(object):
         # Have to do retries and timeout default values this way as BaseClient
         # sends None for these values if not overridden by the user.
         if retries is None:
-            retries = 0
+            self.retries = 0
         else:
             self.retries = retries
         if timeout is None:
