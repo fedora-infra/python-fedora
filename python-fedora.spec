@@ -107,6 +107,7 @@ License:        LGPLv2+
 Requires: %{name} = %{version}-%{release}
 Requires: python-flask
 Requires: python-flask-wtf
+Requires: python-openid
 
 %description flask
 Python modules that help with building Fedora Services.  This package includes
