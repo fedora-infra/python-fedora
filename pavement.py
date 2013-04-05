@@ -47,7 +47,7 @@ options(
         extras_require = {
             'tg' : ['TurboGears >= 1.0.4', 'SQLAlchemy', 'decorator'],
             'wsgi': ['repoze.who', 'Beaker', 'Paste'],
-            'flask': ['Flask', 'Flask_WTF'],
+            'flask': ['Flask', 'Flask_WTF', 'openid'],
             },
         #test_require = ['TurboGears >= 2.0', 'nose', ],
         entry_points = {
