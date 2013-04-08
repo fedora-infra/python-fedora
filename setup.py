@@ -1,9 +1,10 @@
-import sys, os
-import glob
+# Work around setuptools multi-version silliness
+__requires__ = ['CherryPy < 3']
+import pkg_resources
 
 from fedora.release import *
 
-from setuptools import find_packages, command, setup
+from setuptools import find_packages, setup
 
 setup(
     name=NAME,
