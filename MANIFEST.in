@@ -1,4 +1,5 @@
 include setup.py
+include releaseutils.py
 include *.spec
 include COPYING AUTHORS NEWS
 recursive-include doc *
