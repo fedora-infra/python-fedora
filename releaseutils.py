@@ -1,10 +1,15 @@
 #!/usr/bin/python -tt
 
+from __future__ import print_function
+
 import ConfigParser
 import glob
 import os
 import shutil
+import sys
+
 from kitchen.pycompat27 import subprocess
+
 
 class MsgFmt(object):
     def run(self, args):
@@ -14,6 +19,7 @@ class MsgFmt(object):
 def setup_message_compiler():
     # Look for msgfmt
     try:
+        # Prefer msgfmt because it will throw errors on misformatted messages
         subprocess.Popen(['msgfmt', '-h'], stdout=subprocess.PIPE)
     except OSError:
         import babel.messages.frontend
@@ -24,7 +30,7 @@ def setup_message_compiler():
     else:
         return (MsgFmt(), 'msgfmt -c -o locale/%(lang)s/LC_MESSAGES/%(domain)s.mo %(pofile)s')
 
-def main():
+def build_catalogs():
     # Get the directory with message catalogs
     # Reuse transifex's config file first as it will know this
     cfg = ConfigParser.SafeConfigParser()
@@ -60,5 +66,58 @@ def main():
             compile_args = compile_args.split(' ')
             cmd.run(compile_args)
 
+def _install_catalogs(localedir):
+    # mkdir
+    try:
+        os.makedirs(localedir, 0755)
+    except OSError as e:
+        if e.errno == 17:
+            # File exists
+            pass
+    # copy
+    shutil.copytree('locale', localedir)
+
+def install_catalogs():
+    # First try to install the messages to an FHS location
+    try:
+        _install_catalogs(os.path.join(ENVVARS['DESTDIR'], 'usr', 'share', 'locale'))
+    except:
+        # Didn't work so try installing where the module was installed.  This
+        # isn't perfect because the module might have been installed in a
+        # different location from setup.py.  Better integration with setup.py
+        # might fix that.
+        # For a generic utility to be used with other modules, this would also
+        # need to handle arch-specific locations (get_python_lib(1))
+        from sysconfig import get_python_lib
+        _install_catalogs(os.path.join(ENVVARS['DESTDIR'], get_python_lib()))
+
+def usage():
+    print ('Subcommands:')
+    for command in sorted(SUBCOMMANDS.keys()):
+        print('%-15s  %s' % (command, SUBCOMMANDS[command][1]))
+
+    print()
+    print('Parameter passing: This script can be customized using the following'
+          ' ENV VARS:')
+    for var in sorted(ENVVARDESC.keys()):
+        print('%-15s  %s' % (var, ENVVARDESC[var]))
+
+    sys.exit(1)
+
+SUBCOMMANDS = {'build_catalogs': (build_catalogs, 'Compile the message catalogs from po files'),
+               'install_catalogs': (install_catalogs, 'Install the message catalogs to the system'),
+               }
+
+ENVVARDESC = {'DESTDIR': 'Alternate root directory hierarchy to install into'}
+
+ENVVARS = dict(map(lambda k: (k, os.environ.get(k)), ENVVARDESC.keys()))
+
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) < 1:
+        print('At least one subcommand is needed\n')
+        usage()
+    try:
+        SUBCOMMANDS[sys.argv[1]][0]
+    except KeyError:
+        print ('Unknown subcommand: %s\n' % sys.argv[1])
+        usage()
