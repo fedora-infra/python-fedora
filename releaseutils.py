@@ -1,5 +1,4 @@
 #!/usr/bin/python -tt
-
 from __future__ import print_function
 
 import ConfigParser
@@ -8,8 +7,25 @@ import os
 import shutil
 import sys
 
+from contextlib import contextmanager
+
 from kitchen.pycompat27 import subprocess
 
+#
+# Helper function
+#
+
+@contextmanager
+def pushd(dirname):
+    '''Contextmanager so that we can switch directories that the script is
+    running in and have the current working directory restored  afterwards.
+    '''
+    curdir = os.getcwd()
+    os.chdir(dirname)
+    try:
+        yield curdir
+    finally:
+        os.chdir(curdir)
 
 class MsgFmt(object):
     def run(self, args):
@@ -29,6 +45,7 @@ def setup_message_compiler():
             )
     else:
         return (MsgFmt(), 'msgfmt -c -o locale/%(lang)s/LC_MESSAGES/%(domain)s.mo %(pofile)s')
+
 
 def build_catalogs():
     # Get the directory with message catalogs
@@ -67,15 +84,18 @@ def build_catalogs():
             cmd.run(compile_args)
 
 def _install_catalogs(localedir):
-    # mkdir
-    try:
-        os.makedirs(localedir, 0755)
-    except OSError as e:
-        if e.errno == 17:
-            # File exists
-            pass
-    # copy
-    shutil.copytree('locale', localedir)
+    with pushd('locale'):
+        for catalog in glob.glob('*/LC_MESSAGES/*.mo'):
+            # Make the directory for the locale
+            dirname = os.path.dirname(catalog)
+            dst = os.path.join(localedir, dirname)
+            try:
+                os.makedirs(dst, 0755)
+            except OSError as e:
+                # Only allow file exists to pass
+                if e.errno != 17:
+                    raise
+            shutil.copy2(catalog, dst)
 
 def install_catalogs():
     # First try to install the messages to an FHS location
@@ -88,8 +108,17 @@ def install_catalogs():
         # might fix that.
         # For a generic utility to be used with other modules, this would also
         # need to handle arch-specific locations (get_python_lib(1))
-        from sysconfig import get_python_lib
-        _install_catalogs(os.path.join(ENVVARS['DESTDIR'], get_python_lib()))
+        from distutils.sysconfig import get_python_lib
+        localedir = get_python_lib()
+        if ENVVARS['PACKAGENAME'] is None:
+            print ('Set the PACKAGENAME environment variable and try again')
+            sys.exit(2)
+        localedir = os.path.join(localedir, ENVVARS['PACKAGENAME'], 'locale')
+        if ENVVARS['DESTDIR'] is not None:
+            if localedir.startswith('/'):
+                localedir = localedir[1:]
+            localedir = os.path.join(ENVVARS['DESTDIR'], localedir)
+        _install_catalogs(localedir)
 
 def usage():
     print ('Subcommands:')
@@ -108,16 +137,18 @@ SUBCOMMANDS = {'build_catalogs': (build_catalogs, 'Compile the message catalogs 
                'install_catalogs': (install_catalogs, 'Install the message catalogs to the system'),
                }
 
-ENVVARDESC = {'DESTDIR': 'Alternate root directory hierarchy to install into'}
+ENVVARDESC = {'DESTDIR': 'Alternate root directory hierarchy to install into',
+              'PACKAGENAME': 'Python packagename (commonly the setup.py name field)',
+              }
 
 ENVVARS = dict(map(lambda k: (k, os.environ.get(k)), ENVVARDESC.keys()))
 
 if __name__ == '__main__':
-    if len(sys.argv) < 1:
+    if len(sys.argv) < 2:
         print('At least one subcommand is needed\n')
         usage()
     try:
-        SUBCOMMANDS[sys.argv[1]][0]
+        SUBCOMMANDS[sys.argv[1]][0]()
     except KeyError:
         print ('Unknown subcommand: %s\n' % sys.argv[1])
         usage()
