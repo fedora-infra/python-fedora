@@ -157,8 +157,7 @@ Updating the POT File
 =====================
 
 When you make changes that change the translatable strings in the package, you
-should update the POT file.  Use the following distutils command (provided by
-python-babel) to do that::
+should update the POT file.  Use the following distutils command (provided by python-babel) to do that::
   ./setup.py extract_messages -o translations/python-fedora.pot
   tx push -s
 
@@ -274,14 +273,14 @@ Release
 9) When satisfied that the build works, create a fresh tarball and upload to
     pypi::
      popd   # Back to the release directory
-     python seutp.py sdist upload --sign
+     python setup.py sdist upload --sign
 
 10) copy the same tarball to fedorahosted.  The directory to upload to is
     slightly different for fedorahosted admins vs normal fedorahosted users:
     Admin::
       scp dist/python-fedora*tar.gz* fedorahosted.org:/srv/web/releases/p/y/python-fedora/
     Normal user::
-      scp dist/python-fedora*tar.gz* fedorahoshttp://9gag.com/gag/127514ted.org:python-fedora
+      scp dist/python-fedora*tar.gz* fedorahosted.org:python-fedora
 11) mark the release as finished in git::
      cd ../python-fedora
      git flow release finish $VERSION
