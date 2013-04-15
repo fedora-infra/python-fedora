@@ -136,6 +136,16 @@ easy.  Please see the `client documentation`_ for more details
 
 .. _`client documentation`: doc/client.rst
 
+-----------------
+Building the docs
+-----------------
+
+You'll need to install python-sphinx for this::
+  yum install python-sphinx
+
+Then run this command::
+  python setup.py build_sphinx
+
 ------------
 Translations
 ------------
