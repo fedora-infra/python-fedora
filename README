@@ -3,7 +3,7 @@ Python Fedora Module
 ====================
 
 :Author: Toshio Kuratomi
-:Date: 30 July 2009
+:Date: 10 April 2013
 :Version: 0.3.x
 
 The Fedora module provides a python API for building `Fedora Services`_ and
@@ -47,12 +47,7 @@ procedures::
 
     # git clone https://github.com/fedora-infra/python-fedora.git
     # cd python-fedora
-    # ./paver install
-
-You'll need Paver 1.0 or higher for this to work.  In Fedora, this can be
-installed with::
-
-    # yum install -y python-paver
+    # ./setup.py install
 
 See the configuration notes in each section for information on configuring
 your application after install.
@@ -132,14 +127,6 @@ Fedora Services
 ``python-fedora`` provides several helper classes and functions for building a
 TurboGears_ application that works well with other `Fedora Services`_.  the
 `Fedora Services`_ documentation is the best place to learn more about these.
-x
-TurboGears Widgets
-==================
-
-We've started adding experimental TG Widgets to interact with specific aspects
-of Fedora.  This are a needs more work and integration with `MyFedora`_.
-
-.. _`MyFedora`: https://fedorahosted.org/myfedora
 
 -----------------
 TurboGears Client
@@ -148,6 +135,16 @@ There is a module to make writing a client for our TurboGears services very
 easy.  Please see the `client documentation`_ for more details
 
 .. _`client documentation`: doc/client.rst
+
+-----------------
+Building the docs
+-----------------
+
+You'll need to install python-sphinx for this::
+  yum install python-sphinx
+
+Then run this command::
+  python setup.py build_sphinx
 
 ------------
 Translations
@@ -170,8 +167,8 @@ Updating the POT File
 =====================
 
 When you make changes that change the translatable strings in the package, you
-should update the POT file.  Use the following paver command to do that::
-  ./paver extract_messages -o translations/python-fedora.pot
+should update the POT file.  Use the following distutils command (provided by python-babel) to do that::
+  ./setup.py extract_messages -o translations/python-fedora.pot
   tx push -s
 
 Then commit your changes to source control.
@@ -214,32 +211,30 @@ Compiling Message Catalogs
 ==========================
 
 Message catalogs can be compiled for testing and should always be compiled
-just prior to release.  Do this with the following paver command::
-  ./paver make_catalogs
+just prior to release.  Do this with the following script::
+  python releaseutils.py build_catalogs
 
 Compiled message catalogs should not be committed to source control.
 
 Installing Message Catalogs
 ===========================
 
-``./paver install_catalogs`` will install the catalogs.  This commmand has been
-added to ``./paver install``.
+``python releaseutils.py install_catalogs`` will install the catalogs.  This
+command may be customized through the use of environment variables.  See ``python
+releaseutils.py --help`` for details.
 
 -------
 Release
 -------
-
-We want to get to the place where a release can be made via a paver target.
-Currently, this is more involved.
 
 0) Checkout a copy of the repository and setup git flow::
      git clone git@github.com:fedora-infra/python-fedora.git
      cd python-fedora
      git flow init
 
-1) Download new translations and verify they are valid::
+1) Download new translations and verify they are valid by compiling them::
      tx pull -a
-     ./paver make_catalogs
+     python releaseutils.py build_catalogs
      # If everything checks out
      git commit -m 'Merge new translations from transifex.net'
 
@@ -250,11 +245,9 @@ Currently, this is more involved.
 
 3) Make sure the docs are proper and publish them::
     # Build docs and check for errors
-    ./paver build_sphinx
+    python setup.py build_sphinx
      # pypi
-     ./paver upload_docs
-     # fedorahosted
-     ./paver publish_doc
+     python setup.py upload_docs
 
 4) Merge everything into a release branch.
 
@@ -272,11 +265,11 @@ Currently, this is more involved.
      git checkout release/$VERSION
 
 6) Create the tarball in this clean checkout::
-     ./paver sdist
+     python setup.py sdist
 
 7) copy the dist/python-fedora-VERSION.tar.gz and python-fedora.spec files to
    where you build Fedora RPMS.  Do a test build::
-     cp dist/python-fedora-*.tar.gz python-fedora.spec /srv/cvs/python-fedora/devel/
+     cp dist/python-fedora-*.tar.gz python-fedora.spec /srv/git/python-fedora/
      pushd /srv/git/python-fedora/
      fedpkg switch-branch master
      make mockbuild
@@ -290,12 +283,14 @@ Currently, this is more involved.
 9) When satisfied that the build works, create a fresh tarball and upload to
     pypi::
      popd   # Back to the release directory
-     ./paver sdist upload --sign
+     python setup.py sdist upload --sign
 
-10) copy the same tarball to fedorahosted.  Note: The directory is slightly
-   different if you're not a fedorahosted admin::
-     scp dist/python-fedora*tar.gz* fedorahosted.org:/srv/web/releases/p/y/python-fedora/
-
+10) copy the same tarball to fedorahosted.  The directory to upload to is
+    slightly different for fedorahosted admins vs normal fedorahosted users:
+    Admin::
+      scp dist/python-fedora*tar.gz* fedorahosted.org:/srv/web/releases/p/y/python-fedora/
+    Normal contributor::
+      scp dist/python-fedora*tar.gz* fedorahosted.org:python-fedora
 11) mark the release as finished in git::
      cd ../python-fedora
      git flow release finish $VERSION

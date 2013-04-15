@@ -2,16 +2,15 @@
 Information about this python-fedora release
 '''
 
-from fedora import _
 
 NAME = 'python-fedora'
 VERSION = '0.3.32.90'
-DESCRIPTION = _('Python modules for interacting with Fedora Services')
-LONG_DESCRIPTION = _('''
+DESCRIPTION = 'Python modules for interacting with Fedora Services'
+LONG_DESCRIPTION = '''
 The Fedora Project runs many different services.  These services help us to
 package software, develop new programs, and generally put together the distro.
 This package contains software that helps us do that.
-''')
+'''
 AUTHOR = 'Toshio Kuratomi, Luke Macken, Ricky Elrod'
 EMAIL = 'tkuratom@redhat.com'
 COPYRIGHT = '2007-2013 Red Hat, Inc.'

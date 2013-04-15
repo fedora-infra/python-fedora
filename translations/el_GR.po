@@ -1,16 +1,17 @@
 # Translations template for python-fedora.
-# Copyright (C) 2012 ORGANIZATION
+# Copyright (C) 2013 ORGANIZATION
 # This file is distributed under the same license as the python-fedora
 # project.
 # 
 # Translators:
 # Michael Michaelides <nukeme.8.6@gmail.com>, 2011.
+# Toshio Kuratomi <a.badger@gmail.com>, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: python-fedora\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-02-13 14:44-0800\n"
-"PO-Revision-Date: 2012-02-14 08:41+0000\n"
+"POT-Creation-Date: 2013-01-10 09:49-0800\n"
+"PO-Revision-Date: 2013-04-10 19:17+0000\n"
 "Last-Translator: Toshio Kuratomi <a.badger@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -40,7 +41,7 @@ msgid ""
 "The Fedora Project runs many different services.  These services help us to\n"
 "package software, develop new programs, and generally put together the distro.\n"
 "This package contains software that helps us do that.\n"
-msgstr "\\n \nΤο έργο Fedora παρέχει πολλές υπηρεσίες.  Αυτές οι υπηρεσίες μας βοηθούν με το λογισμικό πακέτο, την ανάπτυξη νέων προγραμμάτων και γενικά της διανομής. \\n\nΗ διανομή αυτή περιέχει λογισμικό που μας βοηθά να κάνουμε αυτό. \\n"
+msgstr "\nΤο έργο Fedora παρέχει πολλές υπηρεσίες.  Αυτές οι υπηρεσίες μας βοηθούν με το λογισμικό πακέτο, την ανάπτυξη νέων προγραμμάτων και γενικά της διανομής.\nΗ διανομή αυτή περιέχει λογισμικό που μας βοηθά να κάνουμε αυτό. \n"
 
 #: fedora/textutils.py:33
 msgid "fedora.textutils is deprecated.  Use kitchen.text.converters instead"
@@ -116,37 +117,37 @@ msgstr ""
 msgid "Reading from %s "
 msgstr ""
 
-#: fedora/client/fas2.py:269
+#: fedora/client/fas2.py:334
 #, python-format
 msgid "FAS server unable to retrieve group %(group)s"
 msgstr ""
 
-#: fedora/client/fas2.py:367
+#: fedora/client/fas2.py:439
 #, python-format
 msgid "Size %(size)i disallowed.  Must be in %(valid_sizes)r"
 msgstr ""
 
-#: fedora/client/fas2.py:454
+#: fedora/client/fas2.py:530
 msgid "key must be one of \"id\", \"username\", or \"email\""
 msgstr ""
 
-#: fedora/client/fas2.py:461
+#: fedora/client/fas2.py:537
 #, python-format
 msgid "%(field)s is not a valid field to filter"
 msgstr ""
 
-#: fedora/client/fas2.py:514
+#: fedora/client/fas2.py:590
 msgid ""
 "people_by_id() is deprecated and will be removed in 0.4.  Please port your "
 "code to use people_by_key(key='id', fields=['human_name', 'email', "
 "'username', 'bugzilla_email']) instead"
 msgstr ""
 
-#: fedora/client/fas2.py:696
+#: fedora/client/fas2.py:772
 msgid "FAS server unable to retrieve group members"
 msgstr ""
 
-#: fedora/client/fas2.py:718
+#: fedora/client/fas2.py:794
 msgid "FAS server unable to retrieve user information"
 msgstr ""
 
@@ -260,46 +261,46 @@ msgid ""
 "set both username and password in auth_params"
 msgstr ""
 
-#: fedora/client/proxyclient.py:372
+#: fedora/client/proxyclient.py:381
 #, python-format
 msgid "Creating request %(url)s"
 msgstr ""
 
-#: fedora/client/proxyclient.py:374
+#: fedora/client/proxyclient.py:383
 #, python-format
 msgid "Headers: %(header)s"
 msgstr ""
 
-#: fedora/client/proxyclient.py:379
+#: fedora/client/proxyclient.py:388
 #, python-format
 msgid "Data: %(data)s"
 msgstr ""
 
-#: fedora/client/proxyclient.py:396
+#: fedora/client/proxyclient.py:405
 msgid "Authentication failed logging in"
 msgstr ""
 
-#: fedora/client/proxyclient.py:397
+#: fedora/client/proxyclient.py:406
 msgid ""
 "Unable to log into server.  Invalid authentication tokens.  Send new "
 "username and password"
 msgstr ""
 
-#: fedora/client/proxyclient.py:403
+#: fedora/client/proxyclient.py:412
 #, python-format
 msgid "Attempt #%(try)s failed"
 msgstr ""
 
-#: fedora/client/proxyclient.py:410
+#: fedora/client/proxyclient.py:419
 msgid "Unknown HTTP Server Response"
 msgstr ""
 
-#: fedora/client/proxyclient.py:432
+#: fedora/client/proxyclient.py:441
 #, python-format
 msgid "Error returned from json module while processing %(url)s: %(err)s"
 msgstr ""
 
-#: fedora/client/proxyclient.py:448
+#: fedora/client/proxyclient.py:457
 msgid "proxyclient.send_request: exited"
 msgstr ""
 
@@ -363,26 +364,26 @@ msgid ""
 "in 0.4"
 msgstr ""
 
-#: fedora/tg/controllers.py:60
+#: fedora/tg/controllers.py:71
 #, python-format
 msgid "Welcome, %s"
 msgstr ""
 
-#: fedora/tg/controllers.py:69
+#: fedora/tg/controllers.py:80
 msgid ""
 "The credentials you supplied were not correct or did not grant access to "
 "this resource."
 msgstr ""
 
-#: fedora/tg/controllers.py:72
+#: fedora/tg/controllers.py:83
 msgid "You must provide your credentials before accessing this resource."
 msgstr ""
 
-#: fedora/tg/controllers.py:75
+#: fedora/tg/controllers.py:86
 msgid "Please log in."
 msgstr ""
 
-#: fedora/tg/controllers.py:100
+#: fedora/tg/controllers.py:111
 msgid "You have successfully logged out."
 msgstr ""
 
@@ -431,24 +432,24 @@ msgstr ""
 msgid "jsonfasprovider returned errors from send_request: %s"
 msgstr ""
 
-#: fedora/tg/templates/genshi/login.html:10
+#: fedora/tg/templates/genshi/login.html:14
 #: fedora/tg2/templates/genshi/login.html:9
 #: fedora/tg2/templates/mako/login.mak:3
 msgid "Log In"
 msgstr ""
 
-#: fedora/tg/templates/genshi/login.html:14
+#: fedora/tg/templates/genshi/login.html:18
 msgid "User Name:"
 msgstr ""
 
-#: fedora/tg/templates/genshi/login.html:17
+#: fedora/tg/templates/genshi/login.html:21
 #: fedora/tg2/templates/genshi/login.html:31
 #: fedora/tg2/templates/mako/login.mak:25
 msgid "Password:"
 msgstr ""
 
-#: fedora/tg/templates/genshi/login.html:21
-#: fedora/tg/templates/genshi/login.html:84
+#: fedora/tg/templates/genshi/login.html:25
+#: fedora/tg/templates/genshi/login.html:88
 #: fedora/tg2/templates/genshi/login.html:33
 #: fedora/tg2/templates/genshi/login.html:66
 #: fedora/tg2/templates/mako/login.mak:27
@@ -456,13 +457,13 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: fedora/tg/templates/genshi/login.html:28
+#: fedora/tg/templates/genshi/login.html:32
 #: fedora/tg2/templates/genshi/login.html:14
 #: fedora/tg2/templates/mako/login.mak:9
 msgid "CSRF attacks"
 msgstr ""
 
-#: fedora/tg/templates/genshi/login.html:29
+#: fedora/tg/templates/genshi/login.html:33
 #: fedora/tg2/templates/genshi/login.html:15
 #: fedora/tg2/templates/mako/login.mak:10
 msgid ""
@@ -475,49 +476,49 @@ msgid ""
 "        website."
 msgstr ""
 
-#: fedora/tg/templates/genshi/login.html:36
+#: fedora/tg/templates/genshi/login.html:40
 #: fedora/tg2/templates/genshi/login.html:23
 #: fedora/tg2/templates/mako/login.mak:18
 msgid "I am a human"
 msgstr ""
 
-#: fedora/tg/templates/genshi/login.html:41
+#: fedora/tg/templates/genshi/login.html:45
 #: fedora/tg2/templates/genshi/login.html:37
 #: fedora/tg2/templates/mako/login.mak:31
 msgid "Forgot Password?"
 msgstr ""
 
-#: fedora/tg/templates/genshi/login.html:42
+#: fedora/tg/templates/genshi/login.html:46
 #: fedora/tg2/templates/genshi/login.html:38
 #: fedora/tg2/templates/mako/login.mak:32
 msgid "Sign Up"
 msgstr ""
 
-#: fedora/tg/templates/genshi/login.html:60
+#: fedora/tg/templates/genshi/login.html:64
 #: fedora/tg2/templates/genshi/login.html:47
 #: fedora/tg2/templates/mako/login.mak:40
 msgid "Welcome"
 msgstr ""
 
-#: fedora/tg/templates/genshi/login.html:82
+#: fedora/tg/templates/genshi/login.html:86
 #: fedora/tg2/templates/genshi/login.html:64
 #: fedora/tg2/templates/mako/login.mak:61
 msgid "You are not logged in"
 msgstr ""
 
-#: fedora/tg/templates/genshi/login.html:89
+#: fedora/tg/templates/genshi/login.html:93
 #: fedora/tg2/templates/genshi/login.html:70
 #: fedora/tg2/templates/mako/login.mak:69
 msgid "CSRF protected"
 msgstr ""
 
-#: fedora/tg/templates/genshi/login.html:91
+#: fedora/tg/templates/genshi/login.html:95
 #: fedora/tg2/templates/genshi/login.html:72
 #: fedora/tg2/templates/mako/login.mak:72
 msgid "Verify Login"
 msgstr ""
 
-#: fedora/tg/templates/genshi/login.html:97
+#: fedora/tg/templates/genshi/login.html:101
 #: fedora/tg2/templates/genshi/login.html:78
 #: fedora/tg2/templates/mako/login.mak:79
 msgid "Logout"
@@ -533,87 +534,87 @@ msgstr ""
 msgid "Username:"
 msgstr ""
 
-#: fedora/wsgi/csrf.py:117
+#: fedora/wsgi/csrf.py:113
 msgid "Creating CSRFProtectionMiddleware"
 msgstr ""
 
-#: fedora/wsgi/csrf.py:126
+#: fedora/wsgi/csrf.py:122
 #, python-format
 msgid "clean_environ(%s)"
 msgstr ""
 
-#: fedora/wsgi/csrf.py:129
+#: fedora/wsgi/csrf.py:125
 #, python-format
 msgid "Deleting %(key)s from environ"
 msgstr ""
 
-#: fedora/wsgi/csrf.py:142
+#: fedora/wsgi/csrf.py:138
 #, python-format
 msgid "CSRFProtectionMiddleware(%(r_path)s)"
 msgstr ""
 
-#: fedora/wsgi/csrf.py:149
+#: fedora/wsgi/csrf.py:145
 msgid "User supplied CSRF token matches environ!"
 msgstr ""
 
-#: fedora/wsgi/csrf.py:152
+#: fedora/wsgi/csrf.py:148
 msgid "Clearing identity"
 msgstr ""
 
-#: fedora/wsgi/csrf.py:160
+#: fedora/wsgi/csrf.py:156
 #, python-format
 msgid ""
 "Invalid CSRF token.  User supplied (%(u_token)s) does not match what's in "
 "our environ (%(e_token)s)"
 msgstr ""
 
-#: fedora/wsgi/csrf.py:169
+#: fedora/wsgi/csrf.py:165
 msgid "CSRF_AUTH_STATE; rewriting headers"
 msgstr ""
 
-#: fedora/wsgi/csrf.py:175
+#: fedora/wsgi/csrf.py:171
 #, python-format
 msgid "response.location = %(r_loc)s"
 msgstr ""
 
-#: fedora/wsgi/csrf.py:250
+#: fedora/wsgi/csrf.py:246
 #, python-format
 msgid "CSRFMetadataProvider.add_metadata(%(r_path)s)"
 msgstr ""
 
-#: fedora/wsgi/csrf.py:256
+#: fedora/wsgi/csrf.py:252
 #, python-format
 msgid "session_id = %(s_id)r"
 msgstr ""
 
-#: fedora/wsgi/csrf.py:263
+#: fedora/wsgi/csrf.py:259
 msgid "Identity updated with CSRF token"
 msgstr ""
 
-#: fedora/wsgi/csrf.py:266
+#: fedora/wsgi/csrf.py:262
 msgid "Setting CSRF_AUTH_STATE"
 msgstr ""
 
-#: fedora/wsgi/csrf.py:276
+#: fedora/wsgi/csrf.py:272
 msgid "Got HTTPFound(302) from repoze.who.application"
 msgstr ""
 
-#: fedora/wsgi/csrf.py:289
+#: fedora/wsgi/csrf.py:285
 #, python-format
 msgid "Altered headers: %(headers)s"
 msgstr ""
 
-#: fedora/wsgi/csrf.py:292
+#: fedora/wsgi/csrf.py:288
 #, python-format
 msgid "Invalid session cookie %(s_id)r, not setting CSRF token!"
 msgstr ""
 
-#: fedora/wsgi/csrf.py:302
+#: fedora/wsgi/csrf.py:298
 #, python-format
 msgid "%(token)s in GET"
 msgstr ""
 
-#: fedora/wsgi/csrf.py:310
+#: fedora/wsgi/csrf.py:306
 #, python-format
 msgid "%(token)s in POST"
 msgstr ""
@@ -622,55 +623,55 @@ msgstr ""
 msgid "in identify()"
 msgstr ""
 
-#: fedora/wsgi/faswho/faswhoplugin.py:243
+#: fedora/wsgi/faswho/faswhoplugin.py:237
 #, python-format
 msgid "Request identify for cookie %(cookie)s"
 msgstr ""
 
-#: fedora/wsgi/faswho/faswhoplugin.py:263
+#: fedora/wsgi/faswho/faswhoplugin.py:257
 msgid "In remember()"
 msgstr ""
 
-#: fedora/wsgi/faswho/faswhoplugin.py:283
+#: fedora/wsgi/faswho/faswhoplugin.py:277
 msgid "In forget()"
 msgstr ""
 
-#: fedora/wsgi/faswho/faswhoplugin.py:293
+#: fedora/wsgi/faswho/faswhoplugin.py:287
 #, python-format
 msgid "Forgetting login data for cookie %(s_id)s"
 msgstr ""
 
-#: fedora/wsgi/faswho/faswhoplugin.py:307
+#: fedora/wsgi/faswho/faswhoplugin.py:301
 msgid "In authenticate()"
 msgstr ""
 
-#: fedora/wsgi/faswho/faswhoplugin.py:339
+#: fedora/wsgi/faswho/faswhoplugin.py:333
 msgid "Parameters for authenticating not found"
 msgstr ""
 
-#: fedora/wsgi/faswho/faswhoplugin.py:345
+#: fedora/wsgi/faswho/faswhoplugin.py:339
 #, python-format
 msgid "Authentication failed: %s"
 msgstr ""
 
-#: fedora/wsgi/faswho/faswhoplugin.py:349
+#: fedora/wsgi/faswho/faswhoplugin.py:343
 #, python-format
 msgid "Unknown auth failure: %s"
 msgstr ""
 
-#: fedora/wsgi/faswho/faswhoplugin.py:358
+#: fedora/wsgi/faswho/faswhoplugin.py:352
 msgid "user information from fas not in expected format!"
 msgstr ""
 
-#: fedora/wsgi/faswho/faswhoplugin.py:362
+#: fedora/wsgi/faswho/faswhoplugin.py:356
 msgid "An unknown error happened when trying to log you in. Please try again."
 msgstr ""
 
-#: fedora/wsgi/faswho/faswhoplugin.py:367
+#: fedora/wsgi/faswho/faswhoplugin.py:361
 msgid "In add_metadata"
 msgstr ""
 
-#: fedora/wsgi/faswho/faswhoplugin.py:371
+#: fedora/wsgi/faswho/faswhoplugin.py:365
 msgid "Error exists in session, no need to set metadata"
 msgstr ""
 
