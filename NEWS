@@ -26,6 +26,7 @@ NEWS
   response strings.  This takes a very long time on large return values.
   Since we know that all responses from the services we're talking to will be
   utf-8, we can skip this detection step.
+* No longer use paver for building.  We just need setuptools now
 
 --------
 0.3.32.3
