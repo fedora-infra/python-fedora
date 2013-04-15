@@ -16,7 +16,6 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  python2-devel
 BuildRequires:  python-setuptools
-BuildRequires:  python-paver >= 1.0
 BuildRequires:  python-sphinx
 %if 0%{?fedora} || 0%{?rhel} > 5
 BuildRequires:  python-cherrypy2
@@ -117,13 +116,14 @@ Account System.
 %setup -q -n %{name}-%{version}%{?prerel}
 
 %build
-paver build
-path=$(echo %{python_sitelib}/CherryPy-2.?.?-py2.?.egg)
-PYTHONPATH=$path paver html
+python setup.py build
+python setup.py build_sphinx
+python releaseutils.py build_catalogs
 
 %install
 rm -rf %{buildroot}
-paver install --skip-build --root %{buildroot}
+python setup.py install --skip-build --root %{buildroot}
+DESTDIR=%{buildroot} python releaseutils.py install_catalogs
 
 # Cleanup doc
 mv build-doc/html doc/
