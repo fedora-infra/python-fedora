@@ -1,6 +1,15 @@
+#!/usr/bin/python -tt
+
 # Work around setuptools multi-version silliness
-__requires__ = ['CherryPy < 3']
-import pkg_resources
+try:
+    __requires__ = ['CherryPy < 3']
+    import pkg_resources
+except:
+    # And also workaround the workaround being broken inside of a virtualenv
+    # *sigh*  setuptools is such a broken implementation
+    # When setuptools is imported later, it will see the CherryPy requirement
+    # and barf.  So we have to delete it here.
+    del __requires__
 
 from fedora.release import *
 
