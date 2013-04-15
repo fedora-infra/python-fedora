@@ -1,4 +1,8 @@
 #!/usr/bin/python -tt
+
+# Copyright Red Hat Inc 2013
+# Licensed under the terms of the LGPLv2+
+
 from __future__ import print_function
 
 import ConfigParser
@@ -6,10 +10,16 @@ import glob
 import os
 import shutil
 import sys
+import textwrap
 
 from contextlib import contextmanager
+from distutils.sysconfig import get_python_lib
+from distutils.util import get_platform
 
 from kitchen.pycompat27 import subprocess
+import pkg_resources
+
+import fedora.release
 
 #
 # Helper function
@@ -83,6 +93,13 @@ def build_catalogs():
             compile_args = compile_args.split(' ')
             cmd.run(compile_args)
 
+def _add_destdir(path):
+    if ENVVARS['DESTDIR'] is not None:
+        if path.startswith('/'):
+            path = path[1:]
+        path = os.path.join(ENVVARS['DESTDIR'], path)
+    return path
+
 def _install_catalogs(localedir):
     with pushd('locale'):
         for catalog in glob.glob('*/LC_MESSAGES/*.mo'):
@@ -99,25 +116,46 @@ def _install_catalogs(localedir):
 
 def install_catalogs():
     # First try to install the messages to an FHS location
-    try:
-        _install_catalogs(os.path.join(ENVVARS['DESTDIR'], 'usr', 'share', 'locale'))
-    except:
-        # Didn't work so try installing where the module was installed.  This
-        # isn't perfect because the module might have been installed in a
-        # different location from setup.py.  Better integration with setup.py
-        # might fix that.
-        # For a generic utility to be used with other modules, this would also
-        # need to handle arch-specific locations (get_python_lib(1))
-        from distutils.sysconfig import get_python_lib
+    if ENVVARS['INSTALLSTRATEGY'] == 'EGG':
         localedir = get_python_lib()
+
+        # Need certain info from the user
         if ENVVARS['PACKAGENAME'] is None:
             print ('Set the PACKAGENAME environment variable and try again')
             sys.exit(2)
-        localedir = os.path.join(localedir, ENVVARS['PACKAGENAME'], 'locale')
-        if ENVVARS['DESTDIR'] is not None:
-            if localedir.startswith('/'):
-                localedir = localedir[1:]
-            localedir = os.path.join(ENVVARS['DESTDIR'], localedir)
+        if ENVVARS['MODULENAME'] is None:
+            print ('Set the MODULENAME environment variable and try again')
+            sys.exit(2)
+
+        # Get teh egg name from pkg_resources
+        dist = pkg_resources.Distribution(project_name=ENVVARS['PACKAGENAME'],
+                                          version=fedora.release.VERSION)
+
+        # Set the localedir to be inside the egg directory
+        localedir = os.path.join(localedir, '{}.egg'.format(dist.egg_name()),
+                                 ENVVARS['MODULENAME'], 'locale')
+        # Tack on DESTDIR if needed
+        localedir = _add_destdir(localedir)
+        _install_catalogs(localedir)
+
+    elif ENVVARS['INSTALLSTRATEGY'] == 'SITEPACKAGES':
+        # For a generic utility to be used with other modules, this would also
+        # need to handle arch-specific locations (get_python_lib(1))
+
+        # Retrieve the site-packages directory
+        localedir = get_python_lib()
+
+        # Set the install path to be inside of the module in site-packages
+        if ENVVARS['MODULENAME'] is None:
+            print ('Set the MODULENAME environment variable and try again')
+            sys.exit(2)
+        localedir = os.path.join(localedir, ENVVARS['MODULENAME'], 'locale')
+        localedir = _add_destdir(localedir)
+        _install_catalogs(localedir)
+
+    else:
+        # FHS
+        localedir = _add_destdir('/usr/share/locale')
         _install_catalogs(localedir)
 
 def usage():
@@ -126,11 +164,10 @@ def usage():
         print('%-15s  %s' % (command, SUBCOMMANDS[command][1]))
 
     print()
-    print('Parameter passing: This script can be customized using the following'
-          ' ENV VARS:')
+    print('This script can be customized by setting the following ENV VARS:')
     for var in sorted(ENVVARDESC.keys()):
-        print('%-15s  %s' % (var, ENVVARDESC[var]))
-
+        for line in textwrap.wrap('%-15s  %s' % (var, ENVVARDESC[var]), subsequent_indent=' '*8):
+            print(line.rstrip())
     sys.exit(1)
 
 SUBCOMMANDS = {'build_catalogs': (build_catalogs, 'Compile the message catalogs from po files'),
@@ -138,7 +175,13 @@ SUBCOMMANDS = {'build_catalogs': (build_catalogs, 'Compile the message catalogs 
                }
 
 ENVVARDESC = {'DESTDIR': 'Alternate root directory hierarchy to install into',
-              'PACKAGENAME': 'Python packagename (commonly the setup.py name field)',
+              'PACKAGENAME': 'Pypi packagename (commonly the setup.py name field)',
+              'MODULENAME': 'Python module name (commonly used with import NAME)',
+              'INSTALLSTRATEGY': 'One of FHS, EGG, SITEPACKAGES.  FHS will work'
+              ' for system packages installed using'
+              ' --single-version-externally-managed.  EGG install into an egg'
+              ' directory.  SITEPACKAGES will install into a $PACKAGENAME'
+              ' directory directly in site-packages.  Default FHS'
               }
 
 ENVVARS = dict(map(lambda k: (k, os.environ.get(k)), ENVVARDESC.keys()))
