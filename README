@@ -289,7 +289,7 @@ Release
     slightly different for fedorahosted admins vs normal fedorahosted users:
     Admin::
       scp dist/python-fedora*tar.gz* fedorahosted.org:/srv/web/releases/p/y/python-fedora/
-    Normal user::
+    Normal contributor::
       scp dist/python-fedora*tar.gz* fedorahosted.org:python-fedora
 11) mark the release as finished in git::
      cd ../python-fedora
