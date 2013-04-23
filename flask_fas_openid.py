@@ -143,8 +143,12 @@ class FAS(object):
         request.addExtension(pape.Request([]))
         request.addExtension(teams.TeamsRequest(requested=['_FAS_ALL_GROUPS_'])) # Magic value which requests all groups from FAS-OpenID >= 0.2.0
         request.addExtension(cla.CLARequest(requested=[cla.CLA_URI_FEDORA_DONE]))
-        trust_root = flask.request.url_root
-        return_to = flask.request.url_root + '_flask_fas_openid_handler/'
+
+        scheme = self.app.config['PREFERRED_URL_SCHEME']
+        scheme_index = flask.request.url_root.index('://')
+        trust_root = scheme + flask.request.url_root[scheme_index:]
+        return_to = trust_root + '_flask_fas_openid_handler/'
+
         flask.session['FLASK_FAS_OPENID_RETURN_URL'] = return_url
         flask.session['FLASK_FAS_OPENID_CANCEL_URL'] = cancel_url
         if request.shouldSendRedirect():
