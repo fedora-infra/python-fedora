@@ -68,8 +68,13 @@ class FAS(object):
     def _handle_openid_request(self):
         return_url = flask.session['FLASK_FAS_OPENID_RETURN_URL']
         cancel_url = flask.session['FLASK_FAS_OPENID_CANCEL_URL']
+
+        scheme = self.app.config['PREFERRED_URL_SCHEME']
+        scheme_index = flask.request.base_url.index('://')
+        base_url = scheme + flask.request.base_url[scheme_index:]
+
         oidconsumer = consumer.Consumer(flask.session, None)
-        info = oidconsumer.complete(flask.request.values, flask.request.base_url)
+        info = oidconsumer.complete(flask.request.values, base_url)
         display_identifier = info.getDisplayIdentifier()
 
         if info.status == consumer.FAILURE and display_identifier:
