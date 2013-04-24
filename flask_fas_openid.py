@@ -68,11 +68,7 @@ class FAS(object):
     def _handle_openid_request(self):
         return_url = flask.session['FLASK_FAS_OPENID_RETURN_URL']
         cancel_url = flask.session['FLASK_FAS_OPENID_CANCEL_URL']
-
-        scheme = self.app.config['PREFERRED_URL_SCHEME']
-        scheme_index = flask.request.base_url.index('://')
-        base_url = scheme + flask.request.base_url[scheme_index:]
-
+        base_url = self.normalize_url(flask.request.base_url)
         oidconsumer = consumer.Consumer(flask.session, None)
         info = oidconsumer.complete(flask.request.values, base_url)
         display_identifier = info.getDisplayIdentifier()
@@ -149,9 +145,7 @@ class FAS(object):
         request.addExtension(teams.TeamsRequest(requested=['_FAS_ALL_GROUPS_'])) # Magic value which requests all groups from FAS-OpenID >= 0.2.0
         request.addExtension(cla.CLARequest(requested=[cla.CLA_URI_FEDORA_DONE]))
 
-        scheme = self.app.config['PREFERRED_URL_SCHEME']
-        scheme_index = flask.request.url_root.index('://')
-        trust_root = scheme + flask.request.url_root[scheme_index:]
+        trust_root = self.normalize_url(flask.request.url_root)
         return_to = trust_root + '_flask_fas_openid_handler/'
 
         flask.session['FLASK_FAS_OPENID_RETURN_URL'] = return_url
@@ -169,6 +163,13 @@ class FAS(object):
         flask.g.fas_session_id = None
         flask.g.fas_user = None
         flask.session.modified = True
+
+    def normalize_url(self, url):
+        ''' Replace the scheme prefix of a url with our preferred scheme.
+        '''
+        scheme = self.app.config['PREFERRED_URL_SCHEME']
+        scheme_index = url.index('://')
+        return scheme + url[scheme_index:]
 
 
 # This is a decorator we can use with any HTTP method (except login, obviously)
