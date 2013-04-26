@@ -87,13 +87,21 @@ class AccountSystem(BaseClient):
     .. versionchanged:: 0.3.26
         Added :meth:`~fedora.client.AccountSystem.gravatar_url` that returns
         a url to a gravatar for a user.
+    .. versionchanged:: 0.3.33
+        Renamed :meth:`~fedora.client.AccountSystem.gravatar_url` to
+        :meth:`~fedora.client.AccountSystem.avatar_url`.
     '''
     # proxy is a thread-safe connection to the fas server for verifying
     # passwords of other users
     proxy = None
 
-    # size that we allow to request from gravatar.com
-    _valid_gravatar_sizes = (32, 64, 140)
+    # size that we allow to request from remote avatar providers.
+    _valid_avatar_sizes = (32, 64, 140)
+    # URLs for remote avatar providers.
+    _avatar_service_urls = {
+        'libravatar': 'cdn.libravatar.org',
+        'gravatar': 'www.gravatar.com',
+    }
 
     def __init__(self, base_url='https://admin.fedoraproject.org/accounts/',
             *args, **kwargs):
@@ -410,43 +418,53 @@ class AccountSystem(BaseClient):
         else:
             return dict()
 
-    def gravatar_url(self, username, size=64,
-                     default=None, lookup_email=True):
-        ''' Returns a URL to a gravatar for a given username.
+    def avatar_url(self, username, size=64,
+                   default=None, lookup_email=True,
+                   service='libravatar'):
+        ''' Returns a URL to an avatar for a given username.
 
-        Although we use the term 'gravatar' which normally refers to the
-        popular and proprietary service hosted at http://gravatar.com,
-        internally we use the free AGPL service at http://www.libravatar.org/.
+        Avatars are drawn from third party services.
 
-        :arg username: FAS username to construct a gravatar url for
-        :kwarg size: size of the gravatar.  Allowed sizes are 32, 64, 140.
+        :arg username: FAS username to construct a avatar url for
+        :kwarg size: size of the avatar.  Allowed sizes are 32, 64, 140.
             Default: 64
-        :kwarg default: If gravatar does not have a gravatar image for the
+        :kwarg default: If the service does not have a avatar image for the
             email address, this url is returned instead.  Default:
             the fedora logo at the specified size.
         :kwarg lookup_email:  If true, use the email from FAS, otherwise just
-            append @fedoraproject.org to the username.  Not that this will be
-            much slower if lookup_email is set to True since we'd have to make a
-            query against FAS itself.
-        :raises ValueError: if the size parameter is not allowed
+            append @fedoraproject.org to the username.  Note that this will be
+            much slower if lookup_email is set to True since we'd have to make
+            a query against FAS itself.
+        :kwarg service: One of 'libravatar' or 'gravatar'.
+            Default: 'libravatar'.
+        :raises ValueError: if the size parameter is not allowed or if the
+            service is not one of 'libravatar' or 'gravatar'
         :rtype: :obj:`str`
-        :returns: url of a gravatar for the user
+        :returns: url of a avatar for the user
 
-        If that user has no gravatar entry, instruct gravatar.com to redirect
-        us to the Fedora logo.
+        If that user has no avatar entry, instruct the remote service to
+        redirect us to the Fedora logo.
 
         If that user has no email attribute, then make a fake request to
-        gravatar.
+        the third party service.
 
         .. versionadded:: 0.3.26
         .. versionchanged: 0.3.30
-            Add lookup_email parameter to control whether we generate gravatar
+            Add lookup_email parameter to control whether we generate avatar
             urls with the email in fas or username@fedoraproject.org
+        .. versionchanged: 0.3.33
+            Renamed from `gravatar_url` to `avatar_url`
         '''
-        if size not in self._valid_gravatar_sizes:
+
+        if size not in self._valid_avatar_sizes:
             raise ValueError(b_('Size %(size)i disallowed.  Must be in'
                 ' %(valid_sizes)r') % { 'size': size,
-                    'valid_sizes': self._valid_gravatar_sizes})
+                    'valid_sizes': self._valid_avatar_sizes})
+
+        if service not in self._avatar_service_urls:
+            raise ValueError(b_('Service %(service)r disallowed.  Must be in'
+                ' %(valid_services)r') % { 'service': service,
+                    'valid_services': self._avatar_service_urls.keys()})
 
         if not default:
             default = "http://fedoraproject.org/static/images/" + \
@@ -465,7 +483,26 @@ class AccountSystem(BaseClient):
 
         hash = md5(email).hexdigest()
 
-        return "http://cdn.libravatar.org/avatar/%s?%s" % (hash, query_string)
+        return "http://%s/avatar/%s?%s" % (
+            self._avatar_service_urls[service], hash, query_string)
+
+    def gravatar_url(self, *args, **kwargs):
+        """ *Deprecated* - Use avatar_url.
+
+         .. versionadded:: 0.3.26
+         .. versionchanged: 0.3.30
+            Add lookup_email parameter to control whether we generate gravatar
+            urls with the email in fas or username@fedoraproject.org
+         .. versionchanged: 0.3.33
+            Deprecated in favor of `avatar_url`.
+        """
+
+        warnings.warn(b_("gravatar_url is deprecated and will be removed in"
+            " a future version.  Please port your code to use avatar_url(...,"
+            " service='libravatar', ...)  instead"),
+            DeprecationWarning, stacklevel=2)
+
+        return self.avatar_url(*args, service='gravatar', **kwargs)
 
     def user_id(self):
         '''Returns a dict relating user IDs to usernames'''
