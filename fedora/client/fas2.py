@@ -414,6 +414,10 @@ class AccountSystem(BaseClient):
                      default=None, lookup_email=True):
         ''' Returns a URL to a gravatar for a given username.
 
+        Although we use the term 'gravatar' which normally refers to the
+        popular and proprietary service hosted at http://gravatar.com,
+        internally we use the free AGPL service at http://www.libravatar.org/.
+
         :arg username: FAS username to construct a gravatar url for
         :kwarg size: size of the gravatar.  Allowed sizes are 32, 64, 140.
             Default: 64
@@ -461,7 +465,7 @@ class AccountSystem(BaseClient):
 
         hash = md5(email).hexdigest()
 
-        return "http://www.gravatar.com/avatar/%s?%s" % (hash, query_string)
+        return "http://cdn.libravatar.org/avatar/%s?%s" % (hash, query_string)
 
     def user_id(self):
         '''Returns a dict relating user IDs to usernames'''
