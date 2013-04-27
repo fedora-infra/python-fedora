@@ -28,10 +28,13 @@ import itertools
 import urllib
 import warnings
 
-import libravatar
-
 from bunch import Bunch
 from kitchen.text.converters import to_bytes
+
+try:
+    import libravatar
+except ImportError:
+    libravatar = None
 
 try:
     from hashlib import md5
@@ -419,7 +422,7 @@ class AccountSystem(BaseClient):
 
     def avatar_url(self, username, size=64,
                    default=None, lookup_email=True,
-                   service='libravatar'):
+                   service=None):
         ''' Returns a URL to an avatar for a given username.
 
         Avatars are drawn from third party services.
@@ -460,6 +463,16 @@ class AccountSystem(BaseClient):
                 ' %(valid_sizes)r') % { 'size': size,
                     'valid_sizes': self._valid_avatar_sizes})
 
+        # If our caller didn't specify a service, let's pick a one for them.
+        # If they have pylibravatar installed, then by all means let freedom
+        # ring!  Otherwise, we'll use gravatar.com if we have to.
+        if not service:
+            if libravatar:
+                service = 'libravatar'
+            else:
+                service = 'gravatar'
+
+        # Just double check to make sure they didn't pass us a bogus service.
         if service not in self._valid_avatar_services:
             raise ValueError(b_('Service %(service)r disallowed.  Must be in'
                 ' %(valid_services)r') % { 'service': service,
