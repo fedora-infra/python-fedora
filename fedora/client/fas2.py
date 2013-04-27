@@ -502,6 +502,10 @@ class AccountSystem(BaseClient):
             " service='libravatar', ...)  instead"),
             DeprecationWarning, stacklevel=2)
 
+        if 'service' in kwargs:
+            raise TypeError("'service' is an invalid keyword argument for"
+                            " this function.  Use avatar_url() instead)")
+
         return self.avatar_url(*args, service='gravatar', **kwargs)
 
     def user_id(self):
