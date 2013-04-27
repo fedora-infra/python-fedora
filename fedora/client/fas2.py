@@ -28,6 +28,8 @@ import itertools
 import urllib
 import warnings
 
+import libravatar
+
 from bunch import Bunch
 from kitchen.text.converters import to_bytes
 
@@ -98,10 +100,7 @@ class AccountSystem(BaseClient):
     # size that we allow to request from remote avatar providers.
     _valid_avatar_sizes = (32, 64, 140)
     # URLs for remote avatar providers.
-    _avatar_service_urls = {
-        'libravatar': 'cdn.libravatar.org',
-        'gravatar': 'www.gravatar.com',
-    }
+    _valid_avatar_services = ['libravatar', 'gravatar']
 
     def __init__(self, base_url='https://admin.fedoraproject.org/accounts/',
             *args, **kwargs):
@@ -461,19 +460,14 @@ class AccountSystem(BaseClient):
                 ' %(valid_sizes)r') % { 'size': size,
                     'valid_sizes': self._valid_avatar_sizes})
 
-        if service not in self._avatar_service_urls:
+        if service not in self._valid_avatar_services:
             raise ValueError(b_('Service %(service)r disallowed.  Must be in'
                 ' %(valid_services)r') % { 'service': service,
-                    'valid_services': self._avatar_service_urls.keys()})
+                    'valid_services': self._valid_avatar_services})
 
         if not default:
             default = "http://fedoraproject.org/static/images/" + \
                     "fedora_infinity_%ix%i.png" % (size, size)
-
-        query_string = urllib.urlencode({
-            's': size,
-            'd': default,
-        })
 
         if lookup_email:
             person = self.person_by_username(username)
@@ -481,10 +475,21 @@ class AccountSystem(BaseClient):
         else:
             email = "%s@fedoraproject.org" % username
 
-        hash = md5(email).hexdigest()
+        if service == 'libravatar':
+            return libravatar.libravatar_url(
+                email=email,
+                size=size,
+                default=default,
+            )
+        else:
+            query_string = urllib.urlencode({
+                's': size,
+                'd': default,
+            })
 
-        return "http://%s/avatar/%s?%s" % (
-            self._avatar_service_urls[service], hash, query_string)
+            hash = md5(email).hexdigest()
+
+            return "http://www.gravatar.com/avatar/%s?%s" % (hash, query_string)
 
     def gravatar_url(self, *args, **kwargs):
         """ *Deprecated* - Use avatar_url.

@@ -31,7 +31,7 @@ setup(
     # non-setuptools package.  When everything we care about uses
     # python-2.5 distutils we can add these:
     #   for bodhi (koji yum)
-    install_requires=['bunch', 'kitchen', 'requests'],
+    install_requires=['bunch', 'kitchen', 'requests', 'pyLibravatar'],
     extras_require = {
         'tg' : ['TurboGears >= 1.0.4', 'SQLAlchemy', 'decorator'],
         'wsgi': ['repoze.who', 'Beaker', 'Paste'],
