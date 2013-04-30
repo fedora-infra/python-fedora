@@ -466,8 +466,8 @@ class AccountSystem(BaseClient):
         # If our caller explicitly requested libravatar but they don't have
         # it installed, then we need to raise a nice error and let them know.
         if service == 'libravatar' and not libravatar:
-            raise ImportError("Install python-pylibravatar if you want to "
-                              "use libravatar as an avatar provider.")
+            raise ValueError("Install python-pylibravatar if you want to "
+                             "use libravatar as an avatar provider.")
 
         # If our caller didn't specify a service, let's pick a one for them.
         # If they have pylibravatar installed, then by all means let freedom
