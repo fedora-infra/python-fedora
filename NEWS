@@ -27,6 +27,11 @@ NEWS
   Since we know that all responses from the services we're talking to will be
   utf-8, we can skip this detection step.
 * No longer use paver for building.  We just need setuptools now
+* Deprecated AccountSystem's gravatar_url method in favor of a new avatar_url
+  method.  This defaults to using the free libravatar service but still allows
+  API users to fall back on the proprietary gravatar service if they prefer.
+  python-pylibravatar must be installed for the default to work.  If it isn't
+  found on the user's system, then gravatar.com is made the new default.
 
 --------
 0.3.32.3
