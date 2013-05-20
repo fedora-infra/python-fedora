@@ -11,6 +11,7 @@ NEWS
 ------
 
 * Added flask_fas_openid for the migration to OpenID
+  This adds the requirements for python-openid and python-openid-teams.
 * Rename the FAS_HTTPS_REQUIRED config variable in the flask_fas auth adapter
   to FAS_FLASK_COOKIE_REQUIRES_HTTPS.  The longer name is more cumbersome but
   the previous name was too often mistaken to be setting whether we needed to
