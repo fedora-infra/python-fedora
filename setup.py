@@ -35,7 +35,7 @@ setup(
     extras_require = {
         'tg' : ['TurboGears >= 1.0.4', 'SQLAlchemy', 'decorator'],
         'wsgi': ['repoze.who', 'Beaker', 'Paste'],
-        'flask': ['Flask', 'Flask_WTF', 'openid', 'openid_teams'],
+        'flask': ['Flask', 'Flask_WTF', 'python-openid', 'python-openid-teams'],
         },
     entry_points = {
         'turbogears.identity.provider' : (
