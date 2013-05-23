@@ -83,9 +83,9 @@ class FAS(object):
                 session_id, user = self.fasclient.get_user_info({'session_id':
                                                                  session_id})
                 if hasattr(user, 'approved_memberships'):
-                    user.groups = [x.name for x in user.approved_memberships]
+                    user.groups = frozenset(x.name for x in user.approved_memberships)
                 else:
-                    user.groups = []
+                    user.groups = frozenset()
             except AuthError:
                 session_id = None
                 user = None

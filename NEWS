@@ -18,6 +18,8 @@ NEWS
   connect to the fas server with https when it really was about whether the
   session cookie should require https to be returned to the server (the
   cookie's secure flag).
+* Change the groups attribute of the flask_fas and flask_fas_openid auth
+  adapters to be a frozenset instead of a list
 * Set a configurable timeout on how long a client request will wait for the
   server to setup a connection in BaseClient and ProxyClient.
 * Fix instance-wide default retries in BaseClient (and subclasses) being
