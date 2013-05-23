@@ -91,7 +91,7 @@ class FAS(object):
             user['timezone'] = sreg_resp.get('timezone')
             #user['locale'] = sreg_resp.get('LOCALE')
             user['cla_done'] = cla.CLA_URI_FEDORA_DONE in cla_resp.clas
-            user['groups'] = teams_resp.teams   # The groups do not contain the cla_ groups
+            user['groups'] = frozenset(teams_resp.teams) # The groups do not contain the cla_ groups
             flask.session['FLASK_FAS_OPENID_USER'] = user
             flask.session.modified = True
             return flask.redirect(return_url)
