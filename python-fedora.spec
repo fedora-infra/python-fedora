@@ -32,6 +32,7 @@ BuildRequires: TurboGears python-repoze-who-friendlyform Django
 BuildRequires: python-requests
 BuildRequires: python-openid
 BuildRequires: python-openid-teams
+BuildRequires: python-openid-cla
 
 Requires:       python-simplejson
 Requires:       python-bunch
@@ -39,6 +40,7 @@ Requires:       python-kitchen
 Requires:       python-requests
 Requires:       python-openid
 Requires:       python-openid-teams
+Requires:       python-openid-cla
 # These are now optional dependencies.  Some bodhi methods will not work if
 # they aren't installed but they aren't needed for most functionality of the
 # module.
