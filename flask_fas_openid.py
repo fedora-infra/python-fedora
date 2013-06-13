@@ -84,28 +84,18 @@ class FAS(object):
             pape_resp = pape.Response.fromSuccessResponse(info)
             teams_resp = teams.TeamsResponse.fromSuccessResponse(info)
             cla_resp = cla.CLAResponse.fromSuccessResponse(info)
-            user = dict()
-            if sreg_resp:
-                user['username'] = sreg_resp.get('nickname')
-                user['fullname'] = sreg_resp.get('fullname')
-                user['email'] = sreg_resp.get('email')
-                user['timezone'] = sreg_resp.get('timezone')
-            else:
-                user['username'] = ''
-                user['fullname'] = ''
-                user['email'] = ''
-                user['timezone'] = ''
-
+            user = {'fullname': '', 'username': '', 'email': '', 'timezone': '', 'cla_done': False, 'groups': []}
+            if not sreg_resp:
+                # If we have no basic info, be gone with them!
+                return flask.redirect(cancel_url)
+            user['username'] = sreg_resp.get('nickname')
+            user['fullname'] = sreg_resp.get('fullname')
+            user['email'] = sreg_resp.get('email')
+            user['timezone'] = sreg_resp.get('timezone')
             if cla_resp:
                 user['cla_done'] = cla.CLA_URI_FEDORA_DONE in cla_resp.clas
-            else:
-                user['cla_done'] = False
-
             if teams_resp:
                 user['groups'] = frozenset(teams_resp.teams) # The groups do not contain the cla_ groups
-            else:
-                user['groups'] = []
-
             flask.session['FLASK_FAS_OPENID_USER'] = user
             flask.session.modified = True
             return flask.redirect(return_url)
