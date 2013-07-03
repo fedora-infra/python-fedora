@@ -33,15 +33,15 @@ both of the pieces are valid, the server will log the user in and return a
 invalid, the server will return a 403 http response code to indicate an error.
 If the API receives a 403 from sending the username and password, it will then
 try sending a ``session_id`` if it has given one.  If the API receives a 403
-from this as well, thenit will translate this into a
-:exc:`fedora.client.AuthError` which can be caught by the calling client code.
+from this as well, then it will throw  a :exc:`fedora.client.AuthError` which
+can be caught by the calling client code.
 
-This means that there is an inherent inefficiency for users who have an
-:term:`otp` setup exists.  The first time they use the API, their password+otp
-will serve to authenticate them and get them a session_id.  Subsequent uses of
-the API will first attempt to pass in their saved password+otp which will fail.
-It will then use the session_id which should work (provided that their session
-hasn't timed out).
+This means that there is an inherent inefficiency for users who are using an
+:term:`otp`.  The first time they use the API, their password+otp will serve
+to authenticate them and get them a ``session_id``.  Subsequent uses of the API
+will first attempt to pass in their saved password+otp string which will fail.
+It will then use the ``session_id`` which should work (provided that their
+session hasn't timed out).
 
 .. warning:: Because we try both the ``session_id`` and username and password
     it is possible for someone with a saved ``session_id`` to give an
