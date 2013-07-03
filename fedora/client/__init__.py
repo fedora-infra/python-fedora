@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2007  Red Hat, Inc.
+# Copyright (C) 20013  Red Hat, Inc.
 # This file is part of python-fedora
 #
 # python-fedora is free software; you can redistribute it and/or
@@ -21,6 +21,8 @@ fedora.client is used to interact with Fedora Services.
 
 .. versionchanged:: 0.3.21
     Deprecate DictContainer in favor of bunch.Bunch
+.. versionchanged:: 0.3.33
+    Added OTP_MAP
 
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
@@ -84,6 +86,22 @@ class AppError(FedoraServiceError):
     def __str__(self):
         return 'AppError(%s, %s, extras=%s)' % (self.name, self.message,
                 self.extras)
+
+#: OTP_MAP sentinel values for one-time-password (otp) token handling.
+#: :meth:`fedora.client.ProxyClient.send_request` interprets these to
+#: determine how to treat username and password for authentication.
+#: Possible values:
+#:
+#: :UNDEFINED: Means that no otp has been given for this user.  When this is
+#:      the sentinel value, the code will not send an otp
+#: :USED: Means that an otp was once set but has already been sent to the
+#:      server.  The code will use this to mean only session_id can be used to
+#:      authenticate the user.
+#:
+#: In addition to these sentinel values, an otp variable could also be a string
+#: containing an otp.  In that case, it will be used.  Actual otp values are
+#: strings and the sentinel values will always be integers.
+OTP_MAP = Bunch(UNDEFINED=0, USED=-1)
 
 # Backwards compatibility
 class DictContainer(Bunch):

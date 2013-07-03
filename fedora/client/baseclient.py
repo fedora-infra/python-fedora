@@ -40,21 +40,20 @@ log = logging.getLogger(__name__)
 b_SESSION_DIR = path.join(path.expanduser('~'), '.fedora')
 b_SESSION_FILE = path.join(b_SESSION_DIR, '.fedora_session')
 
-from fedora.client import AuthError, ProxyClient
-from fedora.client.utils import filter_password
+from fedora.client import AuthError, ProxyClient, OTP_MAP
 
 class BaseClient(ProxyClient):
     '''
         A client for interacting with web services.
     '''
     def __init__(self, base_url, useragent=None, debug=False, insecure=False,
-            username=None, password=None, httpauth=None, session_cookie=None,
+            username=None, password=None,httpauth=None, session_cookie=None,
             session_id=None, session_name='tg-visit', cache_session=True,
-            retries=None, timeout=None):
+            retries=None, timeout=None, otp=OTP_MAP.UNDEFINED):
         '''
         :arg base_url: Base of every URL used to contact the server
         :kwarg useragent: Useragent string to use.  If not given, default to
-            "Fedora BaseClient/VERSION"
+        "Fedora BaseClient/VERSION"
         :kwarg session_name: name of the cookie to use with session handling
         :kwarg debug: If True, log debug information
         :kwarg insecure: If True, do not check server certificates against
@@ -64,6 +63,13 @@ class BaseClient(ProxyClient):
             certificate but it should be off in production.
         :kwarg username: Username for establishing authenticated connections
         :kwarg password: Password to use with authenticated connections
+        :kwarg otp: Either a string containing a one-time-password or a
+            sentinel value from :attr:`fedora.client.OTP_MAP`.  If this is an
+            otp it will be sent to the server.  If it's a sentinel it will
+            affect how we attempt to authenticate to the server.  See
+            :attr:`~fedora.client.OTP_MAP` for information on the sentinel
+            values.  The default is ``OTP_MAP.UNDEFINED`` which means that the
+            user has not specified an otp.
         :kwarg httpauth: If this is set to ``basic`` then use HTTP Basic
             Authentication to send the username and password.  Default: None,
             means do not use HTTP Authentication.
@@ -81,7 +87,8 @@ class BaseClient(ProxyClient):
             downloading of the response body. Defaults to 120 seconds.
 
         .. versionchanged:: 0.3.33
-            Added the timeout kwarg
+            * Added the timeout kwarg
+            * Added the otp kwarg to hold one-time-passwords
         '''
         self.log = log
         self.useragent = useragent or 'Fedora BaseClient/%(version)s' % {
@@ -92,6 +99,7 @@ class BaseClient(ProxyClient):
 
         self.username = username
         self.password = password
+        self.otp = otp
         self.httpauth = httpauth
         self.cache_session = cache_session
         self._session_id = None
@@ -273,7 +281,8 @@ class BaseClient(ProxyClient):
         del(self.session_id)
 
     def send_request(self, method, req_params=None, file_params=None,
-            auth=False, retries=None, timeout=None, **kwargs):
+                     auth=False, retries=None, timeout=None,
+                     otp=None, **kwargs):
         '''Make an HTTP request to a server method.
 
         The given method is called with any parameters set in req_params.  If
@@ -298,6 +307,17 @@ class BaseClient(ProxyClient):
             downloading of the response body. Default to use the
             :attr:`timeout` value set on the instance or in :meth:`__init__`
             (which defaults to 120s).
+        :kwarg otp: If you wish to specify a new one-time-password to use to
+            authenticate, you can do it here.  Either a string containing
+            a one-time-password or a sentinel value from
+            :attr:`fedora.client.OTP_MAP`.  If this is an otp it will be sent
+            to the server.  If it's a sentinel it will affect how we attempt
+            to authenticate to the server.  See :attr:`~fedora.client.OTP_MAP`
+            for information on the sentinel values.  The default is to use the
+            value of :attr:`self.otp` and then set :attr:`self.otp` to
+            ``OTP_MAP.USED``.  That allows the code to not try
+            username+password authentication if a new OTP is known to be
+            needed.
 
         :rtype: Bunch
         :returns: The data from the server
@@ -307,6 +327,7 @@ class BaseClient(ProxyClient):
             * Add file_params to allow uploading files
         .. versionchanged:: 0.3.33
             * Added the timeout kwarg
+            * Added the otp kwarg
         '''
         # Check for deprecated arguments.  This section can go once we hit 0.4
         if len(kwargs) >= 1:
@@ -330,18 +351,27 @@ class BaseClient(ProxyClient):
                     stacklevel=2)
             req_params = kwargs['input']
 
+        # Always send the session_id
         auth_params = {'session_id': self.session_id}
         if auth == True:
             # We need something to do auth.  Check user/pass
-            password, otp = filter_password(self.password)
-            if self.username and password:
+            if self.username and self.password:
                 # Add the username and password and we're all set
                 auth_params['username'] = self.username
-                auth_params['password'] = password
+                auth_params['password'] = self.password
                 if otp:
                     auth_params['otp'] = otp
+                elif self.otp != OTP_MAP.UNDEFINED:
+                    try:
+                        auth_params['otp'] = self.otp
+                    finally:
+                        # Don't expect that we'll ever except here but we
+                        # absolutely must make sure that self.otp is properly
+                        # invalidated once it is used so code defensively here
+                        self.otp = OTP_MAP.USED
                 if self.httpauth:
                     auth_params['httpauth'] = self.httpauth
+
             else:
                 # No?  Check for session_id
                 if not self.session_id:

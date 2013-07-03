@@ -13,7 +13,7 @@ Client
 ------
 
 .. automodule:: fedora.client
-    :members: FedoraServiceError, ServerError, AuthError, AppError,
+    :members: OTP_MAP, FedoraServiceError, ServerError, AuthError, AppError,
         FedoraClientError, FASError, CLAError, BodhiClientException,
         PackageDBError, DictContainer
 
