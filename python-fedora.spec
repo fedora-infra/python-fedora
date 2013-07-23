@@ -38,9 +38,6 @@ Requires:       python-simplejson
 Requires:       python-bunch
 Requires:       python-kitchen
 Requires:       python-requests
-Requires:       python-openid
-Requires:       python-openid-teams
-Requires:       python-openid-cla
 # These are now optional dependencies.  Some bodhi methods will not work if
 # they aren't installed but they aren't needed for most functionality of the
 # module.
@@ -111,6 +108,8 @@ Requires: %{name} = %{version}-%{release}
 Requires: python-flask
 Requires: python-flask-wtf
 Requires: python-openid
+Requires: python-openid-teams
+Requires: python-openid-cla
 
 %description flask
 Python modules that help with building Fedora Services.  This package includes
