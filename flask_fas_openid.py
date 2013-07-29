@@ -39,10 +39,10 @@ import openid
 from openid.consumer import consumer
 from openid.fetchers import setDefaultFetcher, Urllib2Fetcher
 from openid.extensions import pape, sreg
+from openid_cla import cla
+from openid_teams import teams
 
 from fedora import __version__
-import openid_cla.cla
-import openid_teams.teams
 
 class FAS(object):
 
