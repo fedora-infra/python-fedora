@@ -117,16 +117,21 @@ class FAS(object):
             flask.g.fas_user = Bunch.fromDict(user)
         flask.g.fas_session_id = 0
 
-    def login(self, username=None, password=None, return_url=None, cancel_url=None):
+    def login(self, username=None, password=None, return_url=None,
+              cancel_url=None, groups=['_FAS_ALL_GROUPS_']):
         """Tries to log in a user.
 
         Sets the user information on :attr:`flask.g.fas_user`.
         Will set 0 to :attr:`flask.g.fas_session_id, for compatibility
         with flask_fas.
 
-        :arg username: Not used, but accepted for compatibility with the flask_fas module
-        :arg password: Not used, but accepted for compatibility with the flask_fas module
+        :arg username: Not used, but accepted for compatibility with the
+           flask_fas module
+        :arg password: Not used, but accepted for compatibility with the
+           flask_fas module
         :arg return_url: The URL to forward the user to after login
+        :arg groups: A string or a list of group the user should belong to
+           to be authentified.
         :returns: True if the user was succesfully authenticated.
         :raises: Might raise an redirect to the OpenID endpoint
         """
@@ -144,9 +149,13 @@ class FAS(object):
         if request is None:
             # Also very strange, as this means the discovered OpenID endpoint is no OpenID endpoint
             return 'no-request'
+
+        if isinstance(groups, BaseString):
+           groups = [groups]
+
         request.addExtension(sreg.SRegRequest(required=['nickname', 'fullname', 'email', 'timezone']))
         request.addExtension(pape.Request([]))
-        request.addExtension(teams.TeamsRequest(requested=['_FAS_ALL_GROUPS_'])) # Magic value which requests all groups from FAS-OpenID >= 0.2.0
+        request.addExtension(teams.TeamsRequest(requested=groups))
         request.addExtension(cla.CLARequest(requested=[cla.CLA_URI_FEDORA_DONE]))
 
         trust_root = self.normalize_url(flask.request.url_root)
