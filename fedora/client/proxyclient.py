@@ -52,8 +52,7 @@ import requests
 import urllib3
 
 from fedora import __version__, b_
-from fedora.client import AppError, AuthError, ServerError
-from fedora.client.utils import filter_password
+from fedora.client import AppError, AuthError, OTP_MAP, ServerError
 
 log = logging.getLogger(__name__)
 
@@ -249,6 +248,16 @@ class ProxyClient(object):
                 for the server
             :username: Username to send to the server
             :password: Password to use with username to send to the server
+            :otp: If you wish to specify a one-time-password to use to
+                authenticate, you can do it here.  Either a string containing
+                a one-time-password or a sentinel value from
+                :attr:`fedora.client.OTP_MAP`.  If this is an otp it will be
+                sent to the server.  If it's a sentinel it will affect how we
+                attempt to authenticate to the server.  See
+                :attr:`~fedora.client.OTP_MAP` for information on the sentinel
+                values.  The default is to ``OTP_MAP.UNDEFINED`` which means
+                that the calling code did not provide an otp and we are
+                expecting usernames and passwords to work without one.
             :httpauth: If set to ``basic`` then use HTTP Basic Authentication
                 to send the username and password to the server.  This may be
                 extended in the future to support other httpauth types than
@@ -284,7 +293,8 @@ class ProxyClient(object):
             * Return data as a Bunch instead of a DictContainer
             * Add file_params to allow uploading files
         .. versionchanged:: 0.3.33
-            Added the timeout kwarg
+            * Added the timeout kwarg
+            * Added the otp option to auth_params
         '''
         self.log.debug(b_('proxyclient.send_request: entered'))
 
@@ -308,13 +318,10 @@ class ProxyClient(object):
             if 'username' in auth_params and 'password' in auth_params:
                 username = auth_params['username']
                 password = auth_params['password']
+                otp = auth_params.get('otp', OTP_MAP.UNDEFINED)
             elif 'username' in auth_params or 'password' in auth_params:
                 raise AuthError(b_('username and password must both be set in'
                         ' auth_params'))
-            if 'otp' in auth_params:
-                otp = auth_params['otp']
-            else:
-                self.log.debug('OTP key not set')
             if not (session_id or username):
                 raise AuthError(b_('No known authentication methods'
                     ' specified: set "cookie" in auth_params or set both'
@@ -354,8 +361,7 @@ class ProxyClient(object):
             complete_params.update({'_csrf_token': token.hexdigest()})
 
         auth = None
-        password, otp = filter_password(password)
-        if username and password:
+        if username and password and otp != OTP_MAP.USED:
             if auth_params.get('httpauth', '').lower() == 'basic':
                 # HTTP Basic auth login
                 auth = (username, password)
@@ -363,10 +369,13 @@ class ProxyClient(object):
                 # TG login
                 # Adding this to the request data prevents it from being logged by
                 # apache.
+                if otp != OTP_MAP.UNDEFINED:
+                    password_field = password + otp
+                else:
+                    password_field = password
                 complete_params.update({
                     'user_name': to_bytes(username),
-                    'password': to_bytes(password),
-                    'otp': to_bytes(otp),
+                    'password': to_bytes(password_field),
                     'login': 'Login',
                 })
 
@@ -378,11 +387,9 @@ class ProxyClient(object):
         if self.debug and complete_params:
             debug_data = copy.deepcopy(complete_params)
 
-            # wipe password and otp
+            # wipe password
             if 'password' in debug_data:
                 debug_data['password'] = 'xxxxxxx'
-            if 'otp' in debug_data:
-                debug_data['otp'] = 'xxxxxxxxxxxxxxxxxxxxxxxx'
 
             self.log.debug(b_('Data: %r') % debug_data)
 
@@ -413,7 +420,7 @@ class ProxyClient(object):
                     #   urllib3.exceptions.SSLError(
                     #     ssl.SSLError('The read operation timed out')))
                     # If we weren't interested in reraising the exception with
-                    # full tracdeback we could use a try: except instead of
+                    # full traceback we could use a try: except instead of
                     # this gross conditional.  But we need to code defensively
                     # because we don't want to raise an unrelated exception
                     # here and if requests/urllib3 can do this sort of
@@ -454,6 +461,15 @@ class ProxyClient(object):
             # We need to accept both until all apps are updated to return 401.
             http_status = response.status_code
             if http_status in (401, 403):
+                # Could it be an otp in the password field but we have a valid
+                # session_id?
+                if otp == OTP_MAP.UNDEFINED and username in complete_params \
+                        and password in complete_params:
+                    # Try the session_id as it could be that there was an otp
+                    # in the password parameter
+                    del complete_params['username']
+                    del complete_params['password']
+                    continue
                 # Wrong username or password
                 self.log.debug(b_('Authentication failed logging in'))
                 raise AuthError(b_('Unable to log into server.  Invalid'

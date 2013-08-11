@@ -30,6 +30,7 @@ NEWS
   response strings.  This takes a very long time on large return values.
   Since we know that all responses from the services we're talking to will be
   utf-8, we can skip this detection step.
+* Add support for one-time-passwords in the BaseClient and ProxyClient API.
 * No longer use paver for building.  We just need setuptools now
 * Deprecated AccountSystem's gravatar_url method in favor of a new avatar_url
   method.  This defaults to using the free libravatar service but still allows

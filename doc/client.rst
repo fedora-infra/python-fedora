@@ -3,7 +3,7 @@ Fedora Client
 =============
 :Authors: Toshio Kuratomi
           Luke Macken
-:Date: 28 May 2008
+:Date: 2 July 2013
 :For Version: 0.3.x
 
 The client module allows you to easily code an application that talks to a
@@ -167,6 +167,18 @@ header to get this information instead.  See the `JSON output`_ section of the
 .. _[#]: Note that the ``req_params`` are actually sent via ``POST`` request
          rather than ``GET``.  Among other things, this means that values in
          ``req_params`` won't show up in apache logs.
+
+Authentication with OTP
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Using the :attr:`auth` parameter to
+:meth:`~fedora.client.BaseClient.send_request` is easy enough when dealing
+with authentication credentials that don't change like username and password.
+When you throw :term:`one time password` s into the mix things change a bit
+because they are different for every request.  Please see `Client Support for
+One Time Passwords`_ for full details.
+
+.. _`Client Support for One Time Passwords`: otp.html
 
 Subclassing
 ===========
