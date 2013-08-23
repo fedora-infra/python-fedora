@@ -261,7 +261,7 @@ class BodhiClient(BaseClient):
 
         """
         from iniparse.compat import ConfigParser
-        self.log.info(b_('Reading from %s ') % input_file)
+        self.log.info('Reading from %s ') % input_file)
         input_file = expanduser(input_file)
         if exists(input_file):
             defaults = {
