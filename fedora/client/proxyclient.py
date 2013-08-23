@@ -384,7 +384,7 @@ class ProxyClient(object):
             if 'otp' in debug_data:
                 debug_data['otp'] = 'xxxxxxxxxxxxxxxxxxxxxxxx'
 
-            self.log.debug(b_('Data: %r') % debug_data)
+            self.log.debug('Data: %r' % debug_data)
 
         if retries is None:
             retries = self.retries

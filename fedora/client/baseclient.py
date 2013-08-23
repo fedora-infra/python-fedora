@@ -115,8 +115,8 @@ class BaseClient(ProxyClient):
                 session_file = file(b_SESSION_FILE, 'r')
                 saved_session = pickle.load(session_file)
             except (IOError, EOFError):
-                self.log.info(b_('Unable to load session from %(file)s') %
-                        {'file': b_SESSION_FILE})
+                self.log.info('Unable to load session from %(file)s') %
+                        {'file': b_SESSION_FILE}
             if session_file:
                 session_file.close()
 
@@ -345,10 +345,10 @@ class BaseClient(ProxyClient):
                 # No?  Check for session_id
                 if not self.session_id:
                     # Not enough information to auth
-                    raise AuthError(b_('Auth was requested but no way to'
+                    raise AuthError('Auth was requested but no way to'
                             ' perform auth was given.  Please set username'
                             ' and password or session_id before calling'
-                            ' this function with auth=True'))
+                            ' this function with auth=True')
 
         # Remove empty params
         # pylint: disable-msg=W0104

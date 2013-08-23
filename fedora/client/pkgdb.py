@@ -194,9 +194,9 @@ class PackageDB(BaseClient):
         # See if we have the information to
         # create it
         if not owner:
-            raise AppError(name='AppError', message=b_('We do not have '
+            raise AppError(name='AppError', message=('We do not have '
                     'enough information to create package %(pkg)s. '
-                    'Need version owner.') % {'pkg': to_bytes(pkg)})
+                    'Need version owner.' % {'pkg': to_bytes(pkg)})
 
         data = {'owner': owner, 'summary': description}
         # This call creates the package and an initial branch for
@@ -205,7 +205,7 @@ class PackageDB(BaseClient):
             % pkg, auth=True, req_params=data)
         if 'status' in response and not response['status']:
             raise AppError(name='PackageDBError', message=
-                b_('PackageDB returned an error creating %(pkg)s:' ' %(msg)s')
+                ('PackageDB returned an error creating %(pkg)s:' ' %(msg)s')
                 % {'pkg': to_bytes(pkg), 'msg': to_bytes(response['message'])})
 
         if cc_list:
@@ -228,8 +228,8 @@ class PackageDB(BaseClient):
                     'edit_package/%s' % pkg, auth=True, req_params=data)
             if 'status' in response and not response['status']:
                 raise AppError(name='PackageDBError', 
-                    message=b_('Unable to save all information for'
-                        ' %(pkg)s: %(msg)s') % {'pkg': to_bytes(pkg), 'msg':
+                    message=('Unable to save all information for'
+                        ' %(pkg)s: %(msg)s' % {'pkg': to_bytes(pkg), 'msg':
                             to_bytes(response['message'])})
 
     def edit_package(self, pkg, owner=None, description=None,

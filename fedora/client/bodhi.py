@@ -191,7 +191,7 @@ class BodhiClient(BaseClient):
         could potentially be pushed as updates.
         """
         if not self.username:
-            raise BodhiClientException(b_('You must specify a username'))
+            raise BodhiClientException('You must specify a username'))
         data = self.send_request('candidate_tags')
         koji = self.get_koji_session(login=False)
         for tag in data['tags']:

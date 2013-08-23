@@ -43,7 +43,7 @@ except ImportError:
 
 from fedora.client import AppError, BaseClient, FasProxyClient, \
         FedoraClientError, FedoraServiceError
-from fedora import __version__, b_
+from fedora import __version__ 
 
 ### FIXME: To merge:
 # /usr/bin/fasClient from fas
@@ -345,7 +345,7 @@ class AccountSystem(BaseClient):
         if request['success']:
             return request['group']
         else:
-            raise AppError(message=b_('FAS server unable to retrieve group'
+            raise AppError(message='FAS server unable to retrieve group'
                 ' %(group)s') % {'group': to_bytes(groupname)},
                 name='FASError')
 
@@ -459,8 +459,8 @@ class AccountSystem(BaseClient):
         '''
 
         if size not in self._valid_avatar_sizes:
-            raise ValueError(b_('Size %(size)i disallowed.  Must be in'
-                ' %(valid_sizes)r') % { 'size': size,
+            raise ValueError('Size %(size)i disallowed.  Must be in'
+                ' %(valid_sizes)r' % { 'size': size,
                     'valid_sizes': self._valid_avatar_sizes})
 
         # If our caller explicitly requested libravatar but they don't have
@@ -480,8 +480,8 @@ class AccountSystem(BaseClient):
 
         # Just double check to make sure they didn't pass us a bogus service.
         if service not in self._valid_avatar_services:
-            raise ValueError(b_('Service %(service)r disallowed.  Must be in'
-                ' %(valid_services)r') % { 'service': service,
+            raise ValueError('Service %(service)r disallowed.  Must be in'
+                ' %(valid_services)r' % { 'service': service,
                     'valid_services': self._valid_avatar_services})
 
         if not default:
@@ -521,9 +521,9 @@ class AccountSystem(BaseClient):
             Deprecated in favor of `avatar_url`.
         """
 
-        warnings.warn(b_("gravatar_url is deprecated and will be removed in"
+        warnings.warn("gravatar_url is deprecated and will be removed in"
             " a future version.  Please port your code to use avatar_url(...,"
-            " service='libravatar', ...)  instead"),
+            " service='libravatar', ...)  instead",
             DeprecationWarning, stacklevel=2)
 
         if 'service' in kwargs:
@@ -600,15 +600,15 @@ class AccountSystem(BaseClient):
         '''
         # Make sure we have a valid key value
         if key not in ('id', 'username', 'email'):
-            raise KeyError(b_('key must be one of "id", "username", or'
-                ' "email"'))
+            raise KeyError('key must be one of "id", "username", or'
+                ' "email"')
 
         if fields:
             fields = list(fields)
             for field in fields:
                 if field not in USERFIELDS:
-                    raise KeyError(b_('%(field)s is not a valid field to'
-                        ' filter') % {'field': to_bytes(field)})
+                    raise KeyError('%(field)s is not a valid field to'
+                        ' filter' % {'field': to_bytes(field)})
         else:
             fields = USERFIELDS
 
@@ -660,10 +660,10 @@ class AccountSystem(BaseClient):
         .. versionchanged:: 0.3.21
             Return a Bunch instead of a DictContainer
         '''
-        warnings.warn(b_("people_by_id() is deprecated and will be removed in"
+        warnings.warn("people_by_id() is deprecated and will be removed in"
             " 0.4.  Please port your code to use people_by_key(key='id',"
             " fields=['human_name', 'email', 'username', 'bugzilla_email'])"
-            " instead"), DeprecationWarning, stacklevel=2)
+            " instead", DeprecationWarning, stacklevel=2)
 
         request = self.send_request('/json/user_id', auth=True)
         user_to_id = {}
@@ -842,8 +842,8 @@ class AccountSystem(BaseClient):
             if request['success']:
                 return request['data']
             else:
-                raise AppError(message=b_('FAS server unable to retrieve'
-                    ' group members'), name='FASError')
+                raise AppError(message=('FAS server unable to retrieve'
+                    ' group members', name='FASError')
         except FedoraServiceError:
             raise
 
@@ -864,7 +864,7 @@ class AccountSystem(BaseClient):
             if request['success']:
                 return request['data']
             else:
-                raise AppError(message=b_('FAS server unable to retrieve user'
+                raise AppError(message=('FAS server unable to retrieve user'
                     ' information'), name='FASError')
         except FedoraServiceError:
             raise
