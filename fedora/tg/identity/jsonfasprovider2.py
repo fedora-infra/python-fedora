@@ -43,7 +43,7 @@ sets.add_builtin_set()
 
 from fedora.client import AccountSystem, AuthError, BaseClient, \
         FedoraServiceError
-from fedora import b_, __version__
+from fedora import __version__
 
 import logging
 log = logging.getLogger('turbogears.identity.jsonfasprovider')
@@ -53,9 +53,9 @@ if config.get('identity.ssl', False):
     fas_password = config.get('fas.password', None)
     if not (fas_user and fas_password):
         raise identity.IdentityConfigurationException(
-                b_('Cannot enable ssl certificate auth via identity.ssl'
+                ('Cannot enable ssl certificate auth via identity.ssl'
                     ' without setting fas.usernamme and fas.password for'
-                    ' authorization'))
+                    ' authorization')
     __url = config.get('fas.url', None)
     if __url:
         fas = AccountSystem(__url, username=config.get('fas.username'),
@@ -163,8 +163,8 @@ class JsonFasIdentity(BaseClient):
             except Exception, e: # pylint: disable-msg=W0703
                 # :W0703: Any errors have to result in no user being set.  The
                 # rest of the framework doesn't know what to do otherwise.
-                self.log.warning(b_('jsonfasprovider, ssl, returned errors'
-                    ' from send_request: %s') % to_bytes(e))
+                self.log.warning('jsonfasprovider, ssl, returned errors'
+                    ' from send_request: %s' % to_bytes(e))
                 person = None
             self._retrieved_user = person or None
             return self._retrieved_user
@@ -178,8 +178,8 @@ class JsonFasIdentity(BaseClient):
         except Exception, e: # pylint: disable-msg=W0703
             # :W0703: Any errors have to result in no user being set.  The rest
             # of the framework doesn't know what to do otherwise.
-            self.log.warning(b_('jsonfasprovider returned errors from'
-                ' send_request: %s') % to_bytes(e))
+            self.log.warning('jsonfasprovider returned errors from'
+                ' send_request: %s' % to_bytes(e))
             return None
         # pylint: enable-msg=W0702
 
@@ -406,7 +406,7 @@ class JsonFasIdentityProvider(object):
             user = JsonFasIdentity(visit_key, username=user_name,
                     password=password, using_ssl=using_ssl)
         except FedoraServiceError, e:
-            self.log.warning(b_('Error logging in %(user)s: %(error)s') % {
+            self.log.warning('Error logging in %(user)s: %(error)s' % {
                 'user': to_bytes(user_name), 'error': to_bytes(e)})
             return None
 
