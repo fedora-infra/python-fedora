@@ -27,7 +27,7 @@
 
 from fedora.client import AuthError, AppError
 from fedora.client.proxyclient import ProxyClient
-from fedora import __version__, b_
+from fedora import __version__
 
 import logging
 log = logging.getLogger(__name__)
@@ -64,7 +64,7 @@ class FasProxyClient(ProxyClient):
         if 'session_as_cookie' in kwargs and kwargs['session_as_cookie']:
             # No need to allow this in FasProxyClient as it's deprecated in
             # ProxyClient
-            raise TypeError(b_('FasProxyClient() got an unexpected keyword'
+            raise TypeError('FasProxyClient() got an unexpected keyword'
                 ' argument \'session_as_cookie\''))
         kwargs['session_as_cookie'] = False
         super(FasProxyClient, self).__init__(base_url, *args, **kwargs)

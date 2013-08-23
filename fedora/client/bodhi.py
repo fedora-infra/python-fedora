@@ -30,7 +30,6 @@ from textwrap import wrap
 from os.path import join, expanduser, exists
 
 from fedora.client import BaseClient, FedoraClientError
-from fedora import b_
 
 __version__ = '0.5.1'
 log = logging.getLogger(__name__)

@@ -51,7 +51,7 @@ import requests
 # For handling an exception that's coming from requests:
 import urllib3
 
-from fedora import __version__, b_
+from fedora import __version__
 from fedora.client import AppError, AuthError, ServerError
 from fedora.client.utils import filter_password
 
@@ -167,7 +167,7 @@ class ProxyClient(object):
             requests_log = logging.getLogger("requests")
             requests_log.setLevel(logging.WARN)
 
-        self.log.debug(b_('proxyclient.__init__:entered'))
+        self.log.debug('proxyclient.__init__:entered'))
         if base_url[-1] != '/':
             base_url = base_url +'/'
         self.base_url = base_url
@@ -177,7 +177,7 @@ class ProxyClient(object):
         self.session_name = session_name
         self.session_as_cookie = session_as_cookie
         if session_as_cookie:
-            warnings.warn(b_('Returning cookies from send_request() is'
+            warnings.warn('Returning cookies from send_request() is'
                 ' deprecated and will be removed in 0.4.  Please port your'
                 ' code to use a session_id instead by calling the ProxyClient'
                 ' constructor with session_as_cookie=False'),
@@ -194,7 +194,7 @@ class ProxyClient(object):
             self.timeout = 120.0
         else:
             self.timeout = timeout
-        self.log.debug(b_('proxyclient.__init__:exited'))
+        self.log.debug('proxyclient.__init__:exited')
 
     def __get_debug(self):
         '''Return whether we have debug logging turned on.
@@ -286,7 +286,7 @@ class ProxyClient(object):
         .. versionchanged:: 0.3.33
             Added the timeout kwarg
         '''
-        self.log.debug(b_('proxyclient.send_request: entered'))
+        self.log.debug('proxyclient.send_request: entered')
 
         # parameter mangling
         file_params = file_params or {}
@@ -299,7 +299,7 @@ class ProxyClient(object):
             if 'session_id' in auth_params:
                 session_id = auth_params['session_id']
             elif 'cookie' in auth_params:
-                warnings.warn(b_('Giving a cookie to send_request() to'
+                warnings.warn('Giving a cookie to send_request() to'
                 ' authenticate is deprecated and will be removed in 0.4.'
                 ' Please port your code to use session_id instead.'),
                 DeprecationWarning, stacklevel=2)
@@ -309,16 +309,16 @@ class ProxyClient(object):
                 username = auth_params['username']
                 password = auth_params['password']
             elif 'username' in auth_params or 'password' in auth_params:
-                raise AuthError(b_('username and password must both be set in'
-                        ' auth_params'))
+                raise AuthError('username and password must both be set in'
+                        ' auth_params')
             if 'otp' in auth_params:
                 otp = auth_params['otp']
             else:
                 self.log.debug('OTP key not set')
             if not (session_id or username):
-                raise AuthError(b_('No known authentication methods'
+                raise AuthError('No known authentication methods'
                     ' specified: set "cookie" in auth_params or set both'
-                    ' username and password in auth_params'))
+                    ' username and password in auth_params')
 
         # urljoin is slightly different than os.path.join().  Make sure method
         # will work with it.
@@ -371,9 +371,9 @@ class ProxyClient(object):
                 })
 
         # If debug, give people our debug info
-        self.log.debug(b_('Creating request %(url)s') %
+        self.log.debug('Creating request %(url)s') %
                 {'url': to_bytes(url)})
-        self.log.debug(b_('Headers: %(header)s') %
+        self.log.debug('Headers: %(header)s') %
                 {'header': to_bytes(headers, nonstring='simplerepr')})
         if self.debug and complete_params:
             debug_data = copy.deepcopy(complete_params)
@@ -426,10 +426,10 @@ class ProxyClient(object):
                             and 'timed out' in e.args[0].args[0].args[0]):
                         # We're only interested in timeouts here
                         raise
-                self.log.debug(b_('Request timed out'))
+                self.log.debug('Request timed out')
                 if retries < 0 or num_tries < retries:
                     num_tries += 1
-                    self.log.debug(b_('Attempt #%(try)s failed') % {'try': num_tries})
+                    self.log.debug('Attempt #%(try)s failed') % {'try': num_tries})
                     time.sleep(0.5)
                     continue
                 # Fail and raise an error
@@ -455,21 +455,21 @@ class ProxyClient(object):
             http_status = response.status_code
             if http_status in (401, 403):
                 # Wrong username or password
-                self.log.debug(b_('Authentication failed logging in'))
-                raise AuthError(b_('Unable to log into server.  Invalid'
-                        ' authentication tokens.  Send new username and password'))
+                self.log.debug('Authentication failed logging in')
+                raise AuthError('Unable to log into server.  Invalid'
+                        ' authentication tokens.  Send new username and password')
             elif http_status >= 400:
                 if retries < 0 or num_tries < retries:
                     # Retry the request
                     num_tries += 1
-                    self.log.debug(b_('Attempt #%(try)s failed') % {'try': num_tries})
+                    self.log.debug('Attempt #%(try)s failed') % {'try': num_tries})
                     time.sleep(0.5)
                     continue
                 # Fail and raise an error
                 try:
                     msg = httplib.responses[http_status]
                 except (KeyError, AttributeError):
-                    msg = b_('Unknown HTTP Server Response')
+                    msg = ('Unknown HTTP Server Response')
                 raise ServerError(url, http_status, msg)
             # Successfully returned data
             break
@@ -484,7 +484,7 @@ class ProxyClient(object):
                 data = data()
         except ValueError, e:
             # The response wasn't JSON data
-            raise ServerError(url, http_status, b_('Error returned from'
+            raise ServerError(url, http_status, ('Error returned from'
                     ' json module while processing %(url)s: %(err)s') %
                     {'url': to_bytes(url), 'err': to_bytes(e)})
 
@@ -499,7 +499,7 @@ class ProxyClient(object):
             cookie[self.session_name] = new_session
             new_session = cookie
 
-        self.log.debug(b_('proxyclient.send_request: exited'))
+        self.log.debug('proxyclient.send_request: exited')
         data = bunchify(data)
         return new_session, data
 

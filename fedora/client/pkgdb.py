@@ -39,7 +39,7 @@ try:
 except ImportError:
     import json as json
 
-from fedora import __version__, b_
+from fedora import __version__
 from fedora.client import BaseClient, FedoraClientError, AppError
 
 COLLECTIONMAP = {'F': 'Fedora',
@@ -284,7 +284,7 @@ class PackageDB(BaseClient):
         response = self.send_request('/acls/dispatcher/edit_package/%s'
                 % pkg, auth=True, req_params=data)
         if 'status' in response and not response['status']:
-            raise AppError(name='PackageDBError', message=b_('Unable to save'
+            raise AppError(name='PackageDBError', message=('Unable to save'
                 ' all information for %(pkg)s: %(msg)s') %
                     {'pkg': to_bytes(pkg), 'msg':
                         to_bytes(response['message'])})
@@ -308,7 +308,7 @@ class PackageDB(BaseClient):
         #try:
         #    collection = self.branches[branch]
         #except KeyError:
-        #    raise PackageDBError(b_('Collection %(branch)s does not exist in'
+        #    raise PackageDBError('Collection %(branch)s does not exist in'
         #        ' the packagedb') % {'branch': branch})
         #return collection['name'], collection['version']
 
@@ -320,7 +320,7 @@ class PackageDB(BaseClient):
             try:
                 collection = COLLECTIONMAP[collection]
             except KeyError:
-                raise PackageDBError(b_('Collection abbreviation'
+                raise PackageDBError('Collection abbreviation'
                         ' %(collection)s is unknown.  Use F, FC, EL, or OLPC')
                         % {'collection': to_bytes(collection)})
 
@@ -347,19 +347,19 @@ class PackageDB(BaseClient):
             Return Bunch instead of DictContainer
         '''
         if (collctn_name and collection) or (collctn_ver and collection_ver):
-            warnings.warn(b_('collection and collection_ver are deprecated'
+            warnings.warn('collection and collection_ver are deprecated'
                 ' names for collctn_name and collctn_ver respectively.'
                 '  Ignoring the values given in them.'), DeprecationWarning,
                 stacklevel=2)
 
         if collection and not collctn_name:
-            warnings.warn(b_('collection has been renamed to collctn_name.\n'
+            warnings.warn('collection has been renamed to collctn_name.\n'
                 'Please start using the new name.  collection will go '
                 'away in 0.4.x.'), DeprecationWarning, stacklevel=2)
             collctn_name = collection
 
         if collection_ver and not collctn_ver:
-            warnings.warn(b_('collection_ver has been renamed to collctn_ver.'
+            warnings.warn('collection_ver has been renamed to collctn_ver.'
                 '\nPlease start using the new name.  collection_ver will go '
                 'away in 0.4.x.'), DeprecationWarning, stacklevel=2)
             collctn_ver = collection_ver
@@ -396,12 +396,12 @@ class PackageDB(BaseClient):
             Rename collectn_list to collctn_list
         '''
         if (collctn_list and collectn_list):
-            warnings.warn(b_('collectn_list is a deprecated name for'
+            warnings.warn('collectn_list is a deprecated name for'
                     ' collctn_list.\nIgnoring the value of collectn_list.'),
                     DeprecationWarning, stacklevel=2)
 
         if collectn_list and not collctn_list:
-            warnings.warn(b_('collectn_list has been renamed to collctn_list.'
+            warnings.warn('collectn_list has been renamed to collctn_list.'
                     '\nPlease start using the new name.  collectn_list will go'
                     ' away in 0.4.x.'), DeprecationWarning, stacklevel=2)
             collctn_list = collectn_list
@@ -475,12 +475,12 @@ class PackageDB(BaseClient):
             Rename collectn to collctn
         '''
         if (collctn and collectn):
-            warnings.warn(b_('collectn is a deprecated name for'
+            warnings.warn('collectn is a deprecated name for'
                     ' collctn.\nIgnoring the value of collectn.'),
                     DeprecationWarning, stacklevel=2)
 
         if collectn and not collctn:
-            warnings.warn(b_('collectn has been renamed to collctn.\n'
+            warnings.warn('collectn has been renamed to collctn.\n'
                     'Please start using the new name.  collectn will go'
                     ' away in 0.4.x.'), DeprecationWarning, stacklevel=2)
             collctn = collectn
@@ -490,7 +490,7 @@ class PackageDB(BaseClient):
             try:
                 collctn_id = self.branches[collctn]['id']
             except KeyError:
-                raise PackageDBError(b_('Collection shortname %(collctn)s'
+                raise PackageDBError('Collection shortname %(collctn)s'
                     ' is unknown.') % {'collctn': to_bytes(collctn)})
             data = self.send_request('/collections/name/%s/' % collctn, params)
         else:
