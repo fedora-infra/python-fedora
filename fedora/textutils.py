@@ -29,6 +29,6 @@ import warnings
 from kitchen.text.converters import to_unicode, to_bytes
 
 warnings.warn('fedora.textutils is deprecated.  Use'
-    ' kitchen.text.converters instead'), DeprecationWarning, stacklevel=2)
+    ' kitchen.text.converters instead', DeprecationWarning, stacklevel=2)
 
 __all__ = ('to_unicode', 'to_bytes')

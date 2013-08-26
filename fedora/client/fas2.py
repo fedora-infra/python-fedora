@@ -346,7 +346,7 @@ class AccountSystem(BaseClient):
             return request['group']
         else:
             raise AppError(message='FAS server unable to retrieve group'
-                ' %(group)s') % {'group': to_bytes(groupname)},
+                ' %(group)s' % {'group': to_bytes(groupname)},
                 name='FASError')
 
     def group_members(self, groupname):
@@ -842,7 +842,7 @@ class AccountSystem(BaseClient):
             if request['success']:
                 return request['data']
             else:
-                raise AppError(message=('FAS server unable to retrieve'
+                raise AppError(message='FAS server unable to retrieve'
                     ' group members', name='FASError')
         except FedoraServiceError:
             raise
@@ -864,8 +864,8 @@ class AccountSystem(BaseClient):
             if request['success']:
                 return request['data']
             else:
-                raise AppError(message=('FAS server unable to retrieve user'
-                    ' information'), name='FASError')
+                raise AppError(message='FAS server unable to retrieve user'
+                    ' information', name='FASError')
         except FedoraServiceError:
             raise
 

@@ -167,7 +167,7 @@ class ProxyClient(object):
             requests_log = logging.getLogger("requests")
             requests_log.setLevel(logging.WARN)
 
-        self.log.debug('proxyclient.__init__:entered'))
+        self.log.debug('proxyclient.__init__:entered')
         if base_url[-1] != '/':
             base_url = base_url +'/'
         self.base_url = base_url
@@ -180,7 +180,7 @@ class ProxyClient(object):
             warnings.warn('Returning cookies from send_request() is'
                 ' deprecated and will be removed in 0.4.  Please port your'
                 ' code to use a session_id instead by calling the ProxyClient'
-                ' constructor with session_as_cookie=False'),
+                ' constructor with session_as_cookie=False',
                 DeprecationWarning, stacklevel=2)
         self.insecure = insecure
 
@@ -301,7 +301,7 @@ class ProxyClient(object):
             elif 'cookie' in auth_params:
                 warnings.warn('Giving a cookie to send_request() to'
                 ' authenticate is deprecated and will be removed in 0.4.'
-                ' Please port your code to use session_id instead.'),
+                ' Please port your code to use session_id instead.',
                 DeprecationWarning, stacklevel=2)
                 session_id = auth_params['cookie'].output(attrs=[],
                         header='').strip()
@@ -371,9 +371,9 @@ class ProxyClient(object):
                 })
 
         # If debug, give people our debug info
-        self.log.debug('Creating request %(url)s') %
+        self.log.debug('Creating request %(url)s' %
                 {'url': to_bytes(url)})
-        self.log.debug('Headers: %(header)s') %
+        self.log.debug('Headers: %(header)s' %
                 {'header': to_bytes(headers, nonstring='simplerepr')})
         if self.debug and complete_params:
             debug_data = copy.deepcopy(complete_params)
@@ -429,7 +429,7 @@ class ProxyClient(object):
                 self.log.debug('Request timed out')
                 if retries < 0 or num_tries < retries:
                     num_tries += 1
-                    self.log.debug('Attempt #%(try)s failed') % {'try': num_tries})
+                    self.log.debug('Attempt #%(try)s failed' % {'try': num_tries})
                     time.sleep(0.5)
                     continue
                 # Fail and raise an error
@@ -462,14 +462,14 @@ class ProxyClient(object):
                 if retries < 0 or num_tries < retries:
                     # Retry the request
                     num_tries += 1
-                    self.log.debug('Attempt #%(try)s failed') % {'try': num_tries})
+                    self.log.debug('Attempt #%(try)s failed' % {'try': num_tries})
                     time.sleep(0.5)
                     continue
                 # Fail and raise an error
                 try:
                     msg = httplib.responses[http_status]
                 except (KeyError, AttributeError):
-                    msg = ('Unknown HTTP Server Response')
+                    msg = 'Unknown HTTP Server Response'
                 raise ServerError(url, http_status, msg)
             # Successfully returned data
             break
@@ -485,7 +485,7 @@ class ProxyClient(object):
         except ValueError, e:
             # The response wasn't JSON data
             raise ServerError(url, http_status, ('Error returned from'
-                    ' json module while processing %(url)s: %(err)s') %
+                    ' json module while processing %(url)s: %(err)s' %
                     {'url': to_bytes(url), 'err': to_bytes(e)})
 
         if 'exc' in data:

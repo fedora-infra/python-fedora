@@ -64,7 +64,7 @@ class Wiki(BaseClient):
                 'lgpassword': password,
                 })
         if 'lgtoken' not in data.get('login', {}):
-            raise AuthError('Login failed: %(data)s') %
+            raise AuthError('Login failed: %(data)s' %
                     {'data':to_bytes(data)})
         #self.session_id = data['login']['lgtoken']
         #self.username = data['login']['lgusername']

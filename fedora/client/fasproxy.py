@@ -65,7 +65,7 @@ class FasProxyClient(ProxyClient):
             # No need to allow this in FasProxyClient as it's deprecated in
             # ProxyClient
             raise TypeError('FasProxyClient() got an unexpected keyword'
-                ' argument \'session_as_cookie\''))
+                ' argument \'session_as_cookie\'')
         kwargs['session_as_cookie'] = False
         super(FasProxyClient, self).__init__(base_url, *args, **kwargs)
 

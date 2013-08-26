@@ -32,7 +32,7 @@ import warnings
 from kitchen.iterutils import isiterable as _isiterable
 
 warnings.warn('fedora.iterutils is deprecated.  Use kitchen.iterutils'
-    ' instead'), DeprecationWarning, stacklevel=2)
+    ' instead', DeprecationWarning, stacklevel=2)
 
 def isiterable(obj, include_string=True):
     '''*Deprecated* Use kitchen.iterutils.isiterable instead.
@@ -50,7 +50,7 @@ def isiterable(obj, include_string=True):
     :returns: True if `obj` is iterable, otherwise False.
     '''
     warnings.warn('fedora.iterutils.isiterable is deprecated, use'
-        ' kitchen.iterutils.isiterable instead'), DeprecationWarning,
+        ' kitchen.iterutils.isiterable instead', DeprecationWarning,
         stacklevel=2)
     return _isiterable(obj, include_string)
 

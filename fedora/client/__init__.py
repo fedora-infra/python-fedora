@@ -87,7 +87,7 @@ class AppError(FedoraServiceError):
 class DictContainer(Bunch):
     def __init__(self, *args, **kwargs):
         warnings.warn('DictContainer is deprecated.  Use the Bunch class'
-            ' from python-bunch instead.'), DeprecationWarning, stacklevel=2)
+            ' from python-bunch instead.', DeprecationWarning, stacklevel=2)
         Bunch.__init__(self, *args, **kwargs)
 
 # We want people to be able to import fedora.client.*Client directly

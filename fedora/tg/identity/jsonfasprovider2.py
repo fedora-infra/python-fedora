@@ -52,7 +52,7 @@ if config.get('identity.ssl', False):
     fas_user = config.get('fas.username', None)
     fas_password = config.get('fas.password', None)
     if not (fas_user and fas_password):
-        raise identity.IdentityConfigurationException(
+        raise identity.IdentityConfigurationException
                 ('Cannot enable ssl certificate auth via identity.ssl'
                     ' without setting fas.usernamme and fas.password for'
                     ' authorization')
