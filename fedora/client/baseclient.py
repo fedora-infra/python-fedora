@@ -167,8 +167,8 @@ class BaseClient(ProxyClient):
             self._session_id = ''
 
         if not self._session_id:
-            self.log.debug('No session cached for "%s"')
-                    % to_bytes(self.username)
+            self.log.debug('No session cached for "%s"'
+                    % to_bytes(self.username))
 
         return self._session_id
 

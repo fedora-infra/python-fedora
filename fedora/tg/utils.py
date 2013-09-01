@@ -99,7 +99,7 @@ def url(tgpath, tgparams=None, **kwargs):
             tgparams.update(kwargs)
         except AttributeError:
             raise TypeError(
-                    ('url() expects a dictionary for query parameters')
+                    'url() expects a dictionary for query parameters')
     args = []
     # Add the _csrf_token
     try:

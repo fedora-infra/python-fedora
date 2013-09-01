@@ -484,7 +484,7 @@ class ProxyClient(object):
                 data = data()
         except ValueError, e:
             # The response wasn't JSON data
-            raise ServerError(url, http_status, ('Error returned from'
+            raise ServerError(url, http_status, 'Error returned from'
                     ' json module while processing %(url)s: %(err)s' %
                     {'url': to_bytes(url), 'err': to_bytes(e)})
 
