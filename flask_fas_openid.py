@@ -136,7 +136,7 @@ class FAS(object):
         :raises: Might raise an redirect to the OpenID endpoint
         """
         if return_url is None:
-            if 'next' in flask.request.args.values:
+            if 'next' in flask.request.args.values():
                 return_url = flask.request.args.values['next']
             else:
                 return_url = flask.request.url
@@ -150,7 +150,7 @@ class FAS(object):
             # Also very strange, as this means the discovered OpenID endpoint is no OpenID endpoint
             return 'no-request'
 
-        if isinstance(groups, BaseString):
+        if isinstance(groups, basestring):
            groups = [groups]
 
         request.addExtension(sreg.SRegRequest(required=['nickname', 'fullname', 'email', 'timezone']))
