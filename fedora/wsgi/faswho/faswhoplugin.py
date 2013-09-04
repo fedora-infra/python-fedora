@@ -49,7 +49,7 @@ from repoze.who.plugins.friendlyform import FriendlyFormPlugin
 from paste.request import parse_dict_querystring, parse_formvars
 import webob
 
-from fedora import _, b_
+from fedora import _
 from fedora.client import AuthError
 from fedora.client.fasproxy import FasProxyClient
 from fedora.wsgi.csrf import CSRFMetadataProvider, CSRFProtectionMiddleware
@@ -205,7 +205,7 @@ class FASWhoPlugin(object):
         Retrieve either a username and password or a session_id that can be
         passed on to FAS to authenticate the user.
         '''
-        log.info(b_('in identify()'))
+        log.info('in identify()')
 
         # friendlyform compat
         if not 'repoze.who.logins' in environ:
@@ -234,7 +234,7 @@ class FASWhoPlugin(object):
         if cookie is None:
             return None
 
-        log.info(b_('Request identify for cookie %(cookie)s') %
+        log.info('Request identify for cookie %(cookie)s' %
                 {'cookie': to_bytes(cookie)})
         try:
             user_data = self._retrieve_user_info(environ,
@@ -254,7 +254,7 @@ class FASWhoPlugin(object):
         return identity
 
     def remember(self, environ, identity):
-        log.info(b_('In remember()'))
+        log.info('In remember()')
         req = webob.Request(environ)
         result = []
 
@@ -274,7 +274,7 @@ class FASWhoPlugin(object):
         return result
 
     def forget(self, environ, identity):
-        log.info(b_('In forget()'))
+        log.info('In forget()')
         # return a expires Set-Cookie header
         req = webob.Request(environ)
 
@@ -284,7 +284,7 @@ class FASWhoPlugin(object):
         except Exception:
             return None
 
-        log.info(b_('Forgetting login data for cookie %(s_id)s') %
+        log.info('Forgetting login data for cookie %(s_id)s' %
                 {'s_id': to_bytes(session_id)})
 
         self.fas.logout(session_id)
@@ -298,7 +298,7 @@ class FASWhoPlugin(object):
 
     # IAuthenticatorPlugin
     def authenticate(self, environ, identity):
-        log.info(b_('In authenticate()'))
+        log.info('In authenticate()')
 
         def set_error(msg):
             log.info(msg)
@@ -330,17 +330,17 @@ class FASWhoPlugin(object):
                 auth_params = {'session_id': identity['session_id']}
             except:
                 # On error we return None which means that auth failed
-                set_error(b_('Parameters for authenticating not found'))
+                set_error('Parameters for authenticating not found')
                 return None
 
         try:
             user_data = self._retrieve_user_info(environ, auth_params)
         except AuthError, e:
-            set_error(b_('Authentication failed: %s') % exception_to_bytes(e))
+            set_error('Authentication failed: %s' % exception_to_bytes(e))
             log.warning(e)
             return None
         except Exception, e:
-            set_error(b_('Unknown auth failure: %s') % exception_to_bytes(e))
+            set_error('Unknown auth failure: %s' % exception_to_bytes(e))
             return None
 
         if user_data:
@@ -349,20 +349,20 @@ class FASWhoPlugin(object):
                 environ['CSRF_AUTH_SESSION_ID'] = user_data[0]
                 return user_data[1]['username']
             except ValueError:
-                set_error(b_('user information from fas not in expected format!'))
+                set_error('user information from fas not in expected format!')
                 return None
             except Exception, e:
                 pass
-        set_error(b_('An unknown error happened when trying to log you in.'
-                ' Please try again.'))
+        set_error('An unknown error happened when trying to log you in.'
+                ' Please try again.')
         return None
 
     def add_metadata(self, environ, identity):
-        log.info(b_('In add_metadata'))
+        log.info('In add_metadata')
         req = webob.Request(environ)
 
         if identity.get('error'):
-            log.info(b_('Error exists in session, no need to set metadata'))
+            log.info('Error exists in session, no need to set metadata')
             return 'error'
 
         plugin_user_info = {}

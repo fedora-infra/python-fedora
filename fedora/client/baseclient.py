@@ -33,7 +33,6 @@ import warnings
 from kitchen.text.converters import to_bytes
 
 from fedora import __version__
-from fedora import b_
 
 log = logging.getLogger(__name__)
 
@@ -98,8 +97,8 @@ class BaseClient(ProxyClient):
         if session_id:
             self.session_id = session_id
         elif session_cookie:
-            warnings.warn(b_('session_cookie is deprecated, use session_id'
-                    ' instead'), DeprecationWarning, stacklevel=2)
+            warnings.warn('session_cookie is deprecated, use session_id'
+                    ' instead', DeprecationWarning, stacklevel=2)
             session_id = session_cookie.get(self.session_name, '')
             if session_id:
                 self.session_id = session_id.value
@@ -116,7 +115,7 @@ class BaseClient(ProxyClient):
                 session_file = file(b_SESSION_FILE, 'r')
                 saved_session = pickle.load(session_file)
             except (IOError, EOFError):
-                self.log.info(b_('Unable to load session from %(file)s') %
+                self.log.info('Unable to load session from %(file)s' %
                         {'file': b_SESSION_FILE})
             if session_file:
                 session_file.close()
@@ -133,7 +132,7 @@ class BaseClient(ProxyClient):
             try:
                 os.mkdir(b_SESSION_DIR, 0755)
             except OSError, e:
-                self.log.warning(b_('Unable to create %(dir)s: %(error)s') %
+                self.log.warning('Unable to create %(dir)s: %(error)s' %
                     {'dir': b_SESSION_DIR, 'error': to_bytes(e)})
 
         try:
@@ -145,8 +144,8 @@ class BaseClient(ProxyClient):
             # If we can't save the file, issue a warning but go on.  The
             # session just keeps you from having to type your password over
             # and over.
-            self.log.warning(b_('Unable to write to session file %(session)s:'
-                    ' %(error)s') % {'session': b_SESSION_FILE, 'error':
+            self.log.warning('Unable to write to session file %(session)s:'
+                    ' %(error)s' % {'session': b_SESSION_FILE, 'error':
                         to_bytes(e)})
 
     def _get_session_id(self):
@@ -168,7 +167,7 @@ class BaseClient(ProxyClient):
             self._session_id = ''
 
         if not self._session_id:
-            self.log.debug(b_('No session cached for "%s"')
+            self.log.debug('No session cached for "%s"'
                     % to_bytes(self.username))
 
         return self._session_id
@@ -219,8 +218,8 @@ class BaseClient(ProxyClient):
 
         :Returns: user's session cookie
         '''
-        warnings.warn(b_('session_cookie is deprecated, use session_id'
-            ' instead'), DeprecationWarning, stacklevel=2)
+        warnings.warn('session_cookie is deprecated, use session_id'
+            ' instead', DeprecationWarning, stacklevel=2)
         session_id = self.session_id
         if not session_id:
             return ''
@@ -238,8 +237,8 @@ class BaseClient(ProxyClient):
         current user's cookie.  This allows us to retain cookies for
         multiple users.
         '''
-        warnings.warn(b_('session_cookie is deprecated, use session_id'
-            ' instead'), DeprecationWarning, stacklevel=2)
+        warnings.warn('session_cookie is deprecated, use session_id'
+            ' instead', DeprecationWarning, stacklevel=2)
         session_id = session_cookie.get(self.session_name, '')
         if session_id:
             session_id = session_id.value
@@ -250,8 +249,8 @@ class BaseClient(ProxyClient):
 
         Delete the session cookie from the filesystem.
         '''
-        warnings.warn(b_('session_cookie is deprecated, use session_id'
-            ' instead'), DeprecationWarning, stacklevel=2)
+        warnings.warn('session_cookie is deprecated, use session_id'
+            ' instead', DeprecationWarning, stacklevel=2)
         del(self.session_id)
 
     session_cookie = property(_get_session_cookie, _set_session_cookie,
@@ -313,20 +312,20 @@ class BaseClient(ProxyClient):
             for arg in kwargs:
                 # If we have extra args, raise an error
                 if arg != 'input':
-                    raise TypeError(b_('send_request() got an unexpected'
-                            ' keyword argument "%(arg)s"') % {'arg': to_bytes(arg)})
+                    raise TypeError('send_request() got an unexpected'
+                            ' keyword argument "%(arg)s"' % {'arg': to_bytes(arg)})
             if req_params:
                 # We don't want to allow input if req_params was already given
-                raise TypeError(b_('send_request() got an unexpected keyword'
-                        ' argument "input"'))
+                raise TypeError('send_request() got an unexpected keyword'
+                        ' argument "input"')
             if len(kwargs) > 1:
                 # We shouldn't get here
-                raise TypeError(b_('send_request() got an unexpected keyword'
-                        ' argument'))
+                raise TypeError('send_request() got an unexpected keyword'
+                        ' argument')
 
             # Error checking over, set req_params to the value in input
-            warnings.warn(b_('send_request(input) is deprecated.  Use'
-                    ' send_request(req_params) instead'), DeprecationWarning,
+            warnings.warn('send_request(input) is deprecated.  Use'
+                    ' send_request(req_params) instead', DeprecationWarning,
                     stacklevel=2)
             req_params = kwargs['input']
 
@@ -346,10 +345,10 @@ class BaseClient(ProxyClient):
                 # No?  Check for session_id
                 if not self.session_id:
                     # Not enough information to auth
-                    raise AuthError(b_('Auth was requested but no way to'
+                    raise AuthError('Auth was requested but no way to'
                             ' perform auth was given.  Please set username'
                             ' and password or session_id before calling'
-                            ' this function with auth=True'))
+                            ' this function with auth=True')
 
         # Remove empty params
         # pylint: disable-msg=W0104

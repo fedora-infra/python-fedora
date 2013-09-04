@@ -31,7 +31,7 @@ import time
 from kitchen.text.converters import to_bytes
 
 from fedora.client import BaseClient, AuthError
-from fedora import _, b_
+from fedora import _
 
 MEDIAWIKI_DATEFORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
@@ -64,7 +64,7 @@ class Wiki(BaseClient):
                 'lgpassword': password,
                 })
         if 'lgtoken' not in data.get('login', {}):
-            raise AuthError(b_('Login failed: %(data)s') %
+            raise AuthError('Login failed: %(data)s' %
                     {'data':to_bytes(data)})
         #self.session_id = data['login']['lgtoken']
         #self.username = data['login']['lgusername']

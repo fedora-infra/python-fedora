@@ -31,12 +31,11 @@ Miscellaneous functions of use on a TurboGears Server.  This interface is
 #   functions into this namespace.
 # :W0614: Ditto.
 from fedora.tg.utils import * #pylint:disable-msg=W0614,W0401
-from fedora import b_
 
 import warnings
 
-warnings.warn(b_('fedora.tg.tg1utils is deprecated.  Switch to'
-    ' fedora.tg.utils instead.  This file will disappear in 0.4'),
+warnings.warn('fedora.tg.tg1utils is deprecated.  Switch to'
+    ' fedora.tg.utils instead.  This file will disappear in 0.4',
     DeprecationWarning, stacklevel=2)
 
 __all__ = ('add_custom_stdvars', 'absolute_url', 'enable_csrf',
