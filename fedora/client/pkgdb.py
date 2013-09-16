@@ -205,8 +205,8 @@ class PackageDB(BaseClient):
             % pkg, auth=True, req_params=data)
         if 'status' in response and not response['status']:
             raise AppError(name='PackageDBError', message=
-                ('PackageDB returned an error creating %(pkg)s:' ' %(msg)s'
-                % {'pkg': to_bytes(pkg), 'msg': to_bytes(response['message'])}))
+                'PackageDB returned an error creating %(pkg)s:' ' %(msg)s'
+                % {'pkg': to_bytes(pkg), 'msg': to_bytes(response['message'])})
 
         if cc_list:
             data['ccList'] = json.dumps(cc_list)
@@ -228,9 +228,9 @@ class PackageDB(BaseClient):
                     'edit_package/%s' % pkg, auth=True, req_params=data)
             if 'status' in response and not response['status']:
                 raise AppError(name='PackageDBError',
-                    message=('Unable to save all information for'
+                    message='Unable to save all information for'
                         ' %(pkg)s: %(msg)s' % {'pkg': to_bytes(pkg), 'msg':
-                            to_bytes(response['message'])}))
+                            to_bytes(response['message'])})
 
     def edit_package(self, pkg, owner=None, description=None,
             branches=None, cc_list=None, comaintainers=None, groups=None):
@@ -284,10 +284,10 @@ class PackageDB(BaseClient):
         response = self.send_request('/acls/dispatcher/edit_package/%s'
                 % pkg, auth=True, req_params=data)
         if 'status' in response and not response['status']:
-            raise AppError(name='PackageDBError', message=('Unable to save'
+            raise AppError(name='PackageDBError', message='Unable to save'
                 ' all information for %(pkg)s: %(msg)s' %
                     {'pkg': to_bytes(pkg), 'msg':
-                        to_bytes(response['message'])}))
+                        to_bytes(response['message'])})
 
     def canonical_branch_name(self, branch):
         '''Change a branch abbreviation into a name and version.
