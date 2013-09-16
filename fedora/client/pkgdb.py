@@ -205,7 +205,7 @@ class PackageDB(BaseClient):
             % pkg, auth=True, req_params=data)
         if 'status' in response and not response['status']:
             raise AppError(name='PackageDBError', message=
-                ('PackageDB returned an error creating %(pkg)s:' ' %(msg)s'
+                'PackageDB returned an error creating %(pkg)s:' ' %(msg)s'
                 % {'pkg': to_bytes(pkg), 'msg': to_bytes(response['message'])})
 
         if cc_list:
@@ -227,8 +227,8 @@ class PackageDB(BaseClient):
             response = self.send_request('/acls/dispatcher/'
                     'edit_package/%s' % pkg, auth=True, req_params=data)
             if 'status' in response and not response['status']:
-                raise AppError(name='PackageDBError', 
-                    message=('Unable to save all information for'
+                raise AppError(name='PackageDBError',
+                    message='Unable to save all information for'
                         ' %(pkg)s: %(msg)s' % {'pkg': to_bytes(pkg), 'msg':
                             to_bytes(response['message'])})
 
@@ -284,8 +284,8 @@ class PackageDB(BaseClient):
         response = self.send_request('/acls/dispatcher/edit_package/%s'
                 % pkg, auth=True, req_params=data)
         if 'status' in response and not response['status']:
-            raise AppError(name='PackageDBError', message=('Unable to save'
-                ' all information for %(pkg)s: %(msg)s') %
+            raise AppError(name='PackageDBError', message='Unable to save'
+                ' all information for %(pkg)s: %(msg)s' %
                     {'pkg': to_bytes(pkg), 'msg':
                         to_bytes(response['message'])})
 
@@ -491,7 +491,7 @@ class PackageDB(BaseClient):
                 collctn_id = self.branches[collctn]['id']
             except KeyError:
                 raise PackageDBError('Collection shortname %(collctn)s'
-                    ' is unknown.') % {'collctn': to_bytes(collctn)})
+                    ' is unknown.' % {'collctn': to_bytes(collctn)})
             data = self.send_request('/collections/name/%s/' % collctn, params)
         else:
             data = self.send_request('/acls/list/*', params)
