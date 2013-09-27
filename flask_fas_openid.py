@@ -51,6 +51,20 @@ class FAS(object):
         if self.app is not None:
             self._init_app(app)
 
+    def __call__(self, environ, start_response):
+        script_name = environ.get('HTTP_X_SCRIPT_NAME', '') 
+        if script_name:
+            environ['SCRIPT_NAME'] = script_name
+            path_info = environ['PATH_INFO']
+            if path_info.startswith(script_name):
+                environ['PATH_INFO'] = path_info[len(script_name):]
+
+        scheme = environ.get('HTTP_X_FORWARDED_SCHEME', '') 
+        if scheme:
+            environ['wsgi.url_scheme'] = scheme
+        return self.app(environ, start_response)
+
+
     def _init_app(self, app):
         app.config.setdefault('FAS_OPENID_ENDPOINT',
                               'http://id.fedoraproject.org/')
