@@ -233,7 +233,7 @@ class AccountSystem(BaseClient):
                 # David Xie: david.scriptfan@gmail.com
                 167133: 'davidx@fedoraproject.org',
                 # Felix Schwarz: felix.schwarz@oss.schwarz.eu
-                5077989: 'fschwarz@fedoraproject.org',
+                103551: 'fschwarz@fedoraproject.org',
                 }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email
