@@ -44,6 +44,7 @@ from openid_teams import teams
 
 from fedora import __version__
 
+
 class FAS(object):
 
     def __init__(self, app=None):
@@ -95,7 +96,7 @@ class FAS(object):
             if cla_resp:
                 user['cla_done'] = cla.CLA_URI_FEDORA_DONE in cla_resp.clas
             if teams_resp:
-                user['groups'] = frozenset(teams_resp.teams) # The groups do not contain the cla_ groups
+                user['groups'] = teams_resp.teams # The groups do not contain the cla_ groups
             flask.session['FLASK_FAS_OPENID_USER'] = user
             flask.session.modified = True
             return flask.redirect(return_url)
@@ -140,7 +141,8 @@ class FAS(object):
                 return_url = flask.request.args.values['next']
             else:
                 return_url = flask.request.url
-        oidconsumer = consumer.Consumer(flask.session, None)
+        session = {}
+        oidconsumer = consumer.Consumer(session, None)
         try:
             request = oidconsumer.begin(self.app.config['FAS_OPENID_ENDPOINT'])
         except consumer.DiscoveryFailure, exc:
