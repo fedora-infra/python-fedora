@@ -69,7 +69,7 @@ class FasProxyClient(ProxyClient):
         kwargs['session_as_cookie'] = False
         super(FasProxyClient, self).__init__(base_url, *args, **kwargs)
 
-    def login(self, username, password):
+    def login(self, username, password, otp=None):
         '''Login to the Account System
 
         :arg username: username to send to FAS
@@ -81,7 +81,7 @@ class FasProxyClient(ProxyClient):
         :raises AuthError: if the username and password do not work
         '''
         return self.send_request('/login',
-                auth_params={'username': username, 'password':password})
+                auth_params={'username': username, 'password':password, 'otp':otp})
 
     def logout(self, session_id):
         '''Logout of the Account System

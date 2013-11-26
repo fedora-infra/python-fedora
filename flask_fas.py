@@ -119,7 +119,7 @@ class FAS(object):
         )
         return response
 
-    def login(self, username, password):
+    def login(self, username, password, otp=None):
         """Tries to log in a user.
 
         Sets the session ID cookie on :attr:`flask.g.fas_session_id` if the
@@ -131,7 +131,7 @@ class FAS(object):
         :returns: True if successful.  False if unsuccessful.
         """
         try:
-            session_id, junk = self.fasclient.login(username, password)
+            session_id, junk = self.fasclient.login(username, password, otp)
             user = junk.user
             if hasattr(flask.g.fas_user, 'approved_memberships'):
                 user.groups = [x.name for x in user.approved_memberships]
