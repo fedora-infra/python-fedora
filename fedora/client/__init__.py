@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2007  Red Hat, Inc.
+# Copyright (C) 2007-2013  Red Hat, Inc.
 # This file is part of python-fedora
 #
 # python-fedora is free software; you can redistribute it and/or
@@ -21,6 +21,8 @@ fedora.client is used to interact with Fedora Services.
 
 .. versionchanged:: 0.3.21
     Deprecate DictContainer in favor of bunch.Bunch
+.. versionchanged:: 0.3.33
+    Add the openid clients
 
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
@@ -32,6 +34,7 @@ from bunch import Bunch
 
 
 class FedoraClientError(Exception):
+
     '''Base Exception for problems which originate within the Clients.
 
     This should be the base class for any exceptions that the Client generates
@@ -40,26 +43,31 @@ class FedoraClientError(Exception):
 
     Problems returned while talking to the Services should be returned via a
     `FedoraServiceError` instead.
+
     '''
     pass
 
 
 class FedoraServiceError(Exception):
+
     '''Base Exception for any problem talking with the Service.
 
     When the Client gets an error talking to the server, an exception of this
     type is raised.  This can be anything in the networking layer up to an
     error returned from the server itself.
+
     '''
     pass
 
 
 class ServerError(FedoraServiceError):
+
     '''Unable to talk to the server properly.
 
     This includes network errors and 500 response codes.  If the error was
     generated from an http response, :attr:`code` is the HTTP response code.
     Otherwise, :attr:`code` will be -1.
+
     '''
     def __init__(self, url, status, msg):
         FedoraServiceError.__init__(self)
@@ -72,11 +80,13 @@ class ServerError(FedoraServiceError):
 
 
 class AuthError(FedoraServiceError):
+
     '''Error during authentication.  For instance, invalid password.'''
     pass
 
 
 class AppError(FedoraServiceError):
+
     '''Error condition that the server is passing back to the client.'''
     def __init__(self, name, message, extras=None):
         FedoraServiceError.__init__(self)
@@ -89,6 +99,7 @@ class AppError(FedoraServiceError):
             self.name, self.message, self.extras)
 
 
+
 # Backwards compatibility
 class DictContainer(Bunch):
     def __init__(self, *args, **kwargs):
@@ -97,11 +108,14 @@ class DictContainer(Bunch):
             ' from python-bunch instead.', DeprecationWarning, stacklevel=2)
         Bunch.__init__(self, *args, **kwargs)
 
+
 # We want people to be able to import fedora.client.*Client directly
 # pylint: disable-msg=W0611
 from fedora.client.proxyclient import ProxyClient
 from fedora.client.fasproxy import FasProxyClient
 from fedora.client.baseclient import BaseClient
+from fedora.client.openidproxyclient import OpenIdProxyClient
+from fedora.client.openidbaseclient import OpenIdBaseClient
 from fedora.client.fas2 import AccountSystem, FASError, CLAError
 from fedora.client.pkgdb import PackageDB, PackageDBError
 from fedora.client.bodhi import BodhiClient, BodhiClientException
@@ -111,5 +125,11 @@ from fedora.client.wiki import Wiki
 __all__ = ('FedoraServiceError', 'ServerError', 'AuthError', 'AppError',
            'FedoraClientError', 'DictContainer',
            'FASError', 'CLAError', 'BodhiClientException', 'PackageDBError',
+<<<<<<< HEAD
            'ProxyClient', 'FasProxyClient', 'BaseClient', 'AccountSystem',
            'PackageDB', 'BodhiClient', 'Wiki')
+=======
+           'ProxyClient', 'FasProxyClient', 'BaseClient', 'OpenIdProxyClient',
+           'OpenIdBaseClient', 'AccountSystem', 'PackageDB', 'BodhiClient',
+           'Wiki')
+>>>>>>> Add openid clients, update copyright year, docstring for changes, and
