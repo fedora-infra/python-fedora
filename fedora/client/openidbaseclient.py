@@ -27,29 +27,15 @@
 
 """
 
-# Deps:
-# python-beautifulsoup4
-# python-requests
-
-# Need a credential store.
-# In the store, we'll have:
-# A cookie for the openid server
-# A cookie per service
-
-# We play only one part here: the part of the browser.  the openid consumer is
-# the service we're actually interested in connecting to.  The openid producer
-# is the openid server.
-
+# :F0401: Unable to import : Disabled because these will either import on py3
+#   or py2 not both.
+# :E0611: No name $X in module: This was renamed in python3
 
 import logging
 import os
 import sqlite3
 from collections import defaultdict
 from functools import partial, wraps
-
-# :F0401: Unable to import : Disabled because these will either import on py3
-#   or py2 not both.
-# :E0611: No name $X in module: This was renamed in python3
 
 # pylint: disable-msg=F0401
 try:
