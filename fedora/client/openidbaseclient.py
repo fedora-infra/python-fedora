@@ -51,6 +51,8 @@ import bs4
 import requests
 
 from fedora import __version__
+from fedora.client import LoginRequiredError
+from fedora.client.openidproxyclient import OpenIdProxyClient
 
 log = logging.getLogger(__name__)
 
@@ -93,12 +95,6 @@ def absolute_url(beginning, end):
     return end
 
 
-class LoginRequiredException(Exception):
-
-    """ Exception raised when the call requires a logged-in user. """
-
-    pass
-
 
 def requires_login(func):
     """ Decorator function for get or post requests requiring login. """
@@ -108,7 +104,7 @@ def requires_login(func):
         output = func(request, *args, **kwargs)
         if output and \
                 '<title>OpenID transaction in progress</title>' in output.text:
-            raise LoginRequiredException(
+            raise LoginRequiredError(
                 '{0} requires a logged in user'.format(output.url))
         return output
     return wraps(func)(_decorator)
@@ -349,7 +345,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
                 self._authed_verb_dispatcher[(auth, verb)](method, auth_params=auth_params, **kwargs)
             except KeyError:
                 raise Exception('Unknown HTTP verb')
-            except LoginRequiredException:
+            except LoginRequiredError:
                 raise AuthError()
 
     def login(self, username, password, otp=None):
@@ -478,7 +474,7 @@ if __name__ == '__main__':
     FAS_PASS = getpass.getpass('FAS password: ')
     try:
         print PKGDB.test()
-    except LoginRequiredException, err:
+    except LoginRequiredError as err:
         print err.message
     print PKGDB.login(FAS_NAME, FAS_PASS)
     # Retry the action

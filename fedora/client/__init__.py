@@ -85,6 +85,13 @@ class AuthError(FedoraServiceError):
     pass
 
 
+class LoginRequiredError(AuthError):
+
+    """ Exception raised when the call requires a logged-in user. """
+
+    pass
+
+
 class AppError(FedoraServiceError):
 
     '''Error condition that the server is passing back to the client.'''
@@ -123,7 +130,7 @@ from fedora.client.wiki import Wiki
 # pylint: enable-msg=W0611
 
 __all__ = ('FedoraServiceError', 'ServerError', 'AuthError', 'AppError',
-           'FedoraClientError', 'DictContainer',
+           'FedoraClientError', 'LoginRequiredError', 'DictContainer',
            'FASError', 'CLAError', 'BodhiClientException', 'PackageDBError',
 <<<<<<< HEAD
            'ProxyClient', 'FasProxyClient', 'BaseClient', 'AccountSystem',
