@@ -10,6 +10,9 @@ NEWS
 0.3.33 (in progress)
 ------
 
+* Minimum version of python is now 2.6.  Some things may work on older python
+  but this is not guaranteed.  Patches to make it work may or may not be
+  accepted.
 * Added flask_fas_openid for the migration to OpenID
   This adds the requirements for python-openid, python-openid-teams and
   python-openid-cla.
