@@ -72,29 +72,31 @@ log.addHandler(NullHandler())
 
 OPENID_SESSION_NAME = 'FAS_OPENID'
 
-class ProxyClient(object):
+class OpenIdProxyClient(object):
     # pylint: disable-msg=R0903
     """
     A client to a Fedora Service.  This class is optimized to proxy multiple
-    users to a service.  ProxyClient is designed to be threadsafe so that
-    code can instantiate one instance of the class and use it for multiple
-    requests for different users from different threads.
+    users to a service.  OpenIdProxyClient is designed to be usable by code that
+    creates a single instance of this class and uses it in multiple threads.
+    However it is not completely threadsafe.  See the information on setting
+    attributes below.
 
     If you want something that can manage one user's connection to a Fedora
-    Service, then look into using BaseClient instead.
+    Service, then look into using :class:`~fedora.client.OpenIdBaseClient`
+    instead.
 
     This class has several attributes.  These may be changed after
-    instantiation however, please note that this class is intended to be
-    threadsafe.  Changing these values when another thread may affect more
-    than just the thread that you are making the change in.  (For instance,
-    changing the debug option could cause other threads to start logging debug
-    messages in the middle of a method.)
+    instantiation.  Please note, however, that changing these values when
+    another thread is utilizing the same instancew may affect more than just
+    the thread that you are making the change in.  (For instance, changing the
+    debug option could cause other threads to start logging debug messages in
+    the middle of a method.)
 
     .. attribute:: base_url
 
         Initial portion of the url to contact the server.  It is highly
         recommended not to change this value unless you know that no other
-        threads are accessing this :class:`ProxyClient` instance.
+        threads are accessing this :class:`OpenIdProxyClient` instance.
 
     .. attribute:: useragent
 
