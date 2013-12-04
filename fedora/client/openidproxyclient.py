@@ -87,7 +87,7 @@ class OpenIdProxyClient(object):
 
     This class has several attributes.  These may be changed after
     instantiation.  Please note, however, that changing these values when
-    another thread is utilizing the same instancew may affect more than just
+    another thread is utilizing the same instance may affect more than just
     the thread that you are making the change in.  (For instance, changing the
     debug option could cause other threads to start logging debug messages in
     the middle of a method.)
