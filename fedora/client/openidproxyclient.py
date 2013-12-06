@@ -238,7 +238,6 @@ class OpenIdProxyClient(object):
         response = self.session.get(url, params=params, data=data)
         return response
 
-
     def send_request(self, method, req_params=None, auth_params=None,
             file_params=None, retries=None, timeout=None):
         """Make an HTTP request to a server method.
@@ -291,7 +290,7 @@ class OpenIdProxyClient(object):
         :rtype: tuple of session information and data from server
 
         """
-        log.debug('proxyclient.send_request: entered')
+        log.debug('openidproxyclient.send_request: entered')
 
         # parameter mangling
         file_params = file_params or {}
@@ -493,4 +492,5 @@ class OpenIdProxyClient(object):
         data = bunchify(data)
         return new_session, data
 
-__all__ = (ProxyClient,)
+
+__all__ = (OpenIdProxyClient,)
