@@ -35,7 +35,7 @@ import logging
 import os
 import sqlite3
 from collections import defaultdict
-from functools import partial, wraps
+from functools import partial
 
 # pylint: disable-msg=F0401
 try:
@@ -93,21 +93,6 @@ def absolute_url(beginning, end):
     if not end.startswith(beginning):
         end = urljoin(beginning, end)
     return end
-
-
-
-def requires_login(func):
-    """ Decorator function for get or post requests requiring login. """
-    def _decorator(request, *args, **kwargs):
-        """ Run the function and check if it redirected to the openid form.
-        """
-        output = func(request, *args, **kwargs)
-        if output and \
-                '<title>OpenID transaction in progress</title>' in output.text:
-            raise LoginRequiredError(
-                '{0} requires a logged in user'.format(output.url))
-        return output
-    return wraps(func)(_decorator)
 
 
 class OpenIdBaseClient(OpenIdProxyClient):
@@ -398,25 +383,6 @@ class OpenIdProxyClient(object):
     def __init__(self):
         pass
 
-
-
-
-
-
-
-    @requires_login
-    def _authed_post(self, url, params=None, data=None):
-        """ Return the request object of a post query."""
-        response = self.session.post(url, params=params, data=data)
-        return response
-
-    @requires_login
-    def _authed_get(self, url, params=None, data=None):
-        """ Return the request object of a get query."""
-        response = self.session.get(url, params=params, data=data)
-        return response
-
-    pass
     def test(self):
         """ Dummy action - only exists locally."""
         url = urljoin(BASE_URL, '/api/collection/f20/status/')
