@@ -63,6 +63,7 @@ from kitchen.text.converters import to_bytes
 import requests
 # For handling an exception that's coming from requests:
 import urllib3
+from functools import partial, wraps
 
 from fedora import __version__
 from fedora.client import AppError, AuthError, ServerError
@@ -71,6 +72,21 @@ log = logging.getLogger(__name__)
 log.addHandler(NullHandler())
 
 OPENID_SESSION_NAME = 'FAS_OPENID'
+
+
+def requires_login(func):
+    """ Decorator function for get or post requests requiring login. """
+    def _decorator(request, *args, **kwargs):
+        """ Run the function and check if it redirected to the openid form.
+        """
+        output = func(request, *args, **kwargs)
+        if output and \
+                '<title>OpenID transaction in progress</title>' in output.text:
+            raise LoginRequiredError(
+                '{0} requires a logged in user'.format(output.url))
+        return output
+    return wraps(func)(_decorator)
+
 
 class OpenIdProxyClient(object):
     # pylint: disable-msg=R0903
@@ -209,6 +225,19 @@ class OpenIdProxyClient(object):
     When True, we log extra debugging statements.  When False, we only log
     errors.
     """)
+
+    @requires_login
+    def _authed_post(self, url, params=None, data=None):
+        """ Return the request object of a post query."""
+        response = self.session.post(url, params=params, data=data)
+        return response
+
+    @requires_login
+    def _authed_get(self, url, params=None, data=None):
+        """ Return the request object of a get query."""
+        response = self.session.get(url, params=params, data=data)
+        return response
+
 
     def send_request(self, method, req_params=None, auth_params=None,
             file_params=None, retries=None, timeout=None):
