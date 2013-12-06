@@ -225,7 +225,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
         if not self._session_id_map[session_id_key]:
             log.debug('No session cached for "{username}"'.format(
-                username=self.username)
+                username=self.username))
         return self._session_id_map[session_id_key]
 
     def _set_id(self, session_id, base_url=None):
