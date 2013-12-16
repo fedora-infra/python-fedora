@@ -45,12 +45,43 @@ from openid_teams import teams
 from fedora import __version__
 
 
+class FASJSONEncoder(flask.json.JSONEncoder):
+    """ Dedicated JSON encoder for the FAS openid information. """
+
+    def default(self, o):
+        """Implement this method in a subclass such that it returns a
+        serializable object for ``o``, or calls the base implementation (to
+        raise a ``TypeError``).
+
+        For example, to support arbitrary iterators, you could implement
+        default like this::
+
+        def default(self, o):
+            try:
+                iterable = iter(o)
+            except TypeError:
+                pass
+            else:
+                return list(iterable)
+            return JSONEncoder.default(self, o)
+        """
+        if isinstance(o, set):
+            return list(o)
+        if isinstance(o, frozenset):
+            return list(o)
+        return flask.json.JSONEncoder.default(self, o)
+
+
 class FAS(object):
 
     def __init__(self, app=None):
         self.app = app
         if self.app is not None:
             self._init_app(app)
+        # json_encoder is only available from flask 0.10
+        version = flask.__version__.split('.')
+        if int(version[0]) == 0 and int(version[1]) >= 10:
+            self.app.json_encoder = FASJSONEncoder
 
     def _init_app(self, app):
         app.config.setdefault('FAS_OPENID_ENDPOINT',
@@ -98,7 +129,7 @@ class FAS(object):
                 user['cla_done'] = cla.CLA_URI_FEDORA_DONE in cla_resp.clas
             if teams_resp:
                 # The groups do not contain the cla_ groups
-                user['groups'] = teams_resp.teams
+                user['groups'] = frozenset(teams_resp.teams)
             flask.session['FLASK_FAS_OPENID_USER'] = user
             flask.session.modified = True
             return flask.redirect(return_url)
@@ -119,6 +150,7 @@ class FAS(object):
                 membership['name'] = group
                 user['approved_memberships'].append(Bunch.fromDict(membership))
             flask.g.fas_user = Bunch.fromDict(user)
+            flask.g.fas_user.groups = frozenset(flask.g.fas_user.groups)
         flask.g.fas_session_id = 0
 
     def login(self, username=None, password=None, return_url=None,
