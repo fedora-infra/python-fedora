@@ -78,7 +78,15 @@ class FAS(object):
             self._init_app(app)
         # json_encoder is only available from flask 0.10
         version = flask.__version__.split('.')
-        if int(version[0]) == 0 and int(version[1]) >= 10:
+        assume_recent = False
+        try:
+            major = int(version[0])
+            minor = int(version[1])
+        except ValueError:
+            # We'll assume we're using a recent enough flask as the packages
+            # of old versions used sane version numbers.
+            assume_recent = True
+        if assume_recent or (major >= 0 and minor >= 10):
             self.app.json_encoder = FASJSONEncoder
 
     def _init_app(self, app):
