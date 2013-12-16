@@ -65,9 +65,7 @@ class FASJSONEncoder(flask.json.JSONEncoder):
                 return list(iterable)
             return JSONEncoder.default(self, o)
         """
-        if isinstance(o, set):
-            return list(o)
-        if isinstance(o, frozenset):
+        if isinstance(o, (set, frozenset)):
             return list(o)
         return flask.json.JSONEncoder.default(self, o)
 
