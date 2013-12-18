@@ -48,8 +48,6 @@ except ImportError:
 from bunch import bunchify
 from kitchen.text.converters import to_bytes
 import requests
-# For handling an exception that's coming from requests:
-import urllib3
 
 from fedora import __version__
 from fedora.client import AppError, AuthError, ServerError
@@ -408,8 +406,26 @@ class ProxyClient(object):
                     # because we don't want to raise an unrelated exception
                     # here and if requests/urllib3 can do this sort of
                     # nonsense, they may change the nonsense in the future
-                    if not (e.args and isinstance(e.args[0],
-                                                  urllib3.exceptions.SSLError)
+                    #
+                    # And a note on the __class__.__name__/__module__ parsing:
+                    # On top of all the other things it does wrong, requests
+                    # is bundling a copy of urllib3.  Distros can unbundle it.
+                    # But because of the bundling, python will think
+                    # exceptions raised by the version downloaded by pypi
+                    # (requests.packages.urllib3.exceptions.SSLError) are
+                    # different than the exceptions raised by the unbundled
+                    # distro version (urllib3.exceptions.SSLError).  We could
+                    # do a try: except trying to import both of these
+                    # SSLErrors and then code to detect either one of them but
+                    # the whole thing is just stupid.  So we'll use a stupid
+                    # hack of our own that (1) means we don't have to depend
+                    # on urllib3 just for this exception and (2) is (slightly)
+                    # less likely to break on the whims of the requests
+                    # author.
+                    if not (e.args
+                            and e.args[0].__class__.__name__ == 'SSLError'
+                            and e.args[0].__class__.__module__.endswith(
+                                'urllib3.exceptions')
                             and e.args[0].args
                             and isinstance(e.args[0].args[0], ssl.SSLError)
                             and e.args[0].args[0].args
