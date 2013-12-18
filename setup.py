@@ -33,7 +33,7 @@ setup(
     #   for bodhi (koji yum)
     install_requires=['bunch', 'kitchen', 'requests'],
     extras_require = {
-        'tg' : ['TurboGears >= 1.0.4', 'SQLAlchemy', 'decorator'],
+        'tg' : ['TurboGears2', 'SQLAlchemy', 'decorator'],
         'wsgi': ['repoze.who', 'Beaker', 'Paste'],
         'flask': ['Flask', 'Flask_WTF', 'python-openid', 'python-openid-teams'],
         },
