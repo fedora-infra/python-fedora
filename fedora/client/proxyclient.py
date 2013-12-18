@@ -49,7 +49,7 @@ from bunch import bunchify
 from kitchen.text.converters import to_bytes
 import requests
 # For handling an exception that's coming from requests:
-import urllib3
+from requests.packages import urllib3
 
 from fedora import __version__
 from fedora.client import AppError, AuthError, ServerError
