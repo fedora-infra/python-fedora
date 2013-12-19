@@ -130,7 +130,7 @@ python setup.py install --skip-build --root %{buildroot}
 DESTDIR=%{buildroot} python releaseutils.py install_catalogs
 
 # Cleanup doc
-mv build-doc/html doc/
+mv build/sphinx/html doc/
 if test -e doc/html/.buildinfo ; then
   rm doc/html/.buildinfo
 fi
