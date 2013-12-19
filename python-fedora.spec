@@ -167,7 +167,7 @@ rm -rf %{buildroot}
 
 %files flask
 %{python_sitelib}/flask_fas.py*
-%{python_sitelib}/flask_fas_openid.py
+%{python_sitelib}/flask_fas_openid.py*
 
 %changelog
 * Thu Dec 19 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.33-1
@@ -178,9 +178,6 @@ rm -rf %{buildroot}
 
 * Tue Jul 23 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.32.3-2
 - Add the flask_fas_openid identity provider for flask
-
-* Mon Apr  1 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.32.90-1
-- Upstream alpha 1
 
 * Tue Feb  5 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.32.3-1
 - Upstream update to fix BodhiClient's knowledge of koji tags (ajax)
