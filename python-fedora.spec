@@ -170,6 +170,15 @@ rm -rf %{buildroot}
 %{python_sitelib}/flask_fas_openid.py
 
 %changelog
+* Thu Dec 19 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.33-1
+- Update for final release with numerous flask_fas_openid fixes
+
+* Mon Jul 29 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.32.3-3
+- Update flask_fas_openid to fix imports
+
+* Tue Jul 23 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.32.3-2
+- Add the flask_fas_openid identity provider for flask
+
 * Mon Apr  1 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.32.90-1
 - Upstream alpha 1
 
