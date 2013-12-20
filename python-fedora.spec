@@ -1,9 +1,11 @@
-%{!?python_sitelib: %global python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
-
+%if 0%{?rhel} && 0%{?rhel} <= 6
+%{!? __python2: %global __python2 /usr/bin/python2}
+%{!? python2_sitelib: %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
+%endif
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.3.32.90
+Version:        0.3.33
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -16,7 +18,11 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  python2-devel
 BuildRequires:  python-setuptools
+%if 0%{?rhel} && 0%{?rhel} <= 6
+BuildRequires:  python-sphinx10
+%else
 BuildRequires:  python-sphinx
+%endif
 %if 0%{?fedora} || 0%{?rhel} > 5
 BuildRequires:  python-cherrypy2
 %else
@@ -120,24 +126,24 @@ Account System.
 %setup -q -n %{name}-%{version}%{?prerel}
 
 %build
-python setup.py build
-python setup.py build_sphinx
-python releaseutils.py build_catalogs
+python2 setup.py build
+python2 setup.py build_sphinx
+python2 releaseutils.py build_catalogs
 
 %install
 rm -rf %{buildroot}
-python setup.py install --skip-build --root %{buildroot}
-DESTDIR=%{buildroot} python releaseutils.py install_catalogs
+python2 setup.py install --skip-build --root %{buildroot}
+DESTDIR=%{buildroot} python2 releaseutils.py install_catalogs
 
 # Cleanup doc
-mv build-doc/html doc/
+mv build/sphinx/html doc/
 if test -e doc/html/.buildinfo ; then
   rm doc/html/.buildinfo
 fi
 find doc -name 'EMPTY' -exec rm \{\} \;
 
 # Remove regression tests
-rm -rf %{buildroot}%{python_sitelib}/fedora/wsgi/test
+rm -rf %{buildroot}%{python2_sitelib}/fedora/wsgi/test
 
 %find_lang %{name}
 
@@ -147,31 +153,37 @@ rm -rf %{buildroot}
 %files -f %{name}.lang
 %defattr(-,root,root,-)
 %doc NEWS README COPYING AUTHORS doc
-%{python_sitelib}/*
-%exclude %{python_sitelib}/fedora/tg/
-%exclude %{python_sitelib}/fedora/tg2/
-%exclude %{python_sitelib}/fedora/wsgi/
-%exclude %{python_sitelib}/fedora/django/
-%exclude %{python_sitelib}/flask_fas.py*
-%exclude %{python_sitelib}/flask_fas_openid.py*
+%{python2_sitelib}/*
+%exclude %{python2_sitelib}/fedora/tg/
+%exclude %{python2_sitelib}/fedora/tg2/
+%exclude %{python2_sitelib}/fedora/wsgi/
+%exclude %{python2_sitelib}/fedora/django/
+%exclude %{python2_sitelib}/flask_fas.py*
+%exclude %{python2_sitelib}/flask_fas_openid.py*
 
 %files turbogears
-%{python_sitelib}/fedora/tg/
+%{python2_sitelib}/fedora/tg/
 
 %files turbogears2
-%{python_sitelib}/fedora/wsgi/
-%{python_sitelib}/fedora/tg2/
+%{python2_sitelib}/fedora/wsgi/
+%{python2_sitelib}/fedora/tg2/
 
 %files django
-%{python_sitelib}/fedora/django/
+%{python2_sitelib}/fedora/django/
 
 %files flask
-%{python_sitelib}/flask_fas.py*
-%{python_sitelib}/flask_fas_openid.py
+%{python2_sitelib}/flask_fas.py*
+%{python2_sitelib}/flask_fas_openid.py*
 
 %changelog
-* Mon Apr  1 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.32.90-1
-- Upstream alpha 1
+* Thu Dec 19 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.33-1
+- Update for final release with numerous flask_fas_openid fixes
+
+* Mon Jul 29 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.32.3-3
+- Update flask_fas_openid to fix imports
+
+* Tue Jul 23 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.32.3-2
+- Add the flask_fas_openid identity provider for flask
 
 * Tue Feb  5 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.32.3-1
 - Upstream update to fix BodhiClient's knowledge of koji tags (ajax)

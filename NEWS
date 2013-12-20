@@ -3,11 +3,11 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk
-:Date: 16 February 2013
+:Date: 19 December 2013
 :Version: 0.3.x
 
 ------
-0.3.33 (in progress)
+0.3.33
 ------
 
 * Minimum version of python is now 2.6.  Some things may work on older python
