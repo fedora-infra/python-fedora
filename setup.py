@@ -2,7 +2,7 @@
 
 # Work around setuptools multi-version silliness
 try:
-    __requires__ = ['CherryPy < 3']
+    __requires__ = ['CherryPy < 3', 'Sphinx >= 1.0']
     import pkg_resources
 except:
     # And also workaround the workaround being broken inside of a virtualenv

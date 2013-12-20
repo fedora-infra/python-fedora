@@ -246,8 +246,8 @@ Release
      git push
 
 3) Make sure the docs are proper and publish them::
-    # Build docs and check for errors
-    python setup.py build_sphinx
+     # Build docs and check for errors
+     python setup.py build_sphinx
      # pypi
      python setup.py upload_docs
 
