@@ -16,7 +16,11 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  python2-devel
 BuildRequires:  python-setuptools
+%if 0%{?rhel} && 0%{?rhel} <= 6
+BuildRequires:  python-sphinx10
+%else
 BuildRequires:  python-sphinx
+%endif
 %if 0%{?fedora} || 0%{?rhel} > 5
 BuildRequires:  python-cherrypy2
 %else
