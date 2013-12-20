@@ -39,10 +39,36 @@ import openid
 from openid.consumer import consumer
 from openid.fetchers import setDefaultFetcher, Urllib2Fetcher
 from openid.extensions import pape, sreg
+from openid_cla import cla
+from openid_teams import teams
 
 from fedora import __version__
-import fedora._openid_extensions.openid_teams as teams
-import fedora._openid_extensions.openid_cla as cla
+
+
+class FASJSONEncoder(flask.json.JSONEncoder):
+    """ Dedicated JSON encoder for the FAS openid information. """
+
+    def default(self, o):
+        """Implement this method in a subclass such that it returns a
+        serializable object for ``o``, or calls the base implementation (to
+        raise a ``TypeError``).
+
+        For example, to support arbitrary iterators, you could implement
+        default like this::
+
+        def default(self, o):
+            try:
+                iterable = iter(o)
+            except TypeError:
+                pass
+            else:
+                return list(iterable)
+            return JSONEncoder.default(self, o)
+        """
+        if isinstance(o, (set, frozenset)):
+            return list(o)
+        return flask.json.JSONEncoder.default(self, o)
+
 
 class FAS(object):
 
@@ -50,6 +76,18 @@ class FAS(object):
         self.app = app
         if self.app is not None:
             self._init_app(app)
+        # json_encoder is only available from flask 0.10
+        version = flask.__version__.split('.')
+        assume_recent = False
+        try:
+            major = int(version[0])
+            minor = int(version[1])
+        except ValueError:
+            # We'll assume we're using a recent enough flask as the packages
+            # of old versions used sane version numbers.
+            assume_recent = True
+        if assume_recent or (major >= 0 and minor >= 10):
+            self.app.json_encoder = FASJSONEncoder
 
     def _init_app(self, app):
         app.config.setdefault('FAS_OPENID_ENDPOINT',
@@ -68,8 +106,9 @@ class FAS(object):
     def _handle_openid_request(self):
         return_url = flask.session['FLASK_FAS_OPENID_RETURN_URL']
         cancel_url = flask.session['FLASK_FAS_OPENID_CANCEL_URL']
+        base_url = self.normalize_url(flask.request.base_url)
         oidconsumer = consumer.Consumer(flask.session, None)
-        info = oidconsumer.complete(flask.request.values, flask.request.base_url)
+        info = oidconsumer.complete(flask.request.values, base_url)
         display_identifier = info.getDisplayIdentifier()
 
         if info.status == consumer.FAILURE and display_identifier:
@@ -79,18 +118,24 @@ class FAS(object):
                 return flask.redirect(cancel_url)
             return 'OpenID request was cancelled'
         elif info.status == consumer.SUCCESS:
-            sreg_resp =  sreg.SRegResponse.fromSuccessResponse(info)
+            sreg_resp = sreg.SRegResponse.fromSuccessResponse(info)
             pape_resp = pape.Response.fromSuccessResponse(info)
             teams_resp = teams.TeamsResponse.fromSuccessResponse(info)
             cla_resp = cla.CLAResponse.fromSuccessResponse(info)
-            user = dict()
+            user = {'fullname': '', 'username': '', 'email': '',
+                    'timezone': '', 'cla_done': False, 'groups': []}
+            if not sreg_resp:
+                # If we have no basic info, be gone with them!
+                return flask.redirect(cancel_url)
             user['username'] = sreg_resp.get('nickname')
             user['fullname'] = sreg_resp.get('fullname')
             user['email'] = sreg_resp.get('email')
             user['timezone'] = sreg_resp.get('timezone')
-            #user['locale'] = sreg_resp.get('LOCALE')
-            user['cla_done'] = cla.CLA_URI_FEDORA_DONE in cla_resp.clas
-            user['groups'] = teams_resp.teams   # The groups do not contain the cla_ groups
+            if cla_resp:
+                user['cla_done'] = cla.CLA_URI_FEDORA_DONE in cla_resp.clas
+            if teams_resp:
+                # The groups do not contain the cla_ groups
+                user['groups'] = frozenset(teams_resp.teams)
             flask.session['FLASK_FAS_OPENID_USER'] = user
             flask.session.modified = True
             return flask.redirect(return_url)
@@ -98,7 +143,8 @@ class FAS(object):
             return 'Strange state: %s' % info.status
 
     def _check_session(self):
-        if not 'FLASK_FAS_OPENID_USER' in flask.session or flask.session['FLASK_FAS_OPENID_USER'] is None:
+        if not 'FLASK_FAS_OPENID_USER' in flask.session \
+                or flask.session['FLASK_FAS_OPENID_USER'] is None:
             flask.g.fas_user = None
         else:
             user = flask.session['FLASK_FAS_OPENID_USER']
@@ -110,48 +156,67 @@ class FAS(object):
                 membership['name'] = group
                 user['approved_memberships'].append(Bunch.fromDict(membership))
             flask.g.fas_user = Bunch.fromDict(user)
+            flask.g.fas_user.groups = frozenset(flask.g.fas_user.groups)
         flask.g.fas_session_id = 0
 
-    def login(self, username=None, password=None, return_url=None, cancel_url=None):
+    def login(self, username=None, password=None, return_url=None,
+              cancel_url=None, groups=['_FAS_ALL_GROUPS_']):
         """Tries to log in a user.
 
         Sets the user information on :attr:`flask.g.fas_user`.
         Will set 0 to :attr:`flask.g.fas_session_id, for compatibility
         with flask_fas.
 
-        :arg username: Not used, but accepted for compatibility with the flask_fas module
-        :arg password: Not used, but accepted for compatibility with the flask_fas module
+        :arg username: Not used, but accepted for compatibility with the
+           flask_fas module
+        :arg password: Not used, but accepted for compatibility with the
+           flask_fas module
         :arg return_url: The URL to forward the user to after login
+        :arg groups: A string or a list of group the user should belong to
+           to be authentified.
         :returns: True if the user was succesfully authenticated.
         :raises: Might raise an redirect to the OpenID endpoint
         """
         if return_url is None:
-            if 'next' in args.values:
-                return_url = args.values['next']
+            if 'next' in flask.request.args.values():
+                return_url = flask.request.args.values['next']
             else:
                 return_url = flask.request.url
-        oidconsumer = consumer.Consumer(flask.session, None)
+        session = {}
+        oidconsumer = consumer.Consumer(session, None)
         try:
             request = oidconsumer.begin(self.app.config['FAS_OPENID_ENDPOINT'])
         except consumer.DiscoveryFailure, exc:
-            # VERY strange, as this means it could not discover an OpenID endpoint at FAS_OPENID_ENDPOINT
+            # VERY strange, as this means it could not discover an OpenID
+            # endpoint at FAS_OPENID_ENDPOINT
             return 'discoveryfailure'
         if request is None:
-            # Also very strange, as this means the discovered OpenID endpoint is no OpenID endpoint
+            # Also very strange, as this means the discovered OpenID
+            # endpoint is no OpenID endpoint
             return 'no-request'
-        request.addExtension(sreg.SRegRequest(required=['nickname', 'fullname', 'email', 'timezone']))
+
+        if isinstance(groups, basestring):
+            groups = [groups]
+
+        request.addExtension(sreg.SRegRequest(
+            required=['nickname', 'fullname', 'email', 'timezone']))
         request.addExtension(pape.Request([]))
-        request.addExtension(teams.TeamsRequest(requested=['_FAS_ALL_GROUPS_'])) # Magic value which requests all groups from FAS-OpenID >= 0.2.0
-        request.addExtension(cla.CLARequest(requested=[cla.CLA_URI_FEDORA_DONE]))
-        trust_root = flask.request.url_root
-        return_to = flask.request.url_root + '_flask_fas_openid_handler/'
+        request.addExtension(teams.TeamsRequest(requested=groups))
+        request.addExtension(cla.CLARequest(
+            requested=[cla.CLA_URI_FEDORA_DONE]))
+
+        trust_root = self.normalize_url(flask.request.url_root)
+        return_to = trust_root + '_flask_fas_openid_handler/'
+
         flask.session['FLASK_FAS_OPENID_RETURN_URL'] = return_url
         flask.session['FLASK_FAS_OPENID_CANCEL_URL'] = cancel_url
         if request.shouldSendRedirect():
             redirect_url = request.redirectURL(trust_root, return_to, False)
             return flask.redirect(redirect_url)
         else:
-            return request.htmlMarkup(trust_root, return_to, form_tag_attrs={'id': 'openid_message'}, immediate=False)
+            return request.htmlMarkup(
+                trust_root, return_to,
+                form_tag_attrs={'id': 'openid_message'}, immediate=False)
 
     def logout(self):
         '''Logout the user associated with this session
@@ -160,6 +225,13 @@ class FAS(object):
         flask.g.fas_session_id = None
         flask.g.fas_user = None
         flask.session.modified = True
+
+    def normalize_url(self, url):
+        ''' Replace the scheme prefix of a url with our preferred scheme.
+        '''
+        scheme = self.app.config['PREFERRED_URL_SCHEME']
+        scheme_index = url.index('://')
+        return scheme + url[scheme_index:]
 
 
 # This is a decorator we can use with any HTTP method (except login, obviously)
@@ -189,7 +261,9 @@ def cla_plus_one_required(function):
     """
     @wraps(function)
     def decorated_function(*args, **kwargs):
-        if flask.g.fas_user is None or not flask.g.fas_user.cla_done or len(flask.g.fas_user.groups) < 1:  # FAS-OpenID does not return cla_ groups
+        if flask.g.fas_user is None or not flask.g.fas_user.cla_done \
+                or len(flask.g.fas_user.groups) < 1:
+            # FAS-OpenID does not return cla_ groups
             return flask.redirect(flask.url_for('auth_login',
                                                 next=flask.request.url))
         else:

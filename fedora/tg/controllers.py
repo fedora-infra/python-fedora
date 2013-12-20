@@ -30,11 +30,11 @@ from fedora.tg.utils import request_format
 
 from turbogears.i18n.utils import get_locale 
 from turbogears.i18n.tg_gettext import tg_gettext 
- 
-def _(msg): 
+
+def f_(msg):
     ''' 
     Translate given message from current tg locale 
- 
+
     Parameters 
     :message: text to be translated 
     Returns: Translated message string 

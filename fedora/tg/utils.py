@@ -48,7 +48,7 @@ import turbogears.util as tg_util
 from turbogears.controllers import check_app_root
 from turbogears.identity.exceptions import RequestRequiredException
 
-from fedora import b_
+
 
 # Save this for people who need the original url() function
 tg_url = turbogears.url
@@ -99,7 +99,7 @@ def url(tgpath, tgparams=None, **kwargs):
             tgparams.update(kwargs)
         except AttributeError:
             raise TypeError(
-                    b_('url() expects a dictionary for query parameters'))
+                    'url() expects a dictionary for query parameters')
     args = []
     # Add the _csrf_token
     try:

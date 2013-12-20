@@ -2,17 +2,17 @@
 #
 # Copyright (C) 2007  Red Hat, Inc.
 # This file is part of python-fedora
-# 
+#
 # python-fedora is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # python-fedora is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
@@ -29,8 +29,6 @@ fedora.client is used to interact with Fedora Services.
 import warnings
 
 from bunch import Bunch
-
-from fedora import b_
 
 class FedoraClientError(Exception):
     '''Base Exception for problems which originate within the Clients.
@@ -56,7 +54,9 @@ class FedoraServiceError(Exception):
 class ServerError(FedoraServiceError):
     '''Unable to talk to the server properly.
 
-    This includes network errors and 500 response codes.
+    This includes network errors and 500 response codes.  If the error was
+    generated from an http response, :attr:`code` is the HTTP response code.
+    Otherwise, :attr:`code` will be -1.
     '''
     def __init__(self, url, status, msg):
         FedoraServiceError.__init__(self)
@@ -86,10 +86,10 @@ class AppError(FedoraServiceError):
 # Backwards compatibility
 class DictContainer(Bunch):
     def __init__(self, *args, **kwargs):
-        warnings.warn(b_('DictContainer is deprecated.  Use the Bunch class'
-            ' from python-bunch instead.'), DeprecationWarning, stacklevel=2)
+        warnings.warn('DictContainer is deprecated.  Use the Bunch class'
+            ' from python-bunch instead.', DeprecationWarning, stacklevel=2)
         Bunch.__init__(self, *args, **kwargs)
- 
+
 # We want people to be able to import fedora.client.*Client directly
 # pylint: disable-msg=W0611
 from fedora.client.proxyclient import ProxyClient

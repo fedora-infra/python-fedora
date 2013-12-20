@@ -34,7 +34,7 @@ sets.add_builtin_set()
 
 from fedora.client import BaseClient, FedoraServiceError
 
-from fedora import b_, __version__
+from fedora import __version__
 
 import crypt
 
@@ -220,7 +220,7 @@ class JsonFasIdentityProvider(object):
             user = JsonFasIdentity(visit_key, username = user_name,
                     password = password)
         except FedoraServiceError, e:
-            log.warning(b_('Error logging in %(user)s: %(error)s') % {
+            log.warning('Error logging in %(user)s: %(error)s' % {
                 'user': to_bytes(user_name), 'error': to_bytes(e)})
             return None
 

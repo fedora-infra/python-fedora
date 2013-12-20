@@ -3,20 +3,27 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk
-:Date: 16 February 2013
+:Date: 19 December 2013
 :Version: 0.3.x
 
 ------
-0.3.33 (in progress)
+0.3.33
 ------
 
+* Minimum version of python is now 2.6.  Some things may work on older python
+  but this is not guaranteed.  Patches to make it work may or may not be
+  accepted.
 * Added flask_fas_openid for the migration to OpenID
+  This adds the requirements for python-openid, python-openid-teams and
+  python-openid-cla.
 * Rename the FAS_HTTPS_REQUIRED config variable in the flask_fas auth adapter
   to FAS_FLASK_COOKIE_REQUIRES_HTTPS.  The longer name is more cumbersome but
   the previous name was too often mistaken to be setting whether we needed to
   connect to the fas server with https when it really was about whether the
   session cookie should require https to be returned to the server (the
   cookie's secure flag).
+* Change the groups attribute of the flask_fas and flask_fas_openid auth
+  adapters to be a frozenset instead of a list
 * Set a configurable timeout on how long a client request will wait for the
   server to setup a connection in BaseClient and ProxyClient.
 * Fix instance-wide default retries in BaseClient (and subclasses) being
@@ -26,6 +33,12 @@ NEWS
   response strings.  This takes a very long time on large return values.
   Since we know that all responses from the services we're talking to will be
   utf-8, we can skip this detection step.
+* No longer use paver for building.  We just need setuptools now
+* Deprecated AccountSystem's gravatar_url method in favor of a new avatar_url
+  method.  This defaults to using the free libravatar service but still allows
+  API users to fall back on the proprietary gravatar service if they prefer.
+  python-pylibravatar must be installed for the default to work.  If it isn't
+  found on the user's system, then gravatar.com is made the new default.
 
 --------
 0.3.32.3
