@@ -122,8 +122,9 @@ class ProxyClient(object):
     log = log
 
     def __init__(self, base_url, useragent=None, session_name='tg-visit',
-            session_as_cookie=True, debug=False, insecure=False, retries=None,
-            timeout=None):
+                 session_as_cookie=True, debug=False, insecure=False,
+                 retries=None,
+                 timeout=None):
         '''Create a client configured for a particular service.
 
         :arg base_url: Base of every URL used to contact the server
@@ -145,8 +146,8 @@ class ProxyClient(object):
             the server, retry this many times.  Setting this to a negative
             number makes it try forever.  Defaults to zero, no retries.
         :kwarg timeout: A float describing the timeout of the connection. The
-            timeout only affects the connection process itself, not the downloading
-            of the response body. Defaults to 120 seconds.
+            timeout only affects the connection process itself, not the
+            downloading of the response body. Defaults to 120 seconds.
 
         .. versionchanged:: 0.3.33
             Added the timeout kwarg
@@ -166,15 +167,16 @@ class ProxyClient(object):
 
         self.log.debug('proxyclient.__init__:entered')
         if base_url[-1] != '/':
-            base_url = base_url +'/'
+            base_url = base_url + '/'
         self.base_url = base_url
         self.domain = urlparse(self.base_url).netloc
         self.useragent = useragent or 'Fedora ProxyClient/%(version)s' % {
-                'version': __version__}
+            'version': __version__}
         self.session_name = session_name
         self.session_as_cookie = session_as_cookie
         if session_as_cookie:
-            warnings.warn('Returning cookies from send_request() is'
+            warnings.warn(
+                'Returning cookies from send_request() is'
                 ' deprecated and will be removed in 0.4.  Please port your'
                 ' code to use a session_id instead by calling the ProxyClient'
                 ' constructor with session_as_cookie=False',
@@ -221,7 +223,7 @@ class ProxyClient(object):
     ''')
 
     def send_request(self, method, req_params=None, auth_params=None,
-            file_params=None, retries=None, timeout=None):
+                     file_params=None, retries=None, timeout=None):
         '''Make an HTTP request to a server method.
 
         The given method is called with any parameters set in ``req_params``.
@@ -296,20 +298,22 @@ class ProxyClient(object):
             if 'session_id' in auth_params:
                 session_id = auth_params['session_id']
             elif 'cookie' in auth_params:
-                warnings.warn('Giving a cookie to send_request() to'
-                ' authenticate is deprecated and will be removed in 0.4.'
-                ' Please port your code to use session_id instead.',
-                DeprecationWarning, stacklevel=2)
+                warnings.warn(
+                    'Giving a cookie to send_request() to'
+                    ' authenticate is deprecated and will be removed in 0.4.'
+                    ' Please port your code to use session_id instead.',
+                    DeprecationWarning, stacklevel=2)
                 session_id = auth_params['cookie'].output(attrs=[],
-                        header='').strip()
+                                                          header='').strip()
             if 'username' in auth_params and 'password' in auth_params:
                 username = auth_params['username']
                 password = auth_params['password']
             elif 'username' in auth_params or 'password' in auth_params:
                 raise AuthError('username and password must both be set in'
-                        ' auth_params')
+                                ' auth_params')
             if not (session_id or username):
-                raise AuthError('No known authentication methods'
+                raise AuthError(
+                    'No known authentication methods'
                     ' specified: set "cookie" in auth_params or set both'
                     ' username and password in auth_params')
 
@@ -353,8 +357,8 @@ class ProxyClient(object):
                 auth = (username, password)
             else:
                 # TG login
-                # Adding this to the request data prevents it from being logged by
-                # apache.
+                # Adding this to the request data prevents it from being
+                # logged by apache.
                 complete_params.update({
                     'user_name': to_bytes(username),
                     'password': to_bytes(password),
@@ -363,9 +367,9 @@ class ProxyClient(object):
 
         # If debug, give people our debug info
         self.log.debug('Creating request %(url)s' %
-                {'url': to_bytes(url)})
+                       {'url': to_bytes(url)})
         self.log.debug('Headers: %(header)s' %
-                {'header': to_bytes(headers, nonstring='simplerepr')})
+                       {'header': to_bytes(headers, nonstring='simplerepr')})
         if self.debug and complete_params:
             debug_data = copy.deepcopy(complete_params)
 
@@ -435,13 +439,15 @@ class ProxyClient(object):
                 self.log.debug('Request timed out')
                 if retries < 0 or num_tries < retries:
                     num_tries += 1
-                    self.log.debug('Attempt #%(try)s failed' % {'try': num_tries})
+                    self.log.debug(
+                        'Attempt #%(try)s failed' % {'try': num_tries})
                     time.sleep(0.5)
                     continue
                 # Fail and raise an error
                 # Raising our own exception protects the user from the
                 # implementation detail of requests vs pycurl vs urllib
-                raise ServerError(url, -1, 'Request timed out after %s seconds' % timeout)
+                raise ServerError(
+                    url, -1, 'Request timed out after %s seconds' % timeout)
 
             # When the python-requests module gets a response, it attempts to
             # guess the encoding using chardet (or a fork)
@@ -455,20 +461,23 @@ class ProxyClient(object):
             response.encoding = 'utf-8'
 
             # Check for auth failures
-            # Note: old TG apps returned 403 Forbidden on authentication failures.
+            # Note: old TG apps returned 403 Forbidden on authentication
+            # failures.
             # Updated apps return 401 Unauthorized
             # We need to accept both until all apps are updated to return 401.
             http_status = response.status_code
             if http_status in (401, 403):
                 # Wrong username or password
                 self.log.debug('Authentication failed logging in')
-                raise AuthError('Unable to log into server.  Invalid'
-                        ' authentication tokens.  Send new username and password')
+                raise AuthError(
+                    'Unable to log into server.  Invalid'
+                    ' authentication tokens.  Send new username and password')
             elif http_status >= 400:
                 if retries < 0 or num_tries < retries:
                     # Retry the request
                     num_tries += 1
-                    self.log.debug('Attempt #%(try)s failed' % {'try': num_tries})
+                    self.log.debug(
+                        'Attempt #%(try)s failed' % {'try': num_tries})
                     time.sleep(0.5)
                     continue
                 # Fail and raise an error
@@ -490,9 +499,10 @@ class ProxyClient(object):
                 data = data()
         except ValueError, e:
             # The response wasn't JSON data
-            raise ServerError(url, http_status, 'Error returned from'
-                    ' json module while processing %(url)s: %(err)s' %
-                    {'url': to_bytes(url), 'err': to_bytes(e)})
+            raise ServerError(
+                url, http_status, 'Error returned from'
+                ' json module while processing %(url)s: %(err)s' %
+                {'url': to_bytes(url), 'err': to_bytes(e)})
 
         if 'exc' in data:
             name = data.pop('exc')
