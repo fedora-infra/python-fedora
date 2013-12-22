@@ -32,27 +32,32 @@ setup(
     # python-2.5 distutils we can add these:
     #   for bodhi (koji yum)
     install_requires=['bunch', 'kitchen', 'requests'],
-    extras_require = {
-        'tg' : ['TurboGears >= 1.0.4', 'SQLAlchemy', 'decorator'],
+    extras_require={
+        'tg': ['TurboGears >= 1.0.4', 'SQLAlchemy', 'decorator'],
         'wsgi': ['repoze.who', 'Beaker', 'Paste'],
-        'flask': ['Flask', 'Flask_WTF', 'python-openid', 'python-openid-teams'],
-        },
-    entry_points = {
-        'turbogears.identity.provider' : (
+        'flask': [
+            'Flask', 'Flask_WTF', 'python-openid', 'python-openid-teams'
+        ],
+    },
+    entry_points={
+        'turbogears.identity.provider': (
             'jsonfas = fedora.tg.identity.jsonfasprovider1:JsonFasIdentityProvider [tg]',
             'jsonfas2 = fedora.tg.identity.jsonfasprovider2:JsonFasIdentityProvider [tg]',
             'sqlobjectcsrf = fedora.tg.identity.soprovidercsrf:SqlObjectCsrfIdentityProvider [tg]'),
-        'turbogears.visit.manager' : (
+        'turbogears.visit.manager': (
             'jsonfas = fedora.tg.visit.jsonfasvisit1:JsonFasVisitManager [tg]',
-            'jsonfas2 = fedora.tg.visit.jsonfasvisit2:JsonFasVisitManager [tg]'),
-        },
-    message_extractors = {
-        'fedora': [('**.py', 'python', None),
+            'jsonfas2 = fedora.tg.visit.jsonfasvisit2:JsonFasVisitManager [tg]'
+        ),
+    },
+    message_extractors={
+        'fedora': [
+            ('**.py', 'python', None),
             ('tg2/templates/mako/**.mak', 'mako', None),
             ('tg2/templates/genshi/**.html', 'mako', None),
-            ('tg/templates/genshi/**.html', 'genshi', None),],
-        },
-    classifiers = [
+            ('tg/templates/genshi/**.html', 'genshi', None),
+        ],
+    },
+    classifiers=[
         'Development Status :: 4 - Beta',
         'Framework :: TurboGears',
         'Framework :: Django',
@@ -63,5 +68,5 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Software Development :: Libraries :: Python Modules',
-        ],
-    )
+    ],
+)
