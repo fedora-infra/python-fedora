@@ -382,8 +382,8 @@ class JsonFasIdentityProvider(object):
         self.log = log
         # pylint: disable-msg=W0212
         # TG does this so we shouldn't get rid of it.
-        self.encrypt_password = lambda pw: \
-                                    identity._encrypt_password(algorithm, pw)
+        self.encrypt_password = lambda pw: identity._encrypt_password(
+            algorithm, pw)
 
     def create_provider_model(self):
         '''
