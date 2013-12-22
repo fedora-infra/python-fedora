@@ -41,11 +41,13 @@ b_SESSION_FILE = path.join(b_SESSION_DIR, '.fedora_session')
 
 from fedora.client import AuthError, ProxyClient
 
+
 class BaseClient(ProxyClient):
     '''
         A client for interacting with web services.
     '''
-    def __init__(self, base_url, useragent=None, debug=False, insecure=False,
+    def __init__(
+            self, base_url, useragent=None, debug=False, insecure=False,
             username=None, password=None, httpauth=None, session_cookie=None,
             session_id=None, session_name='tg-visit', cache_session=True,
             retries=None, timeout=None):
@@ -83,10 +85,12 @@ class BaseClient(ProxyClient):
         '''
         self.log = log
         self.useragent = useragent or 'Fedora BaseClient/%(version)s' % {
-                'version': __version__}
-        super(BaseClient, self).__init__(base_url, useragent=self.useragent,
-                session_name=session_name, session_as_cookie=False,
-                debug=debug, insecure=insecure, retries=retries, timeout=timeout)
+            'version': __version__}
+        super(BaseClient, self).__init__(
+            base_url, useragent=self.useragent,
+            session_name=session_name, session_as_cookie=False,
+            debug=debug, insecure=insecure, retries=retries, timeout=timeout
+        )
 
         self.username = username
         self.password = password
@@ -97,7 +101,7 @@ class BaseClient(ProxyClient):
             self.session_id = session_id
         elif session_cookie:
             warnings.warn('session_cookie is deprecated, use session_id'
-                    ' instead', DeprecationWarning, stacklevel=2)
+                          ' instead', DeprecationWarning, stacklevel=2)
             session_id = session_cookie.get(self.session_name, '')
             if session_id:
                 self.session_id = session_id.value
@@ -115,7 +119,7 @@ class BaseClient(ProxyClient):
                 saved_session = pickle.load(session_file)
             except (IOError, EOFError):
                 self.log.info('Unable to load session from %(file)s' %
-                        {'file': b_SESSION_FILE})
+                              {'file': b_SESSION_FILE})
             if session_file:
                 session_file.close()
 
@@ -132,20 +136,24 @@ class BaseClient(ProxyClient):
                 os.mkdir(b_SESSION_DIR, 0755)
             except OSError, e:
                 self.log.warning('Unable to create %(dir)s: %(error)s' %
-                    {'dir': b_SESSION_DIR, 'error': to_bytes(e)})
+                                 {'dir': b_SESSION_DIR, 'error': to_bytes(e)})
 
         try:
             session_file = file(b_SESSION_FILE, 'w')
             os.chmod(b_SESSION_FILE, stat.S_IRUSR | stat.S_IWUSR)
             pickle.dump(save, session_file)
             session_file.close()
-        except Exception, e: # pylint: disable-msg=W0703
+        except Exception as e:  # pylint: disable-msg=W0703
             # If we can't save the file, issue a warning but go on.  The
             # session just keeps you from having to type your password over
             # and over.
-            self.log.warning('Unable to write to session file %(session)s:'
-                    ' %(error)s' % {'session': b_SESSION_FILE, 'error':
-                        to_bytes(e)})
+            self.log.warning(
+                'Unable to write to session file %(session)s:'
+                ' %(error)s' % {
+                    'session': b_SESSION_FILE, 'error':
+                    to_bytes(e)
+                }
+            )
 
     def _get_session_id(self):
         '''Attempt to retrieve the session id from the filesystem.
@@ -166,8 +174,8 @@ class BaseClient(ProxyClient):
             self._session_id = ''
 
         if not self._session_id:
-            self.log.debug('No session cached for "%s"'
-                    % to_bytes(self.username))
+            self.log.debug(
+                'No session cached for "%s"' % to_bytes(self.username))
 
         return self._session_id
 
@@ -204,7 +212,7 @@ class BaseClient(ProxyClient):
         self._session_id = None
 
     session_id = property(_get_session_id, _set_session_id,
-            _del_session_id, '''The session_id.
+                          _del_session_id, '''The session_id.
 
         The session id is saved in a file in case it is needed in consecutive
         runs of BaseClient.
@@ -218,7 +226,7 @@ class BaseClient(ProxyClient):
         :Returns: user's session cookie
         '''
         warnings.warn('session_cookie is deprecated, use session_id'
-            ' instead', DeprecationWarning, stacklevel=2)
+                      ' instead', DeprecationWarning, stacklevel=2)
         session_id = self.session_id
         if not session_id:
             return ''
@@ -237,7 +245,7 @@ class BaseClient(ProxyClient):
         multiple users.
         '''
         warnings.warn('session_cookie is deprecated, use session_id'
-            ' instead', DeprecationWarning, stacklevel=2)
+                      ' instead', DeprecationWarning, stacklevel=2)
         session_id = session_cookie.get(self.session_name, '')
         if session_id:
             session_id = session_id.value
@@ -249,11 +257,12 @@ class BaseClient(ProxyClient):
         Delete the session cookie from the filesystem.
         '''
         warnings.warn('session_cookie is deprecated, use session_id'
-            ' instead', DeprecationWarning, stacklevel=2)
+                      ' instead', DeprecationWarning, stacklevel=2)
         del(self.session_id)
 
     session_cookie = property(_get_session_cookie, _set_session_cookie,
-            _del_session_cookie, '''*Deprecated*, use session_id instead.
+                              _del_session_cookie,
+                              '''*Deprecated*, use session_id instead.
 
         The session cookie is saved in a file in case it is needed in
         consecutive runs of BaseClient.
@@ -264,14 +273,14 @@ class BaseClient(ProxyClient):
         '''
         try:
             self.send_request('logout', auth=True)
-        except AuthError: # pylint: disable-msg=W0704
+        except AuthError:  # pylint: disable-msg=W0704
             # We don't need to fail for an auth error as we're getting rid of
             # our authentication tokens here.
             pass
         del(self.session_id)
 
     def send_request(self, method, req_params=None, file_params=None,
-            auth=False, retries=None, timeout=None, **kwargs):
+                     auth=False, retries=None, timeout=None, **kwargs):
         '''Make an HTTP request to a server method.
 
         The given method is called with any parameters set in req_params.  If
@@ -311,25 +320,27 @@ class BaseClient(ProxyClient):
             for arg in kwargs:
                 # If we have extra args, raise an error
                 if arg != 'input':
-                    raise TypeError('send_request() got an unexpected'
-                            ' keyword argument "%(arg)s"' % {'arg': to_bytes(arg)})
+                    raise TypeError(
+                        'send_request() got an unexpected'
+                        ' keyword argument "%(arg)s"' % {'arg': to_bytes(arg)})
             if req_params:
                 # We don't want to allow input if req_params was already given
                 raise TypeError('send_request() got an unexpected keyword'
-                        ' argument "input"')
+                                ' argument "input"')
             if len(kwargs) > 1:
                 # We shouldn't get here
                 raise TypeError('send_request() got an unexpected keyword'
-                        ' argument')
+                                ' argument')
 
             # Error checking over, set req_params to the value in input
-            warnings.warn('send_request(input) is deprecated.  Use'
-                    ' send_request(req_params) instead', DeprecationWarning,
-                    stacklevel=2)
+            warnings.warn(
+                'send_request(input) is deprecated.  Use'
+                ' send_request(req_params) instead', DeprecationWarning,
+                stacklevel=2)
             req_params = kwargs['input']
 
         auth_params = {'session_id': self.session_id}
-        if auth == True:
+        if auth is True:
             # We need something to do auth.  Check user/pass
             if self.username and self.password:
                 # Add the username and password and we're all set
@@ -341,20 +352,22 @@ class BaseClient(ProxyClient):
                 # No?  Check for session_id
                 if not self.session_id:
                     # Not enough information to auth
-                    raise AuthError('Auth was requested but no way to'
-                            ' perform auth was given.  Please set username'
-                            ' and password or session_id before calling'
-                            ' this function with auth=True')
+                    raise AuthError(
+                        'Auth was requested but no way to'
+                        ' perform auth was given.  Please set username'
+                        ' and password or session_id before calling'
+                        ' this function with auth=True')
 
         # Remove empty params
         # pylint: disable-msg=W0104
         [auth_params.__delitem__(key) for key, value in auth_params.items()
-                if not value]
+         if not value]
         # pylint: enable-msg=W0104
 
-        session_id, data = super(BaseClient, self).send_request(method,
-                req_params=req_params, file_params=file_params,
-                auth_params=auth_params, retries=retries, timeout=timeout)
+        session_id, data = super(BaseClient, self).send_request(
+            method,
+            req_params=req_params, file_params=file_params,
+            auth_params=auth_params, retries=retries, timeout=timeout)
         # In case the server returned a new session id to us
         if self.session_id != session_id:
             self.session_id = session_id
