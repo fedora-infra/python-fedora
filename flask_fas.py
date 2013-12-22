@@ -69,9 +69,9 @@ class FAS(object):
         ctx = stack.top
         if not hasattr(ctx, 'fasclient'):
             ctx.fasclient = FasProxyClient(
-                    base_url=self.app.config['FAS_BASE_URL'],
-                    useragent=self.app.config['FAS_USER_AGENT'],
-                    insecure=not self.app.config['FAS_CHECK_CERT'],
+                base_url=self.app.config['FAS_BASE_URL'],
+                useragent=self.app.config['FAS_USER_AGENT'],
+                insecure=not self.app.config['FAS_CHECK_CERT'],
             )
         return ctx.fasclient
 
@@ -83,7 +83,9 @@ class FAS(object):
                 session_id, user = self.fasclient.get_user_info({'session_id':
                                                                  session_id})
                 if hasattr(user, 'approved_memberships'):
-                    user.groups = frozenset(x.name for x in user.approved_memberships)
+                    user.groups = frozenset(
+                        x.name for x in user.approved_memberships
+                    )
                 else:
                     user.groups = frozenset()
             except AuthError:
@@ -112,10 +114,10 @@ class FAS(object):
                           DeprecationWarning, stacklevel=2)
 
         response.set_cookie(
-                key=self.app.config['FAS_COOKIE_NAME'],
-                value=flask.g.fas_session_id or '',
-                secure=self.app.config['FAS_FLASK_COOKIE_REQUIRES_HTTPS'],
-                httponly=True,
+            key=self.app.config['FAS_COOKIE_NAME'],
+            value=flask.g.fas_session_id or '',
+            secure=self.app.config['FAS_FLASK_COOKIE_REQUIRES_HTTPS'],
+            httponly=True,
         )
         return response
 
@@ -186,9 +188,12 @@ def cla_plus_one_required(function):
         if flask.g.fas_user is None:
             valid = False
         else:
-            non_cla_groups = [x.name
-                      for x in flask.g.fas_user.approved_memberships
-                      if x.group_type != 'cla']
+            non_cla_groups = [
+                x.name
+                for x in flask.g.fas_user.approved_memberships
+                if x.group_type != 'cla'
+            ]
+
             if len(non_cla_groups) == 0:
                 valid = False
         if not valid:
