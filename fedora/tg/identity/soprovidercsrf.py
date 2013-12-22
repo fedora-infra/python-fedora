@@ -2,17 +2,17 @@
 #
 # Copyright (C) 2009,2013  Red Hat, Inc.
 # This file is part of python-fedora
-# 
+#
 # python-fedora is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # python-fedora is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
@@ -37,8 +37,10 @@ except ImportError:
     from sha import new as hash_constructor
 
 
-from sqlobject import SQLObject, SQLObjectNotFound, RelatedJoin, \
-        DateTimeCol, IntCol, StringCol, UnicodeCol
+from sqlobject import (
+    SQLObject, SQLObjectNotFound, RelatedJoin,
+    DateTimeCol, IntCol, StringCol, UnicodeCol
+)
 from sqlobject.inheritance import InheritableSQLObject
 
 import warnings
@@ -78,13 +80,19 @@ class DeprecatedAttr(object):
         self.new_name = new_name
 
     def __get__(self, obj, type=None):
-        warnings.warn("%s has been deprecated in favour of %s" %
-            (self.old_name, self.new_name), DeprecationWarning)
+        warnings.warn(
+            "%s has been deprecated in favour of %s" % (self.old_name,
+                                                        self.new_name),
+            DeprecationWarning
+        )
         return getattr(obj, self.new_name)
 
     def __set__(self, obj, value):
-        warnings.warn( "%s has been deprecated in favour of %s" %
-            (self.old_name, self.new_name), DeprecationWarning)
+        warnings.warn(
+            "%s has been deprecated in favour of %s" % (self.old_name,
+                                                        self.new_name),
+            DeprecationWarning
+        )
         return setattr(obj, self.new_name, value)
 
 
@@ -154,7 +162,8 @@ class SqlObjectCsrfIdentity(object):
                     hash_constructor(self.visit_key).hexdigest()):
                 log.info("Bad _csrf_token")
                 if '_csrf_token' in cherrypy.request.params:
-                    log.info("visit: %s token: %s" % (self.visit_key,
+                    log.info("visit: %s token: %s" % (
+                        self.visit_key,
                         cherrypy.request.params['_csrf_token']))
                 else:
                     log.info('No _csrf_token present')
@@ -274,7 +283,10 @@ class SqlObjectCsrfIdentity(object):
         if visit:
             visit.user_id = self._user.id
         else:
-            visit = visit_class(visit_key=self.visit_key, user_id=self._user.id)
+            visit = visit_class(
+                visit_key=self.visit_key,
+                user_id=self._user.id
+            )
 
     def logout(self):
         """Remove the link between this identity and the visit."""
@@ -295,7 +307,7 @@ class SqlObjectCsrfIdentityProvider(object):
         global user_class, group_class, permission_class, visit_class
 
         user_class_path = get("identity.soprovider.model.user",
-            __name__ + ".TG_User")
+                              __name__ + ".TG_User")
         user_class = load_class(user_class_path)
         if user_class:
             log.info("Succesfully loaded \"%s\"" % user_class_path)
@@ -305,19 +317,19 @@ class SqlObjectCsrfIdentityProvider(object):
         except (KeyError, AttributeError):
             self.user_class_db_encoding = 'UTF-8'
         group_class_path = get("identity.soprovider.model.group",
-            __name__ + ".TG_Group")
+                               __name__ + ".TG_Group")
         group_class = load_class(group_class_path)
         if group_class:
             log.info("Succesfully loaded \"%s\"" % group_class_path)
 
         permission_class_path = get("identity.soprovider.model.permission",
-            __name__ + ".TG_Permission")
+                                    __name__ + ".TG_Permission")
         permission_class = load_class(permission_class_path)
         if permission_class:
             log.info("Succesfully loaded \"%s\"" % permission_class_path)
 
         visit_class_path = get("identity.soprovider.model.visit",
-            __name__ + ".TG_VisitIdentity")
+                               __name__ + ".TG_VisitIdentity")
         visit_class = load_class(visit_class_path)
         if visit_class:
             log.info("Succesfully loaded \"%s\"" % visit_class_path)
@@ -339,7 +351,7 @@ class SqlObjectCsrfIdentityProvider(object):
             hub.end()
         except KeyError:
             log.warning("No database is configured:"
-                " SqlObjectCsrfIdentityProvider is disabled.")
+                        " SqlObjectCsrfIdentityProvider is disabled.")
             return
 
     def validate_identity(self, user_name, password, visit_key):
@@ -360,7 +372,7 @@ class SqlObjectCsrfIdentityProvider(object):
                 log.info("Passwords don't match for user: %s", user_name)
                 return None
             log.info("Associating user (%s) with visit (%s)",
-                user_name, visit_key)
+                     user_name, visit_key)
             return SqlObjectCsrfIdentity(visit_key, user)
         except SQLObjectNotFound:
             log.warning("No such user: %s", user_name)
@@ -371,9 +383,10 @@ class SqlObjectCsrfIdentityProvider(object):
 
         Note: user_name is not used here, but is required by external
         password validation schemes that might override this method.
-        If you use SqlObjectCsrfIdentityProvider, but want to check the passwords
-        against an external source (i.e. PAM, a password file, Windows domain),
-        subclass SqlObjectCsrfIdentityProvider, and override this method.
+        If you use SqlObjectCsrfIdentityProvider, but want to check the
+        passwords against an external source (i.e. PAM, a password file,
+        Windows domain), subclass SqlObjectCsrfIdentityProvider, and override
+        this method.
 
         """
         return user.password == self.encrypt_password(password)
@@ -419,7 +432,7 @@ class TG_VisitIdentity(SQLObject):
         table = "tg_visit_identity"
 
     visit_key = StringCol(length=40, alternateID=True,
-        alternateMethodName="by_visit_key")
+                          alternateMethodName="by_visit_key")
     user_id = IntCol()
 
 
@@ -429,7 +442,7 @@ class TG_Group(InheritableSQLObject):
         table = "tg_group"
 
     group_name = UnicodeCol(length=16, alternateID=True,
-        alternateMethodName="by_group_name")
+                            alternateMethodName="by_group_name")
     display_name = UnicodeCol(length=255)
     created = DateTimeCol(default=datetime.now)
 
@@ -439,14 +452,15 @@ class TG_Group(InheritableSQLObject):
 
     # collection of all users belonging to this group
     users = RelatedJoin("TG_User", intermediateTable="tg_user_group",
-        joinColumn="group_id", otherColumn="user_id")
+                        joinColumn="group_id", otherColumn="user_id")
 
     # collection of all permissions for this group
     permissions = RelatedJoin("TG_Permission", joinColumn="group_id",
-        intermediateTable="tg_group_permission",
-        otherColumn="permission_id")
+                              intermediateTable="tg_group_permission",
+                              otherColumn="permission_id")
 
-[jsonify.when('isinstance(obj, TG_Group)')]
+
+@jsonify.when('isinstance(obj, TG_Group)')
 def jsonify_group(obj):
     """Convert group to JSON."""
     result = jsonify_sqlobject(obj)
@@ -461,9 +475,9 @@ class TG_User(InheritableSQLObject):
         table = "tg_user"
 
     user_name = UnicodeCol(length=16, alternateID=True,
-        alternateMethodName="by_user_name")
+                           alternateMethodName="by_user_name")
     email_address = UnicodeCol(length=255, alternateID=True,
-        alternateMethodName="by_email_address")
+                               alternateMethodName="by_email_address")
     display_name = UnicodeCol(length=255)
     password = UnicodeCol(length=40)
     created = DateTimeCol(default=datetime.now)
@@ -475,7 +489,7 @@ class TG_User(InheritableSQLObject):
 
     # groups this user belongs to
     groups = RelatedJoin("TG_Group", intermediateTable="tg_user_group",
-        joinColumn="user_id", otherColumn="group_id")
+                         joinColumn="user_id", otherColumn="group_id")
 
     def _get_permissions(self):
         perms = set()
@@ -487,7 +501,7 @@ class TG_User(InheritableSQLObject):
         """Run cleartext_password through the hash algorithm before saving."""
         try:
             hash = identity.current_provider.encrypt_password(
-                    cleartext_password)
+                cleartext_password)
         except identity.exceptions.IdentityManagementNotEnabledException:
             # Creating identity provider just to encrypt password
             # (so we don't reimplement the encryption step).
@@ -495,15 +509,16 @@ class TG_User(InheritableSQLObject):
             hash = ip.encrypt_password(cleartext_password)
             if hash == cleartext_password:
                 log.info("Identity provider not enabled,"
-                    " and no encryption algorithm specified in config."
-                    " Setting password as plaintext.")
+                         " and no encryption algorithm specified in config."
+                         " Setting password as plaintext.")
         self._SO_set_password(hash)
 
     def set_password_raw(self, password):
         """Save the password as-is to the database."""
         self._SO_set_password(password)
 
-[jsonify.when('isinstance(obj, TG_User)')]
+
+@jsonify.when('isinstance(obj, TG_User)')
 def jsonify_user(obj):
     """Convert user to JSON."""
     result = jsonify_sqlobject(obj)
@@ -519,16 +534,17 @@ class TG_Permission(InheritableSQLObject):
         table = "tg_permission"
 
     permission_name = UnicodeCol(length=16, alternateID=True,
-        alternateMethodName="by_permission_name")
+                                 alternateMethodName="by_permission_name")
     description = UnicodeCol(length=255)
 
     # Old attributes
     permissionId = DeprecatedAttr("permissionId", "permission_name")
 
     groups = RelatedJoin("TG_Group", intermediateTable="tg_group_permission",
-        joinColumn="permission_id", otherColumn="group_id")
+                         joinColumn="permission_id", otherColumn="group_id")
 
-[jsonify.when('isinstance(obj, TG_Permission)')]
+
+@jsonify.when('isinstance(obj, TG_Permission)')
 def jsonify_permission(obj):
     """Convert permissions to JSON."""
     result = jsonify_sqlobject(obj)
@@ -546,6 +562,8 @@ def encrypt_password(cleartext_password):
         ip = SqlObjectCsrfIdentityProvider()
         hash = ip.encrypt_password(cleartext_password)
         if hash == cleartext_password:
-            log.info("Identity provider not enabled, and no encryption "
-                "algorithm specified in config. Setting password as plaintext.")
+            log.info(
+                "Identity provider not enabled, and no encryption "
+                "algorithm specified in config. Setting password as plaintext."
+            )
     return hash
