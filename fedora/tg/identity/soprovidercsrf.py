@@ -460,7 +460,7 @@ class TG_Group(InheritableSQLObject):
                               otherColumn="permission_id")
 
 
-@jsonify.when('isinstance(obj, TG_Group)')
+[jsonify.when('isinstance(obj, TG_Group)')]
 def jsonify_group(obj):
     """Convert group to JSON."""
     result = jsonify_sqlobject(obj)
@@ -518,7 +518,7 @@ class TG_User(InheritableSQLObject):
         self._SO_set_password(password)
 
 
-@jsonify.when('isinstance(obj, TG_User)')
+[jsonify.when('isinstance(obj, TG_User)')]
 def jsonify_user(obj):
     """Convert user to JSON."""
     result = jsonify_sqlobject(obj)
@@ -544,7 +544,7 @@ class TG_Permission(InheritableSQLObject):
                          joinColumn="permission_id", otherColumn="group_id")
 
 
-@jsonify.when('isinstance(obj, TG_Permission)')
+[jsonify.when('isinstance(obj, TG_Permission)')]
 def jsonify_permission(obj):
     """Convert permissions to JSON."""
     result = jsonify_sqlobject(obj)
