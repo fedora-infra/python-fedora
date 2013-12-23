@@ -32,16 +32,19 @@ from fedora.wsgi.test.testapp import make_app
 
 __all__ = ['make_app', 'TestTG2App', 'setup_db', 'teardown_db']
 
+
 def setup_db():
     """Method used to build a database"""
     engine = tg_config['pylons.app_globals'].sa_engine
     model.init_model(engine)
     model.metadata.create_all(engine)
 
+
 def teardown_db():
     """Method used to destroy a database"""
     engine = tg_config['pylons.app_globals'].sa_engine
     model.metadata.drop_all(engine)
+
 
 class TestTG2App(object):
     application_under_test = 'main'
