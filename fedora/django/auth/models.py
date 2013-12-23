@@ -2,12 +2,12 @@
 #
 # Copyright (C) 2009  Ignacio Vazquez-Abrams
 # This file is part of python-fedora
-# 
+#
 # python-fedora is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # python-fedora is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -34,6 +34,7 @@ _fasmap = {
     'email': 'email',
 }
 
+
 def _new_group(group):
     try:
         g = authmodels.Group.objects.get(id=group['id'])
@@ -43,6 +44,7 @@ def _new_group(group):
     g.save()
     return g
 
+
 def _syncdb_handler(sender, **kwargs):
     # Import FAS groups
     verbosity = kwargs.get('verbosity', 1)
@@ -50,19 +52,20 @@ def _syncdb_handler(sender, **kwargs):
         print _('Loading FAS groups...')
     try:
         gl = connection.group_list({'username': settings.FAS_USERNAME,
-            'password': settings.FAS_PASSWORD})
+                                    'password': settings.FAS_PASSWORD})
     except AuthError:
         if verbosity > 0:
             print _('Unable to load FAS groups. Did you set '
-                'FAS_USERNAME and FAS_PASSWORD?')
+                    'FAS_USERNAME and FAS_PASSWORD?')
     else:
         groups = gl[1]['groups']
         for group in groups:
             _new_group(group)
         if verbosity > 0:
             print _('FAS groups loaded. Don\'t forget to set '
-                'FAS_USERNAME and FAS_PASSWORD to a low-privilege '
-                'account.')
+                    'FAS_USERNAME and FAS_PASSWORD to a low-privilege '
+                    'account.')
+
 
 class FasUserManager(authmodels.UserManager):
     def user_from_fas(self, user):
@@ -80,7 +83,7 @@ class FasUserManager(authmodels.UserManager):
         u.set_unusable_password()
         u.is_active = user['status'] == 'active'
         admin = (user['username'] in
-            getattr(settings, 'FAS_ADMINS', ()))
+                 getattr(settings, 'FAS_ADMINS', ()))
         u.is_staff = admin
         u.is_superuser = admin
         if getattr(settings, 'FAS_GENERICEMAIL', True):
@@ -95,7 +98,10 @@ class FasUserManager(authmodels.UserManager):
             fas_groups.append(group['id'])
 
         # This user has been added to one or more FAS groups
-        for group in (g for g in user['approved_memberships'] if g['id'] not in known_groups):
+        for group in (
+            g for g in user['approved_memberships']
+                if g['id'] not in known_groups
+        ):
             newgroup = _new_group(group)
             u.groups.add(newgroup)
 
@@ -111,6 +117,7 @@ class FasUserManager(authmodels.UserManager):
 
         u.save()
         return u
+
 
 class FasUser(authmodels.User):
     def _get_name(self):
