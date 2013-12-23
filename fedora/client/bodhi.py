@@ -403,4 +403,3 @@ class BodhiClient(BaseClient):
                  "locked": false, "name": "F12", "long_name": "Fedora 12"}]}
         """
         return self.send_request('releases')
-

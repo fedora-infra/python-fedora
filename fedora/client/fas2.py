@@ -173,7 +173,7 @@ class AccountSystem(BaseClient):
             # Matt Domsch's rebuild script -- bz email goes to /dev/null
             103590: 'ftbfs@fedoraproject.org',
             # Sindre Pedersen Bjørdal: foolish@guezz.net
-            100460 : 'sindrepb@fedoraproject.org',
+            100460: 'sindrepb@fedoraproject.org',
             # Jesus M. Rodriguez: jmrodri@gmail.com
             102180: 'jesusr@redhat.com',
             # Roozbeh Pournader: roozbeh@farsiweb.info
@@ -925,4 +925,3 @@ class AccountSystem(BaseClient):
                     ' information', name='FASError')
         except FedoraServiceError:
             raise
-

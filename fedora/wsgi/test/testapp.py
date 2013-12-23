@@ -26,9 +26,8 @@ with various pieces of middleware.
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 """
 
-import os
 from tg import config
-from paste.script.appinstall import SetupCommand
+
 
 def make_app(global_conf, **kw):
     from fedora.wsgi.test.config import base_config
