@@ -22,9 +22,9 @@ These tests are meant to ensure the validity of python-fedora's CSRF WSGI
 middleware and repoze.who metadata provider plugin.
 """
 
-from fedora.wsgi.test import TestTG2App, setup_db, teardown_db
+from fedora.wsgi.test import TestTG2App
+from nose.tools import raises
 
-from nose.tools import raises, eq_
 
 class TestCSRF(TestTG2App):
     application_under_test = 'main_with_csrf'
@@ -67,13 +67,13 @@ class TestCSRF(TestTG2App):
         assert post_login.location.startswith('http://localhost/post_login')
         initial_page = post_login.follow(status=302)
         assert 'authtkt' in initial_page.request.cookies, \
-                "Session cookie wasn't defined: %s"\
-                % initial_page.request.cookies
+            "Session cookie wasn't defined: %s"\
+            % initial_page.request.cookies
         #assert initial_page.location.startswith(
         #       'http://localhost/moksha_admin/'), initial_page.location
 
         assert '_csrf_token=' in initial_page.location, \
-                "Login not redirected with CSRF token"
+            "Login not redirected with CSRF token"
 
         token = initial_page.location.split('_csrf_token=')[1]
 
@@ -81,15 +81,15 @@ class TestCSRF(TestTG2App):
         resp = initial_page.follow(status=200)
         assert 'moksha_csrf_token' in resp
         assert token == resp.body.split('moksha_csrf_token')[1].split(';')[0]\
-                .split('"')[1], "CSRF token not set in response body!"
+            .split('"')[1], "CSRF token not set in response body!"
 
         # Make sure we can get to the page with the token
         resp = self.app.post('/moksha_admin/', {'_csrf_token': token},
-                status=200)
+                             status=200)
         assert 'moksha_csrf_token' in resp, resp
         assert 'moksha_csrf_token = ""' not in resp, "CSRF token not set!"
         assert token == resp.body.split('moksha_csrf_token')[1].split(';')[0]\
-                .split('"')[1], "CSRF token not set in response body!"
+            .split('"')[1], "CSRF token not set in response body!"
 
         # Make sure we can't get back to the page without the token
         resp = self.app.get('/moksha_admin/', status=302)
@@ -98,7 +98,7 @@ class TestCSRF(TestTG2App):
 
         # Make sure that we can't get back after we got rejected once
         resp = self.app.post('/moksha_admin/', {'_csrf_token': token},
-                status=302)
+                             status=302)
         assert 'The resource was found at /login' in resp, resp
 
         # Ensure the token gets removed
@@ -116,7 +116,7 @@ class TestCSRF(TestTG2App):
         post_login = form.submit(status=302)
         initial_page = post_login.follow(status=302)
         assert '_csrf_token=' in initial_page.location, "Login not redirected"\
-                " with CSRF token"
+            " with CSRF token"
         newtoken = initial_page.location.split('_csrf_token=')[1]
 
         # For some reason logging out sometimes doesn't give us a new session
@@ -125,5 +125,5 @@ class TestCSRF(TestTG2App):
 
         # Now, make sure we reject invalid tokens
         resp = self.app.post('/moksha_admin/', {'_csrf_token': token + ' '},
-                status=302)
+                             status=302)
         assert 'The resource was found at /post_logout' in resp, resp
