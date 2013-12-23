@@ -2,17 +2,17 @@
 #
 # Copyright (C) 2008-2011  Red Hat, Inc.
 # This file is part of python-fedora
-# 
+#
 # python-fedora is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # python-fedora is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
@@ -28,18 +28,20 @@ from cherrypy import request, response
 
 from fedora.tg.utils import request_format
 
-from turbogears.i18n.utils import get_locale 
-from turbogears.i18n.tg_gettext import tg_gettext 
+from turbogears.i18n.utils import get_locale
+from turbogears.i18n.tg_gettext import tg_gettext
+
 
 def f_(msg):
-    ''' 
-    Translate given message from current tg locale 
+    '''
+    Translate given message from current tg locale
 
-    Parameters 
-    :message: text to be translated 
-    Returns: Translated message string 
-    ''' 
+    Parameters
+    :message: text to be translated
+    Returns: Translated message string
+    '''
     return tg_gettext(msg, get_locale(), 'python-fedora')
+
 
 def login(forward_url=None, *args, **kwargs):
     '''Page to become authenticated to the Account System.
@@ -68,29 +70,32 @@ def login(forward_url=None, *args, **kwargs):
     if not identity.current.anonymous and identity.was_login_attempted() \
             and not identity.get_identity_errors():
         # User is logged in
-        flash(_('Welcome, %s') % identity.current.user_name)
+        flash(f_('Welcome, %s') % identity.current.user_name)
         if request_format() == 'json':
             # When called as a json method, doesn't make any sense to redirect
             # to a page.  Returning the logged in identity is better.
             return dict(user=identity.current.user,
-                    _csrf_token=identity.current.csrf_token)
+                        _csrf_token=identity.current.csrf_token)
         redirect(forward_url or '/')
 
     if identity.was_login_attempted():
-        msg = _('The credentials you supplied were not correct or '
-               'did not grant access to this resource.')
+        msg = f_('The credentials you supplied were not correct or '
+                 'did not grant access to this resource.')
     elif identity.get_identity_errors():
-        msg = _('You must provide your credentials before accessing '
-               'this resource.')
+        msg = f_('You must provide your credentials before accessing '
+                 'this resource.')
     else:
-        msg = _('Please log in.')
+        msg = f_('Please log in.')
         if not forward_url:
             forward_url = request.headers.get('Referer', '/')
 
     response.status = 403
-    return dict(logging_in=True, message=msg,
+    return dict(
+        logging_in=True, message=msg,
         forward_url=forward_url, previous_url=request.path_info,
-        original_parameters=request.params)
+        original_parameters=request.params
+    )
+
 
 def logout(url=None):
     '''Logout from the server.
@@ -108,9 +113,9 @@ def logout(url=None):
         at when they clicked logout.
     '''
     identity.current.logout()
-    flash(_('You have successfully logged out.'))
+    flash(f_('You have successfully logged out.'))
     if request_format() == 'json':
         return dict()
     if not url:
-        url = request.headers.get('Referer','/')
+        url = request.headers.get('Referer', '/')
     redirect(url)
