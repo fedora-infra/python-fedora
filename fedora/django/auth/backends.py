@@ -20,7 +20,6 @@
 .. moduleauthor:: Ignacio Vazquez-Abrams <ivazquez@fedoraproject.org>
 .. moduleauthor:: Toshio Kuratomi <toshio@fedoraproject.org>
 '''
- 
 from fedora.client import AuthError
 from fedora.django import connection, person_by_id
 from fedora.django.auth.models import FasUser

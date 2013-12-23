@@ -3,6 +3,7 @@
 
 __all__ = ['setup_app']
 
+
 def setup_app(command, conf, vars):
     # Importing in the function to avoid pulling our whole test environment in
     # from fedora/__init__.py
@@ -35,7 +36,7 @@ def setup_app(command, conf, vars):
     permission = model.Permission()
     permission.permission_name = u'manage'
     permission.description = u'This permission gives an administrative right'\
-            ' to the bearer'
+                             ' to the bearer'
     permission.groups.append(group)
 
     model.DBSession.add(permission)
