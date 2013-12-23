@@ -18,7 +18,6 @@ from tg.configuration import AppConfig
 #import fedora.wsgi.test
 from fedora.wsgi import test
 from fedora.wsgi.test import model
-from fedora.wsgi.test.lib import app_globals, helpers 
 
 base_config = AppConfig()
 base_config.renderers = []

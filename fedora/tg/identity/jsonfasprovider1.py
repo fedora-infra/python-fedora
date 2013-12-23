@@ -2,17 +2,17 @@
 #
 # Copyright (C) 2007-2008  Red Hat, Inc.
 # This file is part of python-fedora
-# 
+#
 # python-fedora is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # python-fedora is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
@@ -41,12 +41,15 @@ import crypt
 import logging
 log = logging.getLogger('turbogears.identity.safasprovider')
 
+
 class JsonFasIdentity(BaseClient):
     '''
     Associate an identity with a person in the auth system.
     '''
     cookie_name = config.get('visit.cookie.name', 'tg-visit')
-    fas_url = config.get('fas.url', 'https://admin.fedoraproject.org/accounts/')
+    fas_url = config.get(
+        'fas.url', 'https://admin.fedoraproject.org/accounts/'
+    )
     useragent = 'JsonFasIdentity/%s' % __version__
     cache_session = False
 
@@ -54,8 +57,8 @@ class JsonFasIdentity(BaseClient):
         if user:
             self._user = user
             self._groups = frozenset(
-                    [g['name'] for g in user['approved_memberships']]
-                    )
+                [g['name'] for g in user['approved_memberships']]
+            )
         self.visit_key = visit_key
         if visit_key:
             # Set the cookie to the user's tg_visit key before requesting
@@ -65,10 +68,11 @@ class JsonFasIdentity(BaseClient):
             session_id = None
 
         debug = config.get('jsonfas.debug', False)
-        super(JsonFasIdentity, self).__init__(self.fas_url,
-                useragent=self.useragent, debug=debug,
-                username=username, password=password,
-                session_id=session_id, cache_session=self.cache_session)
+        super(JsonFasIdentity, self).__init__(
+            self.fas_url,
+            useragent=self.useragent, debug=debug,
+            username=username, password=password,
+            session_id=session_id, cache_session=self.cache_session)
 
         if self.debug:
             import inspect
@@ -96,8 +100,9 @@ class JsonFasIdentity(BaseClient):
             self.visit_key = self.session_id
             response.simple_cookie[self.cookie_name] = self.visit_key
         log.debug('Leaving jsonfas send_request')
-        return super(JsonFasIdentity, self).send_request(method,
-                req_params=req_params, auth=auth)
+        return super(JsonFasIdentity, self).send_request(
+            method,
+            req_params=req_params, auth=auth)
 
     def _get_user(self):
         '''Retrieve information about the user from cache or network.'''
@@ -132,8 +137,8 @@ class JsonFasIdentity(BaseClient):
             return None
         self._user = data['person']
         self._groups = frozenset(
-                [g['name'] for g in data['person']['approved_memberships']]
-                )
+            [g['name'] for g in data['person']['approved_memberships']]
+        )
         return self._user
     user = property(_get_user)
 
@@ -181,17 +186,20 @@ class JsonFasIdentity(BaseClient):
         # Call Account System Server logout method
         self.send_request('logout', auth=True)
 
+
 class JsonFasIdentityProvider(object):
     '''
     IdentityProvider that authenticates users against the fedora account system
     '''
     def __init__(self):
         # Default encryption algorithm is to use plain text passwords
-        algorithm = config.get('identity.saprovider.encryption_algorithm', None)
+        algorithm = config.get(
+            'identity.saprovider.encryption_algorithm', None
+        )
         # pylint: disable-msg=W0212
         # TG does this so we shouldn't get rid of it.
-        self.encrypt_password = lambda pw: \
-                                    identity._encrypt_password(algorithm, pw)
+        self.encrypt_password = lambda pw: identity._encrypt_password(
+            algorithm, pw)
 
     def create_provider_model(self):
         '''
@@ -217,8 +225,9 @@ class JsonFasIdentityProvider(object):
         # pylint: disable-msg=R0201
         # TG identity providers have this method so we can't get rid of it.
         try:
-            user = JsonFasIdentity(visit_key, username = user_name,
-                    password = password)
+            user = JsonFasIdentity(visit_key,
+                                   username=user_name,
+                                   password=password)
         except FedoraServiceError, e:
             log.warning('Error logging in %(user)s: %(error)s' % {
                 'user': to_bytes(user_name), 'error': to_bytes(e)})

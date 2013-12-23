@@ -32,6 +32,7 @@ import django
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import AnonymousUser
 
+
 class FasMiddleware(object):
     def process_request(self, request):
         # Retrieve the sessionid that the user gave, associating them with the
@@ -79,14 +80,16 @@ class FasMiddleware(object):
             else:
                 try:
                     if django.VERSION[:2] <= (1, 3):
-                        response.set_cookie('tg-visit',
-                                request.user.session_id, max_age=1814400,
-                                path='/', secure=True)
+                        response.set_cookie(
+                            'tg-visit',
+                            request.user.session_id, max_age=1814400,
+                            path='/', secure=True)
                     else:
-                        response.set_cookie('tg-visit',
-                                request.user.session_id, max_age=1814400,
-                                path='/', secure=True, httponly=True)
-                except AttributeError, e:
+                        response.set_cookie(
+                            'tg-visit',
+                            request.user.session_id, max_age=1814400,
+                            path='/', secure=True, httponly=True)
+                except AttributeError:
                     # We expect that request.user.session_id won't be set
                     # if the user is logging in with a non-FAS account
                     # (ie: Django local auth).

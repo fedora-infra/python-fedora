@@ -3,6 +3,7 @@ from tg import tmpl_context
 from pylons.i18n import _
 from repoze.what import predicates
 
+
 class BaseController(TGController):
 
     def __call__(self, environ, start_response):
@@ -41,7 +42,8 @@ class RootController(BaseController):
         """
         if not request.identity:
             login_counter = request.environ['repoze.who.logins'] + 1
-            redirect(url('/login', came_from=came_from, __logins=login_counter))
+            redirect(
+                url('/login', came_from=came_from, __logins=login_counter))
         userid = request.identity['repoze.who.userid']
         flash(_('Welcome back, %s!') % userid)
         redirect(came_from)

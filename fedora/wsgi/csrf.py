@@ -3,17 +3,17 @@
 #
 # Copyright (C) 2008-2011  Red Hat, Inc.
 # This file is part of python-fedora
-# 
+#
 # python-fedora is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # python-fedora is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
@@ -59,8 +59,8 @@ class CSRFProtectionMiddleware(object):
     '''
     CSRF Protection WSGI Middleware.
 
-    A layer of WSGI middleware that is responsible for making sure authenticated
-    requests originated from the user inside of the app's domain
+    A layer of WSGI middleware that is responsible for making sure
+    authenticated requests originated from the user inside of the app's domain
     and not a malicious website.
 
     This middleware works with the :mod:`repoze.who` middleware, and requires
@@ -122,7 +122,7 @@ class CSRFProtectionMiddleware(object):
         for key in self.clear_env:
             if key in environ:
                 log.debug('Deleting %(key)s from environ' %
-                    {'key': to_bytes(key)})
+                          {'key': to_bytes(key)})
                 del(environ[key])
 
     def __call__(self, environ, start_response):
@@ -135,7 +135,7 @@ class CSRFProtectionMiddleware(object):
         '''
         request = Request(environ)
         log.debug('CSRFProtectionMiddleware(%(r_path)s)' %
-                {'r_path': to_bytes(request.path)})
+                  {'r_path': to_bytes(request.path)})
 
         token = environ.get('repoze.who.identity', {}).get(self.csrf_token_id)
         csrf_token = environ.get(self.token_env)
@@ -153,22 +153,23 @@ class CSRFProtectionMiddleware(object):
                     environ['repoze.who.logins'] = 0
                 if csrf_token:
                     log.warning('Invalid CSRF token.  User supplied'
-                            ' (%(u_token)s) does not match what\'s in our'
-                            ' environ (%(e_token)s)' %
-                            {'u_token': to_bytes(csrf_token),
-                            'e_token': to_bytes(token)})
+                                ' (%(u_token)s) does not match what\'s in our'
+                                ' environ (%(e_token)s)' %
+                                {'u_token': to_bytes(csrf_token),
+                                 'e_token': to_bytes(token)})
 
         response = request.get_response(self.application)
 
         if environ.get(self.auth_state):
             log.debug('CSRF_AUTH_STATE; rewriting headers')
             token = environ.get('repoze.who.identity', {})\
-                    .get(self.csrf_token_id)
+                           .get(self.csrf_token_id)
 
-            loc = update_qs(response.location, {self.csrf_token_id: str(token)})
+            loc = update_qs(
+                response.location, {self.csrf_token_id: str(token)})
             response.location = loc
             log.debug('response.location = %(r_loc)s' %
-                    {'r_loc': to_bytes(response.location)})
+                      {'r_loc': to_bytes(response.location)})
             environ[self.auth_state] = None
 
         return response(environ, start_response)
@@ -243,13 +244,13 @@ class CSRFMetadataProvider(object):
     def add_metadata(self, environ, identity):
         request = Request(environ)
         log.debug('CSRFMetadataProvider.add_metadata(%(r_path)s)'
-                % {'r_path': to_bytes(request.path)})
+                  % {'r_path': to_bytes(request.path)})
 
         session_id = environ.get(self.auth_session_id)
         if not session_id:
             session_id = request.cookies.get(self.session_cookie)
         log.debug('session_id = %(s_id)r' % {'s_id':
-                to_bytes(session_id)})
+                                             to_bytes(session_id)})
 
         if session_id and session_id != 'Set-Cookie:':
             environ[self.auth_session_id] = session_id
@@ -269,23 +270,23 @@ class CSRFMetadataProvider(object):
                 # This occurs during login in some application configurations
                 if isinstance(app, HTTPFound) and environ.get(self.auth_state):
                     log.debug('Got HTTPFound(302) from'
-                        ' repoze.who.application')
+                              ' repoze.who.application')
                     # What possessed people to make this a string or
                     # a function?
                     location = app.location
                     if hasattr(location, '__call__'):
                         location = location()
                     loc = update_qs(location, {self.csrf_token_id:
-                        str(token)})
+                                               str(token)})
 
                     headers = app.headers.items()
                     replace_header(headers, 'location', loc)
                     app.headers = ResponseHeaders(headers)
-                    log.debug('Altered headers: %(headers)s' % {'headers':
-                        to_bytes(app.headers)})
+                    log.debug('Altered headers: %(headers)s' % {
+                        'headers': to_bytes(app.headers)})
         else:
             log.warning('Invalid session cookie %(s_id)r, not setting CSRF'
-                ' token!' % {'s_id': to_bytes(session_id)})
+                        ' token!' % {'s_id': to_bytes(session_id)})
 
     def extract_csrf_token(self, request):
         '''Extract and remove the CSRF token from a given
@@ -295,7 +296,7 @@ class CSRFMetadataProvider(object):
 
         if self.csrf_token_id in request.GET:
             log.debug("%(token)s in GET" % {'token':
-                to_bytes(self.csrf_token_id)})
+                                            to_bytes(self.csrf_token_id)})
             csrf_token = request.GET[self.csrf_token_id]
             del(request.GET[self.csrf_token_id])
             request.query_string = '&'.join(['%s=%s' % (k, v) for k, v in
@@ -303,7 +304,7 @@ class CSRFMetadataProvider(object):
 
         if self.csrf_token_id in request.POST:
             log.debug("%(token)s in POST" % {'token':
-                to_bytes(self.csrf_token_id)})
+                                             to_bytes(self.csrf_token_id)})
             csrf_token = request.POST[self.csrf_token_id]
             del(request.POST[self.csrf_token_id])
 

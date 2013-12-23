@@ -30,7 +30,9 @@ from nose.tools import eq_
 from fedora.wsgi.test import model
 from fedora.wsgi.test.testapp import make_app
 
+here = os.path.dirname(__file__)
 __all__ = ['make_app', 'TestTG2App', 'setup_db', 'teardown_db']
+
 
 def setup_db():
     """Method used to build a database"""
@@ -38,17 +40,21 @@ def setup_db():
     model.init_model(engine)
     model.metadata.create_all(engine)
 
+
 def teardown_db():
     """Method used to destroy a database"""
     engine = tg_config['pylons.app_globals'].sa_engine
     model.metadata.drop_all(engine)
 
+
 class TestTG2App(object):
     application_under_test = 'main'
 
     def setUp(self):
-        wsgiapp = loadapp('config:test.ini#%s' % self.application_under_test,
-                          relative_to='.')
+        fpath = os.path.join(here, 'test.ini')
+        wsgiapp = loadapp(
+            'config:%s#%s' % (fpath, self.application_under_test),
+        )
         self.app = TestApp(wsgiapp)
 
         # Setting it up:
