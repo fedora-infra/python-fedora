@@ -11,31 +11,49 @@ except ImportError:
 
 from tg import config
 from sqlalchemy import Table, ForeignKey, Column
-from sqlalchemy.types import String, Unicode, UnicodeText, Integer, DateTime, \
-                             Boolean, Float
-from sqlalchemy.orm import relation, backref, synonym
+from sqlalchemy.types import (
+    Unicode,
+    Integer,
+    DateTime,
+)
+from sqlalchemy.orm import relation, synonym
 
 from fedora.wsgi.test.model import DeclarativeBase, metadata, DBSession
 
 # This is the association table for the many-to-many relationship between
 # groups and permissions.
-group_permission_table = Table('tg_group_permission', metadata,
-    Column('group_id', Integer, ForeignKey('tg_group.group_id',
-        onupdate="CASCADE", ondelete="CASCADE")),
-    Column('permission_id', Integer, ForeignKey('tg_permission.permission_id',
-        onupdate="CASCADE", ondelete="CASCADE"))
+group_permission_table = Table(
+    'tg_group_permission',
+    metadata,
+    Column(
+        'group_id', Integer,
+        ForeignKey(
+            'tg_group.group_id',
+            onupdate="CASCADE", ondelete="CASCADE"
+        )
+    ),
+    Column(
+        'permission_id', Integer,
+        ForeignKey('tg_permission.permission_id',
+                   onupdate="CASCADE", ondelete="CASCADE")
+    )
 )
 
 # This is the association table for the many-to-many relationship between
 # groups and members - this is, the memberships.
-user_group_table = Table('tg_user_group', metadata,
-    Column('user_id', Integer, ForeignKey('tg_user.user_id',
-        onupdate="CASCADE", ondelete="CASCADE")),
-    Column('group_id', Integer, ForeignKey('tg_group.group_id',
-        onupdate="CASCADE", ondelete="CASCADE"))
+user_group_table = Table(
+    'tg_user_group',
+    metadata,
+    Column('user_id', Integer,
+           ForeignKey('tg_user.user_id',
+                      onupdate="CASCADE", ondelete="CASCADE")),
+    Column('group_id', Integer,
+           ForeignKey('tg_group.group_id',
+                      onupdate="CASCADE", ondelete="CASCADE"))
 )
 
 # auth model
+
 
 class Group(DeclarativeBase):
     """An ultra-simple group definition.
@@ -69,15 +87,15 @@ class User(DeclarativeBase):
     user_id = Column(Integer, autoincrement=True, primary_key=True)
     user_name = Column(Unicode(16), unique=True, nullable=False)
     email_address = Column(Unicode(255), unique=True, nullable=False,
-                           info={'rum': {'field':'Email'}})
+                           info={'rum': {'field': 'Email'}})
     display_name = Column(Unicode(255))
     _password = Column('password', Unicode(80),
-                       info={'rum': {'field':'Password'}})
+                       info={'rum': {'field': 'Password'}})
     created = Column(DateTime, default=datetime.now)
 
     def __repr__(self):
         return '<User: email="%s", display name="%s">' % (
-                self.email_address, self.display_name)
+            self.email_address, self.display_name)
 
     def __unicode__(self):
         return self.display_name or self.user_name
@@ -94,14 +112,14 @@ class User(DeclarativeBase):
         """A class method that can be used to search users
         based on their email addresses since it is unique.
         """
-        return DBSession.query(cls).filter(cls.email_address==email).first()
+        return DBSession.query(cls).filter(cls.email_address == email).first()
 
     @classmethod
     def by_user_name(cls, username):
         """A class method that permits to search users
         based on their user_name attribute.
         """
-        return DBSession.query(cls).filter(cls.user_name==username).first()
+        return DBSession.query(cls).filter(cls.user_name == username).first()
 
     def _set_password(self, password):
         """encrypts password on the fly using the encryption
@@ -177,7 +195,8 @@ class User(DeclarativeBase):
             return self.password[40:] == hashed_pass.hexdigest()
 
         else:
-            return self.password == self.__encrypt_password(algorithm, password)
+            encrypted_pw = self.__encrypt_password(algorithm, password)
+            return self.password == encrypted_pw
 
 
 class Permission(DeclarativeBase):
