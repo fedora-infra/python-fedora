@@ -34,7 +34,7 @@ setup(
     install_requires=['bunch', 'kitchen', 'requests'],
     extras_require = {
         'tg' : ['TurboGears >= 1.0.4', 'SQLAlchemy', 'decorator'],
-        'wsgi': ['repoze.who', 'Beaker', 'Paste'],
+        'wsgi': ['repoze.who', 'repoze.who-friendlyform', 'Beaker', 'Paste'],
         'flask': ['Flask', 'Flask_WTF', 'python-openid', 'python-openid-teams'],
         },
     entry_points = {
