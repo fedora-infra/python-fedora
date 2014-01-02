@@ -67,14 +67,15 @@ class FedoraPeopleWidget(Widget):
 class FedoraMaintainerWidget(Widget):
     '''Widget to show the packages a maintainer owns.
     '''
+    url = "https://admin.fedoraproject.org/pkgdb/packages/name/${pkg['name']}"
     template = """
        <table xmlns:py="http://purl.org/kid/ns#"
          class="widget FedoraMaintainerWidget" py:attrs="{'id': widget_id}">
           <tr py:for="pkg in packages[:5]">
-            <td><a href="https://admin.fedoraproject.org/pkgdb/packages/name/${pkg['name']}">${pkg['name']}</a></td>
+            <td><a href="%s">${pkg['name']}</a></td>
           </tr>
        </table>
-    """
+    """ % url
     params = ["widget_id", "packages"]
 
     def __init__(self, username, widget_id=None):
