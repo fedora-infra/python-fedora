@@ -34,10 +34,9 @@ from fedora.tg2.utils import *  # pylint:disable-msg=W0614,W0401
 
 import warnings
 
-warnings.warn(
-    'fedora.tg.tg2utils is deprecated.  Switch to'
-    ' fedora.tg2.utils instead.  This file will disappear in 0.4',
-    DeprecationWarning, stacklevel=2)
+warnings.warn('fedora.tg.tg2utils is deprecated.  Switch to'
+              ' fedora.tg2.utils instead.  This file will disappear in 0.4',
+              DeprecationWarning, stacklevel=2)
 
 __all__ = ('add_fas_auth_middleware', 'enable_csrf', 'fedora_template',
            'tg_url', 'url')

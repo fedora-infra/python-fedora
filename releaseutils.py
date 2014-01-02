@@ -22,8 +22,9 @@ import fedora.release
 
 
 #
-# Helper function
+# Helper functions
 #
+
 @contextmanager
 def pushd(dirname):
     '''Contextmanager so that we can switch directories that the script is
