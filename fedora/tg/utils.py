@@ -71,9 +71,9 @@ def url(tgpath, tgparams=None, **kwargs):
         :class:`turbogears.controllers.RootController`.
     :kwarg tgparams: See param: ``kwargs``
     :kwarg kwargs: Query parameters for the URL can be passed in as a
-    dictionary in the second argument *or* as keyword parameters.
-    Values which are a list or a tuple are used to create multiple key-value
-    pairs.
+        dictionary in the second argument *or* as keyword parameters.
+        Values which are a list or a tuple are used to create multiple
+        key-value pairs.
     :returns: The changed path
 
     .. versionadded:: 0.3.10
@@ -169,7 +169,7 @@ def tg_absolute_url(tgpath='/', params=None, **kw):
     The host name is determined this way:
 
     * If the config setting 'tg.url_domain' is set and non-null, use this
-    value.
+      value.
     * Else, if the 'base_url_filter.use_x_forwarded_host' config setting is
       True, use the value from the 'Host' or 'X-Forwarded-Host' request header.
     * Else, if config setting 'base_url_filter.on' is True and

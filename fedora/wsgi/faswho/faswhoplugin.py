@@ -66,8 +66,7 @@ def fas_request_classifier(environ):
     if classifier == 'browser':
         request = webob.Request(environ)
         if not request.accept.best_match(
-                ['application/xhtml+xml', 'text/html']
-        ):
+                ['application/xhtml+xml', 'text/html']):
             classifier = 'app'
     return classifier
 
