@@ -214,8 +214,7 @@ class BodhiClient(BaseClient):
         fedora = file('/etc/fedora-release').readlines()[0].split()[2]
         tag = 'f%s-updates-testing' % fedora
         builds = self.get_koji_session(
-            login=False
-        ).listTagged(tag, latest=True)
+            login=False).listTagged(tag, latest=True)
         for build in builds:
             pkgs = yum.rpmdb.searchNevra(name=build['name'],
                                          ver=build['version'],

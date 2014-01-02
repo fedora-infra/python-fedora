@@ -101,8 +101,7 @@ class JsonFasIdentity(BaseClient):
             response.simple_cookie[self.cookie_name] = self.visit_key
         log.debug('Leaving jsonfas send_request')
         return super(JsonFasIdentity, self).send_request(
-            method,
-            req_params=req_params, auth=auth)
+            method, req_params=req_params, auth=auth)
 
     def _get_user(self):
         '''Retrieve information about the user from cache or network.'''

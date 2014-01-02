@@ -98,10 +98,8 @@ class FasUserManager(authmodels.UserManager):
             fas_groups.append(group['id'])
 
         # This user has been added to one or more FAS groups
-        for group in (
-            g for g in user['approved_memberships']
-                if g['id'] not in known_groups
-        ):
+        for group in (g for g in user['approved_memberships']
+                      if g['id'] not in known_groups):
             newgroup = _new_group(group)
             u.groups.add(newgroup)
 

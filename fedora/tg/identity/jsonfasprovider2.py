@@ -353,7 +353,7 @@ class JsonFasIdentity(BaseClient):
         '''Send a request so that we associate the visit_cookie with the user
 
         :kwarg using_ssl: Boolean that tells whether ssl was used to
-        authenticate
+            authenticate
         '''
         if not using_ssl:
             # This is only of value if we have username and password
