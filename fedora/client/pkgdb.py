@@ -239,8 +239,10 @@ class PackageDB(BaseClient):
                 raise AppError(
                     name='PackageDBError',
                     message='Unable to save all information for'
-                    ' %(pkg)s: %(msg)s' % {'pkg': to_bytes(pkg), 'msg':
-                                           to_bytes(response['message'])})
+                            ' %(pkg)s: %(msg)s' % {
+                                'pkg': to_bytes(pkg),
+                                'msg': to_bytes(response['message'])
+                            })
 
     def edit_package(self, pkg, owner=None, description=None,
                      branches=None, cc_list=None, comaintainers=None,
@@ -297,9 +299,9 @@ class PackageDB(BaseClient):
         if 'status' in response and not response['status']:
             raise AppError(
                 name='PackageDBError', message='Unable to save'
-                ' all information for %(pkg)s: %(msg)s' %
-                {'pkg': to_bytes(pkg),
-                 'msg': to_bytes(response['message'])})
+                ' all information for %(pkg)s: %(msg)s' % {
+                    'pkg': to_bytes(pkg),
+                    'msg': to_bytes(response['message'])})
 
     def canonical_branch_name(self, branch):
         '''Change a branch abbreviation into a name and version.
@@ -344,7 +346,7 @@ class PackageDB(BaseClient):
         '''Retrieve the ownership information for a package.
 
         :arg package: Name of the package to retrieve package information
-        about.
+            about.
         :kwarg collctn_name: Limit the returned information to this collection
             ('Fedora', 'Fedora EPEL', Fedora OLPC', etc)
         :kwarg collctn_ver: If collection is specified, further limit to this
@@ -357,7 +359,7 @@ class PackageDB(BaseClient):
 
         .. versionchanged:: 0.3.17
             Rename collection and collection_ver to collctn_name and
-        collctn_ver
+            collctn_ver
         .. versionchanged:: 0.3.21
             Return Bunch instead of DictContainer
         '''
@@ -510,7 +512,7 @@ class PackageDB(BaseClient):
         params = {'packages_tgp_limit': '0'}
         if collctn:
             try:
-                self.branches[collctn]['id']
+                self.branches[collctn]
             except KeyError:
                 raise PackageDBError(
                     'Collection shortname %(collctn)s'

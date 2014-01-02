@@ -46,11 +46,11 @@ class BaseClient(ProxyClient):
     '''
         A client for interacting with web services.
     '''
-    def __init__(
-            self, base_url, useragent=None, debug=False, insecure=False,
-            username=None, password=None, httpauth=None, session_cookie=None,
-            session_id=None, session_name='tg-visit', cache_session=True,
-            retries=None, timeout=None):
+    def __init__(self, base_url, useragent=None, debug=False, insecure=False,
+                 username=None, password=None, httpauth=None,
+                 session_cookie=None, session_id=None,
+                 session_name='tg-visit', cache_session=True,
+                 retries=None, timeout=None):
         '''
         :arg base_url: Base of every URL used to contact the server
         :kwarg useragent: Useragent string to use.  If not given, default to
@@ -321,8 +321,8 @@ class BaseClient(ProxyClient):
                 # If we have extra args, raise an error
                 if arg != 'input':
                     raise TypeError(
-                        'send_request() got an unexpected'
-                        ' keyword argument "%(arg)s"' % {'arg': to_bytes(arg)})
+                        'send_request() got an unexpected keyword'
+                        ' argument "%(arg)s"' % {'arg': to_bytes(arg)})
             if req_params:
                 # We don't want to allow input if req_params was already given
                 raise TypeError('send_request() got an unexpected keyword'
@@ -360,13 +360,12 @@ class BaseClient(ProxyClient):
 
         # Remove empty params
         # pylint: disable-msg=W0104
-        [auth_params.__delitem__(key) for key, value in auth_params.items()
-         if not value]
+        [auth_params.__delitem__(key)
+            for key, value in auth_params.items() if not value]
         # pylint: enable-msg=W0104
 
         session_id, data = super(BaseClient, self).send_request(
-            method,
-            req_params=req_params, file_params=file_params,
+            method, req_params=req_params, file_params=file_params,
             auth_params=auth_params, retries=retries, timeout=timeout)
         # In case the server returned a new session id to us
         if self.session_id != session_id:

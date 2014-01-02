@@ -105,7 +105,7 @@ class FasProxyClient(ProxyClient):
         '''Verify that a session is active.
 
         :arg session_id: session_id to verify is currently associated with a
-        logged in user
+            logged in user
         :returns: True if the session_id is valid.  False otherwise.
         '''
         try:

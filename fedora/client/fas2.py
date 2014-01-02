@@ -130,8 +130,9 @@ class AccountSystem(BaseClient):
             on the filesystem between runs.
         '''
         if 'useragent' not in kwargs:
-            kwargs['useragent'] = 'Fedora Account System Client/%s' \
-                                  % __version__
+            kwargs['useragent'] = \
+                'Fedora Account System Client/%s' % __version__
+
         super(AccountSystem, self).__init__(base_url, *args, **kwargs)
         # We need a single proxy for the class to verify username/passwords
         # against.
@@ -335,8 +336,7 @@ class AccountSystem(BaseClient):
                 urllib.quote(name),
                 urllib.quote(display_name),
                 urllib.quote(owner),
-                urllib.quote(group_type)
-            ),
+                urllib.quote(group_type)),
             req_params=req_params,
             auth=True
         )
@@ -390,8 +390,10 @@ class AccountSystem(BaseClient):
         request = self.send_request('/group/dump/%s' %
                                     urllib.quote(groupname), auth=True)
 
-        return [Bunch(username=user[0], role_type=user[3])
-                for user in request['people']]
+        return map(
+            lambda u: Bunch(username=u[0], role_type=u[3]),
+            request['people']
+        )
 
     ### People ###
 
@@ -542,8 +544,9 @@ class AccountSystem(BaseClient):
             })
 
             hash = md5(email).hexdigest()
-            url_format = "http://www.gravatar.com/avatar/%s?%s"
-            return url_format % (hash, query_string)
+
+            return "http://www.gravatar.com/avatar/%s?%s" % (
+                hash, query_string)
 
     def gravatar_url(self, *args, **kwargs):
         """ *Deprecated* - Use avatar_url.
