@@ -86,8 +86,7 @@ class AppError(FedoraServiceError):
 
     def __str__(self):
         return 'AppError(%s, %s, extras=%s)' % (
-            self.name, self.message,
-            self.extras)
+            self.name, self.message, self.extras)
 
 
 # Backwards compatibility

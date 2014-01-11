@@ -392,10 +392,8 @@ class AccountSystem(BaseClient):
         request = self.send_request('/group/dump/%s' %
                                     urllib.quote(groupname), auth=True)
 
-        return map(
-            lambda u: Bunch(username=u[0], role_type=u[3]),
-            request['people']
-        )
+        return [Bunch(username=user[0],
+                      role_type=user[3]) for user in request['people']]
 
     ### People ###
 

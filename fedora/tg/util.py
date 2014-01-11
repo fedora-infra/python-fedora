@@ -37,10 +37,10 @@ from fedora.tg.tg1utils import *  # pylint:disable-msg=W0614,W0401
 import warnings
 
 warnings.warn('fedora.tg.util is deprecated.  Switch to one of these'
-              ' instead:'
-              '   TG1 apps: fedora.tg.utils'
-              '   TG2 apps: fedora.tg2.utils.  This file will disappear'
-              '             in 0.4',
+              ' instead:\n'
+              '   TG1 apps: fedora.tg.utils\n'
+              '   TG2 apps: fedora.tg2.utils.\n'
+              'This file will disappear in 0.4',
               DeprecationWarning, stacklevel=2)
 
 __all__ = ('add_custom_stdvars', 'enable_csrf', 'fedora_template',
