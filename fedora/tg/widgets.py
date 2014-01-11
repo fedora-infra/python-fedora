@@ -2,17 +2,17 @@
 #
 # Copyright (C) 2007  Red Hat, Inc.
 # This file is part of python-fedora
-# 
+#
 # python-fedora is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # python-fedora is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
@@ -32,6 +32,7 @@ except ImportError:
 
 from bugzilla import Bugzilla
 from turbogears.widgets import Widget
+
 
 class FedoraPeopleWidget(Widget):
     '''Widget to display the Fedora People RSS Feed.
@@ -54,35 +55,40 @@ class FedoraPeopleWidget(Widget):
         feed = feedparser.parse('http://planet.fedoraproject.org/rss20.xml')
         for entry in feed['entries']:
             self.entries.append({
-                'link'  : entry['link'],
-                'title' : entry['title'],
-                'image' : regex.match(entry['summary']).group(1)
+                'link': entry['link'],
+                'title': entry['title'],
+                'image': regex.match(entry['summary']).group(1)
             })
 
     def __json__(self):
         return {'id': self.widget_id, 'entries': self.entries}
 
+
 class FedoraMaintainerWidget(Widget):
     '''Widget to show the packages a maintainer owns.
     '''
+    url = "https://admin.fedoraproject.org/pkgdb/packages/name/${pkg['name']}"
     template = """
        <table xmlns:py="http://purl.org/kid/ns#"
          class="widget FedoraMaintainerWidget" py:attrs="{'id': widget_id}">
           <tr py:for="pkg in packages[:5]">
-            <td><a href="https://admin.fedoraproject.org/pkgdb/packages/name/${pkg['name']}">${pkg['name']}</a></td>
+            <td><a href="%s">${pkg['name']}</a></td>
           </tr>
        </table>
-    """
+    """ % url
     params = ["widget_id", "packages"]
 
     def __init__(self, username, widget_id=None):
         self.widget_id = widget_id
-        page = urllib2.urlopen('https://admin.fedoraproject.org/pkgdb/' \
-                'users/packages/%s/?tg_format=json' % username)
+        page = urllib2.urlopen(
+            'https://admin.fedoraproject.org/pkgdb/'
+            'users/packages/%s/?tg_format=json' % username
+        )
         self.packages = json.load(page)['pkgs']
 
     def __json__(self):
         return {'id': self.widget_id, 'packages': self.packages}
+
 
 class BugzillaWidget(Widget):
     '''Widget to show the stream of bugs submitted against a package.'''
@@ -105,9 +111,9 @@ class BugzillaWidget(Widget):
         # :E1101: Bugzilla class monkey patches itself with methods like
         # query.
         self.bugs = bugzilla.query({
-            'product'           : 'Fedora',
-            'email1'            : email,
-            'emailassigned_to1' : True
+            'product': 'Fedora',
+            'email1': email,
+            'emailassigned_to1': True
         })[:5]
         # pylint: enable-msg=E1101
 

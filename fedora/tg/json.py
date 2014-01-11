@@ -2,17 +2,17 @@
 #
 # Copyright (C) 2007-2008  Red Hat, Inc.
 # This file is part of python-fedora
-# 
+#
 # python-fedora is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # python-fedora is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
@@ -42,6 +42,7 @@ import sqlalchemy.orm
 import sqlalchemy.ext.associationproxy
 import sqlalchemy.engine.base
 from turbojson.jsonify import jsonify
+
 
 class SABase(object):
     '''Base class for SQLAlchemy mapped objects.
@@ -102,7 +103,7 @@ class SABase(object):
             try:
                 # pylint: disable-msg=E1101
                 props[field].json_props = self.json_props
-            except AttributeError: # pylint: disable-msg=W0704
+            except AttributeError:  # pylint: disable-msg=W0704
                 # :W0704: Certain types of objects are terminal and won't
                 #   allow setting json_props
                 pass
@@ -112,10 +113,11 @@ class SABase(object):
             # or dict but needs special handling needs to be specified
             # expicitly here.  Using the @jsonify.when() decorator won't work.
             if isinstance(props[field],
-                    sqlalchemy.orm.collections.InstrumentedList):
+                          sqlalchemy.orm.collections.InstrumentedList):
                 props[field] = jsonify_salist(props[field])
 
         return props
+
 
 @jsonify.when('isinstance(obj, sqlalchemy.orm.query.Query)')
 def jsonify_sa_select_results(obj):
@@ -133,6 +135,7 @@ def jsonify_sa_select_results(obj):
         for element in obj:
             element.json_props = obj.json_props
     return list(obj)
+
 
 # Note: due to the way simplejson works, InstrumentedList has to be taken care
 # of explicitly in SABase's __json__() method.  (This is true of any object
@@ -154,7 +157,8 @@ def jsonify_salist(obj):
     if 'json_props' in obj.__dict__:
         for element in obj:
             element.json_props = obj.json_props
-    return [jsonify(element) for element in  obj]
+    return [jsonify(element) for element in obj]
+
 
 @jsonify.when('''(
         isinstance(obj, sqlalchemy.engine.ResultProxy)
@@ -173,6 +177,7 @@ def jsonify_saresult(obj):
         for element in obj:
             element.json_props = obj.json_props
     return [list(row) for row in obj]
+
 
 @jsonify.when('''(isinstance(obj, set))''')
 def jsonify_set(obj):

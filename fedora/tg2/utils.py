@@ -2,17 +2,17 @@
 #
 # Copyright (C) 2009-2011  Red Hat, Inc.
 # This file is part of python-fedora
-# 
+#
 # python-fedora is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # python-fedora is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
@@ -51,6 +51,7 @@ tg_url = tg.url
 ### FIXME: Need jsonify_validation_errors, json_or_redirect, request_format
 # To have all of the functions that exist for TG1
 
+
 def url(*args, **kwargs):
     '''Compute URL
 
@@ -80,8 +81,9 @@ def url(*args, **kwargs):
             csrf_token = sha_constructor(session_id).hexdigest()
     if csrf_token:
         new_url = update_qs(new_url, {'_csrf_token': csrf_token},
-                overwrite=True)
+                            overwrite=True)
     return new_url
+
 
 def fedora_template(template, template_type='mako', dotted_lookup=True):
     '''Function to return the path to a template.
@@ -99,8 +101,11 @@ def fedora_template(template, template_type='mako', dotted_lookup=True):
     '''
     # :E1101: pkg_resources does have resource_filename
     # pylint: disable-msg=E1101
-    resource = pkg_resources.resource_filename('fedora', os.path.join('tg2',
-        'templates', template_type, template))
+    resource = pkg_resources.resource_filename(
+        'fedora', os.path.join('tg2',
+                               'templates', template_type, template)
+    )
+
     # pylint: enable-msg=E1101
 
     if dotted_lookup:
@@ -121,6 +126,7 @@ def fedora_template(template, template_type='mako', dotted_lookup=True):
         resource = resource.translate({ord(u'/'): u'.'})
 
     return resource
+
 
 def add_fas_auth_middleware(self, app, *args):
     ''' Add our FAS authentication middleware.
@@ -154,7 +160,7 @@ def add_fas_auth_middleware(self, app, *args):
         from bunch import Bunch
         class MyAppConfig(AppConfig):
             fas_auth = Bunch(
-                    fas_url='https://fakefas.fedoraproject.org/accounts', 
+                    fas_url='https://fakefas.fedoraproject.org/accounts',
                     insecure=True, login_form_url='/alternate/login')
             add_auth_middleware = add_fas_auth_middleware
 
@@ -243,7 +249,7 @@ def enable_csrf():
             var_provider().update({'fedora_template': fedora_template})
     else:
         config['variable_provider'] = lambda: {'fedora_template':
-                fedora_template}
+                                               fedora_template}
 
 __all__ = ('add_fas_auth_middleware', 'enable_csrf', 'fedora_template',
-        'tg_url', 'url')
+           'tg_url', 'url')

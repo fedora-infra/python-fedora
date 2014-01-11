@@ -30,6 +30,7 @@ import warnings
 
 from bunch import Bunch
 
+
 class FedoraClientError(Exception):
     '''Base Exception for problems which originate within the Clients.
 
@@ -42,6 +43,7 @@ class FedoraClientError(Exception):
     '''
     pass
 
+
 class FedoraServiceError(Exception):
     '''Base Exception for any problem talking with the Service.
 
@@ -50,6 +52,7 @@ class FedoraServiceError(Exception):
     error returned from the server itself.
     '''
     pass
+
 
 class ServerError(FedoraServiceError):
     '''Unable to talk to the server properly.
@@ -67,9 +70,11 @@ class ServerError(FedoraServiceError):
     def __str__(self):
         return 'ServerError(%s, %s, %s)' % (self.filename, self.code, self.msg)
 
+
 class AuthError(FedoraServiceError):
     '''Error during authentication.  For instance, invalid password.'''
     pass
+
 
 class AppError(FedoraServiceError):
     '''Error condition that the server is passing back to the client.'''
@@ -80,13 +85,15 @@ class AppError(FedoraServiceError):
         self.extras = extras
 
     def __str__(self):
-        return 'AppError(%s, %s, extras=%s)' % (self.name, self.message,
-                self.extras)
+        return 'AppError(%s, %s, extras=%s)' % (
+            self.name, self.message, self.extras)
+
 
 # Backwards compatibility
 class DictContainer(Bunch):
     def __init__(self, *args, **kwargs):
-        warnings.warn('DictContainer is deprecated.  Use the Bunch class'
+        warnings.warn(
+            'DictContainer is deprecated.  Use the Bunch class'
             ' from python-bunch instead.', DeprecationWarning, stacklevel=2)
         Bunch.__init__(self, *args, **kwargs)
 
@@ -102,7 +109,7 @@ from fedora.client.wiki import Wiki
 # pylint: enable-msg=W0611
 
 __all__ = ('FedoraServiceError', 'ServerError', 'AuthError', 'AppError',
-        'FedoraClientError', 'DictContainer',
-        'FASError', 'CLAError', 'BodhiClientException', 'PackageDBError',
-        'ProxyClient', 'FasProxyClient', 'BaseClient', 'AccountSystem',
-        'PackageDB', 'BodhiClient', 'Wiki')
+           'FedoraClientError', 'DictContainer',
+           'FASError', 'CLAError', 'BodhiClientException', 'PackageDBError',
+           'ProxyClient', 'FasProxyClient', 'BaseClient', 'AccountSystem',
+           'PackageDB', 'BodhiClient', 'Wiki')

@@ -32,11 +32,12 @@ from fedora import __version__
 import logging
 log = logging.getLogger(__name__)
 
+
 class FasProxyClient(ProxyClient):
     '''A threadsafe client to the Fedora Account System.'''
 
     def __init__(self, base_url='https://admin.fedoraproject.org/accounts/',
-            *args, **kwargs):
+                 *args, **kwargs):
         '''A threadsafe client to the Fedora Account System.
 
         This class is optimized to proxy multiple users to the account system.
@@ -65,7 +66,7 @@ class FasProxyClient(ProxyClient):
             # No need to allow this in FasProxyClient as it's deprecated in
             # ProxyClient
             raise TypeError('FasProxyClient() got an unexpected keyword'
-                ' argument \'session_as_cookie\'')
+                            ' argument \'session_as_cookie\'')
         kwargs['session_as_cookie'] = False
         super(FasProxyClient, self).__init__(base_url, *args, **kwargs)
 
@@ -80,8 +81,10 @@ class FasProxyClient(ProxyClient):
             :meth:`fedora.client.proxyclient.ProxyClient.get_user_info`
         :raises AuthError: if the username and password do not work
         '''
-        return self.send_request('/login',
-                auth_params={'username': username, 'password':password})
+        return self.send_request(
+            '/login',
+            auth_params={'username': username, 'password': password}
+        )
 
     def logout(self, session_id):
         '''Logout of the Account System
@@ -101,7 +104,8 @@ class FasProxyClient(ProxyClient):
     def verify_session(self, session_id):
         '''Verify that a session is active.
 
-        :arg session_id: session_id to verify is currently associated with a logged in user
+        :arg session_id: session_id to verify is currently associated with a
+            logged in user
         :returns: True if the session_id is valid.  False otherwise.
         '''
         try:
@@ -120,8 +124,9 @@ class FasProxyClient(ProxyClient):
         :returns: True if the username/password are valid.  False otherwise.
         '''
         try:
-            self.send_request('/home', auth_params={'username': username,
-                'password': password})
+            self.send_request('/home',
+                              auth_params={'username': username,
+                                           'password': password})
         except AuthError:
             return False
         except:
@@ -155,21 +160,23 @@ class FasProxyClient(ProxyClient):
         :raises AuthError: if the auth_params do not give access
         '''
         request = self.send_request('/json/person_by_id',
-                req_params={'person_id': person_id}, auth_params=auth_params)
+                                    req_params={'person_id': person_id},
+                                    auth_params=auth_params)
         if request[1]['success']:
-            # In a devel version of FAS, membership info was returned separately
+            # In a devel version of FAS, membership info was returned
+            # separately
             # This has been corrected in a later version
             # Can remove this code at some point
             if 'approved' in request[1]:
                 request[1]['person']['approved_memberships'] = \
-                        request[1]['approved']
+                    request[1]['approved']
             if 'unapproved' in request[1]:
                 request[1]['person']['unapproved_memberships'] = \
-                        request[1]['unapproved']
+                    request[1]['unapproved']
             return (request[0], request[1]['person'])
         else:
             raise AppError(name='Generic AppError',
-                    message=request[1]['tg_flash'])
+                           message=request[1]['tg_flash'])
 
     def group_list(self, auth_params):
         '''Retrieve a list of groups

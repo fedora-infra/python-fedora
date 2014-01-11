@@ -5,8 +5,8 @@ than 2.5.
 import warnings
 
 warnings.warn('fedora.pycompat25.defaultdict is deprecated, use'
-    ' kitchen.pycompat25.collections.defaultdict instead',
-    DeprecationWarning, stacklevel=2)
+              ' kitchen.pycompat25.collections.defaultdict instead',
+              DeprecationWarning, stacklevel=2)
 
 from kitchen.pycompat25.collections import defaultdict
 

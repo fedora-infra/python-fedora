@@ -2,17 +2,17 @@
 #
 # Copyright 2007-2012  Red Hat, Inc.
 # This file is part of python-fedora
-# 
+#
 # python-fedora is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # python-fedora is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
@@ -95,7 +95,8 @@ class BodhiClient(BaseClient):
             editing.
 
         """
-        return self.send_request('save', auth=True, req_params={
+        return self.send_request(
+            'save', auth=True, req_params={
                 'suggest_reboot': suggest_reboot,
                 'close_bugs': close_bugs,
                 'unstable_karma': unstable_karma,
@@ -108,7 +109,7 @@ class BodhiClient(BaseClient):
                 'notes': notes,
                 'type_': type_,
                 'bugs': bugs,
-                })
+            })
 
     def query(self, release=None, status=None, type_=None, bugs=None,
               request=None, mine=None, package=None, username=None, limit=10):
@@ -127,16 +128,17 @@ class BodhiClient(BaseClient):
         :kwarg limit: The maximum number of updates to display.  Default: 10.
         """
         params = {
-                'updates_tgp_limit': limit,
-                'username': username,
-                'release': release,
-                'package': package,
-                'request': request,
-                'status': status,
-                'type_': type_,
-                'bugs': bugs,
-                'mine': mine,
-                }
+            'updates_tgp_limit': limit,
+            'username': username,
+            'release': release,
+            'package': package,
+            'request': request,
+            'status': status,
+            'type_': type_,
+            'bugs': bugs,
+            'mine': mine,
+        }
+
         auth = False
         if params['mine']:
             auth = True
@@ -153,9 +155,9 @@ class BodhiClient(BaseClient):
 
         """
         return self.send_request('request', auth=True, req_params={
-                'update': update,
-                'action': request,
-                })
+            'update': update,
+            'action': request,
+        })
 
     def comment(self, update, comment, karma=0, email=None):
         """ Add a comment to an update.
@@ -211,7 +213,8 @@ class BodhiClient(BaseClient):
         yum.doConfigSetup(init_plugins=False)
         fedora = file('/etc/fedora-release').readlines()[0].split()[2]
         tag = 'f%s-updates-testing' % fedora
-        builds = self.get_koji_session(login=False).listTagged(tag, latest=True)
+        builds = self.get_koji_session(
+            login=False).listTagged(tag, latest=True)
         for build in builds:
             pkgs = yum.rpmdb.searchNevra(name=build['name'],
                                          ver=build['version'],
@@ -309,7 +312,7 @@ class BodhiClient(BaseClient):
         if minimal:
             val = ""
             date = update['date_pushed'] and update['date_pushed'].split()[0] \
-                                          or update['date_submitted'].split()[0]
+                or update['date_submitted'].split()[0]
             val += ' %-43s  %-11s  %-8s  %10s ' % (update['builds'][0]['nvr'],
                                                    update['type'],
                                                    update['status'], date)
@@ -326,7 +329,7 @@ class BodhiClient(BaseClient):
        Type: %s
       Karma: %d""" % (update['release']['long_name'], update['status'],
                       update['type'], update['karma'])
-        if update['request'] != None:
+        if update['request'] is not None:
             val += "\n    Request: %s" % update['request']
         if len(update['bugs']):
             bugs = ''
@@ -399,4 +402,3 @@ class BodhiClient(BaseClient):
                  "locked": false, "name": "F12", "long_name": "Fedora 12"}]}
         """
         return self.send_request('releases')
-

@@ -3,15 +3,18 @@
 # Python Fedora Module documentation build configuration file, created by
 # sphinx-quickstart on Mon Jun  9 08:12:44 2008.
 #
-# This file is execfile()d with the current directory set to its containing dir.
-#
+# This file is execfile()d with the current directory set to its containing
+# dir.
+
 # The contents of this file are pickled, so don't put values in the namespace
-# that aren't pickleable (module imports are okay, they're removed automatically).
+# that aren't pickleable (module imports are okay, they're removed
+# automatically).
 #
 # All configuration values have a default value; values that are commented out
 # serve to show the default value.
 
-import sys, os, re
+import sys
+import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 import fedora.release
@@ -22,8 +25,8 @@ import fedora.release
 # General configuration
 # ---------------------
 
-# Add any Sphinx extension module names here, as strings. They can be extensions
-# coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
+# Add any Sphinx extension module names here, as strings. They can be
+# extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest']
 
 # Add any paths that contain templates here, relative to this directory.
@@ -56,8 +59,8 @@ today_fmt = '%B %d, %Y'
 # List of documents that shouldn't be included in the build.
 #unused_docs = []
 
-# List of directories, relative to source directories, that shouldn't be searched
-# for source files.
+# List of directories, relative to source directories, that shouldn't be
+# searched for source files.
 #exclude_dirs = []
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
@@ -139,9 +142,16 @@ htmlhelp_basename = 'Sphinxdoc'
 #latex_font_size = '10pt'
 
 # Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title, author, document class [howto/manual]).
+# (source start file, target name, title, author, document class
+# [howto/manual]).
 latex_documents = [
-  ('index', 'Python Fedora Module.tex', 'Python Fedora Module Documentation', 'Toshio Kuratomi', 'manual'),
+    (
+        'index',
+        'Python Fedora Module.tex',
+        'Python Fedora Module Documentation',
+        'Toshio Kuratomi',
+        'manual'
+    ),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

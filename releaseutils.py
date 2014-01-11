@@ -14,15 +14,15 @@ import textwrap
 
 from contextlib import contextmanager
 from distutils.sysconfig import get_python_lib
-from distutils.util import get_platform
 
 from kitchen.pycompat27 import subprocess
 import pkg_resources
 
 import fedora.release
 
+
 #
-# Helper function
+# Helper functions
 #
 
 @contextmanager
@@ -37,10 +37,12 @@ def pushd(dirname):
     finally:
         os.chdir(curdir)
 
+
 class MsgFmt(object):
     def run(self, args):
         cmd = subprocess.Popen(args, shell=False)
         cmd.wait()
+
 
 def setup_message_compiler():
     # Look for msgfmt
@@ -50,11 +52,15 @@ def setup_message_compiler():
     except OSError:
         import babel.messages.frontend
 
-        return (babel.messages.frontend.CommandLineInterface(),
+        return (
+            babel.messages.frontend.CommandLineInterface(),
             'pybabel compile -D %(domain)s -d locale -i %(pofile)s -l %(lang)s'
-            )
+        )
     else:
-        return (MsgFmt(), 'msgfmt -c -o locale/%(lang)s/LC_MESSAGES/%(domain)s.mo %(pofile)s')
+        return (
+            MsgFmt(),
+            'msgfmt -c -o locale/%(lang)s/LC_MESSAGES/%(domain)s.mo %(pofile)s'
+        )
 
 
 def build_catalogs():
@@ -85,7 +91,7 @@ def build_catalogs():
         arg_values = {'domain': pot}
         for po_file in glob.glob(glob_pattern):
             file_pattern = os.path.basename(po_file)
-            lang = file_pattern.replace('.po','')
+            lang = file_pattern.replace('.po', '')
             os.makedirs(os.path.join('locale', lang, 'LC_MESSAGES'))
             arg_values['pofile'] = po_file
             arg_values['lang'] = lang
@@ -93,12 +99,14 @@ def build_catalogs():
             compile_args = compile_args.split(' ')
             cmd.run(compile_args)
 
+
 def _add_destdir(path):
     if ENVVARS['DESTDIR'] is not None:
         if path.startswith('/'):
             path = path[1:]
         path = os.path.join(ENVVARS['DESTDIR'], path)
     return path
+
 
 def _install_catalogs(localedir):
     with pushd('locale'):
@@ -113,6 +121,7 @@ def _install_catalogs(localedir):
                 if e.errno != 17:
                     raise
             shutil.copy2(catalog, dst)
+
 
 def install_catalogs():
     # First try to install the messages to an FHS location
@@ -158,6 +167,7 @@ def install_catalogs():
         localedir = _add_destdir('/usr/share/locale')
         _install_catalogs(localedir)
 
+
 def usage():
     print ('Subcommands:')
     for command in sorted(SUBCOMMANDS.keys()):
@@ -166,23 +176,34 @@ def usage():
     print()
     print('This script can be customized by setting the following ENV VARS:')
     for var in sorted(ENVVARDESC.keys()):
-        for line in textwrap.wrap('%-15s  %s' % (var, ENVVARDESC[var]), subsequent_indent=' '*8):
+        lines = textwrap.wrap(
+            '%-15s  %s' % (var, ENVVARDESC[var]),
+            subsequent_indent=' '*8
+        )
+        for line in lines:
             print(line.rstrip())
     sys.exit(1)
 
-SUBCOMMANDS = {'build_catalogs': (build_catalogs, 'Compile the message catalogs from po files'),
-               'install_catalogs': (install_catalogs, 'Install the message catalogs to the system'),
-               }
+SUBCOMMANDS = {
+    'build_catalogs': (
+        build_catalogs, 'Compile the message catalogs from po files'
+    ),
+    'install_catalogs': (
+        install_catalogs,
+        'Install the message catalogs to the system'
+    ),
+}
 
-ENVVARDESC = {'DESTDIR': 'Alternate root directory hierarchy to install into',
-              'PACKAGENAME': 'Pypi packagename (commonly the setup.py name field)',
-              'MODULENAME': 'Python module name (commonly used with import NAME)',
-              'INSTALLSTRATEGY': 'One of FHS, EGG, SITEPACKAGES.  FHS will work'
-              ' for system packages installed using'
-              ' --single-version-externally-managed.  EGG install into an egg'
-              ' directory.  SITEPACKAGES will install into a $PACKAGENAME'
-              ' directory directly in site-packages.  Default FHS'
-              }
+ENVVARDESC = {
+    'DESTDIR': 'Alternate root directory hierarchy to install into',
+    'PACKAGENAME': 'Pypi packagename (commonly the setup.py name field)',
+    'MODULENAME': 'Python module name (commonly used with import NAME)',
+    'INSTALLSTRATEGY': 'One of FHS, EGG, SITEPACKAGES.  FHS will work'
+    ' for system packages installed using'
+    ' --single-version-externally-managed.  EGG install into an egg'
+    ' directory.  SITEPACKAGES will install into a $PACKAGENAME'
+    ' directory directly in site-packages.  Default FHS'
+}
 
 ENVVARS = dict(map(lambda k: (k, os.environ.get(k)), ENVVARDESC.keys()))
 
