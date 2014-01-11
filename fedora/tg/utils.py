@@ -215,7 +215,7 @@ def absolute_url(tgpath='/', params=None, **kw):
     The host name is determined this way:
 
     * If the config setting 'tg.url_domain' is set and non-null, use this
-    value.
+      value.
     * Else, if the 'base_url_filter.use_x_forwarded_host' config setting is
       True, use the value from the 'Host' or 'X-Forwarded-Host' request header.
     * Else, if config setting 'base_url_filter.on' is True and
