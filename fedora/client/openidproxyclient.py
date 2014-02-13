@@ -66,7 +66,7 @@ import urllib3
 from functools import partial, wraps
 
 from fedora import __version__
-from fedora.client import AppError, AuthError, ServerError
+from fedora.client import AppError, AuthError, ServerError, LoginRequiredError
 
 log = logging.getLogger(__name__)
 log.addHandler(NullHandler())
