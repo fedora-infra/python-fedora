@@ -51,13 +51,13 @@ import bs4
 import requests
 
 from fedora import __version__
-from fedora.client import LoginRequiredError
+from fedora.client import AuthError, LoginRequiredError
 from fedora.client.openidproxyclient import OpenIdProxyClient
 
 log = logging.getLogger(__name__)
 
-b_SESSION_DIR = path.join(path.expanduser('~'), '.fedora')
-b_SESSION_FILE = path.join(b_SESSION_DIR, 'baseclient-sessions.sqlite')
+b_SESSION_DIR = os.path.join(os.path.expanduser('~'), '.fedora')
+b_SESSION_FILE = os.path.join(b_SESSION_DIR, 'baseclient-sessions.sqlite')
 
 def _parse_service_form(response):
     """ Retrieve the attributes from the html form. """
@@ -164,7 +164,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
             self.openid_session_id = openid_session_id
 
         # python-requests session.  Holds onto cookies
-        self._session = requests.session()
+        self.session = requests.session()
 
     def _initialize_session_cache(self):
         # Note -- fallback to returning None on any problems as this isn't
@@ -229,7 +229,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
         return self._session_id_map[session_id_key]
 
     def _set_id(self, session_id, base_url=None):
-        if not self.username:
+        #if not self.username:
         # base_url is only sent as a param if we're looking for the openid
         # session
         base_url = base_url or self.base_url
@@ -280,9 +280,9 @@ class OpenIdBaseClient(OpenIdProxyClient):
         runs of BaseClient.
         """)
 
-    openid_session_id = property(functools.partial(_get_id, base_url='FAS_OPENID'),
-                                 functools.partial(_set_id, base_url='FAS_OPENID'),
-                                 functools.partial(_del_id, base_url='FAS_OPENID'),
+    openid_session_id = property(partial(_get_id, base_url='FAS_OPENID'),
+                                 partial(_set_id, base_url='FAS_OPENID'),
+                                 partial(_del_id, base_url='FAS_OPENID'),
         """The openid_session_id.
 
         The openid session id is saved in a file in case it is needed in consecutive
@@ -319,6 +319,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
         """
         # Decide on the set of auth cookies to use
 
+        method = absolute_url(self.base_url, method)
+
         self._authed_verb_dispatcher = {(False, 'POST'): self.session.post,
                                         (False, 'GET'): self.session.get,
                                         (True, 'POST'): self._authed_post,
@@ -327,7 +329,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
             auth_params = {'session_id': self.session_id,
                            'openid_session_id': self.openid_session_id}
             try:
-                self._authed_verb_dispatcher[(auth, verb)](method, auth_params=auth_params, **kwargs)
+                return self._authed_verb_dispatcher[(auth, verb)](
+                    method, auth_params, **kwargs)
             except KeyError:
                 raise Exception('Unknown HTTP verb')
             except LoginRequiredError:
@@ -371,7 +374,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
         # Verify that we want the openid server to send the requested data
         # (Only return decided_allow)
         del(data['decided_deny'])
-        response = self.session.post(action, data)
+        response = self.session.post(action, data, verify=False)
 
         service_url, data = _parse_service_form(response)
         response = self.session.post(service_url, data)
@@ -433,16 +436,17 @@ if __name__ == '__main__':
 
     import getpass
 
-    PKGDB = BaseOpenIdClient(BASE_URL)
+    PKGDB = OpenIdBaseClient('http://209.132.184.188/')
 
     # If that fails, login
     FAS_NAME = raw_input('Username: ')
     FAS_PASS = getpass.getpass('FAS password: ')
     try:
-        print PKGDB.test()
-    except LoginRequiredError as err:
+        print PKGDB.send_request('/admin/', verb='GET', auth=True)
+    except AuthError as err:
+        print 'Requires Auth'
         print err.message
     print PKGDB.login(FAS_NAME, FAS_PASS)
     # Retry the action
     print PKGDB.login(FAS_NAME, FAS_PASS)
-    print PKGDB.test()
+    print PKGDB.send_request('/admin/', verb='GET', auth=True).text
