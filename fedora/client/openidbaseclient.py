@@ -340,7 +340,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
             except LoginRequiredError:
                 raise AuthError()
 
-    def login(self, username, password, otp=None):
+    def login(self, username, password, otp=None, insecure=False):
         """ Open a session for the user.
 
         Log in the user with the specified username and password
@@ -350,6 +350,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
         :arg password: the FAS password of the user that wants to log in
         :kwarg otp: currently unused.  Eventually a way to send an otp to the
             API that the API can use.
+        :kwarg insecure: a boolean specifying whether the SSL certificate
+            should be checked
 
         """
         # Requests session needed to persist the cookies that are created
@@ -378,7 +380,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
         # Verify that we want the openid server to send the requested data
         # (Only return decided_allow)
         del(data['decided_deny'])
-        response = self._session.post(action, data, verify=False)
+        response = self._session.post(action, data, verify=not insecure)
 
         service_url, data = _parse_service_form(response)
         response = self._session.post(service_url, data)
@@ -450,7 +452,7 @@ if __name__ == '__main__':
     except AuthError as err:
         print 'Requires Auth'
         print err.message
-    print PKGDB.login(FAS_NAME, FAS_PASS)
+    print PKGDB.login(FAS_NAME, FAS_PASS, insecure=True)
     # Retry the action
     print PKGDB.login(FAS_NAME, FAS_PASS)
     print PKGDB.send_request('/admin/', verb='GET', auth=True).text
