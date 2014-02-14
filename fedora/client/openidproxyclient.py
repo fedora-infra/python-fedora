@@ -229,13 +229,13 @@ class OpenIdProxyClient(object):
     @requires_login
     def _authed_post(self, url, params=None, data=None):
         """ Return the request object of a post query."""
-        response = self.session.post(url, params=params, data=data)
+        response = self._session.post(url, params=params, data=data)
         return response
 
     @requires_login
     def _authed_get(self, url, params=None, data=None):
         """ Return the request object of a get query."""
-        response = self.session.get(url, params=params, data=data)
+        response = self._session.get(url, params=params, data=data)
         return response
 
     def send_request(self, method, req_params=None, auth_params=None,

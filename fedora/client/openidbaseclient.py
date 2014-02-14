@@ -50,6 +50,10 @@ except ImportError:
 import bs4
 import requests
 
+import sys
+sys.path.insert(0,
+    os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..'))
+
 from fedora import __version__
 from fedora.client import AuthError, LoginRequiredError
 from fedora.client.openidproxyclient import OpenIdProxyClient
@@ -164,7 +168,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
             self.openid_session_id = openid_session_id
 
         # python-requests session.  Holds onto cookies
-        self.session = requests.session()
+        self._session = requests.session()
 
     def _initialize_session_cache(self):
         # Note -- fallback to returning None on any problems as this isn't
@@ -321,8 +325,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
         method = absolute_url(self.base_url, method)
 
-        self._authed_verb_dispatcher = {(False, 'POST'): self.session.post,
-                                        (False, 'GET'): self.session.get,
+        self._authed_verb_dispatcher = {(False, 'POST'): self._session.post,
+                                        (False, 'GET'): self._session.get,
                                         (True, 'POST'): self._authed_post,
                                         (True, 'GET'): self._authed_get}
         if auth:
@@ -351,7 +355,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
         # Requests session needed to persist the cookies that are created
         # during redirects on the openid provider
         # Log into the service
-        response = self.session.get(self.login_url)
+        response = self._session.get(self.login_url)
         if not '<title>OpenID transaction in progress</title>' \
                 in response.text:
             return
@@ -359,7 +363,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
         openid_url, data = _parse_service_form(response)
 
         # Contact openid provider
-        response = self.session.post(openid_url, data)
+        response = self._session.post(openid_url, data)
         action, data = _parse_openid_login_form(response)
 
         action = absolute_url(openid_url, action)
@@ -367,17 +371,17 @@ class OpenIdBaseClient(OpenIdProxyClient):
             # Not logged into openid
             data['username'] = username
             data['password'] = password
-            response = self.session.post(action, data)
+            response = self._session.post(action, data)
             action, data = _parse_openid_login_form(response)
             action = absolute_url(openid_url, action)
 
         # Verify that we want the openid server to send the requested data
         # (Only return decided_allow)
         del(data['decided_deny'])
-        response = self.session.post(action, data, verify=False)
+        response = self._session.post(action, data, verify=False)
 
         service_url, data = _parse_service_form(response)
-        response = self.session.post(service_url, data)
+        response = self._session.post(service_url, data)
         return response
 
 
