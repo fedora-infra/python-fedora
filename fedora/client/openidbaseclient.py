@@ -104,8 +104,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
     """ A client for interacting with web services relying on openid auth. """
 
     def __init__(self, base_url, login_url=None, useragent=None, debug=False,
-                 insecure=False, username=None, httpauth=None,
-                 session_id=None, session_name='tg-visit',
+                 insecure=False,openid_insecure=False, username=None,
+                 httpauth=None, session_id=None, session_name='tg-visit',
                  openid_session_id=None, openid_session_name='FAS_OPENID',
                  cache_session=True, retries=None, timeout=None):
         """Client for interacting with web services relying on fas_openid auth.
@@ -121,6 +121,12 @@ class OpenIdBaseClient(OpenIdProxyClient):
             possible against the `BaseClient`. You might turn this option on
             for testing against a local version of a server with a self-signed
             certificate but it should be off in production.
+        :kwarg openid_insecure: If True, do not check the openid server
+            certificates against their CA's.  This means that man-in-the-
+            middle attacks are possible against the `BaseClient`. You might
+            turn this option on for testing against a local version of a
+            server with a self-signed certificate but it should be off in
+            production.
         :kwarg username: Username for establishing authenticated connections
         :kwarg session_id: id of the user's session
         :kwarg session_name: name of the cookie to use with session handling
@@ -145,6 +151,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
         self.login_url = login_url or urljoin(self.base_url, '/login')
         self.debug = debug
         self.insecure = insecure
+        self.openid_insecure = openid_insecure
         self.retries = retries
         self.timeout = timeout
         self.session_name = session_name
@@ -340,7 +347,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
             except LoginRequiredError:
                 raise AuthError()
 
-    def login(self, username, password, otp=None, insecure=False):
+    def login(self, username, password, otp=None):
         """ Open a session for the user.
 
         Log in the user with the specified username and password
@@ -350,8 +357,6 @@ class OpenIdBaseClient(OpenIdProxyClient):
         :arg password: the FAS password of the user that wants to log in
         :kwarg otp: currently unused.  Eventually a way to send an otp to the
             API that the API can use.
-        :kwarg insecure: a boolean specifying whether the SSL certificate
-            should be checked
 
         """
         # Requests session needed to persist the cookies that are created
@@ -380,7 +385,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
         # Verify that we want the openid server to send the requested data
         # (Only return decided_allow)
         del(data['decided_deny'])
-        response = self._session.post(action, data, verify=not insecure)
+        response = self._session.post(
+            action, data, verify=not self.openid_insecure)
 
         service_url, data = _parse_service_form(response)
         response = self._session.post(service_url, data)
@@ -442,7 +448,8 @@ if __name__ == '__main__':
 
     import getpass
 
-    PKGDB = OpenIdBaseClient('http://209.132.184.188/')
+    PKGDB = OpenIdBaseClient(
+        'http://209.132.184.188/', openid_insecure=True)
 
     # If that fails, login
     FAS_NAME = raw_input('Username: ')
@@ -452,7 +459,7 @@ if __name__ == '__main__':
     except AuthError as err:
         print 'Requires Auth'
         print err.message
-    print PKGDB.login(FAS_NAME, FAS_PASS, insecure=True)
+    print PKGDB.login(FAS_NAME, FAS_PASS)
     # Retry the action
     print PKGDB.login(FAS_NAME, FAS_PASS)
     print PKGDB.send_request('/admin/', verb='GET', auth=True).text
