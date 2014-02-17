@@ -51,8 +51,8 @@ except ImportError:
 import requests
 
 import sys
-sys.path.insert(0,
-    os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..'))
+sys.path.insert(
+    0, os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..'))
 
 from fedora import __version__
 from fedora.client import AuthError, LoginRequiredError
@@ -194,11 +194,11 @@ class OpenIdBaseClient(OpenIdProxyClient):
             # Look for a session on disk
             cursor = self._db.cursor()
             cursor.execute('select * from sessions where'
-                        ' username = ? and base_url = ?',
-                        (username, base_url))
+                           ' username = ? and base_url = ?',
+                           (username, base_url))
             found_sessions = cursor.fetchall()
             if found_sessions:
-                 self._session_id_map[session_id_key] = found_sessions[0]
+                self._session_id_map[session_id_key] = found_sessions[0]
 
         if not self._session_id_map[session_id_key]:
             log.debug('No session cached for "{username}"'.format(
@@ -250,20 +250,24 @@ class OpenIdBaseClient(OpenIdProxyClient):
                            ' username = ? and base_url = ?',
                            (username, base_url))
 
-    session_id = property(_get_id, _set_id, _del_id,
+    session_id = property(
+        _get_id,
+        _set_id,
+        _del_id,
         """The session_id.
 
-        The session id is saved in a file in case it is needed in consecutive
-        runs of BaseClient.
+        The session id is saved in a file in case it is needed in
+        consecutive runs of BaseClient.
         """)
 
-    openid_session_id = property(partial(_get_id, base_url='FAS_OPENID'),
-                                 partial(_set_id, base_url='FAS_OPENID'),
-                                 partial(_del_id, base_url='FAS_OPENID'),
+    openid_session_id = property(
+        partial(_get_id, base_url='FAS_OPENID'),
+        partial(_set_id, base_url='FAS_OPENID'),
+        partial(_del_id, base_url='FAS_OPENID'),
         """The openid_session_id.
 
-        The openid session id is saved in a file in case it is needed in consecutive
-        runs of BaseClient.
+        The openid session id is saved in a file in case it is needed in
+        consecutive runs of BaseClient.
         """)
 
     def send_request(self, method, auth=False, verb='POST', **kwargs):
@@ -342,7 +346,6 @@ if __name__ == '__main__':
     #
     # OpenIdBaseClient => @requires_login decorator; ie: programmer specifies
     # which functions require authentication at function definition time.
-
 
     # here's what we want the end user to do for an authentication-needed
     # request:
