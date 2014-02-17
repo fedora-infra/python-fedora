@@ -44,8 +44,6 @@ except ImportError:
     from urllib.parse import urljoin
     from urllib.parse import urlparse
 
-from hashlib import sha1 as sha_constructor
-
 # Hack, hack, hack around
 # the horror that is logging!
 # Verily, verliy, verily, verily
@@ -61,11 +59,11 @@ except ImportError:
 import bs4
 import requests
 
-from bunch import bunchify
+#from bunch import bunchify
 from kitchen.text.converters import to_bytes
 # For handling an exception that's coming from requests:
 import urllib3
-from functools import partial, wraps
+from functools import wraps
 
 import sys
 import os
@@ -73,7 +71,7 @@ sys.path.insert(
     0, os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..'))
 
 from fedora import __version__
-from fedora.client import AppError, AuthError, ServerError, LoginRequiredError
+from fedora.client import AuthError, ServerError, LoginRequiredError
 
 log = logging.getLogger(__name__)
 log.addHandler(NullHandler())
@@ -469,17 +467,15 @@ class OpenIdProxyClient(object):
             cookies = resp.cookies
 
         # If debug, give people our debug info
-        log.debug('Creating request %(url)s' % {'url': to_bytes(url)})
-        log.debug(
-            'Headers: %(header)s' % {
-                'header': to_bytes(headers, nonstring='simplerepr')})
+        log.debug('Creating request %s', to_bytes(url))
+        log.debug('Headers: %s', to_bytes(headers, nonstring='simplerepr'))
         if self.debug and complete_params:
             debug_data = copy.deepcopy(complete_params)
 
             if 'password' in debug_data:
                 debug_data['password'] = 'xxxxxxx'
 
-            log.debug('Data: %r' % debug_data)
+            log.debug('Data: %r', debug_data)
 
         if retries is None:
             retries = self.retries
@@ -500,8 +496,8 @@ class OpenIdProxyClient(object):
                     verify=not self.insecure,
                     timeout=timeout,
                 )
-            except (requests.Timeout, requests.exceptions.SSLError) as e:
-                if isinstance(e, requests.exceptions.SSLError):
+            except (requests.Timeout, requests.exceptions.SSLError) as err:
+                if isinstance(err, requests.exceptions.SSLError):
                     # And now we know how not to code a library exception
                     # hierarchy...  We're expecting that requests is raising
                     # the following stupidity:
@@ -514,18 +510,18 @@ class OpenIdProxyClient(object):
                     # because we don't want to raise an unrelated exception
                     # here and if requests/urllib3 can do this sort of
                     # nonsense, they may change the nonsense in the future
-                    if not (e.args and isinstance(e.args[0],
-                                                  urllib3.exceptions.SSLError)
-                            and e.args[0].args
-                            and isinstance(e.args[0].args[0], ssl.SSLError)
-                            and e.args[0].args[0].args
-                            and 'timed out' in e.args[0].args[0].args[0]):
+                    if not (err.args and isinstance(
+                                err.args[0], urllib3.exceptions.SSLError)
+                            and err.args[0].args
+                            and isinstance(err.args[0].args[0], ssl.SSLError)
+                            and err.args[0].args[0].args
+                            and 'timed out' in err.args[0].args[0].args[0]):
                         # We're only interested in timeouts here
                         raise
                 log.debug('Request timed out')
                 if retries < 0 or num_tries < retries:
                     num_tries += 1
-                    log.debug('Attempt #%(try)s failed' % {'try': num_tries})
+                    log.debug('Attempt #%s failed', num_tries)
                     time.sleep(0.5)
                     continue
                 # Fail and raise an error
@@ -562,7 +558,7 @@ class OpenIdProxyClient(object):
                 if retries < 0 or num_tries < retries:
                     # Retry the request
                     num_tries += 1
-                    log.debug('Attempt #%(try)s failed' % {'try': num_tries})
+                    log.debug('Attempt #%s failed', num_tries)
                     time.sleep(0.5)
                     continue
                 # Fail and raise an error
