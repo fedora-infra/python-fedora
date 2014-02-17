@@ -108,6 +108,55 @@ def _parse_openid_login_form(response):
     return (parsed.form.attrs['action'], inputs)
 
 
+def openid_login(session, login_url, username, password, otp=None,
+          openid_insecure=False):
+    """ Open a session for the user.
+
+    Log in the user with the specified username and password
+    against the FAS OpenID server.
+
+    :arg username: the FAS username of the user that wants to log in
+    :arg password: the FAS password of the user that wants to log in
+    :kwarg otp: currently unused.  Eventually a way to send an otp to the
+        API that the API can use.
+
+    """
+    # Requests session needed to persist the cookies that are created
+    # during redirects on the openid provider
+    # Log into the service
+    response = session.get(login_url)
+    if not '<title>OpenID transaction in progress</title>' \
+            in response.text:
+        return
+    # requests.session should hold onto this for us....
+    openid_url, data = _parse_service_form(response)
+
+    # Contact openid provider
+    response = session.post(openid_url, data)
+    action, data = _parse_openid_login_form(response)
+
+    action = absolute_url(openid_url, action)
+    if 'username' in data:
+        # Not logged into openid
+        data['username'] = username
+        data['password'] = password
+        response = session.post(action, data)
+        action, data = _parse_openid_login_form(response)
+        action = absolute_url(openid_url, action)
+
+    if '<li>Incorrect username or password</li>' in response.text:
+        raise AuthError('Incorect username or password')
+
+    # Verify that we want the openid server to send the requested data
+    # (Only return decided_allow)
+    del(data['decided_deny'])
+    response = session.post(
+        action, data, verify=not openid_insecure)
+
+    service_url, data = _parse_service_form(response)
+    response = session.post(service_url, data)
+    return response
+
 def absolute_url(beginning, end):
     """ Join two urls parts if the last part does not start with the first
     part specified """
@@ -189,7 +238,7 @@ class OpenIdProxyClient(object):
 
     """
 
-    def __init__(self, base_url, login_url='/login', useragent=None,
+    def __init__(self, base_url, login_url=None, useragent=None,
                  session_name='session', debug=False, insecure=False,
                  openid_insecure=False, retries=None, timeout=None):
         """Create a client configured for a particular service.
@@ -231,6 +280,7 @@ class OpenIdProxyClient(object):
         if base_url[-1] != '/':
             base_url = base_url + '/'
         self.base_url = base_url
+        self.login_url = login_url or urljoin(self.base_url, '/login')
         self.domain = urlparse(self.base_url).netloc
         self.useragent = useragent or 'Fedora ProxyClient/%(version)s' % {
                 'version': __version__}
@@ -288,8 +338,8 @@ class OpenIdProxyClient(object):
         response = self._session.get(url, params=params, data=data)
         return response
 
-    def send_request(self, method, req_params=None, auth_params=None,
-            file_params=None, retries=None, timeout=None):
+    def send_request(self, method, verb='POST', req_params=None,
+            auth_params=None, file_params=None, retries=None, timeout=None):
         """Make an HTTP request to a server method.
 
         The given method is called with any parameters set in ``req_params``.
@@ -399,25 +449,17 @@ class OpenIdProxyClient(object):
             cookies.set(self.session_name, session_id)
 
         complete_params = req_params or {}
-        if session_id:
-            # Add the csrf protection token
-            token = sha_constructor(session_id)
-            complete_params.update({'_csrf_token': token.hexdigest()})
 
         auth = None
+        session = requests.session()
         if username and password:
-            if auth_params.get('httpauth', '').lower() == 'basic':
-                # HTTP Basic auth login
-                auth = (username, password)
-            else:
-                # TG login
-                # Adding this to the request data prevents it from being
-                # logged by apache.
-                complete_params.update({
-                    'user_name': to_bytes(username),
-                    'password': to_bytes(password),
-                    'login': 'Login',
-                })
+            # OpenID login
+            resp = openid_login(
+                session=session, login_url=self.login_url,
+                username=username, password=password,
+                openid_insecure=self.openid_insecure
+            )
+            cookies = resp.cookies
 
         # If debug, give people our debug info
         log.debug('Creating request %(url)s' %
@@ -441,8 +483,9 @@ class OpenIdProxyClient(object):
         num_tries = 0
         while True:
             try:
-                response = requests.post(
-                    url,
+                response = session.request(
+                    method=verb,
+                    url=url,
                     data=complete_params,
                     cookies=cookies,
                     headers=headers,
@@ -526,28 +569,31 @@ class OpenIdProxyClient(object):
         # In case the server returned a new session cookie to us
         new_session = response.cookies.get(self.session_name, '')
 
-        try:
-            data = response.json
-            # Compatibility with newer python-requests
-            if callable(data):
-                data = data()
-        except ValueError, e:
-            # The response wasn't JSON data
-            raise ServerError(url, http_status, 'Error returned from'
-                    ' json module while processing %(url)s: %(err)s' %
-                    {'url': to_bytes(url), 'err': to_bytes(e)})
+        #try:
+            #data = response.json
+            ## Compatibility with newer python-requests
+            #if callable(data):
+                #data = data()
+        #except ValueError, e:
+            #print '**', url
+            #print '***', e
+            ## The response wasn't JSON data
+            #raise ServerError(url, http_status, 'Error returned from'
+                    #' json module while processing %(url)s: %(err)s' %
+                    #{'url': to_bytes(url), 'err': to_bytes(e)})
 
-        if 'exc' in data:
-            name = data.pop('exc')
-            message = data.pop('tg_flash')
-            raise AppError(name=name, message=message, extras=data)
+        #if 'exc' in data:
+            #name = data.pop('exc')
+            #message = data.pop('tg_flash')
+            #raise AppError(name=name, message=message, extras=data)
 
         log.debug('openidproxyclient.send_request: exited')
-        data = bunchify(data)
-        return new_session, data
+        #data = bunchify(data)
+        return new_session, response
 
 
 __all__ = (OpenIdProxyClient,)
+
 
 if __name__ == '__main__':
 
@@ -559,12 +605,10 @@ if __name__ == '__main__':
     # If that fails, login
     FAS_NAME = raw_input('Username: ')
     FAS_PASS = getpass.getpass('FAS password: ')
+    auth_params = {'username': FAS_NAME, 'password': FAS_PASS}
     try:
-        print PKGDB.send_request('/admin/')
+        print PKGDB.send_request('/admin/', verb='GET', auth_params=auth_params)
     except AuthError as err:
         print 'Requires Auth'
         print err.message
-    print PKGDB.login(FAS_NAME, FAS_PASS)
-    # Retry the action
-    print PKGDB.login(FAS_NAME, FAS_PASS)
-    print PKGDB.send_request('/admin/').text
+    print PKGDB.send_request('/admin/', verb='GET', auth_params=auth_params)
