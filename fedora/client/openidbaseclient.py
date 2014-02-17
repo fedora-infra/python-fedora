@@ -47,7 +47,7 @@ except ImportError:
     from urlparse import urljoin
 # pylint: enable-msg=F0401,E0611
 
-import bs4
+
 import requests
 
 import sys
@@ -56,47 +56,14 @@ sys.path.insert(0,
 
 from fedora import __version__
 from fedora.client import AuthError, LoginRequiredError
-from fedora.client.openidproxyclient import OpenIdProxyClient
+from fedora.client.openidproxyclient import (
+    OpenIdProxyClient, absolute_url,
+    _parse_service_form, _parse_openid_login_form)
 
 log = logging.getLogger(__name__)
 
 b_SESSION_DIR = os.path.join(os.path.expanduser('~'), '.fedora')
 b_SESSION_FILE = os.path.join(b_SESSION_DIR, 'baseclient-sessions.sqlite')
-
-def _parse_service_form(response):
-    """ Retrieve the attributes from the html form. """
-    parsed = bs4.BeautifulSoup(response.text)
-    inputs = {}
-    for child in parsed.form.find_all(name='input'):
-        if child.attrs['type'] == 'submit':
-            continue
-        inputs[child.attrs['name']] = child.attrs['value']
-    return (parsed.form.attrs['action'], inputs)
-
-
-def _parse_openid_login_form(response):
-    """ Parse the OpenID login html form. """
-    parsed = bs4.BeautifulSoup(response.text)
-    inputs = {}
-    for child in parsed.form.find_all(name='input'):
-        if 'type' in child.attrs and child.attrs['type'] == 'submit':
-            if not ('name' in child.attrs and
-                    child.attrs['name'].startswith('decided_')):
-                continue
-        if 'value' in child.attrs:
-            value = child.attrs['value']
-        else:
-            value = None
-        inputs[child.attrs['name']] = value
-    return (parsed.form.attrs['action'], inputs)
-
-
-def absolute_url(beginning, end):
-    """ Join two urls parts if the last part does not start with the first
-    part specified """
-    if not end.startswith(beginning):
-        end = urljoin(beginning, end)
-    return end
 
 
 class OpenIdBaseClient(OpenIdProxyClient):

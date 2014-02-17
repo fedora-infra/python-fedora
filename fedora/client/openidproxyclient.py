@@ -58,10 +58,11 @@ except ImportError:
         def emit(self, *args):
             pass
 
+import bs4
+import requests
 
 from bunch import bunchify
 from kitchen.text.converters import to_bytes
-import requests
 # For handling an exception that's coming from requests:
 import urllib3
 from functools import partial, wraps
@@ -78,6 +79,41 @@ log = logging.getLogger(__name__)
 log.addHandler(NullHandler())
 
 OPENID_SESSION_NAME = 'FAS_OPENID'
+
+def _parse_service_form(response):
+    """ Retrieve the attributes from the html form. """
+    parsed = bs4.BeautifulSoup(response.text)
+    inputs = {}
+    for child in parsed.form.find_all(name='input'):
+        if child.attrs['type'] == 'submit':
+            continue
+        inputs[child.attrs['name']] = child.attrs['value']
+    return (parsed.form.attrs['action'], inputs)
+
+
+def _parse_openid_login_form(response):
+    """ Parse the OpenID login html form. """
+    parsed = bs4.BeautifulSoup(response.text)
+    inputs = {}
+    for child in parsed.form.find_all(name='input'):
+        if 'type' in child.attrs and child.attrs['type'] == 'submit':
+            if not ('name' in child.attrs and
+                    child.attrs['name'].startswith('decided_')):
+                continue
+        if 'value' in child.attrs:
+            value = child.attrs['value']
+        else:
+            value = None
+        inputs[child.attrs['name']] = value
+    return (parsed.form.attrs['action'], inputs)
+
+
+def absolute_url(beginning, end):
+    """ Join two urls parts if the last part does not start with the first
+    part specified """
+    if not end.startswith(beginning):
+        end = urljoin(beginning, end)
+    return end
 
 
 def requires_login(func):
@@ -531,4 +567,4 @@ if __name__ == '__main__':
     print PKGDB.login(FAS_NAME, FAS_PASS)
     # Retry the action
     print PKGDB.login(FAS_NAME, FAS_PASS)
-    print PKGDB.send_request('/admin/'=True).text
+    print PKGDB.send_request('/admin/').text
