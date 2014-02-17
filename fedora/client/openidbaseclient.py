@@ -393,19 +393,6 @@ class OpenIdBaseClient(OpenIdProxyClient):
         return response
 
 
-
-class OpenIdProxyClient(object):
-    def __init__(self):
-        pass
-
-    def test(self):
-        """ Dummy action - only exists locally."""
-        url = urljoin(BASE_URL, '/api/collection/f20/status/')
-        response = self._authed_post(url,
-                                   data={'collection_branchname': 'f20',
-                                         'collection_status': 'EOL'})
-        return response.text
-
 if __name__ == '__main__':
 
     # BaseClient API => send_request(auth=True); ie: programmer specifies
