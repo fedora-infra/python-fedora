@@ -66,6 +66,11 @@ import requests
 import urllib3
 from functools import partial, wraps
 
+import sys
+import os
+sys.path.insert(0,
+    os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..'))
+
 from fedora import __version__
 from fedora.client import AppError, AuthError, ServerError, LoginRequiredError
 
@@ -150,24 +155,31 @@ class OpenIdProxyClient(object):
 
     def __init__(self, base_url, login_url='/login', useragent=None,
                  session_name='session', debug=False, insecure=False,
-                 retries=None, timeout=None):
+                 openid_insecure=False, retries=None, timeout=None):
         """Create a client configured for a particular service.
 
         :arg base_url: Base of every URL used to contact the server
-        :kwarg useragent: useragent string to use.  If not given, default to
-            "Fedora ProxyClient/VERSION"
+        :kwarg useragent: useragent string to use.  If not given, default
+            to "Fedora ProxyClient/VERSION"
         :kwarg session_name: name of the cookie to use with session handling
         :kwarg debug: If True, log debug information
         :kwarg insecure: If True, do not check server certificates against
             their CA's.  This means that man-in-the-middle attacks are
-            possible against the `BaseClient`. You might turn this option on
-            for testing against a local version of a server with a self-signed
-            certificate but it should be off in production.
-        :kwarg retries: if we get an unknown or possibly transient error from
-            the server, retry this many times.  Setting this to a negative
-            number makes it try forever.  Defaults to zero, no retries.
-        :kwarg timeout: A float describing the timeout of the connection. The
-            timeout only affects the connection process itself, not the
+            possible against the `BaseClient`. You might turn this option
+            on for testing against a local version of a server with a
+            self-signed certificate but it should be off in production.
+        :kwarg openid_insecure: If True, do not check the openid server
+            certificates against their CA's.  This means that man-in-the-
+            middle attacks are possible against the `BaseClient`. You might
+            turn this option on for testing against a local version of a
+            server with a self-signed certificate but it should be off in
+            production.
+        :kwarg retries: if we get an unknown or possibly transient error
+            from the server, retry this many times.  Setting this to a
+            negative number makes it try forever.  Defaults to zero, no
+            retries.
+        :kwarg timeout: A float describing the timeout of the connection.
+            The timeout only affects the connection process itself, not the
             downloading of the response body. Defaults to 120 seconds.
 
         """
@@ -188,6 +200,7 @@ class OpenIdProxyClient(object):
                 'version': __version__}
         self.session_name = session_name
         self.insecure = insecure
+        self.openid_insecure = openid_insecure
 
         # Have to do retries and timeout default values this way as BaseClient
         # sends None for these values if not overridden by the user.
@@ -244,9 +257,9 @@ class OpenIdProxyClient(object):
         """Make an HTTP request to a server method.
 
         The given method is called with any parameters set in ``req_params``.
-        If auth is True, then the request is made with an authenticated session
-        cookie.  Note that path parameters should be set by adding onto the
-        method, not via ``req_params``.
+        If auth is True, then the request is made with an authenticated
+        session cookie.  Note that path parameters should be set by adding
+        onto the method, not via ``req_params``.
 
         :arg method: Method to call on the server.  It's a url fragment that
             comes after the base_url set in __init__().  Note that any
@@ -254,37 +267,38 @@ class OpenIdProxyClient(object):
             not in ``req_params``.
         :kwarg req_params: dict containing extra parameters to send to the
             server
-        :kwarg auth_params: dict containing one or more means of authenticating
-            to the server.  Valid entries in this dict are:
+        :kwarg auth_params: dict containing one or more means of
+            authenticating to the server.  Valid entries in this dict are:
 
             :cookie: **Deprecated** Use ``session_id`` instead.  If both
-                ``cookie`` and ``session_id`` are set, only ``session_id`` will
-                be used.  A ``Cookie.SimpleCookie`` to send as a session cookie
-                to the server
-            :session_id: Session id to put in a cookie to construct an identity
-                for the server
+                ``cookie`` and ``session_id`` are set, only ``session_id``
+                will be used.  A ``Cookie.SimpleCookie`` to send as a
+                session cookie to the server
+            :session_id: Session id to put in a cookie to construct an
+                identity for the server
             :username: Username to send to the server
             :password: Password to use with username to send to the server
             :httpauth: If set to ``basic`` then use HTTP Basic Authentication
-                to send the username and password to the server.  This may be
-                extended in the future to support other httpauth types than
-                ``basic``.
+                to send the username and password to the server.  This may
+                be extended in the future to support other httpauth types
+                than ``basic``.
 
             Note that cookie can be sent alone but if one of username or
-            password is set the other must as well.  Code can set all of these
-            if it wants and all of them will be sent to the server.  Be careful
-            of sending cookies that do not match with the username in this
-            case as the server can decide what to do in this case.
+            password is set the other must as well.  Code can set all of
+            these if it wants and all of them will be sent to the server.
+            Be careful of sending cookies that do not match with the
+            username in this case as the server can decide what to do in
+            this case.
         :kwarg file_params: dict of files where the key is the name of the
             file field used in the remote method and the value is the local
             path of the file to be uploaded.  If you want to pass multiple
             files to a single file field, pass the paths as a list of paths.
-        :kwarg retries: if we get an unknown or possibly transient error from
-            the server, retry this many times.  Setting this to a negative
-            number makes it try forever.  Default to use the :attr:`retries`
-            value set on the instance or in :meth:`__init__`.
-        :kwarg timeout: A float describing the timeout of the connection. The
-            timeout only affects the connection process itself, not the
+        :kwarg retries: if we get an unknown or possibly transient error
+            from the server, retry this many times.  Setting this to a
+            negative number makes it try forever.  Default to use the
+            :attr:`retries` value set on the instance or in :meth:`__init__`.
+        :kwarg timeout: A float describing the timeout of the connection.
+            The timeout only affects the connection process itself, not the
             downloading of the response body. Defaults to the :attr:`timeout`
             value set on the instance or in :meth:`__init__`.
         :returns: A tuple of session_id and data.
@@ -321,8 +335,8 @@ class OpenIdProxyClient(object):
                     ' specified: set "cookie" in auth_params or set both'
                     ' username and password in auth_params')
 
-        # urljoin is slightly different than os.path.join().  Make sure method
-        # will work with it.
+        # urljoin is slightly different than os.path.join().  Make sure
+        # method will work with it.
         method = method.lstrip('/')
         # And join to make our url.
         url = urljoin(self.base_url, urllib.quote(method))
@@ -343,9 +357,9 @@ class OpenIdProxyClient(object):
         # If we have a session_id, send it
         if session_id:
             # Anytime the session_id exists, send it so that visit tracking
-            # works.  Will also authenticate us if there's a need.  Note that
-            # there's no need to set other cookie attributes because this is a
-            # cookie generated client-side.
+            # works.  Will also authenticate us if there's a need.  Note
+            # that there's no need to set other cookie attributes because
+            # this is a cookie generated client-side.
             cookies.set(self.session_name, session_id)
 
         complete_params = req_params or {}
@@ -361,8 +375,8 @@ class OpenIdProxyClient(object):
                 auth = (username, password)
             else:
                 # TG login
-                # Adding this to the request data prevents it from being logged by
-                # apache.
+                # Adding this to the request data prevents it from being
+                # logged by apache.
                 complete_params.update({
                     'user_name': to_bytes(username),
                     'password': to_bytes(password),
@@ -431,7 +445,8 @@ class OpenIdProxyClient(object):
                 # Fail and raise an error
                 # Raising our own exception protects the user from the
                 # implementation detail of requests vs pycurl vs urllib
-                raise ServerError(url, -1, 'Request timed out after %s seconds' % timeout)
+                raise ServerError(
+                    url, -1, 'Request timed out after %s seconds' % timeout)
 
             # When the python-requests module gets a response, it attempts to
             # guess the encoding using chardet (or a fork)
@@ -452,8 +467,10 @@ class OpenIdProxyClient(object):
             if http_status in (401, 403):
                 # Wrong username or password
                 log.debug('Authentication failed logging in')
-                raise AuthError('Unable to log into server.  Invalid'
-                        ' authentication tokens.  Send new username and password')
+                raise AuthError(
+                    'Unable to log into server.  Invalid '
+                    'authentication tokens.  Send new username and password'
+                )
             elif http_status >= 400:
                 if retries < 0 or num_tries < retries:
                     # Retry the request
@@ -489,9 +506,29 @@ class OpenIdProxyClient(object):
             message = data.pop('tg_flash')
             raise AppError(name=name, message=message, extras=data)
 
-        log.debug('proxyclient.send_request: exited')
+        log.debug('openidproxyclient.send_request: exited')
         data = bunchify(data)
         return new_session, data
 
 
 __all__ = (OpenIdProxyClient,)
+
+if __name__ == '__main__':
+
+    import getpass
+
+    PKGDB = OpenIdProxyClient(
+        'http://209.132.184.188/', openid_insecure=True)
+
+    # If that fails, login
+    FAS_NAME = raw_input('Username: ')
+    FAS_PASS = getpass.getpass('FAS password: ')
+    try:
+        print PKGDB.send_request('/admin/')
+    except AuthError as err:
+        print 'Requires Auth'
+        print err.message
+    print PKGDB.login(FAS_NAME, FAS_PASS)
+    # Retry the action
+    print PKGDB.login(FAS_NAME, FAS_PASS)
+    print PKGDB.send_request('/admin/'=True).text
