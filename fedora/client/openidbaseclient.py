@@ -57,8 +57,7 @@ sys.path.insert(0,
 from fedora import __version__
 from fedora.client import AuthError, LoginRequiredError
 from fedora.client.openidproxyclient import (
-    OpenIdProxyClient, absolute_url,
-    _parse_service_form, _parse_openid_login_form)
+    OpenIdProxyClient, absolute_url, openid_login)
 
 log = logging.getLogger(__name__)
 
@@ -326,37 +325,13 @@ class OpenIdBaseClient(OpenIdProxyClient):
             API that the API can use.
 
         """
-        # Requests session needed to persist the cookies that are created
-        # during redirects on the openid provider
-        # Log into the service
-        response = self._session.get(self.login_url)
-        if not '<title>OpenID transaction in progress</title>' \
-                in response.text:
-            return
-        # requests.session should hold onto this for us....
-        openid_url, data = _parse_service_form(response)
-
-        # Contact openid provider
-        response = self._session.post(openid_url, data)
-        action, data = _parse_openid_login_form(response)
-
-        action = absolute_url(openid_url, action)
-        if 'username' in data:
-            # Not logged into openid
-            data['username'] = username
-            data['password'] = password
-            response = self._session.post(action, data)
-            action, data = _parse_openid_login_form(response)
-            action = absolute_url(openid_url, action)
-
-        # Verify that we want the openid server to send the requested data
-        # (Only return decided_allow)
-        del(data['decided_deny'])
-        response = self._session.post(
-            action, data, verify=not self.openid_insecure)
-
-        service_url, data = _parse_service_form(response)
-        response = self._session.post(service_url, data)
+        response = openid_login(
+            session=self._session,
+            login_url=self.login_url,
+            username=username,
+            password=password,
+            otp=otp,
+            openid_insecure=self.openid_insecure)
         return response
 
 
