@@ -71,7 +71,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
     def __init__(self, base_url, login_url=None, useragent=None, debug=False,
                  insecure=False, openid_insecure=False, username=None,
-                 httpauth=None, session_id=None, session_name='tg-visit',
+                 session_id=None, session_name='tg-visit',
                  openid_session_id=None, openid_session_name='FAS_OPENID',
                  cache_session=True, retries=None, timeout=None):
         """Client for interacting with web services relying on fas_openid auth.
@@ -150,33 +150,33 @@ class OpenIdBaseClient(OpenIdProxyClient):
         if not os.path.isdir(b_SESSION_DIR):
             try:
                 os.makedirs(b_SESSION_DIR, mode=0o755)
-            except OSError as e:
+            except OSError as err:
                 log.warning('Unable to create {file}: {error}').format(
-                    file=b_SESSION_DIR, error=e)
+                    file=b_SESSION_DIR, error=err)
                 return None
 
         if not os.path.exists(b_SESSION_FILE):
-            db = sqlite3.connect(b_SESSION_FILE)
-            cursor = db.cursor()
+            dbcon = sqlite3.connect(b_SESSION_FILE)
+            cursor = dbcon.cursor()
             try:
                 cursor.execute('create table sessions (username text,'
                                ' base_url text, session_id text,'
                                ' primary key (username, base_url))')
-            except sqlite3.DatabaseError as e:
+            except sqlite3.DatabaseError as err:
                 # Probably not a database
                 log.warning('Unable to initialize {file}: {error}'.format(
-                    file=b_SESSION_FILE, error=e))
+                    file=b_SESSION_FILE, error=err))
                 return None
-            db.commit()
+            dbcon.commit()
         else:
             try:
-                db = sqlite3.connect(b_SESSION_FILE)
-            except sqlite3.OperationalError as e:
+                dbcon = sqlite3.connect(b_SESSION_FILE)
+            except sqlite3.OperationalError as err:
                 # Likely permission denied
                 log.warning('Unable to connect to {file}: {error}'.format(
-                    file=b_SESSION_FILE, error=e))
+                    file=b_SESSION_FILE, error=err))
                 return None
-        return db
+        return dbcon
 
     def _get_id(self, base_url=None):
         # base_url is only sent as a param if we're looking for the openid
@@ -230,7 +230,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
                 cursor.execute('update sessions set session_id = ? where'
                                ' username = ? and base_url = ?',
                                (session_id, username, base_url))
-            db.commit()
+            cursor.commit()
 
     def _del_id(self, base_url=None):
         # base_url is only sent as a param if we're looking for the openid
