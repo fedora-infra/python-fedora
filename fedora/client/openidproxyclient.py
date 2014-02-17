@@ -114,14 +114,21 @@ def openid_login(session, login_url, username, password, otp=None,
     Log in the user with the specified username and password
     against the FAS OpenID server.
 
+    :arg session: Requests session object required to persist the cookies
+        that are created during redirects on the openid provider.
+    :arg login_url: The url to the login endpoint of the application.
     :arg username: the FAS username of the user that wants to log in
     :arg password: the FAS password of the user that wants to log in
     :kwarg otp: currently unused.  Eventually a way to send an otp to the
         API that the API can use.
+    :kwarg openid_insecure: If True, do not check the openid server
+        certificates against their CA's.  This means that man-in-the-middle
+        attacks are possible against the `BaseClient`. You might turn this
+        option on for testing against a local version of a server with a
+        self-signed certificate but it should be off in production.
 
     """
-    # Requests session needed to persist the cookies that are created
-    # during redirects on the openid provider
+    #
     # Log into the service
     response = session.get(login_url)
     if not '<title>OpenID transaction in progress</title>' \
@@ -244,6 +251,8 @@ class OpenIdProxyClient(object):
         """Create a client configured for a particular service.
 
         :arg base_url: Base of every URL used to contact the server
+        :kwarg login_url: The url to the login endpoint of the application.
+            If none are specified, it uses the default `/login`.
         :kwarg useragent: useragent string to use.  If not given, default
             to "Fedora ProxyClient/VERSION"
         :kwarg session_name: name of the cookie to use with session handling
