@@ -69,8 +69,8 @@ from functools import partial, wraps
 
 import sys
 import os
-sys.path.insert(0,
-    os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..'))
+sys.path.insert(
+    0, os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..'))
 
 from fedora import __version__
 from fedora.client import AppError, AuthError, ServerError, LoginRequiredError
@@ -79,6 +79,7 @@ log = logging.getLogger(__name__)
 log.addHandler(NullHandler())
 
 OPENID_SESSION_NAME = 'FAS_OPENID'
+
 
 def _parse_service_form(response):
     """ Retrieve the attributes from the html form. """
@@ -109,7 +110,7 @@ def _parse_openid_login_form(response):
 
 
 def openid_login(session, login_url, username, password, otp=None,
-          openid_insecure=False):
+                 openid_insecure=False):
     """ Open a session for the user.
 
     Log in the user with the specified username and password
@@ -157,6 +158,7 @@ def openid_login(session, login_url, username, password, otp=None,
     response = session.post(service_url, data)
     return response
 
+
 def absolute_url(beginning, end):
     """ Join two urls parts if the last part does not start with the first
     part specified """
@@ -183,10 +185,10 @@ class OpenIdProxyClient(object):
     # pylint: disable-msg=R0903
     """
     A client to a Fedora Service.  This class is optimized to proxy multiple
-    users to a service.  OpenIdProxyClient is designed to be usable by code that
-    creates a single instance of this class and uses it in multiple threads.
-    However it is not completely threadsafe.  See the information on setting
-    attributes below.
+    users to a service.  OpenIdProxyClient is designed to be usable by code
+    that creates a single instance of this class and uses it in multiple
+    threads. However it is not completely threadsafe.  See the information
+    on setting attributes below.
 
     If you want something that can manage one user's connection to a Fedora
     Service, then look into using :class:`~fedora.client.OpenIdBaseClient`
@@ -195,9 +197,9 @@ class OpenIdProxyClient(object):
     This class has several attributes.  These may be changed after
     instantiation.  Please note, however, that changing these values when
     another thread is utilizing the same instance may affect more than just
-    the thread that you are making the change in.  (For instance, changing the
-    debug option could cause other threads to start logging debug messages in
-    the middle of a method.)
+    the thread that you are making the change in.  (For instance, changing
+    the debug option could cause other threads to start logging debug
+    messages in the middle of a method.)
 
     .. attribute:: base_url
 
@@ -283,7 +285,7 @@ class OpenIdProxyClient(object):
         self.login_url = login_url or urljoin(self.base_url, '/login')
         self.domain = urlparse(self.base_url).netloc
         self.useragent = useragent or 'Fedora ProxyClient/%(version)s' % {
-                'version': __version__}
+            'version': __version__}
         self.session_name = session_name
         self.insecure = insecure
         self.openid_insecure = openid_insecure
@@ -339,7 +341,8 @@ class OpenIdProxyClient(object):
         return response
 
     def send_request(self, method, verb='POST', req_params=None,
-            auth_params=None, file_params=None, retries=None, timeout=None):
+                     auth_params=None, file_params=None, retries=None,
+                     timeout=None):
         """Make an HTTP request to a server method.
 
         The given method is called with any parameters set in ``req_params``.
@@ -404,22 +407,26 @@ class OpenIdProxyClient(object):
             if 'session_id' in auth_params:
                 session_id = auth_params['session_id']
             elif 'cookie' in auth_params:
-                warnings.warn('Giving a cookie to send_request() to'
-                ' authenticate is deprecated and will be removed in 0.4.'
-                ' Please port your code to use session_id instead.',
-                DeprecationWarning, stacklevel=2)
-                session_id = auth_params['cookie'].output(attrs=[],
-                        header='').strip()
+                warnings.warn(
+                    'Giving a cookie to send_request() to authenticate is '
+                    'deprecated and will be removed in 0.4. Please port '
+                    'your code to use session_id instead.',
+                    DeprecationWarning, stacklevel=2)
+                session_id = auth_params['cookie'].output(
+                    attrs=[],
+                    header='').strip()
             if 'username' in auth_params and 'password' in auth_params:
                 username = auth_params['username']
                 password = auth_params['password']
             elif 'username' in auth_params or 'password' in auth_params:
-                raise AuthError('username and password must both be set in'
-                        ' auth_params')
+                raise AuthError(
+                    'username and password must both be set in auth_params'
+                )
             if not (session_id or username):
-                raise AuthError('No known authentication methods'
-                    ' specified: set "cookie" in auth_params or set both'
-                    ' username and password in auth_params')
+                raise AuthError(
+                    'No known authentication methods specified: set '
+                    '"cookie" in auth_params or set both username and '
+                    'password in auth_params')
 
         # urljoin is slightly different than os.path.join().  Make sure
         # method will work with it.
@@ -462,10 +469,10 @@ class OpenIdProxyClient(object):
             cookies = resp.cookies
 
         # If debug, give people our debug info
-        log.debug('Creating request %(url)s' %
-                {'url': to_bytes(url)})
-        log.debug('Headers: %(header)s' %
-                {'header': to_bytes(headers, nonstring='simplerepr')})
+        log.debug('Creating request %(url)s' % {'url': to_bytes(url)})
+        log.debug(
+            'Headers: %(header)s' % {
+                'header': to_bytes(headers, nonstring='simplerepr')})
         if self.debug and complete_params:
             debug_data = copy.deepcopy(complete_params)
 
@@ -539,7 +546,8 @@ class OpenIdProxyClient(object):
             response.encoding = 'utf-8'
 
             # Check for auth failures
-            # Note: old TG apps returned 403 Forbidden on authentication failures.
+            # Note: old TG apps returned 403 Forbidden on authentication
+            # failures.
             # Updated apps return 401 Unauthorized
             # We need to accept both until all apps are updated to return 401.
             http_status = response.status_code
@@ -607,7 +615,8 @@ if __name__ == '__main__':
     FAS_PASS = getpass.getpass('FAS password: ')
     auth_params = {'username': FAS_NAME, 'password': FAS_PASS}
     try:
-        print PKGDB.send_request('/admin/', verb='GET', auth_params=auth_params)
+        print PKGDB.send_request(
+            '/admin/', verb='GET', auth_params=auth_params)
     except AuthError as err:
         print 'Requires Auth'
         print err.message
