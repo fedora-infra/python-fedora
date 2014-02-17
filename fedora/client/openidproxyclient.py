@@ -63,7 +63,6 @@ import requests
 from kitchen.text.converters import to_bytes
 # For handling an exception that's coming from requests:
 import urllib3
-from functools import wraps
 
 import sys
 import os
@@ -170,20 +169,6 @@ def absolute_url(beginning, end):
     if not end.startswith(beginning):
         end = urljoin(beginning, end)
     return end
-
-
-def requires_login(func):
-    """ Decorator function for get or post requests requiring login. """
-    def _decorator(request, *args, **kwargs):
-        """ Run the function and check if it redirected to the openid form.
-        """
-        output = func(request, *args, **kwargs)
-        if output and \
-                '<title>OpenID transaction in progress</title>' in output.text:
-            raise LoginRequiredError(
-                '{0} requires a logged in user'.format(output.url))
-        return output
-    return wraps(func)(_decorator)
 
 
 class OpenIdProxyClient(object):
@@ -334,18 +319,6 @@ class OpenIdProxyClient(object):
     When True, we log extra debugging statements.  When False, we only log
     errors.
     """)
-
-    @requires_login
-    def _authed_post(self, url, params=None, data=None):
-        """ Return the request object of a post query."""
-        response = self._session.post(url, params=params, data=data)
-        return response
-
-    @requires_login
-    def _authed_get(self, url, params=None, data=None):
-        """ Return the request object of a get query."""
-        response = self._session.get(url, params=params, data=data)
-        return response
 
     def send_request(self, method, verb='POST', req_params=None,
                      auth_params=None, file_params=None, retries=None,

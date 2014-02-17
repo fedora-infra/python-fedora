@@ -49,6 +49,7 @@ except ImportError:
 
 
 import requests
+from functools import wraps
 
 import sys
 sys.path.insert(
@@ -63,6 +64,20 @@ log = logging.getLogger(__name__)
 
 b_SESSION_DIR = os.path.join(os.path.expanduser('~'), '.fedora')
 b_SESSION_FILE = os.path.join(b_SESSION_DIR, 'baseclient-sessions.sqlite')
+
+
+def requires_login(func):
+    """ Decorator function for get or post requests requiring login. """
+    def _decorator(request, *args, **kwargs):
+        """ Run the function and check if it redirected to the openid form.
+        """
+        output = func(request, *args, **kwargs)
+        if output and \
+                '<title>OpenID transaction in progress</title>' in output.text:
+            raise LoginRequiredError(
+                '{0} requires a logged in user'.format(output.url))
+        return output
+    return wraps(func)(_decorator)
 
 
 class OpenIdBaseClient(OpenIdProxyClient):
@@ -269,6 +284,18 @@ class OpenIdBaseClient(OpenIdProxyClient):
         The openid session id is saved in a file in case it is needed in
         consecutive runs of BaseClient.
         """)
+
+    @requires_login
+    def _authed_post(self, url, params=None, data=None):
+        """ Return the request object of a post query."""
+        response = self._session.post(url, params=params, data=data)
+        return response
+
+    @requires_login
+    def _authed_get(self, url, params=None, data=None):
+        """ Return the request object of a get query."""
+        response = self._session.get(url, params=params, data=data)
+        return response
 
     def send_request(self, method, auth=False, verb='POST', **kwargs):
         """Make an HTTP request to a server method.
