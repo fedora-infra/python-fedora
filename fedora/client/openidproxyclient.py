@@ -126,6 +126,9 @@ def openid_login(session, login_url, username, password, otp=None,
 
     if motif.match(openid_url):
         openid_url = 'https://id.fedoraproject.org/api/v1/'
+    else:
+        raise FedoraServiceError(
+            'Un-expected openid provider asked: %s'  % openid_url)
 
     # Contact openid provider
     data['username'] = username
