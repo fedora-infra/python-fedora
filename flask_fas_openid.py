@@ -104,8 +104,8 @@ class FAS(object):
         app.before_request(self._check_session)
 
     def _handle_openid_request(self):
-        return_url = flask.session['FLASK_FAS_OPENID_RETURN_URL']
-        cancel_url = flask.session['FLASK_FAS_OPENID_CANCEL_URL']
+        return_url = flask.session.get('FLASK_FAS_OPENID_RETURN_URL', None)
+        cancel_url = flask.session.get('FLASK_FAS_OPENID_CANCEL_URL', None)
         base_url = self.normalize_url(flask.request.base_url)
         oidconsumer = consumer.Consumer(flask.session, None)
         info = oidconsumer.complete(flask.request.values, base_url)
