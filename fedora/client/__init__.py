@@ -132,11 +132,6 @@ from fedora.client.wiki import Wiki
 __all__ = ('FedoraServiceError', 'ServerError', 'AuthError', 'AppError',
            'FedoraClientError', 'LoginRequiredError', 'DictContainer',
            'FASError', 'CLAError', 'BodhiClientException', 'PackageDBError',
-<<<<<<< HEAD
-           'ProxyClient', 'FasProxyClient', 'BaseClient', 'AccountSystem',
-           'PackageDB', 'BodhiClient', 'Wiki')
-=======
            'ProxyClient', 'FasProxyClient', 'BaseClient', 'OpenIdProxyClient',
            'OpenIdBaseClient', 'AccountSystem', 'PackageDB', 'BodhiClient',
            'Wiki')
->>>>>>> Add openid clients, update copyright year, docstring for changes, and
