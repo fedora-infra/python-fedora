@@ -91,23 +91,6 @@ def _parse_service_form(response):
     return (parsed.form.attrs['action'], inputs)
 
 
-def _parse_openid_login_form(response):
-    """ Parse the OpenID login html form. """
-    parsed = bs4.BeautifulSoup(response.text)
-    inputs = {}
-    for child in parsed.form.find_all(name='input'):
-        if 'type' in child.attrs and child.attrs['type'] == 'submit':
-            if not ('name' in child.attrs and
-                    child.attrs['name'].startswith('decided_')):
-                continue
-        if 'value' in child.attrs:
-            value = child.attrs['value']
-        else:
-            value = None
-        inputs[child.attrs['name']] = value
-    return (parsed.form.attrs['action'], inputs)
-
-
 def openid_login(session, login_url, username, password, otp=None,
                  openid_insecure=False):
     """ Open a session for the user.
