@@ -12,7 +12,7 @@ import functools
 
 from nose.exc import SkipTest
 
-from fedora.client.baseclient import OpenIdBaseClient
+from fedora.client.openidbaseclient import OpenIdBaseClient
 
 BASE_URL = 'http://127.0.0.1:5000'
 BASE_URL = 'http://209.132.184.188'
