@@ -12,6 +12,7 @@ import functools
 
 from nose.exc import SkipTest
 
+from fedora.client import FedoraServiceError
 from fedora.client.openidbaseclient import OpenIdBaseClient
 
 BASE_URL = 'http://127.0.0.1:5000'
@@ -78,8 +79,8 @@ class OpenIdBaseClientTest(unittest.TestCase):
 
     @dev_only
     def test_no_openid_session(self):
-        """Raise AuthError for no session on service or openid server."""
-        self.assertRaises(AuthError, self.client.login, 'username', 'password')
+        """Raise FedoraServiceError for no session on service or openid server."""
+        self.assertRaises(FedoraServiceError, self.client.login, 'username', 'password')
 
     @dev_only
     def test_no_service_session(self):
