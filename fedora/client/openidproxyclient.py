@@ -386,15 +386,6 @@ class OpenIdProxyClient(object):
         if auth_params:
             if 'session_id' in auth_params:
                 session_id = auth_params['session_id']
-            elif 'cookie' in auth_params:
-                warnings.warn(
-                    'Giving a cookie to send_request() to authenticate is '
-                    'deprecated and will be removed in 0.4. Please port '
-                    'your code to use session_id instead.',
-                    DeprecationWarning, stacklevel=2)
-                session_id = auth_params['cookie'].output(
-                    attrs=[],
-                    header='').strip()
             if 'username' in auth_params and 'password' in auth_params:
                 username = auth_params['username']
                 password = auth_params['password']
