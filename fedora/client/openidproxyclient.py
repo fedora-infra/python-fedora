@@ -320,6 +320,30 @@ class OpenIdProxyClient(object):
     errors.
     """)
 
+    def login(self, username, password, otp=None):
+        """ Open a session for the user.
+
+        Log in the user with the specified username and password
+        against the FAS OpenID server.
+
+        :arg username: the FAS username of the user that wants to log in
+        :arg password: the FAS password of the user that wants to log in
+        :kwarg otp: currently unused.  Eventually a way to send an otp to the
+            API that the API can use.
+        :return: a tuple containing both the response from the OpenID
+            provider and the session used to by this provider.
+
+        """
+        session = requests.session()
+        response = openid_login(
+            session=session,
+            login_url=self.login_url,
+            username=username,
+            password=password,
+            otp=otp,
+            openid_insecure=self.openid_insecure)
+        return (response, session)
+
     def send_request(self, method, verb='POST', req_params=None,
                      auth_params=None, file_params=None, retries=None,
                      timeout=None):
@@ -427,15 +451,10 @@ class OpenIdProxyClient(object):
         complete_params = req_params or {}
 
         auth = None
-        session = requests.session()
         if username and password:
             # OpenID login
-            resp = openid_login(
-                session=session, login_url=self.login_url,
-                username=username, password=password,
-                openid_insecure=self.openid_insecure
-            )
-            cookies = resp.cookies
+            resp, session = self.login(username, password, otp=None)
+            cookies = session.cookies
 
         # If debug, give people our debug info
         log.debug('Creating request %s', to_bytes(url))
@@ -542,7 +561,7 @@ class OpenIdProxyClient(object):
             break
 
         # In case the server returned a new session cookie to us
-        new_session = response.cookies.get(self.session_name, '')
+        new_session = session.cookies.get(self.session_name, '')
 
         log.debug('openidproxyclient.send_request: exited')
         #data = bunchify(data)
