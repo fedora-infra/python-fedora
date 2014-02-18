@@ -36,7 +36,8 @@ setup(
         'tg': ['TurboGears >= 1.0.4', 'SQLAlchemy', 'decorator'],
         'wsgi': ['repoze.who', 'Beaker', 'Paste'],
         'flask': [
-            'Flask', 'Flask_WTF', 'python-openid', 'python-openid-teams'
+            'Flask', 'Flask_WTF', 'python-openid', 'python-openid-teams',
+            'python-openid-cla',
         ],
     },
     entry_points={
