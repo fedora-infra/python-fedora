@@ -66,11 +66,6 @@ from kitchen.text.converters import to_bytes
 # For handling an exception that's coming from requests:
 import urllib3
 
-import sys
-import os
-sys.path.insert(
-    0, os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..'))
-
 from fedora import __version__
 from fedora.client import AuthError, ServerError, LoginRequiredError
 
@@ -548,23 +543,3 @@ class OpenIdProxyClient(object):
 
 
 __all__ = (OpenIdProxyClient,)
-
-
-if __name__ == '__main__':
-
-    import getpass
-
-    PKGDB = OpenIdProxyClient(
-        'http://209.132.184.188/', openid_insecure=True)
-
-    # If that fails, login
-    FAS_NAME = raw_input('Username: ')
-    FAS_PASS = getpass.getpass('FAS password: ')
-    auth_params = {'username': FAS_NAME, 'password': FAS_PASS}
-    try:
-        print PKGDB.send_request(
-            '/admin/', verb='GET', auth_params=auth_params)
-    except AuthError as err:
-        print 'Requires Auth'
-        print err.message
-    print PKGDB.send_request('/admin/', verb='GET', auth_params=auth_params)

@@ -51,10 +51,6 @@ except ImportError:
 import requests
 from functools import wraps
 
-import sys
-sys.path.insert(
-    0, os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..'))
-
 from fedora import __version__
 from fedora.client import AuthError, LoginRequiredError
 from fedora.client.openidproxyclient import (
@@ -364,61 +360,3 @@ class OpenIdBaseClient(OpenIdProxyClient):
             otp=otp,
             openid_insecure=self.openid_insecure)
         return response
-
-
-if __name__ == '__main__':
-
-    # BaseClient API => send_request(auth=True); ie: programmer specifies
-    # which calls to the service API need authentication at call time.
-    #
-    # OpenIdBaseClient => @requires_login decorator; ie: programmer specifies
-    # which functions require authentication at function definition time.
-
-    # here's what we want the end user to do for an authentication-needed
-    # request:
-    #
-    # 1) Give username to the API
-    # 2) try action
-    # 3) If fails, get password and five to API
-    # 4) try action again
-    #
-    # Here's what the library needs to do for each step
-    # 1) Give username to API
-    #   A) BaseClient saves Username into an instance variable
-    # 2) Try action
-    #   A) BaseClient looks for saved service cookies.
-    #   B) If no cookie, try action. return AuthError if service says auth
-    #      required
-    #   C) If cookie, try action.  If success return response
-    #   D) If failure, look for saved openid cookie
-    #   E) If no cookie. return AuthError
-    #   F) If cookie, try logging into service via openid cookie
-    #   G) If openid cookie expired: return AuthError
-    #   H) If successful login via openid, get service cookie
-    #   I) Save service cookie
-    #   J) Try action; return action response
-    # 3) Give password to the API
-    #   A) BaseClient logs in to the service with password
-    #   B) Save openid cookie
-    #   C) Save service cookie
-    # 4) Try action again -- same as 2) but should end in success
-
-    # Try the action, remembering to send the session cookie for the service
-
-    import getpass
-
-    PKGDB = OpenIdBaseClient(
-        'http://209.132.184.188/', openid_insecure=True)
-
-    # If that fails, login
-    FAS_NAME = raw_input('Username: ')
-    FAS_PASS = getpass.getpass('FAS password: ')
-    try:
-        print PKGDB.send_request('/admin/', verb='GET', auth=True)
-    except AuthError as err:
-        print 'Requires Auth'
-        print err.message
-    print PKGDB.login(FAS_NAME, FAS_PASS)
-    # Retry the action
-    print PKGDB.login(FAS_NAME, FAS_PASS)
-    print PKGDB.send_request('/admin/', verb='GET', auth=True).text
