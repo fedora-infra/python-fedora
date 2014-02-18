@@ -67,7 +67,7 @@ from kitchen.text.converters import to_bytes
 import urllib3
 
 from fedora import __version__
-from fedora.client import AuthError, ServerError, LoginRequiredError
+from fedora.client import AuthError, ServerError, LoginRequiredError, FedoraServiceError
 
 log = logging.getLogger(__name__)
 log.addHandler(NullHandler())
