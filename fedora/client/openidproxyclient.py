@@ -113,7 +113,7 @@ def openid_login(session, login_url, username, password, otp=None,
 
     """
 
-    fedora_openid = '^http(s)?:\/\/([a-zA-Z0-9]+\.)?id\.fedoraproject\.org(/)?$'
+    fedora_openid = '^http(s)?:\/\/(|stg.|dev.)?id\.fedoraproject\.org/$'
     motif = re.compile(fedora_openid)
 
     # Log into the service
