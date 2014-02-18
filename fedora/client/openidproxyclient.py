@@ -476,7 +476,7 @@ class OpenIdProxyClient(object):
                     #   urllib3.exceptions.SSLError(
                     #     ssl.SSLError('The read operation timed out')))
                     # If we weren't interested in reraising the exception with
-                    # full tracdeback we could use a try: except instead of
+                    # full traceback we could use a try: except instead of
                     # this gross conditional.  But we need to code defensively
                     # because we don't want to raise an unrelated exception
                     # here and if requests/urllib3 can do this sort of
