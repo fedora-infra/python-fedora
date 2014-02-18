@@ -79,7 +79,7 @@ class OpenIdBaseClientTest(unittest.TestCase):
     @dev_only
     def test_no_openid_session(self):
         """Raise AuthError for no session on service or openid server."""
-        self.assertRaises(AuthError, self.client.login)
+        self.assertRaises(AuthError, self.client.login, 'username', 'password')
 
     @dev_only
     def test_no_service_session(self):
