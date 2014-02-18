@@ -405,8 +405,6 @@ class OpenIdProxyClient(object):
         # And join to make our url.
         url = urljoin(self.base_url, urllib.quote(method))
 
-        data = None     # decoded JSON via json.load()
-
         # Set standard headers
         headers = {
             'User-agent': self.useragent,
@@ -545,24 +543,6 @@ class OpenIdProxyClient(object):
 
         # In case the server returned a new session cookie to us
         new_session = response.cookies.get(self.session_name, '')
-
-        #try:
-            #data = response.json
-            ## Compatibility with newer python-requests
-            #if callable(data):
-                #data = data()
-        #except ValueError, e:
-            #print '**', url
-            #print '***', e
-            ## The response wasn't JSON data
-            #raise ServerError(url, http_status, 'Error returned from'
-                    #' json module while processing %(url)s: %(err)s' %
-                    #{'url': to_bytes(url), 'err': to_bytes(e)})
-
-        #if 'exc' in data:
-            #name = data.pop('exc')
-            #message = data.pop('tg_flash')
-            #raise AppError(name=name, message=message, extras=data)
 
         log.debug('openidproxyclient.send_request: exited')
         #data = bunchify(data)
