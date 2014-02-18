@@ -86,7 +86,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
     def __init__(self, base_url, login_url=None, useragent=None, debug=False,
                  insecure=False, openid_insecure=False, username=None,
-                 session_id=None, session_name='tg-visit',
+                 session_id=None, session_name='session',
                  openid_session_id=None, openid_session_name='FAS_OPENID',
                  cache_session=True, retries=None, timeout=None):
         """Client for interacting with web services relying on fas_openid auth.
