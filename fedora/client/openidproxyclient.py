@@ -27,12 +27,14 @@
 """
 
 import copy
-import urllib
 import httplib
+import json
 import logging
+import re
 # For handling an exception that's coming from requests:
 import ssl
 import time
+import urllib
 import warnings
 
 try:
@@ -127,7 +129,10 @@ def openid_login(session, login_url, username, password, otp=None,
         self-signed certificate but it should be off in production.
 
     """
-    #
+
+    fedora_openid = '^http(s)?:\/\/([a-zA-Z0-9]+\.)?id\.fedoraproject\.org(/)?$'
+    motif = re.compile(fedora_openid)
+
     # Log into the service
     response = session.get(login_url)
     if not '<title>OpenID transaction in progress</title>' \
@@ -136,31 +141,19 @@ def openid_login(session, login_url, username, password, otp=None,
     # requests.session should hold onto this for us....
     openid_url, data = _parse_service_form(response)
 
+    if motif.match(openid_url):
+        openid_url = 'https://id.fedoraproject.org/api/v1/'
+
     # Contact openid provider
-    response = session.post(openid_url, data)
-    action, data = _parse_openid_login_form(response)
+    data['username'] = username
+    data['password'] = password
+    response = session.post(openid_url, data, verify=not openid_insecure)
+    output = json.loads(response.text)
 
-    action = absolute_url(openid_url, action)
-    if 'username' in data:
-        # Not logged into openid
-        data['username'] = username
-        data['password'] = password
-        response = session.post(action, data)
-        action, data = _parse_openid_login_form(response)
-        action = absolute_url(openid_url, action)
+    if not output['success']:
+        raise AuthError(output['message'])
 
-    if '<li>Incorrect username or password</li>' in response.text:
-        raise AuthError('Incorect username or password')
-
-    # Verify that we want the openid server to send the requested data
-    # (Only return decided_allow)
-    del(data['decided_deny'])
-    response = session.post(
-        action, data, verify=not openid_insecure)
-
-    service_url, data = _parse_service_form(response)
-    response = session.post(service_url, data)
-    return response
+    return output
 
 
 def absolute_url(beginning, end):
