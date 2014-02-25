@@ -28,7 +28,6 @@
 
 import copy
 import httplib
-import json
 import logging
 import re
 # For handling an exception that's coming from requests:
@@ -86,6 +85,23 @@ def _parse_service_form(response):
     return (parsed.form.attrs['action'], inputs)
 
 
+def _parse_openid_login_form(response):
+    """ Parse the OpenID login html form. """
+    parsed = bs4.BeautifulSoup(response.text)
+    inputs = {}
+    for child in parsed.form.find_all(name='input'):
+        if 'type' in child.attrs and child.attrs['type'] == 'submit':
+            if not ('name' in child.attrs and
+                    child.attrs['name'].startswith('decided_')):
+                continue
+        if 'value' in child.attrs:
+            value = child.attrs['value']
+        else:
+            value = None
+        inputs[child.attrs['name']] = value
+    return (parsed.form.attrs['action'], inputs)
+
+
 def openid_login(session, login_url, username, password, otp=None,
                  openid_insecure=False):
     """ Open a session for the user.
@@ -119,22 +135,35 @@ def openid_login(session, login_url, username, password, otp=None,
     # requests.session should hold onto this for us....
     openid_url, data = _parse_service_form(response)
 
-    if motif.match(openid_url):
-        openid_url = 'https://id.fedoraproject.org/api/v1/'
-    else:
+    if not motif.match(openid_url):
         raise FedoraServiceError(
             'Un-expected openid provider asked: %s'  % openid_url)
 
     # Contact openid provider
-    data['username'] = username
-    data['password'] = password
-    response = session.post(openid_url, data, verify=not openid_insecure)
-    output = json.loads(response.text)
+    response = session.post(openid_url, data)
+    action, data = _parse_openid_login_form(response)
 
-    if not output['success']:
-        raise AuthError(output['message'])
+    action = absolute_url(openid_url, action)
+    if 'username' in data:
+        # Not logged into openid
+        data['username'] = username
+        data['password'] = password
+        response = session.post(action, data)
+        action, data = _parse_openid_login_form(response)
+        action = absolute_url(openid_url, action)
 
-    return output
+    if '<li>Incorrect username or password</li>' in response.text:
+        raise AuthError('Incorect username or password')
+
+    # Verify that we want the openid server to send the requested data
+    # (Only return decided_allow)
+    del(data['decided_deny'])
+    response = session.post(
+        action, data, verify=not openid_insecure)
+
+    service_url, data = _parse_service_form(response)
+    response = session.post(service_url, data)
+    return response
 
 
 def absolute_url(beginning, end):
