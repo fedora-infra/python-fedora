@@ -38,12 +38,10 @@ import warnings
 
 try:
     # Python2
-    from urlparse import urljoin
-    from urlparse import urlparse
+    from urlparse import urljoin, urlparse, parse_qs
 except ImportError:
     # Python3 support
-    from urllib.parse import urljoin
-    from urllib.parse import urlparse
+    from urllib.parse import urljoin, urlparse, parse_qs
 
 # Hack, hack, hack around
 # the horror that is logging!
@@ -64,7 +62,6 @@ import requests
 from kitchen.text.converters import to_bytes
 # For handling an exception that's coming from requests:
 import urllib3
-import urlparse
 
 from fedora import __version__
 from fedora.client import AuthError, ServerError, LoginRequiredError, FedoraServiceError
@@ -125,7 +122,7 @@ def openid_login(session, login_url, username, password, otp=None,
         data = {}
         for r in response.history:
             if motif.match(r.url):
-                parsed = urlparse.parse_qs(urlparse.urlparse(r.url).query)
+                parsed = parse_qs(urlparse(r.url).query)
                 for key, value in parsed.items():
                     data[key] = value[0]
                 break
