@@ -28,7 +28,6 @@
 
 import copy
 import httplib
-import json
 import logging
 import re
 # For handling an exception that's coming from requests:
@@ -139,7 +138,7 @@ def openid_login(session, login_url, username, password, otp=None,
     data['username'] = username
     data['password'] = password
     response = session.post(fedora_openid_api, data, verify=not openid_insecure)
-    output = json.loads(response.text)
+    output = response.json()
 
     if not output['success']:
         raise AuthError(output['message'])
