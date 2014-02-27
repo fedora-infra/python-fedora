@@ -2,9 +2,17 @@
 NEWS
 ====
 
-:Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk
+:Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
 :Date: 19 December 2013
 :Version: 0.3.x
+
+
+------
+0.3.34 (unreleased)
+------
+
+* Updated libravatar lookups to use the user's openid identifier instead of
+  their email address.
 
 ------
 0.3.33
