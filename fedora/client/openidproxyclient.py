@@ -134,6 +134,8 @@ def openid_login(session, login_url, username, password, otp=None,
     if not output['success']:
         raise AuthError(output['message'])
 
+    response = session.post(output['response']['openid.return_to'], data=output['response'])
+
     return output
 
 
