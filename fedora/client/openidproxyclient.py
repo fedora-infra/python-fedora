@@ -28,7 +28,6 @@
 
 import copy
 import httplib
-import json
 import logging
 import re
 # For handling an exception that's coming from requests:
@@ -39,12 +38,10 @@ import warnings
 
 try:
     # Python2
-    from urlparse import urljoin
-    from urlparse import urlparse
+    from urlparse import urljoin, urlparse, parse_qs
 except ImportError:
     # Python3 support
-    from urllib.parse import urljoin
-    from urllib.parse import urlparse
+    from urllib.parse import urljoin, urlparse, parse_qs
 
 # Hack, hack, hack around
 # the horror that is logging!
@@ -107,29 +104,38 @@ def openid_login(session, login_url, username, password, otp=None,
         self-signed certificate but it should be off in production.
 
     """
-
-    fedora_openid = '^http(s)?:\/\/(|stg.|dev.)?id\.fedoraproject\.org(/)?$'
+    fedora_openid_api = 'https://id.fedoraproject.org/api/v1/'
+    fedora_openid = '^http(s)?:\/\/(|stg.|dev.)?id\.fedoraproject\.org(/)?'
     motif = re.compile(fedora_openid)
 
     # Log into the service
     response = session.get(login_url)
-    if not '<title>OpenID transaction in progress</title>' \
-            in response.text:
-        return
-    # requests.session should hold onto this for us....
-    openid_url, data = _parse_service_form(response)
 
-    if motif.match(openid_url):
-        openid_url = 'https://id.fedoraproject.org/api/v1/'
+    if '<title>OpenID transaction in progress</title>' \
+            in response.text:
+        # requests.session should hold onto this for us....
+        openid_url, data = _parse_service_form(response)
+        if not motif.match(openid_url):
+            raise FedoraServiceError(
+                'Un-expected openid provider asked: %s'  % openid_url)
     else:
-        raise FedoraServiceError(
-            'Un-expected openid provider asked: %s'  % openid_url)
+        data = {}
+        for r in response.history:
+            if motif.match(r.url):
+                parsed = parse_qs(urlparse(r.url).query)
+                for key, value in parsed.items():
+                    data[key] = value[0]
+                break
+        else:
+            raise FedoraServiceError(
+                'Unable to determine openid parameters from login: %r' %
+                openid_url)
 
     # Contact openid provider
     data['username'] = username
     data['password'] = password
-    response = session.post(openid_url, data, verify=not openid_insecure)
-    output = json.loads(response.text)
+    response = session.post(fedora_openid_api, data, verify=not openid_insecure)
+    output = response.json()
 
     if not output['success']:
         raise AuthError(output['message'])
