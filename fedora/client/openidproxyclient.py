@@ -86,6 +86,18 @@ def _parse_service_form(response):
     return (parsed.form.attrs['action'], inputs)
 
 
+def _parse_response_history(response):
+    """ Retrieve the attributes from the response history. """
+    data = {}
+    for r in response.history:
+        if FEDORA_OPENID_RE.match(r.url):
+            parsed = parse_qs(urlparse(r.url).query)
+            for key, value in parsed.items():
+                data[key] = value[0]
+            break
+    return data
+
+
 def openid_login(session, login_url, username, password, otp=None,
                  openid_insecure=False):
     """ Open a session for the user.
@@ -118,17 +130,12 @@ def openid_login(session, login_url, username, password, otp=None,
             raise FedoraServiceError(
                 'Un-expected openid provider asked: %s'  % openid_url)
     else:
-        data = {}
-        for r in response.history:
-            if motif.match(r.url):
-                parsed = parse_qs(urlparse(r.url).query)
-                for key, value in parsed.items():
-                    data[key] = value[0]
-                break
-        else:
+        # Some consumers (like pyramid_openid) return redirects with the
+        # openid attributes encoded in the url
+        if not FEDORA_OPENID_RE.match(response.url):
             raise FedoraServiceError(
-                'Unable to determine openid parameters from login: %r' %
-                openid_url)
+                'Un-expected openid provider asked: %s' % response.url)
+        data = _parse_response_history(response)
 
     # Contact openid provider
     data['username'] = username
