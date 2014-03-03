@@ -71,6 +71,9 @@ log.addHandler(NullHandler())
 
 OPENID_SESSION_NAME = 'FAS_OPENID'
 
+FEDORA_OPENID_API = 'https://id.fedoraproject.org/api/v1/'
+FEDORA_OPENID_RE = re.compile(r'^http(s)?:\/\/(|stg.|dev.)?id\.fedoraproject\.org(/)?')
+
 
 def _parse_service_form(response):
     """ Retrieve the attributes from the html form. """
@@ -104,10 +107,6 @@ def openid_login(session, login_url, username, password, otp=None,
         self-signed certificate but it should be off in production.
 
     """
-    fedora_openid_api = 'https://id.fedoraproject.org/api/v1/'
-    fedora_openid = '^http(s)?:\/\/(|stg.|dev.)?id\.fedoraproject\.org(/)?'
-    motif = re.compile(fedora_openid)
-
     # Log into the service
     response = session.get(login_url)
 
@@ -115,7 +114,7 @@ def openid_login(session, login_url, username, password, otp=None,
             in response.text:
         # requests.session should hold onto this for us....
         openid_url, data = _parse_service_form(response)
-        if not motif.match(openid_url):
+        if not FEDORA_OPENID_RE.match(openid_url):
             raise FedoraServiceError(
                 'Un-expected openid provider asked: %s'  % openid_url)
     else:
@@ -134,7 +133,7 @@ def openid_login(session, login_url, username, password, otp=None,
     # Contact openid provider
     data['username'] = username
     data['password'] = password
-    response = session.post(fedora_openid_api, data, verify=not openid_insecure)
+    response = session.post(FEDORA_OPENID_API, data, verify=not openid_insecure)
     output = response.json()
 
     if not output['success']:
