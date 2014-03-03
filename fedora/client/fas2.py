@@ -463,10 +463,12 @@ class AccountSystem(BaseClient):
         :kwarg default: If the service does not have a avatar image for the
             email address, this url is returned instead.  Default:
             the fedora logo at the specified size.
-        :kwarg lookup_email:  If true, use the email from FAS, otherwise just
-            append @fedoraproject.org to the username.  Note that this will be
-            much slower if lookup_email is set to True since we'd have to make
-            a query against FAS itself.
+        :kwarg lookup_email:  If true, use the email from FAS for gravatar.com
+            lookups, otherwise just append @fedoraproject.org to the username.
+            For libravatar.org lookups, this is ignored.  The openid identifier
+            of the user is used instead.
+            Note that gravatar.com lookups will be much slower if lookup_email
+            is set to True since we'd have to make a query against FAS itself.
         :kwarg service: One of 'libravatar' or 'gravatar'.
             Default: 'libravatar'.
         :raises ValueError: if the size parameter is not allowed or if the
@@ -486,6 +488,8 @@ class AccountSystem(BaseClient):
             urls with the email in fas or username@fedoraproject.org
         .. versionchanged: 0.3.33
             Renamed from `gravatar_url` to `avatar_url`
+        .. versionchanged: 0.3.34
+            Updated libravatar to use the user's openid identifier.
         '''
 
         if size not in self._valid_avatar_sizes:
@@ -525,19 +529,20 @@ class AccountSystem(BaseClient):
             default = "http://fedoraproject.org/static/images/" + \
                       "fedora_infinity_%ix%i.png" % (size, size)
 
-        if lookup_email:
-            person = self.person_by_username(username)
-            email = person.get('email', 'no_email')
-        else:
-            email = "%s@fedoraproject.org" % username
-
         if service == 'libravatar':
+            openid = 'http://%s.id.fedoraproject.org/' % username
             return libravatar.libravatar_url(
-                email=email,
+                openid=openid,
                 size=size,
                 default=default,
             )
         else:
+            if lookup_email:
+                person = self.person_by_username(username)
+                email = person.get('email', 'no_email')
+            else:
+                email = "%s@fedoraproject.org" % username
+
             query_string = urllib.urlencode({
                 's': size,
                 'd': default,
