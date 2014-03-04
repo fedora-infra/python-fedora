@@ -329,16 +329,26 @@ class OpenIdBaseClient(OpenIdProxyClient):
                                         (False, 'GET'): self._session.get,
                                         (True, 'POST'): self._authed_post,
                                         (True, 'GET'): self._authed_get}
+        try:
+            func = self._authed_verb_dispatcher[(auth, verb)]
+        except KeyError:
+            raise Exception('Unknown HTTP verb')
+
         if auth:
             auth_params = {'session_id': self.session_id,
                            'openid_session_id': self.openid_session_id}
             try:
-                return self._authed_verb_dispatcher[(auth, verb)](
-                    method, auth_params, **kwargs)
-            except KeyError:
-                raise Exception('Unknown HTTP verb')
+                output = func(method, auth_params, **kwargs)
             except LoginRequiredError:
                 raise AuthError()
+        else:
+            try:
+                output = func(method, **kwargs)
+            except LoginRequiredError:
+                raise AuthError()
+
+        return output
+
 
     def login(self, username, password, otp=None):
         """ Open a session for the user.
