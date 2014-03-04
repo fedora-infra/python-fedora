@@ -34,7 +34,6 @@ import re
 import ssl
 import time
 import urllib
-import warnings
 
 try:
     # Python2
@@ -128,7 +127,7 @@ def openid_login(session, login_url, username, password, otp=None,
         openid_url, data = _parse_service_form(response)
         if not FEDORA_OPENID_RE.match(openid_url):
             raise FedoraServiceError(
-                'Un-expected openid provider asked: %s'  % openid_url)
+                'Un-expected openid provider asked: %s' % openid_url)
     else:
         # Some consumers (like pyramid_openid) return redirects with the
         # openid attributes encoded in the url
@@ -146,7 +145,8 @@ def openid_login(session, login_url, username, password, otp=None,
     if not output['success']:
         raise AuthError(output['message'])
 
-    response = session.post(output['response']['openid.return_to'], data=output['response'])
+    response = session.post(output['response']['openid.return_to'],
+                            data=output['response'])
 
     return output
 
