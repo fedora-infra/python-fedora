@@ -34,7 +34,6 @@ import re
 import ssl
 import time
 import urllib
-import warnings
 
 try:
     # Python2
@@ -71,6 +70,9 @@ log.addHandler(NullHandler())
 
 OPENID_SESSION_NAME = 'FAS_OPENID'
 
+FEDORA_OPENID_API = 'https://id.fedoraproject.org/api/v1/'
+FEDORA_OPENID_RE = re.compile(r'^http(s)?:\/\/(|stg.|dev.)?id\.fedoraproject\.org(/)?')
+
 
 def _parse_service_form(response):
     """ Retrieve the attributes from the html form. """
@@ -81,6 +83,18 @@ def _parse_service_form(response):
             continue
         inputs[child.attrs['name']] = child.attrs['value']
     return (parsed.form.attrs['action'], inputs)
+
+
+def _parse_response_history(response):
+    """ Retrieve the attributes from the response history. """
+    data = {}
+    for r in response.history:
+        if FEDORA_OPENID_RE.match(r.url):
+            parsed = parse_qs(urlparse(r.url).query)
+            for key, value in parsed.items():
+                data[key] = value[0]
+            break
+    return data
 
 
 def openid_login(session, login_url, username, password, otp=None,
@@ -104,10 +118,6 @@ def openid_login(session, login_url, username, password, otp=None,
         self-signed certificate but it should be off in production.
 
     """
-    fedora_openid_api = 'https://id.fedoraproject.org/api/v1/'
-    fedora_openid = '^http(s)?:\/\/(|stg.|dev.)?id\.fedoraproject\.org(/)?'
-    motif = re.compile(fedora_openid)
-
     # Log into the service
     response = session.get(login_url)
 
@@ -115,32 +125,28 @@ def openid_login(session, login_url, username, password, otp=None,
             in response.text:
         # requests.session should hold onto this for us....
         openid_url, data = _parse_service_form(response)
-        if not motif.match(openid_url):
+        if not FEDORA_OPENID_RE.match(openid_url):
             raise FedoraServiceError(
-                'Un-expected openid provider asked: %s'  % openid_url)
+                'Un-expected openid provider asked: %s' % openid_url)
     else:
-        data = {}
-        for r in response.history:
-            if motif.match(r.url):
-                parsed = parse_qs(urlparse(r.url).query)
-                for key, value in parsed.items():
-                    data[key] = value[0]
-                break
-        else:
+        # Some consumers (like pyramid_openid) return redirects with the
+        # openid attributes encoded in the url
+        if not FEDORA_OPENID_RE.match(response.url):
             raise FedoraServiceError(
-                'Unable to determine openid parameters from login: %r' %
-                openid_url)
+                'Un-expected openid provider asked: %s' % response.url)
+        data = _parse_response_history(response)
 
     # Contact openid provider
     data['username'] = username
     data['password'] = password
-    response = session.post(fedora_openid_api, data, verify=not openid_insecure)
+    response = session.post(FEDORA_OPENID_API, data, verify=not openid_insecure)
     output = response.json()
 
     if not output['success']:
         raise AuthError(output['message'])
 
-    response = session.post(output['response']['openid.return_to'], data=output['response'])
+    response = session.post(output['response']['openid.return_to'],
+                            data=output['response'])
 
     return output
 
