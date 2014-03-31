@@ -179,13 +179,13 @@ class FAS(object):
         Will set 0 to :attr:`flask.g.fas_session_id, for compatibility
         with flask_fas.
 
-        :arg username: Not used, but accepted for compatibility with the
-           flask_fas module
-        :arg password: Not used, but accepted for compatibility with the
-           flask_fas module
-        :arg return_url: The URL to forward the user to after login
-        :arg groups: A string or a list of group the user should belong to
-           to be authentified.
+        :kwarg username: Not used, but accepted for compatibility with the
+            flask_fas module
+        :kwarg password: Not used, but accepted for compatibility with the
+            flask_fas module
+        :kwarg return_url: The URL to forward the user to after login
+        :kwarg groups: A string or a list of group the user should belong
+            to to be authentified.
         :returns: True if the user was succesfully authenticated.
         :raises: Might raise an redirect to the OpenID endpoint
         """
