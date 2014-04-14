@@ -73,6 +73,7 @@ class FASJSONEncoder(flask.json.JSONEncoder):
 class FAS(object):
 
     def __init__(self, app=None):
+        self.postlogin_func = None
         self.app = app
         if self.app is not None:
             self._init_app(app)
@@ -102,6 +103,13 @@ class FAS(object):
             return self._handle_openid_request()
 
         app.before_request(self._check_session)
+
+    def postlogin(self, f):
+        """Marks a function as post login handler. This decorator calls your
+        function after the login has been performed.
+        """
+        self.postlogin_func = f
+        return f
 
     def _handle_openid_request(self):
         return_url = flask.session.get('FLASK_FAS_OPENID_RETURN_URL', None)
@@ -138,7 +146,11 @@ class FAS(object):
                 user['groups'] = frozenset(teams_resp.teams)
             flask.session['FLASK_FAS_OPENID_USER'] = user
             flask.session.modified = True
-            return flask.redirect(return_url)
+            if self.postlogin_func is not None:
+                self._check_session()
+                return self.postlogin_func(return_url)
+            else:
+                return flask.redirect(return_url)
         else:
             return 'Strange state: %s' % info.status
 
@@ -167,13 +179,13 @@ class FAS(object):
         Will set 0 to :attr:`flask.g.fas_session_id, for compatibility
         with flask_fas.
 
-        :arg username: Not used, but accepted for compatibility with the
-           flask_fas module
-        :arg password: Not used, but accepted for compatibility with the
-           flask_fas module
-        :arg return_url: The URL to forward the user to after login
-        :arg groups: A string or a list of group the user should belong to
-           to be authentified.
+        :kwarg username: Not used, but accepted for compatibility with the
+            flask_fas module
+        :kwarg password: Not used, but accepted for compatibility with the
+            flask_fas module
+        :kwarg return_url: The URL to forward the user to after login
+        :kwarg groups: A string or a list of group the user should belong
+            to to be authentified.
         :returns: True if the user was succesfully authenticated.
         :raises: Might raise an redirect to the OpenID endpoint
         """
