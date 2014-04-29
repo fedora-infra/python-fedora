@@ -139,6 +139,8 @@ def openid_login(session, login_url, username, password, otp=None,
     # Contact openid provider
     data['username'] = username
     data['password'] = password
+    # Let's precise to FedOAuth that we want to authenticate with FAS
+    data['auth_module'] = 'fedoauth.auth.fas.Auth_FAS'
     response = session.post(FEDORA_OPENID_API, data, verify=not openid_insecure)
     output = response.json()
 
