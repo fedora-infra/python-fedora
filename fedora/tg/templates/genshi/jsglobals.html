@@ -20,8 +20,8 @@
       // Use this form to work around genshi strict checking for xml
       // well-formedness
       fedora.identity = {userid: "${tg.identity.user.id}",
-        username: "${Markup.escape(tg.identity.user.username.replace(unichr(92), u'&#92;'))}",
-        display_name: "${Markup.escape(tg.identity.user.human_name.replace(unichr(92), u'&#92;'))}",
+        username: "${Markup(tg.identity.user.username.replace(u'\\',u'\\\\').replace(u'&', u'\\&').replace(u'"', u'\\"'))}",
+        display_name: "${Markup(tg.identity.user.human_name.replace(u'\\', u'\\\\').replace(u'&', u'\\&').replace(u'"', u'\\"'))}",
         token: "${tg.identity.csrf_token}",
         anonymous: false
       };
