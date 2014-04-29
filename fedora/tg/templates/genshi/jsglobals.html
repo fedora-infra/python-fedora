@@ -13,10 +13,10 @@
       fedora.baseurl = "${tg.url('/')}".replace(/\/?(\?[^?]+)?$/, '');
     </script>
     <script type="text/javascript" py:if="not tg.identity.anonymous">
-      fedora.identity = {userid: "${tg.identity.user.id}",
-        username: "${tg.identity.user.username}",
-        display_name: "${tg.identity.user.human_name}",
-        token: "${tg.identity.csrf_token}",
+      fedora.identity = {userid: "${tg.identity.user.id.replace('"', '&quot;')}",
+        username: "${tg.identity.user.username.replace('"', '&quot;')}",
+        display_name: "${tg.identity.user.human_name.replace('"', '&quot;')}",
+        token: "${tg.identity.csrf_token.replace('"', '&quot;')}",
         anonymous: false
       };
     </script>
