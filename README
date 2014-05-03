@@ -249,9 +249,6 @@ Release
      git commit -m 'Merge new translations from transifex.net'
 
 4) Make sure that the NEWS file is accurate (use git log if needed).
-   After that, push the develop branch to the server::
-     # Update files
-     git push
 
 5) Update python-fedora.spec and fedora/release.py with the new version
    information.
@@ -259,49 +256,53 @@ Release
      git commit
 
 6) Make sure the docs are proper and publish them::
-    # Build docs and check for errors
-    python setup.py build_sphinx
+     # Build docs and check for errors
+     python setup.py build_sphinx
      # pypi
      python setup.py upload_docs
 
-7) Go to a temporary directory and checkout a copy of the release::
+7) Push the release branch to the server::
+     # Update files
+     git flow release publish $VERSION
+
+8) Go to a temporary directory and checkout a copy of the release::
      cd ..
-     git clone python-fedora.git release
+     git clone git@github.com:fedora-infra/python-fedora.git release
      cd release
      git checkout release/$VERSION
 
-8) Create the tarball in this clean checkout::
+9) Create the tarball in this clean checkout::
      python setup.py sdist
 
-9) copy the dist/python-fedora-VERSION.tar.gz and python-fedora.spec files to
+10) copy the dist/python-fedora-VERSION.tar.gz and python-fedora.spec files to
     where you build Fedora RPMS.  Do a test build::
      cp dist/python-fedora-*.tar.gz python-fedora.spec /srv/git/python-fedora/
      pushd /srv/git/python-fedora/
      fedpkg switch-branch master
      make mockbuild
 
-10) Make sure the build completes.  Run rpmlint on the results.  Install and
+11) Make sure the build completes.  Run rpmlint on the results.  Install and
     test the new packages::
      rpmlint *rpm
      sudo rpm -Uvh *noarch.rpm
      [test]
 
-11) When satisfied that the build works, create a fresh tarball and upload to
+12) When satisfied that the build works, create a fresh tarball and upload to
     pypi::
      popd   # Back to the release directory
      python setup.py sdist upload --sign
 
-12) copy the same tarball to fedorahosted.  The directory to upload to is
+13) copy the same tarball to fedorahosted.  The directory to upload to is
     slightly different for fedorahosted admins vs normal fedorahosted users:
     Admin::
       scp dist/python-fedora*tar.gz* fedorahosted.org:/srv/web/releases/p/y/python-fedora/
     Normal contributor::
       scp dist/python-fedora*tar.gz* fedorahosted.org:python-fedora
 
-13) mark the release as finished in git::
+14) mark the release as finished in git::
      cd ../python-fedora
      git flow release finish $VERSION
      git push --all
      git push --tags
 
-14) Finish building and pushing packages for Fedora.
+15) Finish building and pushing packages for Fedora.

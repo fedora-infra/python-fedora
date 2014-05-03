@@ -21,7 +21,7 @@ fedora.client is used to interact with Fedora Services.
 
 .. versionchanged:: 0.3.21
     Deprecate DictContainer in favor of bunch.Bunch
-.. versionchanged:: 0.3.33
+.. versionchanged:: 0.3.35
     Add the openid clients
 
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>

@@ -558,7 +558,8 @@ class PackageDB(BaseClient):
         :rtype: Bunch
         :returns: `Bunch` contains information needed to setup bugzilla
             for every collection.  It looks like this:
-            data[collctn][pkg][attribute] where attribute is one of:
+            ``data[collctn][pkg][attribute]`` where attribute is one of:
+
             :owner: FAS username for the owner
             :qacontact: if the package hasa special qacontact, their userid is
                 listed here
@@ -580,6 +581,7 @@ class PackageDB(BaseClient):
         .. versionadded:: 0.3.15
         .. versionchanged:: 0.3.21
             Return Bunch instead of DictContainer
+
         '''
         data = self.send_request('/lists/bugzilla')
         if 'exc' in data:
