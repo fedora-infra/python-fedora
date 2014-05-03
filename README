@@ -267,7 +267,7 @@ Release
 
 8) Go to a temporary directory and checkout a copy of the release::
      cd ..
-     git clone python-fedora.git release
+     git clone git@github.com:fedora-infra/python-fedora.git release
      cd release
      git checkout release/$VERSION
 
