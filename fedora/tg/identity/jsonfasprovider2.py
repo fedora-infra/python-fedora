@@ -2,17 +2,17 @@
 #
 # Copyright (C) 2007-2011  Red Hat, Inc.
 # This file is part of python-fedora
-# 
+#
 # python-fedora is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # python-fedora is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
@@ -41,8 +41,11 @@ from kitchen.text.converters import to_bytes
 
 sets.add_builtin_set()
 
-from fedora.client import AccountSystem, AuthError, BaseClient, \
-        FedoraServiceError
+from fedora.client import (
+    AccountSystem, AuthError, BaseClient,
+    FedoraServiceError
+)
+
 from fedora import __version__
 
 import logging
@@ -53,25 +56,28 @@ if config.get('identity.ssl', False):
     fas_password = config.get('fas.password', None)
     if not (fas_user and fas_password):
         raise identity.IdentityConfigurationException(
-                'Cannot enable ssl certificate auth via identity.ssl'
-                    ' without setting fas.usernamme and fas.password for'
-                    ' authorization')
+            'Cannot enable ssl certificate auth via identity.ssl'
+            ' without setting fas.usernamme and fas.password for'
+            ' authorization')
     __url = config.get('fas.url', None)
     if __url:
         fas = AccountSystem(__url, username=config.get('fas.username'),
-                password=config.get('fas.password'), retries=3)
+                            password=config.get('fas.password'), retries=3)
 
 
 class JsonFasIdentity(BaseClient):
     '''Associate an identity with a person in the auth system.
     '''
     cookie_name = config.get('visit.cookie.name', 'tg-visit')
-    fas_url = config.get('fas.url', 'https://admin.fedoraproject.org/accounts/')
+    fas_url = config.get(
+        'fas.url',
+        'https://admin.fedoraproject.org/accounts/'
+    )
     useragent = 'JsonFasIdentity/%s' % __version__
     cache_session = False
 
     def __init__(self, visit_key=None, user=None, username=None, password=None,
-            using_ssl=False):
+                 using_ssl=False):
         # The reason we have both _retrieved_user and _user is this:
         # _user is set if both the user is authenticated and a csrf_token is
         # present.
@@ -88,15 +94,17 @@ class JsonFasIdentity(BaseClient):
             self._user = user
             self._user_retrieved = user
             self._groups = frozenset(
-                    [g['name'] for g in user['approved_memberships']]
-                    )
+                [g['name'] for g in user['approved_memberships']]
+            )
 
         debug = config.get('jsonfas.debug', False)
-        super(JsonFasIdentity, self).__init__(self.fas_url,
-                useragent=self.useragent, debug=debug,
-                username=username, password=password,
-                session_id=session_id, cache_session=self.cache_session,
-                retries=3)
+        super(JsonFasIdentity, self).__init__(
+            self.fas_url,
+            useragent=self.useragent, debug=debug,
+            username=username, password=password,
+            session_id=session_id, cache_session=self.cache_session,
+            retries=3
+        )
 
         if self.debug:
             import inspect
@@ -122,8 +130,12 @@ class JsonFasIdentity(BaseClient):
             self.visit_key = self.session_id
             cherrypy.response.simple_cookie[self.cookie_name] = self.visit_key
         self.log.debug('leaving jsonfas send_request')
-        return super(JsonFasIdentity, self).send_request(method,
-                req_params=req_params, auth=auth, retries=3)
+        return super(JsonFasIdentity, self).send_request(
+            method,
+            req_params=req_params,
+            auth=auth,
+            retries=3
+        )
 
     def __retrieve_user(self):
         '''Attempt to load the user from the visit_key.
@@ -138,10 +150,11 @@ class JsonFasIdentity(BaseClient):
         # The cached value can be in four states:
         # Holds a user: we successfully retrieved it last time, return it
         # Holds None: we haven't yet tried to retrieve a user, do so now
-        # Holds a session_id that is the same as our session_id, we unsuccessfully
-        # tried to retrieve a session with this id already, return None
-        # Holds a session_id that is different than the current session_id:
-        # we tried with a previous session_id; try again with the new one.
+        # Holds a session_id that is the same as our session_id, we
+        # unsuccessfully tried to retrieve a session with this id already,
+        # return None Holds a session_id that is different than the current
+        # session_id: we tried with a previous session_id; try again with the
+        # new one.
         if self._retrieved_user:
             if isinstance(self._retrieved_user, basestring):
                 if self._retrieved_user == self.session_id:
@@ -160,11 +173,11 @@ class JsonFasIdentity(BaseClient):
             # Retrieve the user information differently when using ssl
             try:
                 person = fas.person_by_username(self.username, auth=True)
-            except Exception, e: # pylint: disable-msg=W0703
+            except Exception as e:  # pylint: disable-msg=W0703
                 # :W0703: Any errors have to result in no user being set.  The
                 # rest of the framework doesn't know what to do otherwise.
                 self.log.warning('jsonfasprovider, ssl, returned errors'
-                    ' from send_request: %s' % to_bytes(e))
+                                 ' from send_request: %s' % to_bytes(e))
                 person = None
             self._retrieved_user = person or None
             return self._retrieved_user
@@ -175,11 +188,11 @@ class JsonFasIdentity(BaseClient):
             # Failed to login with present credentials
             self._retrieved_user = self.session_id
             return None
-        except Exception, e: # pylint: disable-msg=W0703
+        except Exception as e:  # pylint: disable-msg=W0703
             # :W0703: Any errors have to result in no user being set.  The rest
             # of the framework doesn't know what to do otherwise.
             self.log.warning('jsonfasprovider returned errors from'
-                ' send_request: %s' % to_bytes(e))
+                             ' send_request: %s' % to_bytes(e))
             return None
         # pylint: enable-msg=W0702
 
@@ -201,7 +214,8 @@ class JsonFasIdentity(BaseClient):
                         hash_constructor(self.visit_key).hexdigest()):
                     self.log.info("Bad _csrf_token")
                     if '_csrf_token' in cherrypy.request.params:
-                        self.log.info("visit: %s token: %s" % (self.visit_key,
+                        self.log.info("visit: %s token: %s" % (
+                            self.visit_key,
                             cherrypy.request.params['_csrf_token']))
                     else:
                         self.log.info('No _csrf_token present')
@@ -241,7 +255,8 @@ class JsonFasIdentity(BaseClient):
         if self.debug:
             import inspect
             caller = inspect.getouterframes(inspect.currentframe())[1][3]
-            self.log.debug('JsonFasProvider._get_user_name caller: %s' % caller)
+            self.log.debug(
+                'JsonFasProvider._get_user_name caller: %s' % caller)
 
         if not self.user:
             return None
@@ -303,7 +318,7 @@ class JsonFasIdentity(BaseClient):
         '''Return the groups that a user is a member of.'''
         try:
             return self._groups
-        except AttributeError: # pylint: disable-msg=W0704
+        except AttributeError:  # pylint: disable-msg=W0704
             # :W0704: Groups haven't been computed yet
             pass
         if not self.user:
@@ -317,14 +332,14 @@ class JsonFasIdentity(BaseClient):
         '''Get set of group IDs of this identity.'''
         try:
             return self._group_ids
-        except AttributeError: # pylint: disable-msg=W0704
+        except AttributeError:  # pylint: disable-msg=W0704
             # :W0704: Groups haven't been computed yet
             pass
         if not self.groups:
             self._group_ids = frozenset()
         else:
             self._group_ids = frozenset([g.id for g in
-                self._user.approved_memberships])
+                                         self._user.approved_memberships])
         return self._group_ids
     group_ids = property(_get_group_ids)
 
@@ -337,7 +352,8 @@ class JsonFasIdentity(BaseClient):
     def login(self, using_ssl=False):
         '''Send a request so that we associate the visit_cookie with the user
 
-        :kwarg using_ssl: Boolean that tells whether ssl was used to authenticate
+        :kwarg using_ssl: Boolean that tells whether ssl was used to
+            authenticate
         '''
         if not using_ssl:
             # This is only of value if we have username and password
@@ -354,18 +370,20 @@ class JsonFasIdentity(BaseClient):
         # Call Account System Server logout method
         self.send_request('logout', auth=True)
 
+
 class JsonFasIdentityProvider(object):
     '''
     IdentityProvider that authenticates users against the fedora account system
     '''
     def __init__(self):
         # Default encryption algorithm is to use plain text passwords
-        algorithm = config.get('identity.saprovider.encryption_algorithm', None)
+        algorithm = config.get(
+            'identity.saprovider.encryption_algorithm', None)
         self.log = log
         # pylint: disable-msg=W0212
         # TG does this so we shouldn't get rid of it.
-        self.encrypt_password = lambda pw: \
-                                    identity._encrypt_password(algorithm, pw)
+        self.encrypt_password = lambda pw: identity._encrypt_password(
+            algorithm, pw)
 
     def create_provider_model(self):
         '''
@@ -404,7 +422,7 @@ class JsonFasIdentityProvider(object):
         # TG identity providers have this method so we can't get rid of it.
         try:
             user = JsonFasIdentity(visit_key, username=user_name,
-                    password=password, using_ssl=using_ssl)
+                                   password=password, using_ssl=using_ssl)
         except FedoraServiceError, e:
             self.log.warning('Error logging in %(user)s: %(error)s' % {
                 'user': to_bytes(user_name), 'error': to_bytes(e)})
@@ -439,7 +457,10 @@ class JsonFasIdentityProvider(object):
 
         # pylint: disable-msg=W0613
         # :W0613: TG identity providers have this method
-        return to_bytes(user.password) == crypt.crypt(to_bytes(password), to_bytes(user.password))
+        return to_bytes(user.password) == crypt.crypt(
+            to_bytes(password),
+            to_bytes(user.password)
+        )
 
     def load_identity(self, visit_key):
         '''Lookup the principal represented by visit_key.

@@ -1,19 +1,18 @@
-
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2009  Red Hat, Inc.
 # This file is part of python-fedora
-# 
+#
 # python-fedora is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # python-fedora is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
@@ -32,7 +31,8 @@ import warnings
 from kitchen.iterutils import isiterable as _isiterable
 
 warnings.warn('fedora.iterutils is deprecated.  Use kitchen.iterutils'
-    ' instead', DeprecationWarning, stacklevel=2)
+              ' instead', DeprecationWarning, stacklevel=2)
+
 
 def isiterable(obj, include_string=True):
     '''*Deprecated* Use kitchen.iterutils.isiterable instead.
@@ -50,8 +50,8 @@ def isiterable(obj, include_string=True):
     :returns: True if `obj` is iterable, otherwise False.
     '''
     warnings.warn('fedora.iterutils.isiterable is deprecated, use'
-        ' kitchen.iterutils.isiterable instead', DeprecationWarning,
-        stacklevel=2)
+                  ' kitchen.iterutils.isiterable instead', DeprecationWarning,
+                  stacklevel=2)
     return _isiterable(obj, include_string)
 
 __all__ = ['isiterable']

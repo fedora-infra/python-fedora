@@ -73,6 +73,7 @@ class FASJSONEncoder(flask.json.JSONEncoder):
 class FAS(object):
 
     def __init__(self, app=None):
+        self.postlogin_func = None
         self.app = app
         if self.app is not None:
             self._init_app(app)
@@ -103,9 +104,16 @@ class FAS(object):
 
         app.before_request(self._check_session)
 
+    def postlogin(self, f):
+        """Marks a function as post login handler. This decorator calls your
+        function after the login has been performed.
+        """
+        self.postlogin_func = f
+        return f
+
     def _handle_openid_request(self):
-        return_url = flask.session['FLASK_FAS_OPENID_RETURN_URL']
-        cancel_url = flask.session['FLASK_FAS_OPENID_CANCEL_URL']
+        return_url = flask.session.get('FLASK_FAS_OPENID_RETURN_URL', None)
+        cancel_url = flask.session.get('FLASK_FAS_OPENID_CANCEL_URL', None)
         base_url = self.normalize_url(flask.request.base_url)
         oidconsumer = consumer.Consumer(flask.session, None)
         info = oidconsumer.complete(flask.request.values, base_url)
@@ -138,7 +146,11 @@ class FAS(object):
                 user['groups'] = frozenset(teams_resp.teams)
             flask.session['FLASK_FAS_OPENID_USER'] = user
             flask.session.modified = True
-            return flask.redirect(return_url)
+            if self.postlogin_func is not None:
+                self._check_session()
+                return self.postlogin_func(return_url)
+            else:
+                return flask.redirect(return_url)
         else:
             return 'Strange state: %s' % info.status
 
@@ -159,6 +171,14 @@ class FAS(object):
             flask.g.fas_user.groups = frozenset(flask.g.fas_user.groups)
         flask.g.fas_session_id = 0
 
+    def _check_safe_root(self, url):
+        if url is None:
+            return None
+        if url.startswith(flask.request.url_root) or url.startswith('/'):
+            # A URL inside the same app is deemed to always be safe
+            return url
+        return None
+
     def login(self, username=None, password=None, return_url=None,
               cancel_url=None, groups=['_FAS_ALL_GROUPS_']):
         """Tries to log in a user.
@@ -167,13 +187,13 @@ class FAS(object):
         Will set 0 to :attr:`flask.g.fas_session_id, for compatibility
         with flask_fas.
 
-        :arg username: Not used, but accepted for compatibility with the
-           flask_fas module
-        :arg password: Not used, but accepted for compatibility with the
-           flask_fas module
-        :arg return_url: The URL to forward the user to after login
-        :arg groups: A string or a list of group the user should belong to
-           to be authentified.
+        :kwarg username: Not used, but accepted for compatibility with the
+            flask_fas module
+        :kwarg password: Not used, but accepted for compatibility with the
+            flask_fas module
+        :kwarg return_url: The URL to forward the user to after login
+        :kwarg groups: A string or a list of group the user should belong
+            to to be authentified.
         :returns: True if the user was succesfully authenticated.
         :raises: Might raise an redirect to the OpenID endpoint
         """
@@ -181,7 +201,12 @@ class FAS(object):
             if 'next' in flask.request.args.values():
                 return_url = flask.request.args.values['next']
             else:
-                return_url = flask.request.url
+                return_url = flask.request.url_root
+        return_url = (
+                        # This makes sure that we only allow stuff where ?next= value is in a safe root (the application root)
+                        self._check_safe_root(return_url) or
+                        flask.request.url_root
+                     )
         session = {}
         oidconsumer = consumer.Consumer(session, None)
         try:

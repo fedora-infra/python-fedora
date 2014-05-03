@@ -2,17 +2,17 @@
 #
 # Copyright (C) 2007-2008  Red Hat, Inc.
 # This file is part of python-fedora
-# 
+#
 # python-fedora is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # python-fedora is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
@@ -38,6 +38,7 @@ from fedora import __version__
 import logging
 log = logging.getLogger("turbogears.identity.jsonfasvisit")
 
+
 class JsonFasVisitManager(BaseVisitManager):
     '''
     This proxies visit requests to the Account System Server running remotely.
@@ -51,11 +52,13 @@ class JsonFasVisitManager(BaseVisitManager):
     def __init__(self, timeout):
         self.log = log
         if not self.fas:
-            JsonFasVisitManager.fas = FasProxyClient(self.fas_url,
-                    debug=self.debug,
-                    session_name=config.get('visit.cookie.name', 'tg-visit'),
-                    useragent='JsonFasVisitManager/%s' % __version__,
-                    retries=3)
+            JsonFasVisitManager.fas = FasProxyClient(
+                self.fas_url,
+                debug=self.debug,
+                session_name=config.get('visit.cookie.name', 'tg-visit'),
+                useragent='JsonFasVisitManager/%s' % __version__,
+                retries=3
+            )
         BaseVisitManager.__init__(self, timeout)
         self.log.debug('JsonFasVisitManager.__init__: exit')
 
@@ -130,7 +133,8 @@ class JsonFasVisitManager(BaseVisitManager):
 
     def update_queued_visits(self, queue):
         '''Update the visit information on the server'''
-        self.log.debug('JsonFasVisitManager.update_queued_visits: %s' % len(queue))
+        self.log.debug(
+            'JsonFasVisitManager.update_queued_visits: %s' % len(queue))
         # Hit any URL in fas with each visit_key to update the sessions
         for visit_key in queue:
             self.log.info('updating visit (%s)', to_bytes(visit_key))

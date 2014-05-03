@@ -3,17 +3,17 @@
 # Copyright (C) 2008-2012  Red Hat, Inc.
 # Copyright (C) 2008  Ricky Zhou
 # This file is part of python-fedora
-# 
+#
 # python-fedora is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2.1 of the License, or (at your option) any later version.
-# 
+#
 # python-fedora is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
@@ -28,7 +28,7 @@ Miscellaneous functions of use on a TurboGears Server
 
 .. versionchanged:: 0.3.25
    Renamed from fedora.tg.tg1utils
-   
+
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 '''
@@ -49,12 +49,13 @@ from turbogears.controllers import check_app_root
 from turbogears.identity.exceptions import RequestRequiredException
 
 
-
 # Save this for people who need the original url() function
 tg_url = turbogears.url
 
+
 def add_custom_stdvars(new_vars):
     return new_vars.update({'fedora_template': fedora_template})
+
 
 def url(tgpath, tgparams=None, **kwargs):
     '''Computes URLs.
@@ -69,9 +70,10 @@ def url(tgpath, tgparams=None, **kwargs):
         the approot to be detected properly, the root object should extend
         :class:`turbogears.controllers.RootController`.
     :kwarg tgparams: See param: ``kwargs``
-    :kwarg kwargs: Query parameters for the URL can be passed in as a dictionary
-        in the second argument *or* as keyword parameters.  Values which are a
-        list or a tuple are used to create multiple key-value pairs.
+    :kwarg kwargs: Query parameters for the URL can be passed in as a
+        dictionary in the second argument *or* as keyword parameters.
+        Values which are a list or a tuple are used to create multiple
+        key-value pairs.
     :returns: The changed path
 
     .. versionadded:: 0.3.10
@@ -86,7 +88,7 @@ def url(tgpath, tgparams=None, **kwargs):
             tgpath = request.app_root + tgpath
             try:
                 webpath += request.wsgi_environ['SCRIPT_NAME'].rstrip('/')
-            except (AttributeError, KeyError): # pylint: disable-msg=W0704
+            except (AttributeError, KeyError):  # pylint: disable-msg=W0704
                 # :W0704: Lack of wsgi environ is fine... we still have
                 # server.webpath
                 pass
@@ -99,13 +101,13 @@ def url(tgpath, tgparams=None, **kwargs):
             tgparams.update(kwargs)
         except AttributeError:
             raise TypeError(
-                    'url() expects a dictionary for query parameters')
+                'url() expects a dictionary for query parameters')
     args = []
     # Add the _csrf_token
     try:
         if identity.current.csrf_token:
             tgparams.update({'_csrf_token': identity.current.csrf_token})
-    except RequestRequiredException: # pylint: disable-msg=W0704
+    except RequestRequiredException:  # pylint: disable-msg=W0704
         # :W0704: If we are outside of a request (called from non-controller
         # methods/ templates) just don't set the _csrf_token.
         pass
@@ -115,7 +117,7 @@ def url(tgpath, tgparams=None, **kwargs):
     scheme, netloc, path, params, query_s, fragment = urlparse.urlparse(tgpath)
     if query_s:
         query_params = chain((p for p in cgi.parse_qsl(query_s) if p[0] !=
-            '_csrf_token'), query_params)
+                              '_csrf_token'), query_params)
 
     for key, value in query_params:
         if value is None:
@@ -132,8 +134,9 @@ def url(tgpath, tgparams=None, **kwargs):
             args.append((key, str(value)))
     query_string = urllib.urlencode(args, True)
     tgpath = urlparse.urlunparse((scheme, netloc, path, params, query_string,
-            fragment))
+                                  fragment))
     return tgpath
+
 
 # this is taken from turbogears 1.1 branch
 def _get_server_name():
@@ -152,8 +155,9 @@ def _get_server_name():
     host = get('tg.url_domain') or h.get('X-Forwarded-Host', h.get('Host'))
     if not host:
         host = '%s:%s' % (get('server.socket_host', 'localhost'),
-            get('server.socket_port', 8080))
+                          get('server.socket_port', 8080))
     return host
+
 
 # this is taken from turbogears 1.1 branch
 def tg_absolute_url(tgpath='/', params=None, **kw):
@@ -164,7 +168,8 @@ def tg_absolute_url(tgpath='/', params=None, **kw):
 
     The host name is determined this way:
 
-    * If the config setting 'tg.url_domain' is set and non-null, use this value.
+    * If the config setting 'tg.url_domain' is set and non-null, use this
+      value.
     * Else, if the 'base_url_filter.use_x_forwarded_host' config setting is
       True, use the value from the 'Host' or 'X-Forwarded-Host' request header.
     * Else, if config setting 'base_url_filter.on' is True and
@@ -200,6 +205,7 @@ def tg_absolute_url(tgpath='/', params=None, **kw):
         base_url = get('base_url_filter.base_url').rstrip('/')
     return '%s%s' % (base_url, tg_url(tgpath, params, **kw))
 
+
 def absolute_url(tgpath='/', params=None, **kw):
     """Return absolute URL (including schema and host to this server).
 
@@ -208,7 +214,8 @@ def absolute_url(tgpath='/', params=None, **kw):
 
     The host name is determined this way:
 
-    * If the config setting 'tg.url_domain' is set and non-null, use this value.
+    * If the config setting 'tg.url_domain' is set and non-null, use this
+      value.
     * Else, if the 'base_url_filter.use_x_forwarded_host' config setting is
       True, use the value from the 'Host' or 'X-Forwarded-Host' request header.
     * Else, if config setting 'base_url_filter.on' is True and
@@ -228,6 +235,7 @@ def absolute_url(tgpath='/', params=None, **kw):
        Modified from turbogears.absolute_url() for :ref:`CSRF-Protection`
     """
     return url(tg_absolute_url(tgpath, params, **kw))
+
 
 def enable_csrf():
     '''A startup function to setup :ref:`CSRF-Protection`.
@@ -260,6 +268,7 @@ def enable_csrf():
     # Add a function to the template tg stdvars that looks up a template.
     turbogears.view.variable_providers.append(add_custom_stdvars)
 
+
 def request_format():
     '''Return the output format that was requested by the user.
 
@@ -283,7 +292,7 @@ def request_format():
         #    tie into that as well somehow.
         # 2) Decide whether to standardize on "json" or "application/json"
         accept = tg_util.simplify_http_accept_header(
-                request.headers.get('Accept', 'default').lower())
+            request.headers.get('Accept', 'default').lower())
         if accept in ('text/javascript', 'application/json'):
             output_format = 'json'
         elif accept == 'text/html':
@@ -297,6 +306,7 @@ def request_format():
         else:
             output_format = accept
     return output_format
+
 
 def jsonify_validation_errors():
     '''Return an error for :term:`JSON` if validation failed.
@@ -337,7 +347,7 @@ def jsonify_validation_errors():
 
     # Set the message for both html and json output
     message = u'\n'.join([u'%s: %s' % (param, msg) for param, msg in
-        errors.items()])
+                          errors.items()])
     format = request_format()
     if format in ('html', 'xhtml'):
         message.translate({ord('\n'): u'<br />\n'})
@@ -349,6 +359,7 @@ def jsonify_validation_errors():
         # A fix has been applied for TG-1.0.4.5
         return dict(exc='Invalid', tg_template='json')
     return None
+
 
 def json_or_redirect(forward_url):
     '''If :term:`JSON` is requested, return a dict, otherwise redirect.
@@ -399,6 +410,7 @@ def json_or_redirect(forward_url):
 if hasattr(turbogears, 'get_server_name'):
     _get_server_name = turbogears.get_server_name
 
+
 def fedora_template(template, template_type='genshi'):
     '''Function to return the path to a template.
 
@@ -409,9 +421,11 @@ def fedora_template(template, template_type='genshi'):
     '''
     # :E1101: pkg_resources does have resource_filename
     # pylint: disable-msg=E1101
-    return pkg_resources.resource_filename('fedora', os.path.join('tg',
-        'templates', template_type, template))
+    return pkg_resources.resource_filename(
+        'fedora', os.path.join('tg',
+                               'templates', template_type, template))
 
-__all__ = ('add_custom_stdvars', 'absolute_url', 'enable_csrf',
-        'fedora_template', 'jsonify_validation_errors', 'json_or_redirect',
-        'request_format', 'tg_absolute_url', 'tg_url', 'url')
+__all__ = (
+    'add_custom_stdvars', 'absolute_url', 'enable_csrf',
+    'fedora_template', 'jsonify_validation_errors', 'json_or_redirect',
+    'request_format', 'tg_absolute_url', 'tg_url', 'url')

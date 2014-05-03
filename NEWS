@@ -2,9 +2,22 @@
 NEWS
 ====
 
-:Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk
-:Date: 19 December 2013
+:Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
+:Date: 3 May 2014
 :Version: 0.3.x
+
+
+------
+0.3.34
+------
+
+* **SECURITY** Fix the jsglobals.html template to escape usernames and human
+  names to fix potential XSS flaw.
+* **SECURITY** Make flask-fas-openid check that the page it is returning the
+  user to after authentication is from within the application.
+
+* Updated libravatar lookups to use the user's openid identifier instead of
+  their email address.
 
 ------
 0.3.33
