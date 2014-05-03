@@ -23,10 +23,13 @@ BuildRequires:  python-sphinx10
 %else
 BuildRequires:  python-sphinx
 %endif
-%if 0%{?fedora} || 0%{?rhel} > 5
+%if 0%{?fedora} || (0%{?rhel} == 6)
 BuildRequires:  python-cherrypy2
 %else
+# Do not need TurboGears1 dependencies on epel7
+%if 0%{?rhel} < 7
 BuildRequires:  python-cherrypy
+%endif
 %endif
 BuildRequires:  python-babel
 BuildRequires:  TurboGears2
@@ -34,7 +37,11 @@ BuildRequires:  python-nose
 BuildRequires:  python-kitchen
 BuildRequires:  python-bunch
 # Needed for tests and for the way we build docs
-BuildRequires: TurboGears python-repoze-who-friendlyform Django
+%if 0%{?rhel} < 7
+# Phasing this out.  First from epel7 and later for everything
+BuildRequires: TurboGears
+%endif
+BuildRequires: python-repoze-who-friendlyform Django
 BuildRequires: python-requests
 BuildRequires: python-openid
 BuildRequires: python-openid-teams
@@ -51,10 +58,11 @@ Requires:       python-requests
 
 %description
 Python modules that help with building Fedora Services.  The client module
-included here can be used to build programs that communicate with Fedora
-Infrastructure's TurboGears Applications such as Bodhi, PackageDB,
-MirrorManager, and FAS2.
+included here can be used to build programs that communicate with many of
+Fedora Infrastructure's Applications such as Bodhi, PackageDB, MirrorManager,
+and FAS2.
 
+%if 0%{?rhel} < 7
 %package turbogears
 Summary: Python modules for TurboGears applications in Fedora Infrastructure
 Group:          Development/Languages
@@ -72,6 +80,7 @@ a JSON based auth provider for authenticating TurboGears1 applications against
 FAS2 over the network, a csrf protected version of the standard TG1 auth
 provider, templates to help build CSRF-protected login forms, and miscellaneous
 other helper functions for TurboGears applications.
+%endif
 
 %package turbogears2
 Summary: Python modules for TurboGears applications in Fedora Infrastructure
@@ -80,10 +89,12 @@ License:        LGPLv2+
 Requires: %{name} = %{version}-%{release}
 Requires: TurboGears2
 Requires: python-sqlalchemy
-%if 0%{?fedora}
+%if 0%{?fedora} || 0%{?rhel} >= 7
 Requires: python-mako >= 0.3.6
-%else if 0%{?rhel} && 0%{?rhel} <= 6
-Requires: python-mako0.4 >= 0.3.6
+%else
+%if 0%{?rhel} <= 6
+Requires: python-mako0.4
+%endif
 %endif
 Requires: python-repoze-who-friendlyform
 
@@ -161,8 +172,10 @@ rm -rf %{buildroot}
 %exclude %{python2_sitelib}/flask_fas.py*
 %exclude %{python2_sitelib}/flask_fas_openid.py*
 
+%if 0%{?rhel} < 7
 %files turbogears
 %{python2_sitelib}/fedora/tg/
+%endif
 
 %files turbogears2
 %{python2_sitelib}/fedora/wsgi/
@@ -179,6 +192,15 @@ rm -rf %{buildroot}
 * Fri May  2 2014 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.34-1
 - Upstream 0.3.34 release with security fixes for TG and flask services built
   with python-fedora
+
+* Fri Mar 14 2014 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.33-3
+- Do not build the TG1 subpackage on EPEL7.  Infrastructure is going to port
+  its applications away from TG1 by the time they switch to RHEL7.  So we want
+  to get rid of TurboGears1 packages before RHEL7.
+- Fix conditionals so that they include the proper packages on epel7
+
+* Fri Jan 10 2014 Dennis Gilmore <dennis@ausil.us> - 0.3.33-2
+- clean up some rhel logic in the spec
 
 * Thu Dec 19 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.33-1
 - Update for final release with numerous flask_fas_openid fixes
@@ -279,44 +301,3 @@ rm -rf %{buildroot}
 
 * Thu Mar 11 2010 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.17-1
 - New release 0.3.17.
-
-* Wed Oct 21 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.16-1
-- New release 0.3.16.
-
-* Thu Aug 06 2009 Ricky Zhou <ricky@fedoraproject.org> - 0.3.15-1
-- New release 0.3.15.
-- Relicensed to LGPLv2+
-
-* Mon Jul 27 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.14-1
-- New release 0.3.14.
-
-* Sat Jun 13 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.13.1-1
-- Merge 0.3.12.1 and 0.3.13 releases together.
-
-* Sat Jun 13 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.13-1
-- New release.  Some new pkgdb API, defaultdict implementation, and a
-  bugfix to response code from the shipped login controller.
-
-* Thu Jun 11 2009 Ricky Zhou <ricky@fedoraproject.org> - 0.3.12.1-2
-- Backport a patch to add a bugzilla_email entry.
-
-* Wed Jun 03 2009 Ricky Zhou <ricky@fedoraproject.org> - 0.3.12.1-1
-- Update for new FAS release.
-
-* Thu Mar 19 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.12-1
-- Bugfix and cleanup release.
-
-* Thu Mar 12 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.11.1-1
-- Update to fix problem with django auth and redirects.
-
-* Mon Mar 9 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.11-1
-- readd the old jsonfasproviders.
-
-* Fri Mar 6 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.10-1
-- CSRF fixes and django authentication provider.
-
-* Thu Feb 26 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.3.9-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
-
-* Sun Feb 8 2009 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.9-1
-- New upstream with important bugfixes.
