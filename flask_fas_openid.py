@@ -171,6 +171,14 @@ class FAS(object):
             flask.g.fas_user.groups = frozenset(flask.g.fas_user.groups)
         flask.g.fas_session_id = 0
 
+    def _check_safe_root(self, url):
+        if url is None:
+            return None
+        if url.startswith(flask.request.url_root) or url.startswith('/'):
+            # A URL inside the same app is deemed to always be safe
+            return url
+        return None
+
     def login(self, username=None, password=None, return_url=None,
               cancel_url=None, groups=['_FAS_ALL_GROUPS_']):
         """Tries to log in a user.
@@ -193,7 +201,12 @@ class FAS(object):
             if 'next' in flask.request.args.values():
                 return_url = flask.request.args.values['next']
             else:
-                return_url = flask.request.url
+                return_url = flask.request.url_root
+        return_url = (
+                        # This makes sure that we only allow stuff where ?next= value is in a safe root (the application root)
+                        self._check_safe_root(return_url) or
+                        flask.request.url_root
+                     )
         session = {}
         oidconsumer = consumer.Consumer(session, None)
         try:
