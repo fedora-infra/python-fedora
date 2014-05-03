@@ -5,7 +5,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.3.33
+Version:        0.3.34
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -176,6 +176,10 @@ rm -rf %{buildroot}
 %{python2_sitelib}/flask_fas_openid.py*
 
 %changelog
+* Fri May  2 2014 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.34-1
+- Upstream 0.3.34 release with security fixes for TG and flask services built
+  with python-fedora
+
 * Thu Dec 19 2013 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.33-1
 - Update for final release with numerous flask_fas_openid fixes
 
