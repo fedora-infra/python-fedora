@@ -253,9 +253,9 @@ class FAS(object):
                 return_to, request.return_to_args['janrain_nonce'])
             for arg in args:
                 output['openid.%s' % arg] = args[arg]
-                output['openid.realm'] = trust_root
-                output['openid.return_to'] = return_to_url
-                output['server_url'] = request.endpoint.server_url
+            output['openid.realm'] = trust_root
+            output['openid.return_to'] = return_to_url
+            output['server_url'] = request.endpoint.server_url
             return flask.jsonify(output)
         elif request.shouldSendRedirect():
             redirect_url = request.redirectURL(trust_root, return_to, False)
