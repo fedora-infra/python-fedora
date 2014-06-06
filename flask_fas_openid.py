@@ -245,7 +245,18 @@ class FAS(object):
 
         flask.session['FLASK_FAS_OPENID_RETURN_URL'] = return_url
         flask.session['FLASK_FAS_OPENID_CANCEL_URL'] = cancel_url
-        if request.shouldSendRedirect():
+
+        if request_wants_json():
+            output = {}
+            args = request.message.toArgs()
+            return_to_url='%s?janrain_nonce=%s' % (
+                return_to, request.return_to_args['janrain_nonce'])
+            for arg in args:
+                output['openid.%s' % arg] = args[arg]
+                output['openid.realm'] = trust_root
+                output['openid.return_to'] = return_to_url
+            return flask.jsonify(output)
+        elif request.shouldSendRedirect():
             redirect_url = request.redirectURL(trust_root, return_to, False)
             return flask.redirect(redirect_url)
         else:
