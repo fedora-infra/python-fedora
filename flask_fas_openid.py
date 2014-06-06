@@ -45,6 +45,16 @@ from openid_teams import teams
 from fedora import __version__
 
 
+# http://flask.pocoo.org/snippets/45/
+def request_wants_json():
+    ''' Return wether the user requested the data in JSON or not. '''
+    best = flask.request.accept_mimetypes \
+        .best_match(['application/json', 'text/html'])
+    return best == 'application/json' and \
+        flask.request.accept_mimetypes[best] > \
+        flask.request.accept_mimetypes['text/html']
+
+
 class FASJSONEncoder(flask.json.JSONEncoder):
     """ Dedicated JSON encoder for the FAS openid information. """
 
