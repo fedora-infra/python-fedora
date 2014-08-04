@@ -54,7 +54,6 @@ except ImportError:
         def emit(self, *args):
             pass
 
-import bs4
 import requests
 
 #from bunch import bunchify
@@ -72,17 +71,6 @@ OPENID_SESSION_NAME = 'FAS_OPENID'
 
 FEDORA_OPENID_API = 'https://id.fedoraproject.org/api/v1/'
 FEDORA_OPENID_RE = re.compile(r'^http(s)?:\/\/id\.(|stg.|dev.)?fedoraproject\.org(/)?')
-
-
-def _parse_service_form(response):
-    """ Retrieve the attributes from the html form. """
-    parsed = bs4.BeautifulSoup(response.text)
-    inputs = {}
-    for child in parsed.form.find_all(name='input'):
-        if child.attrs['type'] == 'submit':
-            continue
-        inputs[child.attrs['name']] = child.attrs['value']
-    return (parsed.form.attrs['action'], inputs)
 
 
 def _parse_response_history(response):
@@ -119,16 +107,16 @@ def openid_login(session, login_url, username, password, otp=None,
 
     """
     # Log into the service
-    response = session.get(login_url)
+    response = session.get(
+        login_url, headers={'Accept': 'application/json'})
 
-    if '<title>OpenID transaction in progress</title>' \
-            in response.text:
-        # requests.session should hold onto this for us....
-        openid_url, data = _parse_service_form(response)
+    try:
+        data = response.json()
+        openid_url = data.get('server_url', None)
         if not FEDORA_OPENID_RE.match(openid_url):
             raise FedoraServiceError(
                 'Un-expected openid provider asked: %s' % openid_url)
-    else:
+    except:
         # Some consumers (like pyramid_openid) return redirects with the
         # openid attributes encoded in the url
         if not FEDORA_OPENID_RE.match(response.url):
@@ -141,7 +129,10 @@ def openid_login(session, login_url, username, password, otp=None,
     data['password'] = password
     # Let's precise to FedOAuth that we want to authenticate with FAS
     data['auth_module'] = 'fedoauth.auth.fas.Auth_FAS'
-    response = session.post(FEDORA_OPENID_API, data, verify=not openid_insecure)
+    if not 'openid.mode' in data:
+        data['openid.mode'] = 'checkid_setup'
+    response = session.post(
+        FEDORA_OPENID_API, data, verify=not openid_insecure)
     output = response.json()
 
     if not output['success']:
