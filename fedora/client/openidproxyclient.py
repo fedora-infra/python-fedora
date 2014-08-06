@@ -129,6 +129,7 @@ def openid_login(session, login_url, username, password, otp=None,
     data['password'] = password
     # Let's precise to FedOAuth that we want to authenticate with FAS
     data['auth_module'] = 'fedoauth.auth.fas.Auth_FAS'
+    data['auth_flow'] = 'fedora'
     if not 'openid.mode' in data:
         data['openid.mode'] = 'checkid_setup'
     response = session.post(
