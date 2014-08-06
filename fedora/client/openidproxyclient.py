@@ -205,6 +205,7 @@ class OpenIdProxyClient(object):
         forever.
 
     .. attribute:: timeout
+
         A float describing the timeout of the connection. The timeout only
         affects the connection process itself, not the downloading of the
         response body. Defaults to 120 seconds.
