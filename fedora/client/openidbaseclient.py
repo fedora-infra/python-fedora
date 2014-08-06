@@ -63,7 +63,19 @@ b_SESSION_FILE = os.path.join(b_SESSION_DIR, 'baseclient-sessions.sqlite')
 
 
 def requires_login(func):
-    """ Decorator function for get or post requests requiring login. """
+    """
+    Decorator function for get or post requests requiring login.
+
+    Decorate a controller method that requires the user to be authenticated.
+    Example::
+
+        from fedora.client.openidbaseclient import requires_login
+
+        @requires_login
+        def rename_user(new_name):
+            user = new_name
+            # [...]
+    """
     def _decorator(request, *args, **kwargs):
         """ Run the function and check if it redirected to the openid form.
         """
