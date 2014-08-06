@@ -382,3 +382,5 @@ class OpenIdBaseClient(OpenIdProxyClient):
             otp=otp,
             openid_insecure=self.openid_insecure)
         return response
+
+__all__ = ('OpenIdBaseClient', 'requires_login')
