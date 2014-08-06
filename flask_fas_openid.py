@@ -45,6 +45,16 @@ from openid_teams import teams
 from fedora import __version__
 
 
+# http://flask.pocoo.org/snippets/45/
+def request_wants_json():
+    ''' Return wether the user requested the data in JSON or not. '''
+    best = flask.request.accept_mimetypes \
+        .best_match(['application/json', 'text/html'])
+    return best == 'application/json' and \
+        flask.request.accept_mimetypes[best] > \
+        flask.request.accept_mimetypes['text/html']
+
+
 class FASJSONEncoder(flask.json.JSONEncoder):
     """ Dedicated JSON encoder for the FAS openid information. """
 
@@ -203,7 +213,9 @@ class FAS(object):
             else:
                 return_url = flask.request.url_root
         return_url = (
-                        # This makes sure that we only allow stuff where ?next= value is in a safe root (the application root)
+                        # This makes sure that we only allow stuff where
+                        # ?next= value is in a safe root (the application
+                        # root)
                         self._check_safe_root(return_url) or
                         flask.request.url_root
                      )
@@ -235,7 +247,16 @@ class FAS(object):
 
         flask.session['FLASK_FAS_OPENID_RETURN_URL'] = return_url
         flask.session['FLASK_FAS_OPENID_CANCEL_URL'] = cancel_url
-        if request.shouldSendRedirect():
+
+        if request_wants_json():
+            output = request.message.toPostArgs()
+            return_to_url='%s?janrain_nonce=%s' % (
+                return_to, request.return_to_args['janrain_nonce'])
+            output['openid.realm'] = trust_root
+            output['openid.return_to'] = return_to_url
+            output['server_url'] = request.endpoint.server_url
+            return flask.jsonify(output)
+        elif request.shouldSendRedirect():
             redirect_url = request.redirectURL(trust_root, return_to, False)
             return flask.redirect(redirect_url)
         else:

@@ -1,4 +1,18 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?python
+# Escape characters in username and display_name that could lead to XSS
+# exploits
+# Follows owasp recommendations:
+# https://www.owasp.org/index.php/XSS_%28Cross_Site_Scripting%29_Prevention_Cheat_Sheet#RULE_.233_-_JavaScript_Escape_Before_Inserting_Untrusted_Data_into_JavaScript_Data_Values
+def escape_js_var(data):
+    collect = []
+    for c in data:
+        if ord(c) < 256 and not c.isalnum():
+            collect.extend((ur'\x', unicode(hex(ord(c))[2:])))
+        else:
+            collect.append(c)
+    return ''.join(collect)
+?>
 <html xmlns="http://www.w3.org/1999/xhtml"
   xmlns:py="http://genshi.edgewall.org/"
   xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -14,14 +28,9 @@
     </script>
     <script type="text/javascript" py:if="not tg.identity.anonymous">
       //<![CDATA[
-      // Note: unichr(34) is the double quote character.
-      // unichr(38) is the ampersand
-      // unichr(92) is backslash
-      // Use this form to work around genshi strict checking for xml
-      // well-formedness
       fedora.identity = {userid: "${tg.identity.user.id}",
-        username: "${Markup(tg.identity.user.username.replace(u'\\',u'\\\\').replace(u'&', u'\\&').replace(u'"', u'\\"'))}",
-        display_name: "${Markup(tg.identity.user.human_name.replace(u'\\', u'\\\\').replace(u'&', u'\\&').replace(u'"', u'\\"'))}",
+        username: "${Markup(escape_js_var(tg.identity.user.username))}",
+        display_name: "${Markup(escape_js_var(tg.identity.user.human_name))}",
         token: "${tg.identity.csrf_token}",
         anonymous: false
       };

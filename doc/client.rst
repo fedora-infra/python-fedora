@@ -286,3 +286,15 @@ Here's an example of the exceptions in action::
 
         for collection in collectionData['collections']:
             print collection[0]['name'], collection[0]['version']
+
+----------------
+OpenIdBaseClient
+----------------
+
+Applications that use OpenId to authenticate are not able to use the standard
+BaseClient because the pattern of authenticating is very different.  We've
+written a separate client object called
+:class:`~fedora.client.OpenIdBaseClient` to do this.
+
+
+

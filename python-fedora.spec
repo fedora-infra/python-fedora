@@ -5,7 +5,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.3.34
+Version:        0.3.35
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -51,6 +51,7 @@ Requires:       python-simplejson
 Requires:       python-bunch
 Requires:       python-kitchen
 Requires:       python-requests
+Requires:       python-beautifulsoup4
 # These are now optional dependencies.  Some bodhi methods will not work if
 # they aren't installed but they aren't needed for most functionality of the
 # module.
@@ -189,6 +190,9 @@ rm -rf %{buildroot}
 %{python2_sitelib}/flask_fas_openid.py*
 
 %changelog
+* Wed Aug  6 2014 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.35-1
+- Upstream 0.3.35 release that adds openidbaseclient
+
 * Fri May  2 2014 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.34-1
 - Upstream 0.3.34 release with security fixes for TG and flask services built
   with python-fedora

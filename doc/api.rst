@@ -35,6 +35,22 @@ ProxyClient
     :undoc-members:
 
 
+OpenIdBaseClient
+----------------
+
+.. autoclass:: fedora.client.OpenIdBaseClient
+    :members:
+    :undoc-members:
+
+.. autofunction:: fedora.client.openidbaseclient.requires_login
+
+OpenIdProxyClient
+-----------------
+
+.. autoclass:: fedora.client.OpenIdProxyClient
+    :members:
+    :undoc-members:
+
 Clients for Specific Services
 =============================
 
