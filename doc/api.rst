@@ -42,6 +42,8 @@ OpenIdBaseClient
     :members:
     :undoc-members:
 
+.. autofunction:: fedora.client.openidbaseclient.requires_login
+
 OpenIdProxyClient
 -----------------
 
