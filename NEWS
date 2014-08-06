@@ -3,9 +3,21 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
-:Date: 3 May 2014
+:Date: 6 Aug 2014
 :Version: 0.3.x
 
+
+------
+0.3.35
+------
+
+
+* Add Openid BaseClient for talking to our new web services that are using
+  openid to auth.
+* flask_fas_openid can return the json data from the openid request instead of
+  the html page if requested.
+
+* Add a requirement on urllib3 in setup.py so that pip will install it.
 
 ------
 0.3.34
