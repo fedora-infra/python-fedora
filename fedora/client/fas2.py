@@ -678,9 +678,15 @@ class AccountSystem(BaseClient):
             },
             auth=True)
 
+        people_iter = None
+        if 'people' in request and 'unapproved_people' in request:
+            people_iter = itertools.chain(request['people'],
+                                          request['unapproved_people'])
+        else:
+            people_iter = [request['person']]
+
         people = Bunch()
-        for person in itertools.chain(request['people'],
-                                      request['unapproved_people']):
+        for person in people_iter:
             # Retrieve bugzilla_email from our list if necessary
             if 'bugzilla_email' in fields:
                 if person['id'] in self.__bugzilla_email:
