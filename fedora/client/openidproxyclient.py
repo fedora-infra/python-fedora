@@ -22,7 +22,7 @@
 .. moduleauthor:: Pierre-Yves Chibon <pingou@fedoraproject.org>
 .. moduleauthor:: Toshio Kuratomi <toshio@fedoraproject.org>
 
-.. versionadded: 0.3.33
+.. versionadded: 0.3.35
 
 """
 
@@ -206,6 +206,7 @@ class OpenIdProxyClient(object):
         forever.
 
     .. attribute:: timeout
+
         A float describing the timeout of the connection. The timeout only
         affects the connection process itself, not the downloading of the
         response body. Defaults to 120 seconds.
