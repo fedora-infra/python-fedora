@@ -23,7 +23,7 @@
 .. moduleauthor:: Pierre-Yves Chibon <pingou@fedoraproject.org>
 .. moduleauthor:: Toshio Kuratomi <toshio@fedoraproject.org>
 
-.. versionadded: 0.3.33
+.. versionadded: 0.3.35
 
 """
 
