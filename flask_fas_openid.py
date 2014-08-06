@@ -213,7 +213,9 @@ class FAS(object):
             else:
                 return_url = flask.request.url_root
         return_url = (
-                        # This makes sure that we only allow stuff where ?next= value is in a safe root (the application root)
+                        # This makes sure that we only allow stuff where
+                        # ?next= value is in a safe root (the application
+                        # root)
                         self._check_safe_root(return_url) or
                         flask.request.url_root
                      )
