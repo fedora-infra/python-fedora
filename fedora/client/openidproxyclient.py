@@ -50,7 +50,7 @@ try:
     # Python 2.7+
     from logging import NullHandler
 except ImportError:
-    class NULLHandler(logging.Handler):
+    class NullHandler(logging.Handler):
         def emit(self, *args):
             pass
 
