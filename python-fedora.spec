@@ -5,7 +5,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.3.35
+Version:        0.3.36
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -190,8 +190,14 @@ rm -rf %{buildroot}
 %{python2_sitelib}/flask_fas_openid.py*
 
 %changelog
+* Thu Aug  7 2014 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.36-1
+- New upstream release fixing logging in openidbaseclient
+
 * Wed Aug  6 2014 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.35-1
 - Upstream 0.3.35 release that adds openidbaseclient
+
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.3.34-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
 * Fri May  2 2014 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.34-1
 - Upstream 0.3.34 release with security fixes for TG and flask services built
