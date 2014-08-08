@@ -8,9 +8,14 @@ NEWS
 
 
 ------
-0.3.35
+0.3.36
 ------
 
+* Fix the OpenId BaseClient NullHandler for logging
+
+------
+0.3.35
+------
 
 * Add Openid BaseClient for talking to our new web services that are using
   openid to auth.
