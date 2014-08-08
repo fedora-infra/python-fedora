@@ -196,6 +196,9 @@ rm -rf %{buildroot}
 * Wed Aug  6 2014 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.35-1
 - Upstream 0.3.35 release that adds openidbaseclient
 
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.3.34-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
 * Fri May  2 2014 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.34-1
 - Upstream 0.3.34 release with security fixes for TG and flask services built
   with python-fedora
