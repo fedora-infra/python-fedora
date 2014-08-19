@@ -142,139 +142,16 @@ class AccountSystem(BaseClient):
                                         debug=self.debug,
                                         insecure=self.insecure)
 
-        # Preseed a list of FAS accounts with bugzilla addresses
-        # This allows us to specify a different email for bugzilla than is
-        # in the FAS db.  It is a hack, however, until FAS has a field for the
-        # bugzilla address.
-        self.__bugzilla_email = {
-            # Konstantin Ryabitsev: mricon@gmail.com
-            100029: 'icon@fedoraproject.org',
-            # Sean Reifschneider: jafo@tummy.com
-            100488: 'jafo-redhat@tummy.com',
-            # Karen Pease: karen-pease@uiowa.edu
-            100281: 'meme@daughtersoftiresias.org',
-            # Robert Scheck: redhat@linuxnetz.de
-            100093: 'redhat-bugzilla@linuxnetz.de',
-            # Scott Bakers: bakers@web-ster.com
-            100881: 'scott@perturb.org',
-            # Colin Charles: byte@aeon.com.my
-            100014: 'byte@fedoraproject.org',
-            # W. Michael Petullo: mike@flyn.org
-            100136: 'redhat@flyn.org',
-            # Elliot Lee: sopwith+fedora@gmail.com
-            100060: 'sopwith@redhat.com',
-            # Control Center Team: Bugzilla user but email doesn't exist
-            9908: 'control-center-maint@redhat.com',
-            # Máirín Duffy
-            100548: 'duffy@redhat.com',
-            # Muray McAllister: murray.mcallister@gmail.com
-            102321: 'mmcallis@redhat.com',
-            # William Jon McCann: mccann@jhu.edu
-            102489: 'jmccann@redhat.com',
-            # Matt Domsch's rebuild script -- bz email goes to /dev/null
-            103590: 'ftbfs@fedoraproject.org',
-            # Sindre Pedersen Bjørdal: foolish@guezz.net
-            100460: 'sindrepb@fedoraproject.org',
-            # Jesus M. Rodriguez: jmrodri@gmail.com
-            102180: 'jesusr@redhat.com',
-            # Roozbeh Pournader: roozbeh@farsiweb.info
-            100350: 'roozbeh@gmail.com',
-            # Michael DeHaan: michael.dehaan@gmail.com
-            100603: 'mdehaan@redhat.com',
-            # Sebastian Gosenheimer: sgosenheimer@googlemail.com
-            103647: 'sebastian.gosenheimer@proio.com',
-            # Ben Konrath: bkonrath@redhat.com
-            101156: 'ben@bagu.org',
-            # Kai Engert: kaie@redhat.com
-            100399: 'kengert@redhat.com',
-            # William Jon McCann: william.jon.mccann@gmail.com
-            102952: 'jmccann@redhat.com',
-            # Simon Wesp: simon@w3sp.de
-            109464: 'cassmodiah@fedoraproject.org',
-            # Robert M. Albrecht: romal@gmx.de
-            101475: 'mail@romal.de',
-            # Mathieu Bridon: mathieu.bridon@gmail.com
-            100753: 'bochecha@fedoraproject.org',
-            # Davide Cescato: davide.cescato@iaeste.ch
-            123204: 'ceski@fedoraproject.org',
-            # Nick Bebout: nick@bebout.net
-            101458: 'nb@fedoraproject.org',
-            # Niels Haase: haase.niels@gmail.com
-            126862: 'arxs@fedoraproject.org',
-            # Thomas Janssen: th.p.janssen@googlemail.com
-            103110: 'thomasj@fedoraproject.org',
-            # Michael J Gruber: 'michaeljgruber+fedoraproject@gmail.com'
-            105113: 'mjg@fedoraproject.org',
-            # Juan Manuel Rodriguez Moreno: 'nushio@gmail.com'
-            101302: 'nushio@fedoraproject.org',
-            # Andrew Cagney: 'andrew.cagney@gmail.com'
-            102169: 'cagney@fedoraproject.org',
-            # Jeremy Katz: 'jeremy@katzbox.net'
-            100036: 'katzj@fedoraproject.org',
-            # Dominic Hopf: 'dmaphy@gmail.com'
-            124904: 'dmaphy@fedoraproject.org',
-            # Christoph Wickert: 'christoph.wickert@googlemail.com':
-            100271: 'cwickert@fedoraproject.org',
-            # Elliott Baron: 'elliottbaron@gmail.com'
-            106760: 'ebaron@fedoraproject.org',
-            # Thomas Spura: 'spurath@students.uni-mainz.de'
-            111433: 'tomspur@fedoraproject.org',
-            # Adam Miller: 'maxamillion@gmail.com'
-            110673: 'admiller@redhat.com',
-            # Garrett Holmstrom: 'garrett.holmstrom@gmail.com'
-            131739: 'gholms@fedoraproject.org',
-            # Tareq Al Jurf: taljurf.fedora@gmail.com
-            109863: 'taljurf@fedoraproject.org',
-            # Josh Kayse: jokajak@gmail.com
-            148243: 'jokajak@fedoraproject.org',
-            # Behdad Esfahbod: fedora@behdad.org
-            100102: 'behdad@fedoraproject.org',
-            # Daniel Bruno: danielbrunos@gmail.com
-            101608: 'dbruno@fedoraproject.org',
-            # Beth Lynn Eicher: bethlynneicher@gmail.com
-            148706: 'bethlynn@fedoraproject.org',
-            # Andre Robatino: andre.robatino@verizon.net
-            114970: 'robatino@fedoraproject.org',
-            # Jeff Sheltren: jeff@tag1consulting.com
-            100058: 'sheltren@fedoraproject.org',
-            # Josh Boyer: jwboyer@gmail.com
-            100115: 'jwboyer@redhat.com',
-            # Matthew Miller: mattdm@mattdm.org
-            100042: 'mattdm@redhat.com',
-            # Jamie Nguyen: j@jamielinux.com
-            160587: 'jamielinux@fedoraproject.org',
-            # Nikos Roussos: nikos@roussos.cc
-            144436: 'comzeradd@fedoraproject.org',
-            # Benedikt Schäfer: benedikt@schaefer-flieden.de
-            154726: 'ib54003@fedoraproject.org',
-            # Ricky Elrod: codeblock@elrod.me
-            139137: 'relrod@redhat.com',
-            # David Xie: david.scriptfan@gmail.com
-            167133: 'davidx@fedoraproject.org',
-            # Felix Schwarz: felix.schwarz@oss.schwarz.eu
-            103551: 'fschwarz@fedoraproject.org',
-            # Martin Holec: martix@martix.names
-            137561: 'mholec@redhat.com',
-        }
-        # A few people have an email account that is used in owners.list but
-        # have setup a bugzilla account for their primary account system email
-        # address now.  Map these here.
-        self.__alternate_email = {
-            # Damien Durand: splinux25@gmail.com
-            'splinux@fedoraproject.org': 100406,
-            # Kevin Fenzi: kevin@tummy.com
-            'kevin-redhat-bugzilla@tummy.com': 100037,
-        }
-        for bugzilla_map in self.__bugzilla_email.items():
-            self.__alternate_email[bugzilla_map[1]] = bugzilla_map[0]
-
-        # We use the two mappings as follows::
-        # When looking up a user by email, use __alternate_email.
-        # When looking up a bugzilla email address use __bugzilla_email.
-        #
-        # This allows us to parse in owners.list and have a value for all the
-        # emails in there while not using the alternate email unless it is
-        # the only option.
+        # TODO: could use to retrieve file location
+        #bz_file = resource_filename(Requirement.parse(__name__),'fas-bugzilla_email.ini')
+        bz_file = 'fas-bugzilla_email.ini'
+        self.bz_opt = 'bugzilla.email'
+        if os.path_exist(bz_file):
+            self.config = ConfigParser.SafeConfigParser()
+            self.config.read(bz_file)
+            self.bz_email = self.config.items(self.bz_opt)
+        else:
+            self.bz_email = []
 
     # TODO: Use exceptions properly
 
@@ -296,6 +173,18 @@ class AccountSystem(BaseClient):
     #: version of a server with a self-signed certificate but it should be off
     #: in production.
     insecure = property(_get_insecure, _set_insecure)
+
+    def __get_bz_email__(self, request):
+    ''' retrieve bugzilla email from exception list
+        and return it.
+    '''
+    person_id = request['person']['id']
+    if self.bz_email.has_option(self.bz_opt, str(person_id):
+        email = self.bz_email.get(self.bz_opt, str(person_id))
+    else:
+        email = request['person']['email']
+
+    return email
 
     ### Groups ###
 
@@ -405,12 +294,7 @@ class AccountSystem(BaseClient):
                                     req_params=params)
 
         if request['success']:
-            if person_id in self.__bugzilla_email:
-                request['person']['bugzilla_email'] = \
-                    self.__bugzilla_email[person_id]
-            else:
-                request['person']['bugzilla_email'] = \
-                    request['person']['email']
+            request['person']['bugzilla_email'] = self.__get_bz_email__(request)
 
             # In a devel version of FAS, membership info was returned
             # separately
@@ -433,11 +317,7 @@ class AccountSystem(BaseClient):
             req_params=params)
 
         if request['success']:
-            person = request['person']
-            if person['id'] in self.__bugzilla_email:
-                person['bugzilla_email'] = self.__bugzilla_email[person['id']]
-            else:
-                person['bugzilla_email'] = person['email']
+            person['bugzilla_email'] = self.__get_bz_email__(request)
             # In a devel version of FAS, membership info was returned
             # separately
             # This was later corrected (can remove this code at some point)

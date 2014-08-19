@@ -10,3 +10,4 @@ include translations/*.pot
 include translations/*.po
 include .tx/config
 include locale/*/*/*.mo
+include fas-bugzilla_email.ini

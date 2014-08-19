@@ -1,5 +1,8 @@
 #!/usr/bin/python -tt
 
+import os
+import glob
+
 # Work around setuptools multi-version silliness
 try:
     __requires__ = ['CherryPy < 3', 'Sphinx >= 1.0']
@@ -26,6 +29,9 @@ setup(
     url=URL,
     download_url=DOWNLOAD_URL,
     packages=find_packages(),
+    data_files=[
+        ('/etc/fedora', glob.glob('fas-bugzilla_email.ini')),
+    ],
     py_modules=['flask_fas', 'flask_fas_openid'],
     include_package_data=True,
     # non-setuptools package.  When everything we care about uses
