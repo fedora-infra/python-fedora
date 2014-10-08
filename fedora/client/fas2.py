@@ -253,8 +253,6 @@ class AccountSystem(BaseClient):
             167133: 'davidx@fedoraproject.org',
             # Felix Schwarz: felix.schwarz@oss.schwarz.eu
             103551: 'fschwarz@fedoraproject.org',
-            # Martin Holec: martix@martix.names
-            137561: 'mholec@redhat.com',
             # John Dulaney: j_dulaney@live.com
             149140: 'jdulaney@fedoraproject.org',
         }
