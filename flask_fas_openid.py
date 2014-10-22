@@ -251,6 +251,7 @@ class FAS(object):
         if request_wants_json():
             output = request.getMessage(trust_root,
                                         return_to=return_to).toPostArgs()
+            output['server_url'] = request.endpoint.server_url
             return flask.jsonify(output)
         elif request.shouldSendRedirect():
             redirect_url = request.redirectURL(trust_root, return_to, False)
