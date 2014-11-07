@@ -142,7 +142,7 @@ def openid_login(session, login_url, username, password, otp=None,
     response = session.post(output['response']['openid.return_to'],
                             data=output['response'])
 
-    return output
+    return response
 
 
 def absolute_url(beginning, end):
