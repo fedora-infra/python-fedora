@@ -37,7 +37,7 @@ from fedora import __version__
 log = logging.getLogger(__name__)
 
 b_SESSION_DIR = path.join(path.expanduser('~'), '.fedora')
-b_SESSION_FILE = path.join(b_SESSION_DIR, '.fedora_session')
+b_SESSION_FILE = path.join(b_SESSION_DIR, 'fedora_session')
 
 from fedora.client import AuthError, ProxyClient
 
