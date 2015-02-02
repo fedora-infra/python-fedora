@@ -5,14 +5,14 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.3.36
+Version:        0.3.37
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
 Group:          Development/Languages
 License:        LGPLv2+
 URL:            https://fedorahosted.org/python-fedora/
-Source0:        https://fedorahosted.org/releases/p/y/%{name}/%{name}-%{version}%{?prerel}.tar.gz
+Source0:        https://fedorahosted.org/releases/p/y/%{name}/%{name}-%{version}%{?prerel}.tar.xz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
@@ -135,7 +135,7 @@ an auth provider to let flask applications authenticate against the Fedora
 Account System.
 
 %prep
-%setup -q -n %{name}-%{version}%{?prerel}
+%setup -q -c -n %{name}-%{version}%{?prerel}
 
 %build
 python2 setup.py build
@@ -190,6 +190,9 @@ rm -rf %{buildroot}
 %{python2_sitelib}/flask_fas_openid.py*
 
 %changelog
+* Sat Jan 24 2015 Xavier Lamien <laxathom@fedoraproject.org> - 0.3.37-1
+- Upstream release.
+
 * Thu Aug  7 2014 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.36-1
 - New upstream release fixing logging in openidbaseclient
 
