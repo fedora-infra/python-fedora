@@ -590,8 +590,21 @@ class AccountSystem(BaseClient):
     def people_by_key(self, key=u'username', search=u'*', fields=None):
         '''Return a dict of people
 
-        :kwarg key: Key by this field.  Valid values are 'id', 'username', or
-            'email'.  Default is 'username'
+        For example:
+
+            >>> ret_val = FASCLIENT.people_by_key(
+            ...     key='email', search='toshio*', fields='id')
+            >>> ret_val.keys()
+            a.badger@[...].com
+            a.badger+test1@[...].com
+            a.badger+test2@[...].com
+            >>> ret_val.values()
+            100068
+            102023
+            102434
+
+        :kwarg key: Key used to organize the returned dictionary.  Valid values
+            are 'id', 'username', or 'email'.  Default is 'username'.
         :kwarg search: Pattern to match usernames against.  Defaults to the
             '*' wildcard which matches everyone.
         :kwarg fields: Limit the data returned to a specific list of fields.
