@@ -20,6 +20,9 @@
 '''
 A Wiki Client
 
+This interface is *deprecated*.  Please use resources recommended by upstream
+instead: https://www.mediawiki.org/wiki/API:Client_code#Python
+
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 .. moduleauthor:: Ian Weller <ian@ianweller.org>
@@ -27,6 +30,7 @@ A Wiki Client
 
 from datetime import datetime, timedelta
 import time
+import warnings
 
 from kitchen.text.converters import to_bytes
 
@@ -42,6 +46,10 @@ class Wiki(BaseClient):
     def __init__(self, base_url='https://fedoraproject.org/w/',
                  *args, **kwargs):
         super(Wiki, self).__init__(base_url, *args, **kwargs)
+        warnings.warn(
+            "The Wiki client is deprecated.  Please use resources "
+            "recommended by upstream instead: https://www.mediawiki."
+            "org/wiki/API:Client_code#Python")
 
     def get_recent_changes(self, now, then, limit=500):
         """ Get recent wiki changes from `now` until `then` """
