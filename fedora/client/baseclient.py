@@ -20,15 +20,28 @@
 
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
+.. moduleauthor:: Ralph Bean <rbean@redhat.com>
 '''
 
 import os
 import stat
 from os import path
 import logging
-import cPickle as pickle
-import Cookie
 import warnings
+
+
+try:
+    import cPickle as pickle
+except:
+    # Python3 support
+    import pickle
+
+try:
+    import Cookie
+except ImportError:
+    # Python3 support
+    import http.cookies as Cookie
+
 
 from kitchen.text.converters import to_bytes
 
@@ -133,8 +146,8 @@ class BaseClient(ProxyClient):
         # Make sure the directory exists
         if not path.isdir(b_SESSION_DIR):
             try:
-                os.mkdir(b_SESSION_DIR, 0755)
-            except OSError, e:
+                os.mkdir(b_SESSION_DIR, 0o755)
+            except OSError as e:
                 self.log.warning('Unable to create %(dir)s: %(error)s' %
                                  {'dir': b_SESSION_DIR, 'error': to_bytes(e)})
 

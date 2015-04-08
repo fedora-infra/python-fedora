@@ -11,7 +11,7 @@ except:
     # and barf.  So we have to delete it here.
     del __requires__
 
-execfile("fedora/release.py")
+exec(compile(open("fedora/release.py").read(), "fedora/release.py", 'exec'))
 
 from setuptools import find_packages, setup
 

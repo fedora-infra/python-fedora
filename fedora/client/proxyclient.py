@@ -20,17 +20,29 @@
 
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
+.. moduleauthor:: Ralph Bean <rbean@redhat.com>
 '''
 
-import Cookie
 import copy
 import urllib
-import httplib
 import logging
 # For handling an exception that's coming from requests:
 import ssl
 import time
 import warnings
+
+
+try:
+    import httplib
+except ImportError:
+    # Python3 support
+    import http.client as httplib
+
+try:
+    import Cookie
+except ImportError:
+    # Python3 support
+    import http.cookies as Cookie
 
 try:
     from urlparse import urljoin
@@ -497,7 +509,7 @@ class ProxyClient(object):
             # Compatibility with newer python-requests
             if callable(data):
                 data = data()
-        except ValueError, e:
+        except ValueError as e:
             # The response wasn't JSON data
             raise ServerError(
                 url, http_status, 'Error returned from'

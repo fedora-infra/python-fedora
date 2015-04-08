@@ -27,13 +27,18 @@
 """
 
 import copy
-import httplib
 import logging
 import re
 # For handling an exception that's coming from requests:
 import ssl
 import time
 import urllib
+
+try:
+    import httplib
+except ImportError:
+    # Python3 support
+    import http.client as httplib
 
 try:
     # Python2

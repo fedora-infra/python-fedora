@@ -223,7 +223,7 @@ class FAS(object):
         oidconsumer = consumer.Consumer(session, None)
         try:
             request = oidconsumer.begin(self.app.config['FAS_OPENID_ENDPOINT'])
-        except consumer.DiscoveryFailure, exc:
+        except consumer.DiscoveryFailure as exc:
             # VERY strange, as this means it could not discover an OpenID
             # endpoint at FAS_OPENID_ENDPOINT
             return 'discoveryfailure'
