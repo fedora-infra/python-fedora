@@ -46,12 +46,14 @@ BuildRequires: python-requests
 BuildRequires: python-openid
 BuildRequires: python-openid-teams
 BuildRequires: python-openid-cla
+BuildRequires: python-six
 
 Requires:       python-simplejson
 Requires:       python-bunch
 Requires:       python-kitchen
 Requires:       python-requests
 Requires:       python-beautifulsoup4
+Requires:       python-six
 # These are now optional dependencies.  Some bodhi methods will not work if
 # they aren't installed but they aren't needed for most functionality of the
 # module.
