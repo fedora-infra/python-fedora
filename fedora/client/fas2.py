@@ -32,6 +32,12 @@ from bunch import Bunch
 from kitchen.text.converters import to_bytes
 
 try:
+    from urllib import urlencode, quote
+except ImportError:
+    # Python3 support
+    from urllib.parse import urlencode, quote
+
+try:
     import libravatar
 except ImportError:
     libravatar = None
@@ -337,10 +343,10 @@ class AccountSystem(BaseClient):
 
         request = self.send_request(
             '/group/create/%s/%s/%s/%s' % (
-                urllib.quote(name),
-                urllib.quote(display_name),
-                urllib.quote(owner),
-                urllib.quote(group_type)),
+                quote(name),
+                quote(display_name),
+                quote(owner),
+                quote(group_type)),
             req_params=req_params,
             auth=True
         )
@@ -545,7 +551,7 @@ class AccountSystem(BaseClient):
             else:
                 email = "%s@fedoraproject.org" % username
 
-            query_string = urllib.urlencode({
+            query_string = urlencode({
                 's': size,
                 'd': default,
             })

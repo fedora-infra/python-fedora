@@ -25,15 +25,23 @@ Functions to manipulate urls.
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
 
-from urlparse import urlparse, urlunparse
-from urllib import urlencode
+
+try:
+    from urlparse import urlparse, urlunparse
+    from urllib import urlencode
+except ImportError:
+    # Python3 support
+    from urllib.parse import urlparse, urlunparse, urlencode
 
 from kitchen.iterutils import isiterable
 
 try:
-    from urlparse import parse_qs
+    from urllib.parse import parse_qs
 except ImportError:
-    from cgi import parse_qs
+    try:
+        from urlparse import parse_qs
+    except ImportError:
+        from cgi import parse_qs
 
 
 def update_qs(uri, new_params, overwrite=True):
