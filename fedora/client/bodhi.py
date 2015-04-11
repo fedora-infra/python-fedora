@@ -142,7 +142,7 @@ class BodhiClient(BaseClient):
         auth = False
         if params['mine']:
             auth = True
-        for key, value in params.items():
+        for key, value in list(params.items()):
             if not value:
                 del params[key]
         return self.send_request('list', req_params=params, auth=auth)
