@@ -28,7 +28,7 @@ FAS-OpenID authentication plugin for the flask web framework
 '''
 from functools import wraps
 
-from bunch import Bunch
+from munch import Munch
 import flask
 try:
     from flask import _app_ctx_stack as stack
@@ -176,8 +176,8 @@ class FAS(object):
             for group in user['groups']:
                 membership = dict()
                 membership['name'] = group
-                user['approved_memberships'].append(Bunch.fromDict(membership))
-            flask.g.fas_user = Bunch.fromDict(user)
+                user['approved_memberships'].append(Munch.fromDict(membership))
+            flask.g.fas_user = Munch.fromDict(user)
             flask.g.fas_user.groups = frozenset(flask.g.fas_user.groups)
         flask.g.fas_session_id = 0
 

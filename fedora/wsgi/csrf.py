@@ -31,7 +31,7 @@ http://en.wikipedia.org/wiki/Cross-site_request_forgery
 
 import logging
 
-from bunch import Bunch
+from munch import Munch
 from kitchen.text.converters import to_bytes
 from webob import Request
 try:
@@ -147,7 +147,7 @@ class CSRFProtectionMiddleware(object):
                 log.debug('Clearing identity')
                 self._clean_environ(environ)
                 if 'repoze.who.identity' not in environ:
-                    environ['repoze.who.identity'] = Bunch()
+                    environ['repoze.who.identity'] = Munch()
                 if 'repoze.who.logins' not in environ:
                     # For compatibility with friendlyform
                     environ['repoze.who.logins'] = 0

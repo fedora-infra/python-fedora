@@ -28,7 +28,7 @@ import itertools
 import urllib
 import warnings
 
-from bunch import Bunch
+from munch import Munch
 from kitchen.text.converters import to_bytes
 
 try:
@@ -326,8 +326,8 @@ class AccountSystem(BaseClient):
         :kwarg joinmsg: A message shown to users when they apply to the group.
         :kwarg apply_rules: Rules for applying to the group, shown to users
             before they apply.
-        :rtype: :obj:`bunch.Bunch`
-        :returns: A Bunch containing information about the group that was
+        :rtype: :obj:`munch.Munch`
+        :returns: A Munch containing information about the group that was
             created.
 
         .. versionadded:: 0.3.29
@@ -400,7 +400,7 @@ class AccountSystem(BaseClient):
         request = self.send_request('/group/dump/%s' %
                                     urllib.quote(groupname), auth=True)
 
-        return [Bunch(username=user[0],
+        return [Munch(username=user[0],
                       role_type=user[3]) for user in request['people']]
 
     ### People ###
@@ -699,7 +699,7 @@ class AccountSystem(BaseClient):
             },
             auth=True)
 
-        people = Bunch()
+        people = Munch()
         for person in itertools.chain(request['people'],
                                       request['unapproved_people']):
             # Retrieve bugzilla_email from our list if necessary
@@ -738,7 +738,7 @@ class AccountSystem(BaseClient):
 
         request = self.send_request('/json/user_id', auth=True)
         user_to_id = {}
-        people = Bunch()
+        people = Munch()
         for person_id, username in request['people'].items():
             person_id = int(person_id)
             # change userids from string back to integer
