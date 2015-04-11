@@ -24,13 +24,18 @@
 '''
 
 import copy
-import urllib
 import logging
 # For handling an exception that's coming from requests:
 import ssl
 import time
 import warnings
 
+
+try:
+    from urllib import quote
+except ImportError:
+    # Python3 support
+    from urllib.parse import quote
 
 try:
     import httplib
@@ -57,7 +62,7 @@ try:
 except ImportError:
     from sha import new as sha_constructor
 
-from bunch import bunchify
+from munch import munchify
 from kitchen.text.converters import to_bytes
 import requests
 
@@ -333,7 +338,7 @@ class ProxyClient(object):
         # will work with it.
         method = method.lstrip('/')
         # And join to make our url.
-        url = urljoin(self.base_url, urllib.quote(method))
+        url = urljoin(self.base_url, quote(method))
 
         data = None     # decoded JSON via json.load()
 
@@ -359,7 +364,7 @@ class ProxyClient(object):
         complete_params = req_params or {}
         if session_id:
             # Add the csrf protection token
-            token = sha_constructor(session_id)
+            token = sha_constructor(to_bytes(session_id))
             complete_params.update({'_csrf_token': token.hexdigest()})
 
         auth = None
@@ -528,7 +533,7 @@ class ProxyClient(object):
             new_session = cookie
 
         self.log.debug('proxyclient.send_request: exited')
-        data = bunchify(data)
+        data = munchify(data)
         return new_session, data
 
 __all__ = (ProxyClient,)

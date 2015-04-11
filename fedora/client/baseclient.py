@@ -128,13 +128,11 @@ class BaseClient(ProxyClient):
         session_file = None
         if path.isfile(b_SESSION_FILE):
             try:
-                session_file = file(b_SESSION_FILE, 'r')
-                saved_session = pickle.load(session_file)
+                with open(b_SESSION_FILE, 'rb') as session_file:
+                    saved_session = pickle.load(session_file)
             except (IOError, EOFError):
                 self.log.info('Unable to load session from %(file)s' %
                               {'file': b_SESSION_FILE})
-            if session_file:
-                session_file.close()
 
         return saved_session
 
@@ -152,10 +150,9 @@ class BaseClient(ProxyClient):
                                  {'dir': b_SESSION_DIR, 'error': to_bytes(e)})
 
         try:
-            session_file = file(b_SESSION_FILE, 'w')
-            os.chmod(b_SESSION_FILE, stat.S_IRUSR | stat.S_IWUSR)
-            pickle.dump(save, session_file)
-            session_file.close()
+            with open(b_SESSION_FILE, 'wb') as session_file:
+                os.chmod(b_SESSION_FILE, stat.S_IRUSR | stat.S_IWUSR)
+                pickle.dump(save, session_file)
         except Exception as e:  # pylint: disable-msg=W0703
             # If we can't save the file, issue a warning but go on.  The
             # session just keeps you from having to type your password over
