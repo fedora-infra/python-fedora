@@ -29,19 +29,8 @@ from os import path
 import logging
 import warnings
 
-
-try:
-    import cPickle as pickle
-except:
-    # Python3 support
-    import pickle
-
-try:
-    import Cookie
-except ImportError:
-    # Python3 support
-    import http.cookies as Cookie
-
+import six.moves.cPickle as pickle
+import six.moves.http_cookies as Cookie
 
 from kitchen.text.converters import to_bytes
 

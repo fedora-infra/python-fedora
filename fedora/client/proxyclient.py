@@ -30,32 +30,9 @@ import ssl
 import time
 import warnings
 
-
-try:
-    from urllib import quote
-except ImportError:
-    # Python3 support
-    from urllib.parse import quote
-
-try:
-    import httplib
-except ImportError:
-    # Python3 support
-    import http.client as httplib
-
-try:
-    import Cookie
-except ImportError:
-    # Python3 support
-    import http.cookies as Cookie
-
-try:
-    from urlparse import urljoin
-    from urlparse import urlparse
-except ImportError:
-    # Python3 support
-    from urllib.parse import urljoin
-    from urllib.parse import urlparse
+import six.moves.http_client as httplib
+import six.moves.http_cookies as Cookie
+from six.moves.urllib_parse import quote, urljoin, urlparse
 
 try:
     from hashlib import sha1 as sha_constructor

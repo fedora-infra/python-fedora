@@ -34,18 +34,8 @@ import ssl
 import time
 import urllib
 
-try:
-    import httplib
-except ImportError:
-    # Python3 support
-    import http.client as httplib
-
-try:
-    # Python2
-    from urlparse import urljoin, urlparse, parse_qs
-except ImportError:
-    # Python3 support
-    from urllib.parse import urljoin, urlparse, parse_qs
+import six.moves.http_client as httplib
+from six.moves.urllib_parse import urljoin, urlparse, parse_qs
 
 # Hack, hack, hack around
 # the horror that is logging!
@@ -67,7 +57,7 @@ from kitchen.text.converters import to_bytes
 import urllib3
 
 from fedora import __version__
-from fedora.client import AuthError, ServerError, LoginRequiredError, FedoraServiceError
+from fedora.client import AuthError, ServerError, FedoraServiceError
 
 log = logging.getLogger(__name__)
 log.addHandler(NullHandler())

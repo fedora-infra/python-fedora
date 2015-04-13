@@ -31,11 +31,7 @@ import warnings
 from munch import Munch
 from kitchen.text.converters import to_bytes
 
-try:
-    from urllib import urlencode, quote
-except ImportError:
-    # Python3 support
-    from urllib.parse import urlencode, quote
+from six.moves.urllib_parse import urlencode, quote
 
 try:
     import libravatar
