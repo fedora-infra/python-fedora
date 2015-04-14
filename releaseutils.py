@@ -19,6 +19,7 @@ from kitchen.pycompat27 import subprocess
 import pkg_resources
 
 import fedora.release
+from six.moves import map
 
 
 #
@@ -72,7 +73,7 @@ def build_catalogs():
 
     try:
         shutil.rmtree('locale')
-    except OSError, e:
+    except OSError as e:
         # If the error is that locale does not exist, we're okay.  We're
         # deleting it here, afterall
         if e.errno != 2:
@@ -115,7 +116,7 @@ def _install_catalogs(localedir):
             dirname = os.path.dirname(catalog)
             dst = os.path.join(localedir, dirname)
             try:
-                os.makedirs(dst, 0755)
+                os.makedirs(dst, 0o755)
             except OSError as e:
                 # Only allow file exists to pass
                 if e.errno != 17:

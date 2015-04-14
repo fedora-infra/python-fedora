@@ -27,6 +27,7 @@ instead: https://www.mediawiki.org/wiki/API:Client_code#Python
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 .. moduleauthor:: Ian Weller <ian@ianweller.org>
 '''
+from __future__ import print_function
 
 from datetime import datetime, timedelta
 import time
@@ -98,15 +99,15 @@ class Wiki(BaseClient):
     def print_recent_changes(self, days=7, show=10):
         now = datetime.utcnow()
         then = now - timedelta(days=days)
-        print _(u"From %(then)s to %(now)s") % {'then': then, 'now': now}
+        print(_(u"From %(then)s to %(now)s") % {'then': then, 'now': now})
         changes = self.get_recent_changes(now=now, then=then)
         num_changes = len(changes)
-        print _(u"%d wiki changes in the past week") % num_changes
+        print(_(u"%d wiki changes in the past week") % num_changes)
         if num_changes == 500:
-            print _(
+            print(_(
                 u"""Warning: Number of changes reaches the API return limit.
 You will not get the complete list of changes unless
-you run this script using a 'bot' account.""")
+you run this script using a 'bot' account."""))
 
         users = {}
         pages = {}
@@ -114,18 +115,18 @@ you run this script using a 'bot' account.""")
             users.setdefault(change['user'], []).append(change['title'])
             pages[change['title']] = pages.setdefault(change['title'], 0) + 1
 
-        print _(u'\n== Most active wiki users ==')
+        print(_(u'\n== Most active wiki users =='))
         for user, changes in sorted(users.items(),
                                     cmp=lambda x, y: cmp(len(x[1]), len(y[1])),
                                     reverse=True)[:show]:
-            print u' %-50s %d' % (('%s' % user).ljust(50, '.'),
-                                  len(changes))
+            print(u' %-50s %d' % (('%s' % user).ljust(50, '.'),
+                                  len(changes)))
 
-        print _(u'\n== Most edited pages ==')
+        print(_(u'\n== Most edited pages =='))
         for page, num in sorted(pages.items(),
                                 cmp=lambda x, y: cmp(x[1], y[1]),
                                 reverse=True)[:show]:
-            print u' %-50s %d' % (('%s' % page).ljust(50, '.'), num)
+            print(u' %-50s %d' % (('%s' % page).ljust(50, '.'), num))
 
     def fetch_all_revisions(self, start=1, flags=True, timestamp=True,
                             user=True, size=False, comment=True, content=False,
@@ -165,13 +166,13 @@ you run this script using a 'bot' account.""")
             'ids': True,
         }
         rvprop = '|'.join([key for key in rvprop_list if rvprop_list[key]])
-        revs_to_get = range(start, latest_revid)
+        revs_to_get = list(range(start, latest_revid))
         all_revs = {}
         if self.api_high_limits:
             limit = 500
         else:
             limit = 50
-        for i in xrange(0, len(revs_to_get), limit):
+        for i in range(0, len(revs_to_get), limit):
             revid_list = revs_to_get[i:i+limit]
             revid_str = '|'.join([str(rev) for rev in revid_list])
             data = self.send_request(

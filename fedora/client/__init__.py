@@ -30,7 +30,7 @@ fedora.client is used to interact with Fedora Services.
 '''
 import warnings
 
-from bunch import Bunch
+from munch import Munch
 
 
 class FedoraClientError(Exception):
@@ -108,12 +108,12 @@ class AppError(FedoraServiceError):
 
 
 # Backwards compatibility
-class DictContainer(Bunch):
+class DictContainer(Munch):
     def __init__(self, *args, **kwargs):
         warnings.warn(
-            'DictContainer is deprecated.  Use the Bunch class'
+            'DictContainer is deprecated.  Use the Munch class'
             ' from python-bunch instead.', DeprecationWarning, stacklevel=2)
-        Bunch.__init__(self, *args, **kwargs)
+        Munch.__init__(self, *args, **kwargs)
 
 
 # We want people to be able to import fedora.client.*Client directly

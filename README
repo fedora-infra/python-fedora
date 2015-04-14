@@ -27,7 +27,7 @@ Public License Version 2 or later.
 Dependencies
 ------------
 
-``python-fedora`` requires the ``bunch``, ``kitchen``, and ``requests`` python
+``python-fedora`` requires the ``munch``, ``kitchen``, and ``requests`` python
 modules.  It used to use ``pycurl``, but was updated to use ``requests`` as of
 version ``0.3.32``.
 The ``flask_fas_openid`` module requires the ``python-openid`` and 

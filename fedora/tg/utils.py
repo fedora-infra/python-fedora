@@ -47,6 +47,7 @@ from turbogears import flash, redirect, config, identity
 import turbogears.util as tg_util
 from turbogears.controllers import check_app_root
 from turbogears.identity.exceptions import RequestRequiredException
+import six
 
 
 # Save this for people who need the original url() function
@@ -113,7 +114,7 @@ def url(tgpath, tgparams=None, **kwargs):
         pass
 
     # Check for query params in the current url
-    query_params = tgparams.iteritems()
+    query_params = six.iteritems(tgparams)
     scheme, netloc, path, params, query_s, fragment = urlparse.urlparse(tgpath)
     if query_s:
         query_params = chain((p for p in cgi.parse_qsl(query_s) if p[0] !=

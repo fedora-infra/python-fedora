@@ -27,7 +27,6 @@
 """
 
 import copy
-import httplib
 import logging
 import re
 # For handling an exception that's coming from requests:
@@ -35,12 +34,8 @@ import ssl
 import time
 import urllib
 
-try:
-    # Python2
-    from urlparse import urljoin, urlparse, parse_qs
-except ImportError:
-    # Python3 support
-    from urllib.parse import urljoin, urlparse, parse_qs
+import six.moves.http_client as httplib
+from six.moves.urllib_parse import urljoin, urlparse, parse_qs
 
 # Hack, hack, hack around
 # the horror that is logging!
@@ -56,13 +51,13 @@ except ImportError:
 
 import requests
 
-#from bunch import bunchify
+#from munch import munchify
 from kitchen.text.converters import to_bytes
 # For handling an exception that's coming from requests:
 import urllib3
 
 from fedora import __version__
-from fedora.client import AuthError, ServerError, LoginRequiredError, FedoraServiceError
+from fedora.client import AuthError, ServerError, FedoraServiceError
 
 log = logging.getLogger(__name__)
 log.addHandler(NullHandler())
@@ -555,7 +550,7 @@ class OpenIdProxyClient(object):
         new_session = session.cookies.get(self.session_name, '')
 
         log.debug('openidproxyclient.send_request: exited')
-        #data = bunchify(data)
+        #data = munchify(data)
         return new_session, response
 
 

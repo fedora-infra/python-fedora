@@ -142,7 +142,7 @@ class BodhiClient(BaseClient):
         auth = False
         if params['mine']:
             auth = True
-        for key, value in params.items():
+        for key, value in list(params.items()):
             if not value:
                 del params[key]
         return self.send_request('list', req_params=params, auth=auth)
@@ -211,7 +211,8 @@ class BodhiClient(BaseClient):
         from yum import YumBase
         yum = YumBase()
         yum.doConfigSetup(init_plugins=False)
-        fedora = file('/etc/fedora-release').readlines()[0].split()[2]
+        with open('/etc/fedora-release', 'r') as f:
+            fedora = f.readlines()[0].split()[2]
         tag = 'f%s-updates-testing' % fedora
         builds = self.get_koji_session(
             login=False).listTagged(tag, latest=True)

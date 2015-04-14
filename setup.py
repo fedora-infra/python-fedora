@@ -14,7 +14,7 @@ except:
     # and barf.  So we have to delete it here.
     del __requires__
 
-execfile("fedora/release.py")
+exec(compile(open("fedora/release.py").read(), "fedora/release.py", 'exec'))
 
 from setuptools import find_packages, setup
 
@@ -34,7 +34,7 @@ setup(
     # non-setuptools package.  When everything we care about uses
     # python-2.5 distutils we can add these:
     #   for bodhi (koji yum)
-    install_requires=['bunch', 'kitchen', 'requests', 'beautifulsoup4', 'urllib3'],
+    install_requires=['munch', 'kitchen', 'requests', 'beautifulsoup4', 'urllib3', 'six'],
     extras_require={
         'tg': ['TurboGears >= 1.0.4', 'SQLAlchemy', 'decorator'],
         'wsgi': ['repoze.who', 'Beaker', 'Paste'],
