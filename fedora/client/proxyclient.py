@@ -48,6 +48,10 @@ from fedora.client import AppError, AuthError, ServerError
 
 log = logging.getLogger(__name__)
 
+LOG_FORMAT = '%(asctime)s %(levelname)-5.5s ' \
+             '[%(threadName)s:%(process)s][%(name)s]' \
+             '[%(funcName)s:%(lineno)s] %(message)s'
+
 
 class ProxyClient(object):
     # pylint: disable-msg=R0903
@@ -149,7 +153,7 @@ class ProxyClient(object):
         # Setup our logger
         self._log_handler = logging.StreamHandler()
         self.debug = debug
-        format = logging.Formatter("%(message)s")
+        format = logging.Formatter(LOG_FORMAT)
         self._log_handler.setFormatter(format)
         self.log.addHandler(self._log_handler)
 
@@ -216,8 +220,9 @@ class ProxyClient(object):
     errors.
     ''')
 
-    def send_request(self, method, req_params=None, auth_params=None,
-                     file_params=None, retries=None, timeout=None):
+    def send_request(self, method, req_params=None, req_method='POST',
+                     auth_params=None, file_params=None, retries=None,
+                     timeout=None):
         '''Make an HTTP request to a server method.
 
         The given method is called with any parameters set in ``req_params``.
@@ -381,15 +386,27 @@ class ProxyClient(object):
         num_tries = 0
         while True:
             try:
-                response = requests.post(
-                    url,
-                    data=complete_params,
-                    cookies=cookies,
-                    headers=headers,
-                    auth=auth,
-                    verify=not self.insecure,
-                    timeout=timeout,
-                )
+                if req_method == 'POST':
+                    response = requests.post(
+                        url,
+                        data=complete_params,
+                        cookies=cookies,
+                        headers=headers,
+                        auth=auth,
+                        verify=not self.insecure,
+                        timeout=timeout,
+                    )
+                elif req_method == 'GET':
+                    # let's keep all other params for now
+                    response = requests.get(
+                        url,
+                        params=complete_params,
+                        cookies=cookies,
+                        headers=headers,
+                        auth=auth,
+                        verify=not self.insecure,
+                        timeout=timeout,
+                    )
             except (requests.Timeout, requests.exceptions.SSLError) as e:
                 if isinstance(e, requests.exceptions.SSLError):
                     # And now we know how not to code a library exception
