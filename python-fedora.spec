@@ -195,6 +195,10 @@ rm -rf %{buildroot}
 * Sat Jan 24 2015 Xavier Lamien <laxathom@fedoraproject.org> - 0.3.37-1
 - Upstream release.
 
+* Thu Oct 23 2014 Pierre-Yves Chibon <pingou@pingoured.fr> - 0.3.36-2
+- Backport the flask-fas-openid fix merged upstream at:
+  https://github.com/fedora-infra/python-fedora/pull/108
+
 * Thu Aug  7 2014 Toshio Kuratomi <toshio@fedoraproject.org> - 0.3.36-1
 - New upstream release fixing logging in openidbaseclient
 
