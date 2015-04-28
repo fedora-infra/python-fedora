@@ -172,7 +172,7 @@ When you make changes that change the translatable strings in the package, you
 should update the POT file.  Use the following distutils command (provided by
 python-babel) to do that::
   ./setup.py extract_messages -o translations/python-fedora.pot
-  tx push -s
+  zanata-cli push
 
 Then commit your changes to source control.
 
@@ -182,7 +182,7 @@ Updating the PO Files
 Transifex.net will merge the strings inside the pot file with the already
 translated strings.  To merge these, we just need to pull revised versions of
 the po files::
-  tx pull -a
+  zanata-cli pull
 
 Then commit the changes to source control
 
@@ -243,10 +243,10 @@ Release
      git flow release start $VERSION
 
 3) Download new translations and verify they are valid by compiling them::
-     tx pull -a
+     zanata-cli pull
      python releaseutils.py build_catalogs
      # If everything checks out
-     git commit -m 'Merge new translations from transifex.net'
+     git commit -m 'Merge new translations from fedora.zanata.org'
 
 4) Make sure that the NEWS file is accurate (use git log if needed).
 
