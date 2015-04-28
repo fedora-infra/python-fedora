@@ -37,7 +37,7 @@ import logging
 import pkg_resources
 
 from beaker.cache import Cache
-from bunch import Bunch
+from munch import Munch
 from kitchen.text.converters import to_bytes, exception_to_bytes
 from paste.httpexceptions import HTTPFound
 from repoze.who.middleware import PluggableAuthenticationMiddleware
@@ -228,7 +228,7 @@ class FASWhoPlugin(object):
         # This is compatible with TG1 and it gives us a way to authenticate
         # a user without making two requests
         query = req.GET
-        form = Bunch(req.POST)
+        form = Munch(req.POST)
         form.update(query)
         if form.get('login', None) == 'Login' and \
                 'user_name' in form and \
@@ -394,7 +394,7 @@ class FASWhoPlugin(object):
         identity.update(user_info)
 
         identity['userdata'] = user_info
-        identity['user'] = Bunch()
+        identity['user'] = Munch()
         identity['user'].created = user_info['creation']
         identity['user'].display_name = user_info['human_name']
         identity['user'].email_address = user_info['email']

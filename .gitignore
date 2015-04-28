@@ -2,3 +2,5 @@
 *.egg*
 build
 locale
+.tox
+dist

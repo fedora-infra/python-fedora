@@ -20,12 +20,14 @@
 .. moduleauthor:: Ignacio Vazquez-Abrams <ivazquez@fedoraproject.org>
 .. moduleauthor:: Toshio Kuratomi <toshio@fedoraproject.org>
 '''
+from __future__ import print_function
 from fedora.client import AuthError
 from fedora.django import connection, person_by_id
 from fedora import _
 
 import django.contrib.auth.models as authmodels
 from django.conf import settings
+import six
 
 # Map FAS user elements to model attributes
 _fasmap = {
@@ -49,22 +51,22 @@ def _syncdb_handler(sender, **kwargs):
     # Import FAS groups
     verbosity = kwargs.get('verbosity', 1)
     if verbosity > 0:
-        print _('Loading FAS groups...')
+        print(_('Loading FAS groups...'))
     try:
         gl = connection.group_list({'username': settings.FAS_USERNAME,
                                     'password': settings.FAS_PASSWORD})
     except AuthError:
         if verbosity > 0:
-            print _('Unable to load FAS groups. Did you set '
-                    'FAS_USERNAME and FAS_PASSWORD?')
+            print(_('Unable to load FAS groups. Did you set '
+                    'FAS_USERNAME and FAS_PASSWORD?'))
     else:
         groups = gl[1]['groups']
         for group in groups:
             _new_group(group)
         if verbosity > 0:
-            print _('FAS groups loaded. Don\'t forget to set '
+            print(_('FAS groups loaded. Don\'t forget to set '
                     'FAS_USERNAME and FAS_PASSWORD to a low-privilege '
-                    'account.')
+                    'account.'))
 
 
 class FasUserManager(authmodels.UserManager):
@@ -77,7 +79,7 @@ class FasUserManager(authmodels.UserManager):
         log.write('in models user_from_fas\n')
         log.close()
         d = {}
-        for k, v in _fasmap.iteritems():
+        for k, v in six.iteritems(_fasmap):
             d[v] = user[k]
         u = FasUser(**d)
         u.set_unusable_password()

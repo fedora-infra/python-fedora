@@ -28,8 +28,14 @@ import itertools
 import urllib
 import warnings
 
-from bunch import Bunch
+from munch import Munch
 from kitchen.text.converters import to_bytes
+
+try:
+    from urllib import urlencode, quote
+except ImportError:
+    # Python3 support
+    from urllib.parse import urlencode, quote
 
 try:
     import libravatar
@@ -253,8 +259,8 @@ class AccountSystem(BaseClient):
             167133: 'davidx@fedoraproject.org',
             # Felix Schwarz: felix.schwarz@oss.schwarz.eu
             103551: 'fschwarz@fedoraproject.org',
-            # Lokesh Mandvekar: lsm5@switzerlandmail.ch
-            169250: 'lsm5@fedoraproject.org',
+            # Martin Holec: martix@martix.names
+            137561: 'mholec@redhat.com',
             # John Dulaney: j_dulaney@live.com
             149140: 'jdulaney@fedoraproject.org',
         }
@@ -320,8 +326,8 @@ class AccountSystem(BaseClient):
         :kwarg joinmsg: A message shown to users when they apply to the group.
         :kwarg apply_rules: Rules for applying to the group, shown to users
             before they apply.
-        :rtype: :obj:`bunch.Bunch`
-        :returns: A Bunch containing information about the group that was
+        :rtype: :obj:`munch.Munch`
+        :returns: A Munch containing information about the group that was
             created.
 
         .. versionadded:: 0.3.29
@@ -337,10 +343,10 @@ class AccountSystem(BaseClient):
 
         request = self.send_request(
             '/group/create/%s/%s/%s/%s' % (
-                urllib.quote(name),
-                urllib.quote(display_name),
-                urllib.quote(owner),
-                urllib.quote(group_type)),
+                quote(name),
+                quote(display_name),
+                quote(owner),
+                quote(group_type)),
             req_params=req_params,
             auth=True
         )
@@ -394,7 +400,7 @@ class AccountSystem(BaseClient):
         request = self.send_request('/group/dump/%s' %
                                     urllib.quote(groupname), auth=True)
 
-        return [Bunch(username=user[0],
+        return [Munch(username=user[0],
                       role_type=user[3]) for user in request['people']]
 
     ### People ###
@@ -545,7 +551,7 @@ class AccountSystem(BaseClient):
             else:
                 email = "%s@fedoraproject.org" % username
 
-            query_string = urllib.urlencode({
+            query_string = urlencode({
                 's': size,
                 'd': default,
             })
@@ -590,8 +596,21 @@ class AccountSystem(BaseClient):
     def people_by_key(self, key=u'username', search=u'*', fields=None):
         '''Return a dict of people
 
-        :kwarg key: Key by this field.  Valid values are 'id', 'username', or
-            'email'.  Default is 'username'
+        For example:
+
+            >>> ret_val = FASCLIENT.people_by_key(
+            ...     key='email', search='toshio*', fields='id')
+            >>> ret_val.keys()
+            a.badger@[...].com
+            a.badger+test1@[...].com
+            a.badger+test2@[...].com
+            >>> ret_val.values()
+            100068
+            102023
+            102434
+
+        :kwarg key: Key used to organize the returned dictionary.  Valid values
+            are 'id', 'username', or 'email'.  Default is 'username'.
         :kwarg search: Pattern to match usernames against.  Defaults to the
             '*' wildcard which matches everyone.
         :kwarg fields: Limit the data returned to a specific list of fields.
@@ -680,7 +699,7 @@ class AccountSystem(BaseClient):
             },
             auth=True)
 
-        people = Bunch()
+        people = Munch()
         for person in itertools.chain(request['people'],
                                       request['unapproved_people']):
             # Retrieve bugzilla_email from our list if necessary
@@ -719,7 +738,7 @@ class AccountSystem(BaseClient):
 
         request = self.send_request('/json/user_id', auth=True)
         user_to_id = {}
-        people = Bunch()
+        people = Munch()
         for person_id, username in request['people'].items():
             person_id = int(person_id)
             # change userids from string back to integer

@@ -1,8 +1,11 @@
 #!/usr/bin/python -tt
+import sys
 
 # Work around setuptools multi-version silliness
 try:
-    __requires__ = ['CherryPy < 3', 'Sphinx >= 1.0']
+    __requires__ = ['Sphinx >= 1.0']
+    if sys.version_info[0] == 2:
+        __requires__.append('CherryPy < 3')
     import pkg_resources
 except:
     # And also workaround the workaround being broken inside of a virtualenv
@@ -11,7 +14,7 @@ except:
     # and barf.  So we have to delete it here.
     del __requires__
 
-execfile("fedora/release.py")
+exec(compile(open("fedora/release.py").read(), "fedora/release.py", 'exec'))
 
 from setuptools import find_packages, setup
 
@@ -31,7 +34,7 @@ setup(
     # non-setuptools package.  When everything we care about uses
     # python-2.5 distutils we can add these:
     #   for bodhi (koji yum)
-    install_requires=['bunch', 'kitchen', 'requests', 'beautifulsoup4', 'urllib3'],
+    install_requires=['munch', 'kitchen', 'requests', 'beautifulsoup4', 'urllib3', 'six'],
     extras_require={
         'tg': ['TurboGears >= 1.0.4', 'SQLAlchemy', 'decorator'],
         'wsgi': ['repoze.who', 'Beaker', 'Paste'],

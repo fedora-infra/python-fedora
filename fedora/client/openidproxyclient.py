@@ -27,13 +27,18 @@
 """
 
 import copy
-import httplib
 import logging
 import re
 # For handling an exception that's coming from requests:
 import ssl
 import time
 import urllib
+
+try:
+    import httplib
+except ImportError:
+    # Python3 support
+    import http.client as httplib
 
 try:
     # Python2
@@ -56,7 +61,7 @@ except ImportError:
 
 import requests
 
-#from bunch import bunchify
+#from munch import munchify
 from kitchen.text.converters import to_bytes
 # For handling an exception that's coming from requests:
 import urllib3
@@ -555,7 +560,7 @@ class OpenIdProxyClient(object):
         new_session = session.cookies.get(self.session_name, '')
 
         log.debug('openidproxyclient.send_request: exited')
-        #data = bunchify(data)
+        #data = munchify(data)
         return new_session, response
 
 
