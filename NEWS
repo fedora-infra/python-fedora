@@ -3,9 +3,16 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
-:Date: 6 Aug 2014
-:Version: 0.3.x
+:Date: 28 Apr 2015
+:Version: 0.4.x
 
+-----
+0.4.0
+-----
+
+* Port most modules to a python2/python3 compatible codebase!  Hooray!
+
+* Deprecate the wiki client (it will be removed in the next major release).
 
 ------
 0.3.37
