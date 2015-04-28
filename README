@@ -154,16 +154,16 @@ Translations
 
 The strings in python-fedora has mainly error messages.  These are translated
 so we should make sure that translators are able to translate them when
-necessary.  You will need babel, setuptools, and transifex-client to run these
+necessary.  You will need babel, setuptools, and zanata-client to run these
 commands::
-  yum install babel setuptools transifex-client
+  yum install babel setuptools zanata-client
 
-Much information about using transifex for translations can be found in the
-`transifex user's guide`_.  The information in this section is largely from
-experimenting with the information in the `transifex client documentation`_
+Much information about using zanata for translations can be found in the
+`zanata user's guide`_.  The information in this section is largely from
+experimenting with the information in the `zanata client documentation`_
 
-.. _`transifex user's guide`: http://help.transifex.net/user-guide/index.html
-.. ~`transifex client documentation`: http://help.transifex.net/user-guide/client/index.html
+.. _`zanata user's guide`: http://zanata.readthedocs.org
+.. ~`zanata client documentation`: http://zanata.readthedocs.org/en/latest/user-guide/client-configuration/
 
 Updating the POT File
 =====================
@@ -179,36 +179,22 @@ Then commit your changes to source control.
 Updating the PO Files
 =====================
 
-Transifex.net will merge the strings inside the pot file with the already
+fedora.zanata.org will merge the strings inside the pot file with the already
 translated strings.  To merge these, we just need to pull revised versions of
 the po files::
   zanata-cli pull
 
-Then commit the changes to source control
-
-Note that if you see a status message from transifex like this::
-  Pulling new translations for resource python-fedora.python-fedorapot (source: translations/python-fedora.pot)
-   -> fr: translations/fr.po
-
-it means that transifex has created a brand new po file for you.  You need to
-add the new file to source control before committing.
+Then commit the changes to source control (look for any brand new PO files that
+zanata may have created).
 
 Creating a new PO File
 ======================
 
-The easiest way to create a new po file for a new language is in transifex's
+The easiest way to create a new po file for a new language is in 's
 web UI.
 
 * Visit this link:
-  https://www.transifex.net/projects/p/python-fedora/resource/python-fedorapot/
-* Login with a transifex.net username and password
-* Scroll down to the add translation button below the statistics on current
-  translations
-* Select a language from the dropdown and hit the translate online button
-
-This will start a translation for your language.  In the future you can
-continue to use the transifex online translation editor or you can download
-the .po file, translate on your computer, and then reupload.
+  https://fedora.zanata.org/iteration/view/python-fedora
 
 Compiling Message Catalogs
 ==========================
