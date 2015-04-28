@@ -1,3 +1,7 @@
+%if 0%{?fedora}
+%global with_python3 1
+%endif
+
 %if 0%{?rhel} && 0%{?rhel} <= 6
 %{!?__python2:        %global __python2 /usr/bin/python2}
 %{!?python2_sitelib:  %global python2_sitelib %(%{__python2} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")}
@@ -5,17 +9,18 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.3.37
+Version:        0.4.0
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
 Group:          Development/Languages
 License:        LGPLv2+
 URL:            https://fedorahosted.org/python-fedora/
-Source0:        https://fedorahosted.org/releases/p/y/%{name}/%{name}-%{version}%{?prerel}.tar.xz
+Source0:        https://fedorahosted.org/releases/p/y/%{name}/%{name}-%{version}%{?prerel}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
+
 BuildRequires:  python2-devel
 BuildRequires:  python-setuptools
 %if 0%{?rhel} && 0%{?rhel} <= 6
@@ -64,6 +69,37 @@ Python modules that help with building Fedora Services.  The client module
 included here can be used to build programs that communicate with many of
 Fedora Infrastructure's Applications such as Bodhi, PackageDB, MirrorManager,
 and FAS2.
+
+%if 0%{?with_python3}
+%package -n python3-fedora
+Summary:        Python modules for talking to Fedora Infrastructure Services
+Group:          Development/Languages
+
+BuildRequires:  python3-devel
+BuildRequires:  python3-setuptools
+BuildRequires:  python3-sphinx
+BuildRequires:  python3-babel
+BuildRequires:  python3-nose
+BuildRequires:  python3-kitchen
+BuildRequires:  python3-munch
+
+BuildRequires:  python3-requests
+BuildRequires:  python3-openid
+BuildRequires:  python3-six
+
+Requires:       python3-simplejson
+Requires:       python3-munch
+Requires:       python3-kitchen
+Requires:       python3-requests
+Requires:       python3-beautifulsoup4
+Requires:       python3-six
+
+%description -n python3-fedora
+Python modules that help with building Fedora Services.  The client module
+included here can be used to build programs that communicate with many of
+Fedora Infrastructure's Applications such as Bodhi, PackageDB, MirrorManager,
+and FAS2.
+%endif
 
 %if 0%{?rhel} < 7
 %package turbogears
@@ -139,15 +175,38 @@ Account System.
 %prep
 %setup -q -c -n %{name}-%{version}%{?prerel}
 
+%if 0%{?with_python3}
+rm -rf %{py3dir}
+cp -a . %{py3dir}
+%endif
+
 %build
-python2 setup.py build
-python2 setup.py build_sphinx
-python2 releaseutils.py build_catalogs
+%if 0%{?with_python3}
+pushd %{py3dir}
+%{__python3} setup.py build
+%{__python3} setup.py build_sphinx
+%{__python3} releaseutils.py build_catalogs
+popd
+%endif
+
+%{__python2} setup.py build
+%{__python2} setup.py build_sphinx
+%{__python2} releaseutils.py build_catalogs
 
 %install
-rm -rf %{buildroot}
-python2 setup.py install --skip-build --root %{buildroot}
-DESTDIR=%{buildroot} python2 releaseutils.py install_catalogs
+%if 0%{?with_python3}
+pushd %{py3dir}
+%{__python3} setup.py install --skip-build --root %{buildroot}
+DESTDIR=%{buildroot} %{__python3} releaseutils.py install_catalogs
+
+# Remove regression tests
+rm -rf %{buildroot}%{python3_sitelib}/fedora/wsgi/test
+
+popd
+%endif
+
+%{__python2} setup.py install --skip-build --root %{buildroot}
+DESTDIR=%{buildroot} %{__python2} releaseutils.py install_catalogs
 
 # Cleanup doc
 mv build/sphinx/html doc/
@@ -175,6 +234,19 @@ rm -rf %{buildroot}
 %exclude %{python2_sitelib}/flask_fas.py*
 %exclude %{python2_sitelib}/flask_fas_openid.py*
 
+%if 0%{?with_python3}
+%files -f %{name}.lang -n python3-fedora
+%defattr(-,root,root,-)
+%doc NEWS README COPYING AUTHORS doc
+%{python3_sitelib}/*
+%exclude %{python3_sitelib}/fedora/tg/
+%exclude %{python3_sitelib}/fedora/tg2/
+%exclude %{python3_sitelib}/fedora/wsgi/
+%exclude %{python3_sitelib}/fedora/django/
+%exclude %{python3_sitelib}/flask_fas.py*
+%exclude %{python3_sitelib}/flask_fas_openid.py*
+%endif
+
 %if 0%{?rhel} < 7
 %files turbogears
 %{python2_sitelib}/fedora/tg/
@@ -192,6 +264,11 @@ rm -rf %{buildroot}
 %{python2_sitelib}/flask_fas_openid.py*
 
 %changelog
+* Tue Apr 28 2015 Ralph Bean <rbean@redhat.com> - 0.4.0-1
+- Upstream release.
+- python3 subpackages.
+- New deps on python-munch and python-six.
+
 * Sat Jan 24 2015 Xavier Lamien <laxathom@fedoraproject.org> - 0.3.37-1
 - Upstream release.
 
