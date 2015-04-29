@@ -294,15 +294,15 @@ class OpenIdBaseClient(OpenIdProxyClient):
         """)
 
     @requires_login
-    def _authed_post(self, url, params=None, data=None):
+    def _authed_post(self, url, params=None, data=None, **kwargs):
         """ Return the request object of a post query."""
-        response = self._session.post(url, params=params, data=data)
+        response = self._session.post(url, params=params, data=data, **kwargs)
         return response
 
     @requires_login
-    def _authed_get(self, url, params=None, data=None):
+    def _authed_get(self, url, params=None, data=None, **kwargs):
         """ Return the request object of a get query."""
-        response = self._session.get(url, params=params, data=data)
+        response = self._session.get(url, params=params, data=data, **kwargs)
         return response
 
     def send_request(self, method, auth=False, verb='POST', **kwargs):

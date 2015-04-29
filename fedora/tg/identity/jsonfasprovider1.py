@@ -227,7 +227,7 @@ class JsonFasIdentityProvider(object):
             user = JsonFasIdentity(visit_key,
                                    username=user_name,
                                    password=password)
-        except FedoraServiceError, e:
+        except FedoraServiceError as e:
             log.warning('Error logging in %(user)s: %(error)s' % {
                 'user': to_bytes(user_name), 'error': to_bytes(e)})
             return None

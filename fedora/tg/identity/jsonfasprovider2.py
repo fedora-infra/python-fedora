@@ -184,7 +184,7 @@ class JsonFasIdentity(BaseClient):
         # pylint: disable-msg=W0702
         try:
             data = self.send_request('user/view', auth=True)
-        except AuthError, e:
+        except AuthError as e:
             # Failed to login with present credentials
             self._retrieved_user = self.session_id
             return None
@@ -423,7 +423,7 @@ class JsonFasIdentityProvider(object):
         try:
             user = JsonFasIdentity(visit_key, username=user_name,
                                    password=password, using_ssl=using_ssl)
-        except FedoraServiceError, e:
+        except FedoraServiceError as e:
             self.log.warning('Error logging in %(user)s: %(error)s' % {
                 'user': to_bytes(user_name), 'error': to_bytes(e)})
             return None

@@ -3,8 +3,8 @@ Python Fedora Module
 ====================
 
 :Author: Toshio Kuratomi
-:Date: 10 April 2013
-:Version: 0.3.x
+:Date: 28 April 2015
+:Version: 0.4.x
 
 The Fedora module provides a python API for building `Fedora Services`_ and
 clients that connect to them.  It has functions and classes that help to build
@@ -27,7 +27,7 @@ Public License Version 2 or later.
 Dependencies
 ------------
 
-``python-fedora`` requires the ``bunch``, ``kitchen``, and ``requests`` python
+``python-fedora`` requires the ``munch``, ``kitchen``, and ``requests`` python
 modules.  It used to use ``pycurl``, but was updated to use ``requests`` as of
 version ``0.3.32``.
 The ``flask_fas_openid`` module requires the ``python-openid`` and 
@@ -154,16 +154,16 @@ Translations
 
 The strings in python-fedora has mainly error messages.  These are translated
 so we should make sure that translators are able to translate them when
-necessary.  You will need babel, setuptools, and transifex-client to run these
+necessary.  You will need babel, setuptools, and zanata-client to run these
 commands::
-  yum install babel setuptools transifex-client
+  yum install babel setuptools zanata-client
 
-Much information about using transifex for translations can be found in the
-`transifex user's guide`_.  The information in this section is largely from
-experimenting with the information in the `transifex client documentation`_
+Much information about using zanata for translations can be found in the
+`zanata user's guide`_.  The information in this section is largely from
+experimenting with the information in the `zanata client documentation`_
 
-.. _`transifex user's guide`: http://help.transifex.net/user-guide/index.html
-.. ~`transifex client documentation`: http://help.transifex.net/user-guide/client/index.html
+.. _`zanata user's guide`: http://zanata.readthedocs.org
+.. ~`zanata client documentation`: http://zanata.readthedocs.org/en/latest/user-guide/client-configuration/
 
 Updating the POT File
 =====================
@@ -172,43 +172,29 @@ When you make changes that change the translatable strings in the package, you
 should update the POT file.  Use the following distutils command (provided by
 python-babel) to do that::
   ./setup.py extract_messages -o translations/python-fedora.pot
-  tx push -s
+  zanata-cli push
 
 Then commit your changes to source control.
 
 Updating the PO Files
 =====================
 
-Transifex.net will merge the strings inside the pot file with the already
+fedora.zanata.org will merge the strings inside the pot file with the already
 translated strings.  To merge these, we just need to pull revised versions of
 the po files::
-  tx pull -a
+  zanata-cli pull
 
-Then commit the changes to source control
-
-Note that if you see a status message from transifex like this::
-  Pulling new translations for resource python-fedora.python-fedorapot (source: translations/python-fedora.pot)
-   -> fr: translations/fr.po
-
-it means that transifex has created a brand new po file for you.  You need to
-add the new file to source control before committing.
+Then commit the changes to source control (look for any brand new PO files that
+zanata may have created).
 
 Creating a new PO File
 ======================
 
-The easiest way to create a new po file for a new language is in transifex's
+The easiest way to create a new po file for a new language is in 's
 web UI.
 
 * Visit this link:
-  https://www.transifex.net/projects/p/python-fedora/resource/python-fedorapot/
-* Login with a transifex.net username and password
-* Scroll down to the add translation button below the statistics on current
-  translations
-* Select a language from the dropdown and hit the translate online button
-
-This will start a translation for your language.  In the future you can
-continue to use the transifex online translation editor or you can download
-the .po file, translate on your computer, and then reupload.
+  https://fedora.zanata.org/iteration/view/python-fedora
 
 Compiling Message Catalogs
 ==========================
@@ -243,10 +229,10 @@ Release
      git flow release start $VERSION
 
 3) Download new translations and verify they are valid by compiling them::
-     tx pull -a
+     zanata-cli pull
      python releaseutils.py build_catalogs
      # If everything checks out
-     git commit -m 'Merge new translations from transifex.net'
+     git commit -m 'Merge new translations from fedora.zanata.org'
 
 4) Make sure that the NEWS file is accurate (use git log if needed).
 

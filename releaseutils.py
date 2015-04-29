@@ -1,11 +1,15 @@
 #!/usr/bin/python -tt
 
-# Copyright Red Hat Inc 2013
+# Copyright Red Hat Inc 2013-2015
 # Licensed under the terms of the LGPLv2+
 
 from __future__ import print_function
 
-import ConfigParser
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
+
 import glob
 import os
 import shutil
@@ -19,6 +23,7 @@ from kitchen.pycompat27 import subprocess
 import pkg_resources
 
 import fedora.release
+from six.moves import map
 
 
 #
@@ -66,13 +71,13 @@ def setup_message_compiler():
 def build_catalogs():
     # Get the directory with message catalogs
     # Reuse transifex's config file first as it will know this
-    cfg = ConfigParser.SafeConfigParser()
+    cfg = configparser.SafeConfigParser()
     cfg.read('.tx/config')
     cmd, args = setup_message_compiler()
 
     try:
         shutil.rmtree('locale')
-    except OSError, e:
+    except OSError as e:
         # If the error is that locale does not exist, we're okay.  We're
         # deleting it here, afterall
         if e.errno != 2:
@@ -82,7 +87,7 @@ def build_catalogs():
         try:
             file_filter = cfg.get(section, 'file_filter')
             source_file = cfg.get(section, 'source_file')
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             continue
         glob_pattern = file_filter.replace('<lang>', '*')
         pot = os.path.basename(source_file)
@@ -115,7 +120,7 @@ def _install_catalogs(localedir):
             dirname = os.path.dirname(catalog)
             dst = os.path.join(localedir, dirname)
             try:
-                os.makedirs(dst, 0755)
+                os.makedirs(dst, 0o755)
             except OSError as e:
                 # Only allow file exists to pass
                 if e.errno != 17:

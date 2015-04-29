@@ -3,8 +3,32 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
-:Date: 6 Aug 2014
-:Version: 0.3.x
+:Date: 28 Apr 2015
+:Version: 0.4.x
+
+-----
+0.4.0
+-----
+
+* Port most modules to a python2/python3 compatible codebase!  Hooray!
+
+* Deprecate the wiki client (it will be removed in the next major release).
+
+* Switch over to using zanata for translations.
+
+------
+0.3.37
+------
+
+* Make the fedora_session file unhidden
+
+* Instead of returning the JSON returned by fedoauth/ipsilon we return
+  the response from the application when we sent to it the data returned
+  by fedoauth/ipsilon.
+
+* Update OpenIdProxyClient to allow specifying headers when sending a request
+
+* Update bugzilla exception list.
 
 
 ------

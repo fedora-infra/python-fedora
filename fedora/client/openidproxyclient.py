@@ -27,13 +27,18 @@
 """
 
 import copy
-import httplib
 import logging
 import re
 # For handling an exception that's coming from requests:
 import ssl
 import time
 import urllib
+
+try:
+    import httplib
+except ImportError:
+    # Python3 support
+    import http.client as httplib
 
 try:
     # Python2
@@ -56,7 +61,7 @@ except ImportError:
 
 import requests
 
-#from bunch import bunchify
+#from munch import munchify
 from kitchen.text.converters import to_bytes
 # For handling an exception that's coming from requests:
 import urllib3
@@ -142,7 +147,7 @@ def openid_login(session, login_url, username, password, otp=None,
     response = session.post(output['response']['openid.return_to'],
                             data=output['response'])
 
-    return output
+    return response
 
 
 def absolute_url(beginning, end):
@@ -329,7 +334,7 @@ class OpenIdProxyClient(object):
 
     def send_request(self, method, verb='POST', req_params=None,
                      auth_params=None, file_params=None, retries=None,
-                     timeout=None):
+                     timeout=None, headers=None):
         """Make an HTTP request to a server method.
 
         The given method is called with any parameters set in ``req_params``.
@@ -377,6 +382,8 @@ class OpenIdProxyClient(object):
             The timeout only affects the connection process itself, not the
             downloading of the response body. Defaults to the :attr:`timeout`
             value set on the instance or in :meth:`__init__`.
+        :kwarg headers: A dictionary containing specific headers to add to
+            the request made.
         :returns: A tuple of session_id and data.
         :rtype: tuple of session information and data from server
 
@@ -413,10 +420,16 @@ class OpenIdProxyClient(object):
         url = urljoin(self.base_url, urllib.quote(method))
 
         # Set standard headers
-        headers = {
-            'User-agent': self.useragent,
-            'Accept': 'application/json',
-        }
+        if headers:
+            if not 'User-agent' in headers:
+                headers['User-agent'] = self.useragent
+            if not 'Accept' in headers:
+                headers['Accept'] = 'application/json'
+        else:
+            headers = {
+                'User-agent': self.useragent,
+                'Accept': 'application/json',
+            }
 
         # Files to upload
         for field_name, local_file_name in file_params:
@@ -547,7 +560,7 @@ class OpenIdProxyClient(object):
         new_session = session.cookies.get(self.session_name, '')
 
         log.debug('openidproxyclient.send_request: exited')
-        #data = bunchify(data)
+        #data = munchify(data)
         return new_session, response
 
 

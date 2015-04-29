@@ -36,7 +36,7 @@ try:
 except ImportError:
     from sha import new as sha_constructor
 
-from bunch import Bunch
+from munch import Munch
 from kitchen.text.converters import to_unicode
 import pkg_resources
 from repoze.what.plugins.pylonshq import booleanize_predicates
@@ -157,9 +157,9 @@ def add_fas_auth_middleware(self, app, *args):
     be authenticated against, set the connection to insecure for testing, and
     the url of the login form, do this::
 
-        from bunch import Bunch
+        from munch import Munch
         class MyAppConfig(AppConfig):
-            fas_auth = Bunch(
+            fas_auth = Munch(
                     fas_url='https://fakefas.fedoraproject.org/accounts',
                     insecure=True, login_form_url='/alternate/login')
             add_auth_middleware = add_fas_auth_middleware
@@ -174,7 +174,7 @@ def add_fas_auth_middleware(self, app, *args):
     booleanize_predicates()
 
     if not hasattr(self, 'fas_auth'):
-        self.fas_auth = Bunch()
+        self.fas_auth = Munch()
 
     # Configuring auth logging:
     if 'log_stream' not in self.fas_auth:

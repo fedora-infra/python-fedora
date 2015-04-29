@@ -1,0 +1,6 @@
+munch
+kitchen
+requests
+beautifulsoup4
+urllib3
+six

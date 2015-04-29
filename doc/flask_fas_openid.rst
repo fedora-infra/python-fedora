@@ -72,7 +72,6 @@ authentication::
     # This is a sample application.
 
     import flask
-    from flask.ext.fas import FAS, fas_login_required
     from flask_fas_openid import fas_login_required, cla_plus_one_required, FAS
 
     # Set up Flask application

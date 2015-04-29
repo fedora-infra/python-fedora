@@ -28,7 +28,7 @@ import feedparser
 try:
     import simplejson as json
 except ImportError:
-    import json as json
+    from . import json as json
 
 from bugzilla import Bugzilla
 from turbogears.widgets import Widget

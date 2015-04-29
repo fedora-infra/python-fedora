@@ -28,7 +28,7 @@ FAS-OpenID authentication plugin for the flask web framework
 '''
 from functools import wraps
 
-from bunch import Bunch
+from munch import Munch
 import flask
 try:
     from flask import _app_ctx_stack as stack
@@ -102,7 +102,7 @@ class FAS(object):
 
     def _init_app(self, app):
         app.config.setdefault('FAS_OPENID_ENDPOINT',
-                              'http://id.fedoraproject.org/')
+                              'https://id.fedoraproject.org/openid/')
         app.config.setdefault('FAS_OPENID_CHECK_CERT', True)
 
         if not self.app.config['FAS_OPENID_CHECK_CERT']:
@@ -176,8 +176,8 @@ class FAS(object):
             for group in user['groups']:
                 membership = dict()
                 membership['name'] = group
-                user['approved_memberships'].append(Bunch.fromDict(membership))
-            flask.g.fas_user = Bunch.fromDict(user)
+                user['approved_memberships'].append(Munch.fromDict(membership))
+            flask.g.fas_user = Munch.fromDict(user)
             flask.g.fas_user.groups = frozenset(flask.g.fas_user.groups)
         flask.g.fas_session_id = 0
 
@@ -223,7 +223,7 @@ class FAS(object):
         oidconsumer = consumer.Consumer(session, None)
         try:
             request = oidconsumer.begin(self.app.config['FAS_OPENID_ENDPOINT'])
-        except consumer.DiscoveryFailure, exc:
+        except consumer.DiscoveryFailure as exc:
             # VERY strange, as this means it could not discover an OpenID
             # endpoint at FAS_OPENID_ENDPOINT
             return 'discoveryfailure'
@@ -249,11 +249,8 @@ class FAS(object):
         flask.session['FLASK_FAS_OPENID_CANCEL_URL'] = cancel_url
 
         if request_wants_json():
-            output = request.message.toPostArgs()
-            return_to_url='%s?janrain_nonce=%s' % (
-                return_to, request.return_to_args['janrain_nonce'])
-            output['openid.realm'] = trust_root
-            output['openid.return_to'] = return_to_url
+            output = request.getMessage(trust_root,
+                                        return_to=return_to).toPostArgs()
             output['server_url'] = request.endpoint.server_url
             return flask.jsonify(output)
         elif request.shouldSendRedirect():
