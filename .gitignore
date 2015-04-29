@@ -3,3 +3,4 @@
 build
 locale
 .tox
+dist
