@@ -17,7 +17,6 @@ Group:          Development/Languages
 License:        LGPLv2+
 URL:            https://fedorahosted.org/python-fedora/
 Source0:        https://fedorahosted.org/releases/p/y/%{name}/%{name}-%{version}%{?prerel}.tar.gz
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildArch:      noarch
 
@@ -173,7 +172,7 @@ an auth provider to let flask applications authenticate against the Fedora
 Account System.
 
 %prep
-%setup -q -c -n %{name}-%{version}%{?prerel}
+%setup -q -n %{name}-%{version}%{?prerel}
 
 %if 0%{?with_python3}
 rm -rf %{py3dir}
@@ -184,8 +183,10 @@ cp -a . %{py3dir}
 %if 0%{?with_python3}
 pushd %{py3dir}
 %{__python3} setup.py build
-%{__python3} setup.py build_sphinx
-%{__python3} releaseutils.py build_catalogs
+## No docs, because that tries to hit the tg pathways (py2-only)
+#%{__python3} setup.py build_sphinx
+## We can probably port releaseutils.py, but we haven't yet.
+#%{__python3} releaseutils.py build_catalogs
 popd
 %endif
 
@@ -197,7 +198,8 @@ popd
 %if 0%{?with_python3}
 pushd %{py3dir}
 %{__python3} setup.py install --skip-build --root %{buildroot}
-DESTDIR=%{buildroot} %{__python3} releaseutils.py install_catalogs
+## We can probably port releaseutils.py, but we haven't yet.
+#DESTDIR=%{buildroot} %{__python3} releaseutils.py install_catalogs
 
 # Remove regression tests
 rm -rf %{buildroot}%{python3_sitelib}/fedora/wsgi/test
@@ -219,9 +221,6 @@ find doc -name 'EMPTY' -exec rm \{\} \;
 rm -rf %{buildroot}%{python2_sitelib}/fedora/wsgi/test
 
 %find_lang %{name}
-
-%clean
-rm -rf %{buildroot}
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)

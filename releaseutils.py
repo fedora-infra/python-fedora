@@ -1,11 +1,15 @@
 #!/usr/bin/python -tt
 
-# Copyright Red Hat Inc 2013
+# Copyright Red Hat Inc 2013-2015
 # Licensed under the terms of the LGPLv2+
 
 from __future__ import print_function
 
-import ConfigParser
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
+
 import glob
 import os
 import shutil
@@ -67,7 +71,7 @@ def setup_message_compiler():
 def build_catalogs():
     # Get the directory with message catalogs
     # Reuse transifex's config file first as it will know this
-    cfg = ConfigParser.SafeConfigParser()
+    cfg = configparser.SafeConfigParser()
     cfg.read('.tx/config')
     cmd, args = setup_message_compiler()
 
@@ -83,7 +87,7 @@ def build_catalogs():
         try:
             file_filter = cfg.get(section, 'file_filter')
             source_file = cfg.get(section, 'source_file')
-        except ConfigParser.NoOptionError:
+        except configparser.NoOptionError:
             continue
         glob_pattern = file_filter.replace('<lang>', '*')
         pot = os.path.basename(source_file)
