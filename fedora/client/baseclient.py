@@ -21,6 +21,7 @@
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 .. moduleauthor:: Ralph Bean <rbean@redhat.com>
+.. moduleauthor:: Xavier Lamien <laxathom@fedoraproject.org>
 '''
 
 import os
@@ -281,7 +282,7 @@ class BaseClient(ProxyClient):
     def send_request(self, method, req_params=None, file_params=None,
                      auth=False, retries=None, timeout=None,
                      req_method=None, **kwargs):
-        '''Make an HTTP request to a server method.
+        """Make an HTTP request to a server method.
 
         The given method is called with any parameters set in req_params.  If
         auth is True, then the request is made with an authenticated session
@@ -314,7 +315,9 @@ class BaseClient(ProxyClient):
             * Add file_params to allow uploading files
         .. versionchanged:: 0.3.33
             * Added the timeout kwarg
-        '''
+        .. versionchanged:: 0.4.0
+            * Added req_method to handle HTTP method from `requests`
+        """
         # Check for deprecated arguments.  This section can go once we hit 0.4
         if len(kwargs) >= 1:
             for arg in kwargs:

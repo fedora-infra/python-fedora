@@ -16,12 +16,13 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
-'''Implement a class that sets up simple communication to a Fedora Service.
+"""Implement a class that sets up simple communication to a Fedora Service.
 
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 .. moduleauthor:: Ralph Bean <rbean@redhat.com>
-'''
+.. moduleauthor:: Xavier Lamien <laxathom@fedoraproject.org>
+"""
 
 import copy
 import logging
@@ -55,7 +56,7 @@ LOG_FORMAT = '%(asctime)s %(levelname)-5.5s ' \
 
 class ProxyClient(object):
     # pylint: disable-msg=R0903
-    '''
+    """
     A client to a Fedora Service.  This class is optimized to proxy multiple
     users to a service.  ProxyClient is designed to be threadsafe so that
     code can instantiate one instance of the class and use it for multiple
@@ -116,14 +117,14 @@ class ProxyClient(object):
 
     .. versionchanged:: 0.3.33
         Added the timeout attribute
-    '''
+    """
     log = log
 
     def __init__(self, base_url, useragent=None, session_name='tg-visit',
                  session_as_cookie=True, debug=False, insecure=False,
                  retries=None,
                  timeout=None):
-        '''Create a client configured for a particular service.
+        """Create a client configured for a particular service.
 
         :arg base_url: Base of every URL used to contact the server
 
@@ -149,12 +150,11 @@ class ProxyClient(object):
 
         .. versionchanged:: 0.3.33
             Added the timeout kwarg
-        '''
+        """
         # Setup our logger
         self._log_handler = logging.StreamHandler()
         self.debug = debug
-        format = logging.Formatter(LOG_FORMAT)
-        self._log_handler.setFormatter(format)
+        self._log_handler.setFormatter(logging.Formatter(LOG_FORMAT))
         self.log.addHandler(self._log_handler)
 
         # When we are instantiated, go ahead and silence the python-requests
@@ -223,7 +223,7 @@ class ProxyClient(object):
     def send_request(self, method, req_params=None, req_method='POST',
                      auth_params=None, file_params=None, retries=None,
                      timeout=None):
-        '''Make an HTTP request to a server method.
+        """Make an HTTP request to a server method.
 
         The given method is called with any parameters set in ``req_params``.
         If auth is True, then the request is made with an authenticated session
@@ -283,8 +283,9 @@ class ProxyClient(object):
             * Add file_params to allow uploading files
         .. versionchanged:: 0.3.33
             Added the timeout kwarg
-        '''
-        self.log.debug('proxyclient.send_request: entered')
+        .. versionchanged:: 0.4.0
+            * Added parameter req_method to handle HTTP method
+        """
 
         # parameter mangling
         file_params = file_params or {}

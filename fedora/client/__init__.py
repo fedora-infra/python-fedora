@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
-'''
+"""
 fedora.client is used to interact with Fedora Services.
 
 .. versionchanged:: 0.3.21
@@ -27,15 +27,14 @@ fedora.client is used to interact with Fedora Services.
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
-'''
+"""
 import warnings
 
 from munch import Munch
 
 
 class FedoraClientError(Exception):
-
-    '''Base Exception for problems which originate within the Clients.
+    """Base Exception for problems which originate within the Clients.
 
     This should be the base class for any exceptions that the Client generates
     generate.  For instance, if the client performs validation before passing
@@ -44,31 +43,30 @@ class FedoraClientError(Exception):
     Problems returned while talking to the Services should be returned via a
     `FedoraServiceError` instead.
 
-    '''
+    """
     pass
 
 
 class FedoraServiceError(Exception):
-
-    '''Base Exception for any problem talking with the Service.
+    """Base Exception for any problem talking with the Service.
 
     When the Client gets an error talking to the server, an exception of this
     type is raised.  This can be anything in the networking layer up to an
     error returned from the server itself.
 
-    '''
+    """
     pass
 
 
 class ServerError(FedoraServiceError):
-
-    '''Unable to talk to the server properly.
+    """Unable to talk to the server properly.
 
     This includes network errors and 500 response codes.  If the error was
     generated from an http response, :attr:`code` is the HTTP response code.
     Otherwise, :attr:`code` will be -1.
 
-    '''
+    """
+
     def __init__(self, url, status, msg):
         FedoraServiceError.__init__(self)
         self.filename = url
@@ -80,21 +78,18 @@ class ServerError(FedoraServiceError):
 
 
 class AuthError(FedoraServiceError):
-
-    '''Error during authentication.  For instance, invalid password.'''
+    """Error during authentication.  For instance, invalid password."""
     pass
 
 
 class LoginRequiredError(AuthError):
-
     """ Exception raised when the call requires a logged-in user. """
-
     pass
 
 
 class AppError(FedoraServiceError):
+    """Error condition that the server is passing back to the client."""
 
-    '''Error condition that the server is passing back to the client.'''
     def __init__(self, name, message, extras=None):
         FedoraServiceError.__init__(self)
         self.name = name
@@ -104,7 +99,6 @@ class AppError(FedoraServiceError):
     def __str__(self):
         return 'AppError(%s, %s, extras=%s)' % (
             self.name, self.message, self.extras)
-
 
 
 # Backwards compatibility
