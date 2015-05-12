@@ -51,7 +51,7 @@ from fedora.client import (
 
 from fedora import __version__
 
-FAS_BASE_URL = 'http://localhost:6543/api'
+FAS_BASE_URL = 'http://localhost:6543/'
 
 
 class FASError(FedoraClientError):
@@ -267,7 +267,7 @@ class AccountSystem(BaseClient):
         :return: Login status and session
         :rtype: Munch
         """
-        resp = self.__send_request__('request-login',
+        resp = self.__send_request__('api/request-login',
                                      params=credentials,
                                      method='POST')
 
@@ -285,7 +285,7 @@ class AccountSystem(BaseClient):
         :return: permissions response
         :rtype: Munch
         """
-        resp = self.__send_request__('request-perm/%s' % scope,
+        resp = self.__send_request__('api/request-perm/%s' % scope,
                                      auth_params={'session_id': session})
 
         return resp
@@ -346,7 +346,7 @@ class AccountSystem(BaseClient):
         :return: Returns a group object
         :rtype: Munch
         """
-        response = self.__send_request__('group/id/%s' % group_id)
+        response = self.__send_request__('api/group/id/%s' % group_id)
 
         return response.Group
 
@@ -359,7 +359,7 @@ class AccountSystem(BaseClient):
         :return: Returns a group object
         :rtype: Munch
         """
-        response = self.__send_request__('group/name/%s' % group_name)
+        response = self.__send_request__('api/group/name/%s' % group_name)
 
         return response.Groups
 
@@ -379,7 +379,7 @@ class AccountSystem(BaseClient):
         elif page > 1:
             params['page'] = page
 
-        resp = self.__send_request__('groups', params=params)
+        resp = self.__send_request__('api/groups', params=params)
 
         return resp.Groups
 
@@ -427,7 +427,7 @@ class AccountSystem(BaseClient):
         elif page > 1:
             params['page'] = page
 
-        resp = self.__send_request__('people', params=params)
+        resp = self.__send_request__('api/people', params=params)
 
         return resp
 
@@ -442,7 +442,7 @@ class AccountSystem(BaseClient):
 
         .. versionaddded:: 0.4.0
         """
-        resp = self.__send_request__('people/id/%s' % person_id)
+        resp = self.__send_request__('api/people/id/%s' % person_id)
 
         return resp.People
 
@@ -457,7 +457,7 @@ class AccountSystem(BaseClient):
 
         .. versionadded:: 0.4.0
         """
-        request = self.__send_request__('people/username/%s' % username)
+        request = self.__send_request__('api/people/username/%s' % username)
 
         return request.People
 
@@ -481,7 +481,7 @@ class AccountSystem(BaseClient):
 
         .. versionadded:: 0.4.0
         """
-        resp = self.__send_request__('people/email/%s' % email)
+        resp = self.__send_request__('api/people/email/%s' % email)
 
         return resp.People
 
