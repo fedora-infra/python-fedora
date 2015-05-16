@@ -368,9 +368,21 @@ class AccountSystem(BaseClient):
         Retrieves list of registered groups' data.
 
         :param status: Group status to look up
-        :type status: int
+        :type status: GroupStatus
         :return: Returns a list of registered group's object
         :rtype: Munch
+
+        .. Example::
+
+            >>> ret = fas.get_groups(GroupStatus.ACTIVE, page=3)
+            >>> ret.Pages.total
+            10
+            >>> groups = ret.Groups
+            >>> groups[0].keys()
+            [u'name', u'status', u'owner', u'members', u'displayName', ...]
+            >>> groups[0].name
+            u'fas-admin'
+
         """
         params = dict()
 
@@ -381,7 +393,7 @@ class AccountSystem(BaseClient):
 
         resp = self.__send_request__('api/groups', params=params)
 
-        return resp.Groups
+        return resp
 
     def get_group_members(self, groupname):
         """
@@ -404,7 +416,7 @@ class AccountSystem(BaseClient):
         #               role_type=user[3]) for user in request['people']]
         group = self.get_group_by_name(groupname)
 
-        return group.Membership
+        return group.memberships
 
     ### People ###
 
