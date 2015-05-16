@@ -280,7 +280,7 @@ class BaseClient(ProxyClient):
         del(self.session_id)
 
     def send_request(self, method, req_params=None, file_params=None,
-                     auth=False, retries=None, timeout=None,
+                     auth=False, retries=None, timeout=None, auth_params=None,
                      req_method=None, **kwargs):
         """Make an HTTP request to a server method.
 
@@ -342,30 +342,31 @@ class BaseClient(ProxyClient):
                 stacklevel=2)
             req_params = kwargs['input']
 
-        auth_params = {'session_id': self.session_id}
-        if auth is True:
-            # We need something to do auth.  Check user/pass
-            if self.username and self.password:
-                # Add the username and password and we're all set
-                auth_params['username'] = self.username
-                auth_params['password'] = self.password
-                if self.httpauth:
-                    auth_params['httpauth'] = self.httpauth
-            else:
-                # No?  Check for session_id
-                if not self.session_id:
-                    # Not enough information to auth
-                    raise AuthError(
-                        'Auth was requested but no way to'
-                        ' perform auth was given.  Please set username'
-                        ' and password or session_id before calling'
-                        ' this function with auth=True')
+        if auth_params is None:
+            auth_params = {'session_id': self.session_id}
+            if auth is True:
+                # We need something to do auth.  Check user/pass
+                if self.username and self.password:
+                    # Add the username and password and we're all set
+                    auth_params['username'] = self.username
+                    auth_params['password'] = self.password
+                    if self.httpauth:
+                        auth_params['httpauth'] = self.httpauth
+                else:
+                    # No?  Check for session_id
+                    if not self.session_id:
+                        # Not enough information to auth
+                        raise AuthError(
+                            'Auth was requested but no way to'
+                            ' perform auth was given.  Please set username'
+                            ' and password or session_id before calling'
+                            ' this function with auth=True')
 
-        # Remove empty params
-        # pylint: disable-msg=W0104
-        [auth_params.__delitem__(key)
-            for key, value in auth_params.items() if not value]
-        # pylint: enable-msg=W0104
+            # Remove empty params
+            # pylint: disable-msg=W0104
+            [auth_params.__delitem__(key)
+                for key, value in auth_params.items() if not value]
+            # pylint: enable-msg=W0104
 
         session_id, data = super(BaseClient, self).send_request(
             method, req_params=req_params, file_params=file_params,

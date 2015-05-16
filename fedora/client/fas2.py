@@ -416,7 +416,7 @@ class AccountSystem(BaseClient):
         #               role_type=user[3]) for user in request['people']]
         group = self.get_group_by_name(groupname)
 
-        return group.memberships
+        return group.members
 
     ### People ###
 
