@@ -43,6 +43,7 @@ except ImportError:
 from munch import munchify
 from kitchen.text.converters import to_bytes
 import requests
+import json
 
 from fedora import __version__
 from fedora.client import AppError, AuthError, ServerError
@@ -222,7 +223,7 @@ class ProxyClient(object):
 
     def send_request(self, method, req_params=None, req_method='POST',
                      auth_params=None, file_params=None, retries=None,
-                     timeout=None):
+                     timeout=None, data=None):
         """Make an HTTP request to a server method.
 
         The given method is called with any parameters set in ``req_params``.
@@ -323,12 +324,13 @@ class ProxyClient(object):
         # And join to make our url.
         url = urljoin(self.base_url, quote(method))
 
-        data = None     # decoded JSON via json.load()
+        # data = None  # decoded JSON via json.load()
 
         # Set standard headers
         headers = {
             'User-agent': self.useragent,
             'Accept': 'application/json',
+            'Content-Type': 'application/json',
         }
 
         # Files to upload
@@ -390,7 +392,8 @@ class ProxyClient(object):
                 if req_method == 'POST':
                     response = requests.post(
                         url,
-                        data=complete_params,
+                        params=complete_params,
+                        data=json.dumps(data),
                         cookies=cookies,
                         headers=headers,
                         auth=auth,
@@ -414,7 +417,7 @@ class ProxyClient(object):
                     # hierarchy...  We're expecting that requests is raising
                     # the following stupidity:
                     # requests.exceptions.SSLError(
-                    #   urllib3.exceptions.SSLError(
+                    # urllib3.exceptions.SSLError(
                     #     ssl.SSLError('The read operation timed out')))
                     # If we weren't interested in reraising the exception with
                     # full tracdeback we could use a try: except instead of
@@ -513,7 +516,7 @@ class ProxyClient(object):
             # The response wasn't JSON data
             raise ServerError(
                 url, http_status, 'Error returned from'
-                ' json module while processing %(url)s: %(err)s' %
+                                  ' json module while processing %(url)s: %(err)s' %
                 {'url': to_bytes(url), 'err': to_bytes(e)})
 
         if 'exc' in data:
@@ -530,5 +533,6 @@ class ProxyClient(object):
         self.log.debug('proxyclient.send_request: exited')
         data = munchify(data)
         return new_session, data
+
 
 __all__ = (ProxyClient,)

@@ -281,7 +281,7 @@ class BaseClient(ProxyClient):
 
     def send_request(self, method, req_params=None, file_params=None,
                      auth=False, retries=None, timeout=None, auth_params=None,
-                     req_method=None, **kwargs):
+                     req_method=None, data=None, **kwargs):
         """Make an HTTP request to a server method.
 
         The given method is called with any parameters set in req_params.  If
@@ -371,7 +371,7 @@ class BaseClient(ProxyClient):
         session_id, data = super(BaseClient, self).send_request(
             method, req_params=req_params, file_params=file_params,
             auth_params=auth_params, retries=retries, timeout=timeout,
-            req_method=req_method)
+            req_method=req_method, data=data)
         # In case the server returned a new session id to us
         if self.session_id != session_id:
             self.session_id = session_id

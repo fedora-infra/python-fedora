@@ -134,6 +134,11 @@ class AccountActivityType(IntEnum):
     CHANGED_GROUP_MAIN_ADMIN = 0x13
 
 
+class ApiStatus(IntEnum):
+    SUCCESS = 0x00
+    FAILED = 0x01
+
+
 class AccountSystem(BaseClient):
     """An object for querying the Fedora Account System.
 
@@ -236,106 +241,128 @@ class AccountSystem(BaseClient):
         :return: HTTP's response data from server.
         :rtype: Munch
         """
+        data = None
         req_params = dict()
         req_params['apikey'] = self.token_api
 
-        if params is not None:
+        if params is not None and method == 'GET':
             for key, value in params.iteritems():
                 req_params[key] = value
+        else:
+            data = params
 
         resp = self.send_request(
             api_method,
             req_params=req_params,
+            data=data,
             req_method=method,
             auth_params=auth_params
         )
 
         if 'Error' in resp:
             raise AppError(
-                name=resp.Error.Name,
-                message=resp.Error.Text
+                name=resp.Error.name,
+                message=resp.Error.text
             )
 
         return resp
 
     def request_login(self, credentials):
         """
-        Request a login from FAS server
+        Retrieve groups' types
 
-        :param credentials: User credentials to log in
-        :type credentials: dict
-        :return: Login status and session
+        :return: Registered groups' types
         :rtype: Munch
         """
-        resp = self.__send_request__('api/request-login',
-                                     params=credentials,
-                                     method='POST')
+        resp = self.__send_request__('api/group/types', method='GET')
 
-        return resp
+        return resp.GroupTypes
 
-    def request_permission(self, scope, session):
+    def create_group(self, name, display_name, owner, group_type,
+                     invite_only=0, needs_sponsor=0, user_can_remove=True,
+                     joinmsg='', apply_rules='None', description='',
+                     web_link='', mailing_list='', mailing_list_url='',
+                     irc_channel='', irc_network='', parent_group=-1,
+                     is_private=False, certificate=-1, license=-1):
         """
-        Request permission for a given scope for an registered user.
+        Creates a FAS group.
 
-        :param scope: A scope to request authorization
-        :type scope: str
-        :param session: An authenticated session from the person
-                        the app want a granted permission
-        :type session: dict
-        :return: permissions response
+        :arg name: The short group name (alphanumeric only).
+        :arg display_name: A longer version of the group's name.
+        :arg owner: The username of the FAS account which owns the new group.
+        :arg group_type: The kind of group being created. Current valid options
+            are git, svn, hg, shell, and tracking.
+        :kwarg invite_only: Users must be invited to the group, they cannot
+            join on their own.
+        :kwarg needs_sponsor: Users must be sponsored into the group.
+        :kwarg user_can_remove: Users can remove themselves from the group.
+        :kwarg prerequisite: Users must be in the given group (string) before
+            they can join the new group.
+        :kwarg joinmsg: A message shown to users when they apply to the group.
+        :kwarg apply_rules: Rules for applying to the group, shown to users
+            before they apply.
+        :rtype: :obj:`munch.Munch`
+        :returns: A Munch containing information about the group that was
+            created.
+
+        .. versionadded:: 0.3.29
+        """
+        req_params = {
+            'name': name,
+            'display_name': display_name,
+            'owner_id': owner,
+            'group_type': group_type,
+            'invite_only': invite_only,
+            'need_approval': needs_sponsor,
+            'self_removal': user_can_remove,
+            'parent_group_id': parent_group,
+            'join_msg': joinmsg,
+            'apply_rules': apply_rules,
+            'description': description,
+            'web_link': web_link,
+            'mailing_list': mailing_list,
+            'mailing_list_url': mailing_list_url,
+            'irc_channel': irc_channel,
+            'irc_network': irc_network,
+            'private': is_private,
+            'certificate': certificate,
+            'license_sign_up': license
+        }
+
+        request = self.__send_request__(
+            'api/group/create', params=req_params, method='POST')
+        return request
+
+    def update_group(self, group):
+        """
+        Update a given group into FAS
+
+        :param group: Group object to update
+        :type group: Munch
+        :return: updated group's object
         :rtype: Munch
+
+        .. Example::
+
+            >>> fas = AccountSystem(token_api='e533af492c7d')
+            >>> group = fas.get_group_by_name('packagers')
+            >>> group.irc_channel
+            u'#fedora-packagers'
+            >>> group.invite_only = True
+            >>> group.irc_channel = u'#fedora-devel'
+            >>> update_group(group)
+            True
         """
-        resp = self.__send_request__('api/request-perm/%s' % scope,
-                                     auth_params={'session_id': session})
+        params = group.toDict()
 
-        return resp
+        resp = self.__send_request__(
+            'api/group/id/%s' % str(group.id), params=params, method='POST'
+        )
 
-    ### Groups ###
+        if resp.Status == ApiStatus.SUCCESS:
+            return True
 
-    # def create_group(self, name, display_name, owner, group_type,
-    #                  invite_only=0, needs_sponsor=0, user_can_remove=1,
-    #                  prerequisite='', joinmsg='', apply_rules='None'):
-    #     '''Creates a FAS group.
-    #
-    #     :arg name: The short group name (alphanumeric only).
-    #     :arg display_name: A longer version of the group's name.
-    #     :arg owner: The username of the FAS account which owns the new group.
-    #     :arg group_type: The kind of group being created. Current valid options
-    #         are git, svn, hg, shell, and tracking.
-    #     :kwarg invite_only: Users must be invited to the group, they cannot
-    #         join on their own.
-    #     :kwarg needs_sponsor: Users must be sponsored into the group.
-    #     :kwarg user_can_remove: Users can remove themselves from the group.
-    #     :kwarg prerequisite: Users must be in the given group (string) before
-    #         they can join the new group.
-    #     :kwarg joinmsg: A message shown to users when they apply to the group.
-    #     :kwarg apply_rules: Rules for applying to the group, shown to users
-    #         before they apply.
-    #     :rtype: :obj:`munch.Munch`
-    #     :returns: A Munch containing information about the group that was
-    #         created.
-    #
-    #     .. versionadded:: 0.3.29
-    #     '''
-    #     req_params = {
-    #     'invite_only': invite_only,
-    #     'needs_sponsor': needs_sponsor,
-    #     'user_can_remove': user_can_remove,
-    #     'prerequisite': prerequisite,
-    #         'joinmsg': joinmsg,
-    #         'apply_rules': apply_rules
-    #     }
-    #
-    #     request = self.send_request(
-    #         '/group/create/%s/%s/%s/%s' % (
-    #             quote(name),
-    #             quote(display_name),
-    #             quote(owner),
-    #             quote(group_type)),
-    #         req_params=req_params,
-    #         auth=True
-    #     )
-    #     return request
+        return False
 
     def get_group_by_id(self, group_id):
         """
@@ -374,12 +401,13 @@ class AccountSystem(BaseClient):
 
         .. Example::
 
+            >>> fas = AccountSystem(token_api='e533af492c7d')
             >>> ret = fas.get_groups(GroupStatus.ACTIVE, page=3)
             >>> ret.Pages.total
             10
             >>> groups = ret.Groups
             >>> groups[0].keys()
-            [u'name', u'status', u'owner', u'members', u'displayName', ...]
+            [u'name', u'status', u'owner_id', u'members', u'display_name', ...]
             >>> groups[0].name
             u'fas-admin'
 
@@ -409,11 +437,6 @@ class AccountSystem(BaseClient):
         .. versionchanged:: 0.3.21
             Return a Bunch instead of a DictContainer
         """
-        # request = self.send_request('/group/dump/%s' %
-        #                             urllib.quote(groupname), auth=True)
-        #
-        # return [Munch(username=user[0],
-        #               role_type=user[3]) for user in request['people']]
         group = self.get_group_by_name(groupname)
 
         return group.members
