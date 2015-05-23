@@ -234,7 +234,7 @@ class AccountSystem(BaseClient):
     def __send_request__(self, api_method, method='GET',
                          params=None, auth_params=None):
         """
-        Request a HTTP request from given
+        Request an HTTP request from given
 
         :param api_method: API method to call on the server.
         :type api_method: basestring
@@ -440,6 +440,34 @@ class AccountSystem(BaseClient):
         group = self.get_group_by_name(groupname)
 
         return group.members
+
+    def grant_membership(self, group_id, person_id, sponsor_id=-1):
+        """
+        Grants pending membership request and sponsors a person if
+        group requires sponsorship.
+
+        :param group_id: Group ID to look up for membership approval.
+        :type group_id: int
+        :param person_id: Person ID to approve.
+        :type person_id: int
+        :param sponsor_id: Sponsor ID to set upon membership approval
+                            This parameter should be set from 3rd party
+                            if group requires sponsorship.
+        :type sponsor_id: int
+        :return: True if person has been successfully approved and/or sponsored
+        :rtype: bool
+        """
+        param = {'sponsor': sponsor_id} if sponsor_id > -1 else None
+
+        resp = self.__send_request__(
+            'api/group/%s/membership/grant/%s' % (group_id, person_id),
+            params=param,
+            method='POST'
+        )
+        if resp.Status == ApiStatus.SUCCESS:
+            return True
+
+        return False
 
     ### People ###
 
