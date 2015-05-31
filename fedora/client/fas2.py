@@ -107,7 +107,7 @@ class LicenseAgreementStatus(IntEnum):
     ENABLED = 0x01
 
 
-class GroupRole(IntEnum):
+class MembershipRole(IntEnum):
     UNKNOWN = 0x00
     USER = 0x01
     EDITOR = 0x02
@@ -237,7 +237,7 @@ class AccountSystem(BaseClient):
         Request an HTTP request from given
 
         :param api_method: API method to call on the server.
-        :type api_method: basestring
+        :type api_method: unicode
         :return: HTTP's response data from server.
         :rtype: Munch
         """
@@ -450,12 +450,12 @@ class AccountSystem(BaseClient):
         :type group_id: int
         :param person_id: Person ID to approve.
         :type person_id: int
-        :param sponsor_id: Sponsor ID to set upon membership approval
-                            This parameter should be set from 3rd party
-                            if group requires sponsorship.
+        :param sponsor_id: Sponsor ID to set upon membership approval.
+        This parameter should be set from 3rd party if group requires sponsorship.
         :type sponsor_id: int
-        :return: True if person has been successfully approved and/or sponsored
-        :rtype: bool
+        :return: Updated group's info if person has been successfully
+        approved and/or sponsored
+        :rtype: Munch
         """
         param = {'sponsor': sponsor_id} if sponsor_id > -1 else None
 
@@ -465,9 +465,45 @@ class AccountSystem(BaseClient):
             method='POST'
         )
         if resp.Status == ApiStatus.SUCCESS:
-            return True
+            return resp.Group
 
-        return False
+        return None
+
+    def update_membership_role(self, membership_id, role, requester=None):
+        """
+        Updates a given group's membership info
+
+        :param membership_id: group's membership to update
+        :type membership_id: Munch of membership
+        :param role: role's membership to update
+        :type role: fedora.client.fas2.MembershipRole
+        :return: True if group's mebership has been successfully updated.
+        otherwise false.
+        :rtype: bool
+
+        .. Example::
+
+            >>> fas = SystemAccount(apikey='23d3dk32d-2k32d')
+            >>> group = fas.get_group_by_name('suicide_squad')
+            >>> member = group.members[0]
+            >>> group = fas.update_membership_role(
+            ... member.membership_id,
+            ... MembershipRole.SPONSOR)
+        """
+        param = {'role': role.value}
+        if requester is not None:
+            param['admin'] = requester
+
+        resp = self.__send_request__(
+            'api/group/membership/edit/%s' % membership_id,
+            params=param,
+            method='POST'
+        )
+
+        if resp.Status == ApiStatus.SUCCESS:
+            return resp.Group
+
+        return None
 
     ### People ###
 
@@ -548,274 +584,277 @@ class AccountSystem(BaseClient):
 
         return resp.People
 
-    # def get_people_by_key(self, key=u'username', search=u'*', fields=None):
-    #     """
-    #     Return a dict of people
-    #
-    #     For example:
-    #
-    #         >>> ret_val = FASCLIENT.get_people_by_key(
-    #         ...     key='email', search='toshio*', fields='id')
-    #         >>> ret_val.keys()
-    #         a.badger@[...].com
-    #         a.badger+test1@[...].com
-    #         a.badger+test2@[...].com
-    #         >>> ret_val.values()
-    #         100068
-    #         102023
-    #         102434
-    #
-    #     :kwarg key: Key used to organize the returned dictionary.  Valid values
-    #         are 'id', 'username', or 'email'.  Default is 'username'.
-    #     :kwarg search: Pattern to match usernames against.  Defaults to the
-    #         '*' wildcard which matches everyone.
-    #     :kwarg fields: Limit the data returned to a specific list of fields.
-    #         The default is to retrieve all fields.
-    #         Valid fields are:
-    #
-    #             * affiliation
-    #             * alias_enabled
-    #             * bugzilla_email
-    #             * certificate_serial
-    #             * comments
-    #             * country_code
-    #             * creation
-    #             * email
-    #             * emailtoken
-    #             * facsimile
-    #             * gpg_keyid
-    #             * group_roles
-    #             * human_name
-    #             * id
-    #             * internal_comments
-    #             * ircnick
-    #             * last_seen
-    #             * latitude
-    #             * locale
-    #             * longitude
-    #             * memberships
-    #             * old_password
-    #             * password
-    #             * password_changed
-    #             * passwordtoken
-    #             * postal_address
-    #             * privacy
-    #             * roles
-    #             * ssh_key
-    #             * status
-    #             * status_change
-    #             * telephone
-    #             * timezone
-    #             * unverified_email
-    #             * username
-    #
-    #         Note that for most users who access this data, many of these
-    #         fields will be set to None due to security or privacy settings.
-    #     :returns: a dict relating the key value to the fields.
-    #
-    #     .. versionchanged:: 0.3.21
-    #         Return a Bunch instead of a DictContainer
-    #     .. versionchanged:: 0.3.26
-    #         Fixed to return a list with both people who have signed the CLA
-    #         and have not
-    #     """
-    #     # Make sure we have a valid key value
-    #     if key not in ('id', 'username', 'email'):
-    #         raise KeyError('key must be one of "id", "username", or'
-    #                        ' "email"')
-    #
-    #     if fields:
-    #         fields = list(fields)
-    #         for field in fields:
-    #             if field not in USERFIELDS:
-    #                 raise KeyError('%(field)s is not a valid field to'
-    #                                ' filter' % {'field': to_bytes(field)})
-    #     else:
-    #         fields = USERFIELDS
-    #
-    #     # Make sure we retrieve the key value
-    #     unrequested_fields = []
-    #     if key not in fields:
-    #         unrequested_fields.append(key)
-    #         fields.append(key)
-    #     if 'bugzilla_email' in fields:
-    #         # Need id and email for the bugzilla information
-    #         if 'id' not in fields:
-    #             unrequested_fields.append('id')
-    #             fields.append('id')
-    #         if 'email' not in fields:
-    #             unrequested_fields.append('email')
-    #             fields.append('email')
-    #
-    #     request = self.send_request(
-    #         '/user/list',
-    #         req_params={
-    #             'search': search,
-    #             'fields': [f for f in fields if f != 'bugzilla_email']
-    #         },
-    #         auth=True)
-    #
-    #     people = Munch()
-    #     for person in itertools.chain(request['people'],
-    #                                   request['unapproved_people']):
-    #         # Retrieve bugzilla_email from our list if necessary
-    #         if 'bugzilla_email' in fields:
-    #             if person['id'] in self.__bugzilla_email:
-    #                 person['bugzilla_email'] = \
-    #                     self.__bugzilla_email[person['id']]
-    #             else:
-    #                 person['bugzilla_email'] = person['email']
-    #
-    #         person_key = person[key]
-    #         # Remove any fields that weren't requested by the user
-    #         if unrequested_fields:
-    #             for field in unrequested_fields:
-    #                 del person[field]
-    #
-    #         # Add the person record to the people dict
-    #         people[person_key] = person
-    #
-    #     return people
+        # def get_people_by_key(self, key=u'username', search=u'*', fields=None):
+        #     """
+        #     Return a dict of people
+        #
+        #     For example:
+        #
+        #         >>> ret_val = FASCLIENT.get_people_by_key(
+        #         ...     key='email', search='toshio*', fields='id')
+        #         >>> ret_val.keys()
+        #         a.badger@[...].com
+        #         a.badger+test1@[...].com
+        #         a.badger+test2@[...].com
+        #         >>> ret_val.values()
+        #         100068
+        #         102023
+        #         102434
+        #
+        #     :kwarg key: Key used to organize the returned dictionary.  Valid values
 
-    ### Utils ###
+        #         are 'id', 'username', or 'email'.  Default is 'username'.
+        #     :kwarg search: Pattern to match usernames against.  Defaults to the
+        #         '*' wildcard which matches everyone.
+        #     :kwarg fields: Limit the data returned to a specific list of fields.
+        #         The default is to retrieve all fields.
+        #         Valid fields are:
+        #
+        #             * affiliation
+        #             * alias_enabled
+        #             * bugzilla_email
+        #             * certificate_serial
+        #             * comments
+        #             * country_code
+        #             * creation
+        #             * email
+        #             * emailtoken
+        #             * facsimile
+        #             * gpg_keyid
+        #             * group_roles
+        #             * human_name
+        #             * id
+        #             * internal_comments
+        #             * ircnick
+        #             * last_seen
+        #             * latitude
+        #             * locale
+        #             * longitude
+        #             * memberships
+        #             * old_password
+        #             * password
+        #             * password_changed
+        #             * passwordtoken
+        #             * postal_address
+        #             * privacy
+        #             * roles
+        #             * ssh_key
+        #             * status
+        #             * status_change
+        #             * telephone
+        #             * timezone
+        #             * unverified_email
+        #             * username
+        #
+        #         Note that for most users who access this data, many of these
+        #         fields will be set to None due to security or privacy settings.
+        #     :returns: a dict relating the key value to the fields.
+        #
+        #     .. versionchanged:: 0.3.21
+        #         Return a Bunch instead of a DictContainer
+        #     .. versionchanged:: 0.3.26
+        #         Fixed to return a list with both people who have signed the CLA
+        #         and have not
+        #     """
+        #     # Make sure we have a valid key value
+        #     if key not in ('id', 'username', 'email'):
+        #         raise KeyError('key must be one of "id", "username", or'
+        #                        ' "email"')
+        #
+        #     if fields:
+        #         fields = list(fields)
+        #         for field in fields:
+        #             if field not in USERFIELDS:
+        #                 raise KeyError('%(field)s is not a valid field to'
+        #                                ' filter' % {'field': to_bytes(field)})
+        #     else:
+        #         fields = USERFIELDS
+        #
+        #     # Make sure we retrieve the key value
+        #     unrequested_fields = []
+        #     if key not in fields:
+        #         unrequested_fields.append(key)
+        #         fields.append(key)
+        #     if 'bugzilla_email' in fields:
+        #         # Need id and email for the bugzilla information
+        #         if 'id' not in fields:
+        #             unrequested_fields.append('id')
+        #             fields.append('id')
+        #         if 'email' not in fields:
+        #             unrequested_fields.append('email')
+        #             fields.append('email')
+        #
+        #     request = self.send_request(
+        #         '/user/list',
+        #         req_params={
+        #             'search': search,
+        #             'fields': [f for f in fields if f != 'bugzilla_email']
+        #         },
+        #         auth=True)
+        #
+        #     people = Munch()
+        #     for person in itertools.chain(request['people'],
+        #                                   request['unapproved_people']):
+        #         # Retrieve bugzilla_email from our list if necessary
+        #         if 'bugzilla_email' in fields:
+        #             if person['id'] in self.__bugzilla_email:
+        #                 person['bugzilla_email'] = \
+        #                     self.__bugzilla_email[person['id']]
+        #             else:
+        #                 person['bugzilla_email'] = person['email']
+        #
+        #         person_key = person[key]
+        #         # Remove any fields that weren't requested by the user
+        #         if unrequested_fields:
+        #             for field in unrequested_fields:
+        #                 del person[field]
+        #
+        #         # Add the person record to the people dict
+        #         people[person_key] = person
+        #
+        #     return people
 
-    # def people_by_groupname(self, groupname):
-    #     """Return a list of persons for the given groupname.
-    #
-    #     :arg groupname: Name of the group to look up
-    #     :returns: A list of person objects from the group.  If the group
-    #         contains no entries, then an empty list is returned.
-    #     """
-    #     people = self.people_by_id()
-    #     group = dict(self.group_by_name(groupname))
-    #     userids = [user[u'person_id'] for user in
-    #                group[u'approved_roles'] + group[u'unapproved_roles']]
-    #     return [people[userid] for userid in userids]
+        ### Utils ###
 
-    ### Configs ###
+        # def people_by_groupname(self, groupname):
+        #     """Return a list of persons for the given groupname.
+        #
+        #     :arg groupname: Name of the group to look up
+        #     :returns: A list of person objects from the group.  If the group
+        #         contains no entries, then an empty list is returned.
+        #     """
+        #     people = self.people_by_id()
+        #     group = dict(self.group_by_name(groupname))
+        #     userids = [user[u'person_id'] for user in
+        #                group[u'approved_roles'] + group[u'unapproved_roles']]
+        #     return [people[userid] for userid in userids]
 
-    # def get_config(self, username, application, attribute):
-    #     """Return the config entry for the key values.
-    #
-    #     :arg username: Username of the person
-    #     :arg application: Application for which the config is set
-    #     :arg attribute: Attribute key to lookup
-    #     :raises AppError: if the server returns an exception
-    #     :returns: The unicode string that describes the value.  If no entry
-    #         matched the username, application, and attribute then None is
-    #         returned.
-    #     """
-    #     request = self.send_request('config/list/%s/%s/%s' %
-    #                                 (username, application, attribute),
-    #                                 auth=True)
-    #     if 'exc' in request:
-    #         raise AppError(
-    #             name=request['exc'],
-    #             message=request['tg_flash']
-    #         )
-    #
-    #     # Return the value if it exists, else None.
-    #     if 'configs' in request and attribute in request['configs']:
-    #         return request['configs'][attribute]
-    #     return None
+        ### Configs ###
 
-    # def get_configs_like(self, username, application, pattern=u'*'):
-    #     """Return the config entries that match the keys and the pattern.
-    #
-    #     Note: authentication on the server will prevent anyone but the user
-    #     or a fas admin from viewing or changing their configs.
-    #
-    #     :arg username: Username of the person
-    #     :arg application: Application for which the config is set
-    #     :kwarg pattern: A pattern to select values for.  This accepts * as a
-    #         wildcard character. Default='*'
-    #     :raises AppError: if the server returns an exception
-    #     :returns: A dict mapping ``attribute`` to ``value``.
-    #     """
-    #     request = self.send_request(
-    #         'config/list/%s/%s/%s' %
-    #         (username, application, pattern),
-    #         auth=True)
-    #     if 'exc' in request:
-    #         raise AppError(
-    #             name=request['exc'],
-    #             message=request['tg_flash'])
-    #
-    #     return request['configs']
+        # def get_config(self, username, application, attribute):
+        #     """Return the config entry for the key values.
+        #
+        #     :arg username: Username of the person
+        #     :arg application: Application for which the config is set
+        #     :arg attribute: Attribute key to lookup
+        #     :raises AppError: if the server returns an exception
+        #     :returns: The unicode string that describes the value.  If no entry
+        #         matched the username, application, and attribute then None is
+        #         returned.
+        #     """
+        #     request = self.send_request('config/list/%s/%s/%s' %
+        #                                 (username, application, attribute),
+        #                                 auth=True)
+        #     if 'exc' in request:
+        #         raise AppError(
+        #             name=request['exc'],
+        #             message=request['tg_flash']
+        #         )
+        #
+        #     # Return the value if it exists, else None.
+        #     if 'configs' in request and attribute in request['configs']:
+        #         return request['configs'][attribute]
+        #     return None
 
-    # def set_config(self, username, application, attribute, value):
-    #     """Set a config entry in FAS for the user.
-    #
-    #     Note: authentication on the server will prevent anyone but the user
-    #     or a fas admin from viewing or changing their configs.
-    #
-    #     :arg username: Username of the person
-    #     :arg application: Application for which the config is set
-    #     :arg attribute: The name of the config key that we're setting
-    #     :arg value: The value to set this to
-    #     :raises AppError: if the server returns an exception
-    #     """
-    #     request = self.send_request(
-    #         'config/set/%s/%s/%s' %
-    #         (username, application, attribute),
-    #         req_params={'value': value}, auth=True)
-    #
-    #     if 'exc' in request:
-    #         raise AppError(
-    #             name=request['exc'],
-    #             message=request['tg_flash'])
+        # def get_configs_like(self, username, application, pattern=u'*'):
+        #     """Return the config entries that match the keys and the pattern.
+        #
+        #     Note: authentication on the server will prevent anyone but the user
+        #     or a fas admin from viewing or changing their configs.
+        #
+        #     :arg username: Username of the person
+        #     :arg application: Application for which the config is set
+        #     :kwarg pattern: A pattern to select values for.  This accepts * as a
+        #         wildcard character. Default='*'
+        #     :raises AppError: if the server returns an exception
+        #     :returns: A dict mapping ``attribute`` to ``value``.
+        #     """
+        #     request = self.send_request(
+        #         'config/list/%s/%s/%s' %
+        #         (username, application, pattern),
+        #         auth=True)
+        #     if 'exc' in request:
+        #         raise AppError(
+        #             name=request['exc'],
+        #             message=request['tg_flash'])
+        #
+        #     return request['configs']
 
-    # def people_query(self, constraints=None, columns=None):
-    #     """Returns a list of dicts representing database rows
-    #
-    #     :arg constraints: A dictionary specifying WHERE constraints on columns
-    #     :arg columns: A list of columns to be selected in the query
-    #     :raises AppError: if the query failed on the server (most likely
-    #         because  the server was given a bad query)
-    #     :returns: A list of dicts representing database rows (the keys of
-    #         the dict are the columns requested)
-    #
-    #     .. versionadded:: 0.3.12.1
-    #     """
-    #     if constraints is None:
-    #         constraints = {}
-    #     if columns is None:
-    #         columns = []
-    #
-    #     req_params = {}
-    #     req_params.update(constraints)
-    #     req_params['columns'] = ','.join(columns)
-    #
-    #     try:
-    #         request = self.send_request(
-    #             'json/people_query',
-    #             req_params=req_params, auth=True)
-    #         if request['success']:
-    #             return request['data']
-    #         else:
-    #             raise AppError(message=request['error'], name='FASError')
-    #     except FedoraServiceError:
-    #         raise
+        # def set_config(self, username, application, attribute, value):
+        #     """Set a config entry in FAS for the user.
+        #
+        #     Note: authentication on the server will prevent anyone but the user
+        #     or a fas admin from viewing or changing their configs.
+        #
+        #     :arg username: Username of the person
+        #     :arg application: Application for which the config is set
+        #     :arg attribute: The name of the config key that we're setting
+        #     :arg value: The value to set this to
+        #     :raises AppError: if the server returns an exception
+        #     """
+        #     request = self.send_request(
+        #         'config/set/%s/%s/%s' %
+        #         (username, application, attribute),
+        #         req_params={'value': value}, auth=True)
+        #
+        #     if 'exc' in request:
+        #         raise AppError(
+        #             name=request['exc'],
+        #             message=request['tg_flash'])
 
-    ### Certs ###
+        # def people_query(self, constraints=None, columns=None):
+        #     """Returns a list of dicts representing database rows
+        #
+        #     :arg constraints: A dictionary specifying WHERE constraints on
+        # columns
+        #     :arg columns: A list of columns to be selected in the query
+        #     :raises AppError: if the query failed on the server (most likely
+        #         because  the server was given a bad query)
+        #     :returns: A list of dicts representing database rows (the keys of
+        #         the dict are the columns requested)
+        #
+        #     .. versionadded:: 0.3.12.1
+        #     """
+        #     if constraints is None:
+        #         constraints = {}
+        #     if columns is None:
+        #         columns = []
+        #
+        #     req_params = {}
+        #     req_params.update(constraints)
+        #     req_params['columns'] = ','.join(columns)
+        #
+        #     try:
+        #         request = self.send_request(
+        #             'json/people_query',
+        #             req_params=req_params, auth=True)
+        #         if request['success']:
+        #             return request['data']
+        #         else:
+        #             raise AppError(message=request['error'], name='FASError')
+        #     except FedoraServiceError:
+        #         raise
 
-    # def user_gencert(self):
-    #     """Generate a cert for a user"""
-    #     try:
-    #         request = self.send_request('user/dogencert', auth=True)
-    #     except FedoraServiceError:
-    #         raise
-    #     if not request['cla']:
-    #         raise CLAError
-    #     return "%(cert)s\n%(key)s" % request
-    #
-    # ### Passwords ###
-    #
-    # # def verify_password(self, username, password):
-    # #     """Return whether the username and password pair are valid.
-    # #
-    # #     :arg username: username to try authenticating
-    # #     :arg password: password for the user
-    # #     :returns: True if the username/password are valid.  False otherwise.
-    # #     """
-    # #     return self.proxy.verify_password(username, password)
+        ### Certs ###
+
+        # def user_gencert(self):
+        #     """Generate a cert for a user"""
+        #     try:
+        #         request = self.send_request('user/dogencert', auth=True)
+        #     except FedoraServiceError:
+        #         raise
+        #     if not request['cla']:
+        #         raise CLAError
+        #     return "%(cert)s\n%(key)s" % request
+        #
+        # ### Passwords ###
+        #
+        # # def verify_password(self, username, password):
+        # #     """Return whether the username and password pair are valid.
+        # #
+        # #     :arg username: username to try authenticating
+        # #     :arg password: password for the user
+        # #     :returns: True if the username/password are valid.  False otherwise.
+
+        # #     """
+        # #     return self.proxy.verify_password(username, password)
