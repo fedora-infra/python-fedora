@@ -335,12 +335,12 @@ class AccountSystem(BaseClient):
 
     def update_group(self, group):
         """
-        Update a given group into FAS
+        Updates group's information
 
         :param group: Group object to update
         :type group: Munch
         :return: updated group's object
-        :rtype: Munch
+        :rtype: Munch of group
 
         .. Example::
 
@@ -350,19 +350,27 @@ class AccountSystem(BaseClient):
             u'#fedora-packagers'
             >>> group.invite_only = True
             >>> group.irc_channel = u'#fedora-devel'
-            >>> update_group(group)
-            True
+            >>> group = fas.update_group(group)
+            >>> group.irc_channel
+            u'#fedora-devel'
         """
+        # Pull out data we don't need.
+        if 'members' in group:
+            members = group.pop('members')
+        elif 'pending_requests' in group:
+            pr = group.pop('pending_requests')
+
         params = group.toDict()
 
         resp = self.__send_request__(
-            'api/group/id/%s' % str(group.id), params=params, method='POST'
+            'api/group/id/%s' % str(group.id),
+            params=params, method='POST'
         )
 
         if resp.Status == ApiStatus.SUCCESS:
-            return True
+            return resp.Group
 
-        return False
+        return None
 
     def get_group_by_id(self, group_id):
         """
