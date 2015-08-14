@@ -398,7 +398,7 @@ class AccountSystem(BaseClient):
             Return a Bunch instead of a DictContainer
         '''
         request = self.send_request('/group/dump/%s' %
-                                    urllib.quote(groupname), auth=True)
+                                    quote(groupname), auth=True)
 
         return [Munch(username=user[0],
                       role_type=user[3]) for user in request['people']]
