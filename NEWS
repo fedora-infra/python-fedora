@@ -3,8 +3,19 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
-:Date: 28 Apr 2015
-:Version: 0.4.x
+:Date: 17 Aug 2015
+:Version: 0.5.x
+
+-----
+0.5.0
+-----
+
+* Bodhi2 compatibility!
+
+* Ensure that the OpenIdBaseClient returns a munch object like the old
+  BaseClient did.
+
+* Minor fixes to some python3 compatibility.
 
 -----
 0.4.0
