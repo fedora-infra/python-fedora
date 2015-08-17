@@ -30,6 +30,9 @@ import textwrap
 import warnings
 import requests
 
+from six.moves import urllib
+from distutils.version import LooseVersion
+
 from fedora.client import OpenIdBaseClient, FedoraClientError, BaseClient
 import fedora.client.openidproxyclient
 
@@ -53,9 +56,23 @@ def BodhiClient(base_url=BASE_URL, staging=False, **kwargs):
 
     log.debug('Querying bodhi API version')
     api_url = base_url + 'api_version'
-    response = requests.head(api_url)
-    if response.status_code == 200:
+    response = requests.get(api_url)
+
+    try:
+        data = response.json
+        if callable(data):
+            data = data()
+        server_version = LooseVersion(data['version'])
+    except Exception as e:
+        if 'json' in str(type(e)).lower():
+            # Claim that bodhi1 is on the server
+            server_version = LooseVersion('0.9')
+        else:
+            raise
+
+    if server_version >= LooseVersion('2.0'):
         log.debug('Bodhi2 detected')
+        base_url = 'https://{}/'.format(urllib.parse.urlparse(response.url).netloc)
         return Bodhi2Client(base_url=base_url, staging=staging, **kwargs)
     else:
         log.debug('Bodhi1 detected')
@@ -67,7 +84,7 @@ class Bodhi2Client(OpenIdBaseClient):
     def __init__(self, base_url=BASE_URL, username=None, password=None,
                  staging=False, **kwargs):
         super(Bodhi2Client, self).__init__(base_url, login_url=base_url +
-                                          'login', **kwargs)
+                'login', username=username, **kwargs)
 
         if username and password:
             self.login(username, password)
@@ -177,6 +194,8 @@ class Bodhi2Client(OpenIdBaseClient):
         if 'limit' in kwargs:  # bodhi1 compat
             kwargs['rows_per_page'] = kwargs['limit']
             del(kwargs['limit'])
+        if 'mine' in kwargs:
+            kwargs['user'] = self.username
         return self.send_request('updates', verb='GET', params=kwargs)
 
     def comment(self, update, comment, karma=0, email=None):

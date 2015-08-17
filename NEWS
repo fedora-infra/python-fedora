@@ -7,6 +7,12 @@ NEWS
 :Version: 0.5.x
 
 -----
+0.5.2
+-----
+
+* Better version checking against the bodhi server.
+
+-----
 0.5.1
 -----
 
