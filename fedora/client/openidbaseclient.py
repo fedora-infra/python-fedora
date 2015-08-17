@@ -50,9 +50,11 @@ except ImportError:
 
 import requests
 from functools import wraps
+from munch import munchify
+from kitchen.text.converters import to_bytes
 
 from fedora import __version__
-from fedora.client import AuthError, LoginRequiredError
+from fedora.client import AuthError, LoginRequiredError, ServerError
 from fedora.client.openidproxyclient import (
     OpenIdProxyClient, absolute_url, openid_login)
 
@@ -359,7 +361,21 @@ class OpenIdBaseClient(OpenIdProxyClient):
             except LoginRequiredError:
                 raise AuthError()
 
-        return output
+        try:
+            data = output.json
+            # Compatibility with newer python-requests
+            if callable(data):
+                data = data()
+        except ValueError as e:
+            # The response wasn't JSON data
+            raise ServerError(
+                method, output.status_code, 'Error returned from'
+                ' json module while processing %(url)s: %(err)s' %
+                {'url': to_bytes(method), 'err': to_bytes(e)})
+
+        data = munchify(data)
+
+        return data
 
 
     def login(self, username, password, otp=None):
