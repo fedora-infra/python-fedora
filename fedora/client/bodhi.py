@@ -30,6 +30,8 @@ import textwrap
 import warnings
 import requests
 
+from six.moves import urllib
+
 from fedora.client import OpenIdBaseClient, FedoraClientError, BaseClient
 import fedora.client.openidproxyclient
 
@@ -53,9 +55,10 @@ def BodhiClient(base_url=BASE_URL, staging=False, **kwargs):
 
     log.debug('Querying bodhi API version')
     api_url = base_url + 'api_version'
-    response = requests.head(api_url)
+    response = requests.get(api_url)
     if response.status_code == 200:
         log.debug('Bodhi2 detected')
+        base_url = 'https://{}/'.format(urllib.parse.urlparse(response.url).netloc)
         return Bodhi2Client(base_url=base_url, staging=staging, **kwargs)
     else:
         log.debug('Bodhi1 detected')
