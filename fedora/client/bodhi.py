@@ -180,6 +180,8 @@ class Bodhi2Client(OpenIdBaseClient):
         if 'limit' in kwargs:  # bodhi1 compat
             kwargs['rows_per_page'] = kwargs['limit']
             del(kwargs['limit'])
+        if 'mine' in kwargs:
+            kwargs['user'] = self.username
         return self.send_request('updates', verb='GET', params=kwargs)
 
     def comment(self, update, comment, karma=0, email=None):
