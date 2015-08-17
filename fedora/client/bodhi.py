@@ -671,9 +671,9 @@ class Bodhi1Client(BaseClient):
             for build in update['builds'][1:]:
                 val += '\n %s' % build['nvr']
             return val
-        val = "%s\n%s\n%s\n" % ('=' * 80, '\n'.join(
-            wrap(update['title'].replace(',', ', '), width=80,
-                 initial_indent=' '*5, subsequent_indent=' '*5)), '=' * 80)
+        val = "%s\n%s\n%s\n" % ('=' * 80, '\n'.join(textwrap.wrap(
+                update['title'].replace(',', ', '), width=80,
+                initial_indent=' '*5, subsequent_indent=' '*5)), '=' * 80)
         if update['updateid']:
             val += "  Update ID: %s\n" % update['updateid']
         val += """    Release: %s
@@ -689,14 +689,14 @@ class Bodhi1Client(BaseClient):
             for bug in update['bugs']:
                 bugstr = '%s%s - %s\n' % (i and ' ' * 11 + ': ' or '',
                                           bug['bz_id'], bug['title'])
-                bugs += '\n'.join(wrap(bugstr, width=67,
-                                       subsequent_indent=' '*11+': ')) + '\n'
+                bugs += '\n'.join(textwrap.wrap(
+                    bugstr, width=67, subsequent_indent=' '*11+': ')) + '\n'
                 i += 1
             bugs = bugs[:-1]
             val += "\n       Bugs: %s" % bugs
         if update['notes']:
-            notes = wrap(update['notes'], width=67,
-                         subsequent_indent=' ' * 11 + ': ')
+            notes = textwrap.wrap(
+                update['notes'], width=67, subsequent_indent=' ' * 11 + ': ')
             val += "\n      Notes: %s" % '\n'.join(notes)
         val += """
   Submitter: %s
@@ -713,8 +713,9 @@ class Bodhi1Client(BaseClient):
                                 comment['author'], anonymous,
                                 comment['timestamp'], comment['karma']))
                 if comment['text']:
-                    text = wrap(comment['text'], initial_indent=' ' * 13,
-                                subsequent_indent=' ' * 13, width=67)
+                    text = textwrap.wrap(
+                        comment['text'], initial_indent=' ' * 13,
+                        subsequent_indent=' ' * 13, width=67)
                     comments.append('\n'.join(text))
             val += '\n'.join(comments).lstrip() + '\n'
         if update['updateid']:
