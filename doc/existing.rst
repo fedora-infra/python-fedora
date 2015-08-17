@@ -73,9 +73,18 @@ Bodhi is used to push updates from the build system to the download
 repositories.  It lets packagers send packages to the testing repository or to
 the update repository.
 
+pythyon-fedora currently supports both the old Bodhi1 interface and the new
+Bodhi2 interface.  By using ``fedora.client.BodhiCLient``, the correct one
+should be returned to you depending on what is running live on Fedora
+Infrastructure servers.
+
 .. toctree::
     :maxdepth: 2
 
-.. autoclass:: fedora.client.BodhiClient
+.. autoclass:: fedora.client.Bodhi2Client
+    :members:
+    :undoc-members:
+
+.. autoclass:: fedora.client.Bodhi1Client
     :members:
     :undoc-members:

@@ -9,7 +9,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.4.0
+Version:        0.5.0
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -203,6 +203,7 @@ pushd %{py3dir}
 
 # Remove regression tests
 rm -rf %{buildroot}%{python3_sitelib}/fedora/wsgi/test
+rm -rf %{buildroot}%{python3_sitelib}/tests/
 
 popd
 %endif
@@ -219,13 +220,15 @@ find doc -name 'EMPTY' -exec rm \{\} \;
 
 # Remove regression tests
 rm -rf %{buildroot}%{python2_sitelib}/fedora/wsgi/test
+rm -rf %{buildroot}%{python2_sitelib}/tests/
 
 %find_lang %{name}
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
 %doc NEWS README COPYING AUTHORS doc
-%{python2_sitelib}/*
+%{python2_sitelib}/fedora/
+%{python2_sitelib}/python_fedora*egg-info
 %exclude %{python2_sitelib}/fedora/tg/
 %exclude %{python2_sitelib}/fedora/tg2/
 %exclude %{python2_sitelib}/fedora/wsgi/
@@ -237,7 +240,9 @@ rm -rf %{buildroot}%{python2_sitelib}/fedora/wsgi/test
 %files -f %{name}.lang -n python3-fedora
 %defattr(-,root,root,-)
 %doc NEWS README COPYING AUTHORS doc
-%{python3_sitelib}/*
+%{python3_sitelib}/fedora/
+%{python3_sitelib}/python_fedora*egg-info
+%{python3_sitelib}/__pycache__/flask_fas*
 %exclude %{python3_sitelib}/fedora/tg/
 %exclude %{python3_sitelib}/fedora/tg2/
 %exclude %{python3_sitelib}/fedora/wsgi/
@@ -263,6 +268,17 @@ rm -rf %{buildroot}%{python2_sitelib}/fedora/wsgi/test
 %{python2_sitelib}/flask_fas_openid.py*
 
 %changelog
+* Mon Aug 17 2015 Ralph Bean <rbean@redhat.com> - 0.5.0-1
+- Bodhi2 compatibility.
+- Return munch object from OpenIdBaseClient.
+- Minor python3 fixes.
+
+* Thu Jun 18 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.4.0-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
+* Mon May 04 2015 Ralph Bean <rbean@redhat.com> - 0.4.0-2
+- More specific directory ownership for the core packages.
+
 * Tue Apr 28 2015 Ralph Bean <rbean@redhat.com> - 0.4.0-1
 - Upstream release.
 - python3 subpackages.
