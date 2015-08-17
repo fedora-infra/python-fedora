@@ -9,7 +9,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.5.0
+Version:        0.5.1
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -268,6 +268,9 @@ rm -rf %{buildroot}%{python2_sitelib}/tests/
 %{python2_sitelib}/flask_fas_openid.py*
 
 %changelog
+* Mon Aug 17 2015 Ralph Bean <rbean@redhat.com> - 0.5.1-1
+- Typofix in the BodhiClient.
+
 * Mon Aug 17 2015 Ralph Bean <rbean@redhat.com> - 0.5.0-1
 - Bodhi2 compatibility.
 - Return munch object from OpenIdBaseClient.
