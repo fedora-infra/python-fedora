@@ -70,7 +70,7 @@ class Bodhi2Client(OpenIdBaseClient):
     def __init__(self, base_url=BASE_URL, username=None, password=None,
                  staging=False, **kwargs):
         super(Bodhi2Client, self).__init__(base_url, login_url=base_url +
-                                          'login', **kwargs)
+                'login', username=username, **kwargs)
 
         if username and password:
             self.login(username, password)
