@@ -3,8 +3,14 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
-:Date: 17 Aug 2015
+:Date: 18 Aug 2015
 :Version: 0.5.x
+
+-----
+0.5.3
+-----
+
+* Better bodhi compatibility with 'fedpkg update'.
 
 -----
 0.5.2
