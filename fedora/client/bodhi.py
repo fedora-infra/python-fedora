@@ -172,7 +172,7 @@ class Bodhi2Client(OpenIdBaseClient):
             ``testing``, ``stable``, ``unpush``, ``obsolete`` or None.
         :kwarg mine: If True, only query the users updates.  Default: False.
         :kwarg packages: A space or comma delimited list of package names
-        :kwarg limit: The maximum number of updates to display.  Default: 10.
+        :kwarg limit: A deprecated argument, sets ``rows_per_page``. See its docstring for more info.
         :kwarg approved_since: A datetime string
         :kwarg builds: A space or comma delimited string of build nvrs
         :kwarg critpath: A boolean to query only critical path updates
@@ -191,7 +191,7 @@ class Bodhi2Client(OpenIdBaseClient):
             (``logout``, ``reboot``)
         :kwarg user: Query for updates submitted by a specific user.
         :kwarg rows_per_page: Limit the results to a certain number of rows per
-            page (min:1 max: 100)
+                    page (min:1 max: 100 default: 20)
         :kwarg page: Return a specific page of results
 
         """
