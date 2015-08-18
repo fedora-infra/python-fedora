@@ -9,7 +9,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.5.2
+Version:        0.5.3
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -268,6 +268,9 @@ rm -rf %{buildroot}%{python2_sitelib}/tests/
 %{python2_sitelib}/flask_fas_openid.py*
 
 %changelog
+* Tue Aug 18 2015 Ralph Bean <rbean@redhat.com> - 0.5.3-1
+- Better compatibility with 'fedpkg update' for bodhi.
+
 * Mon Aug 17 2015 Ralph Bean <rbean@redhat.com> - 0.5.2-1
 - Better version checking against the bodhi server.
 

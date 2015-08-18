@@ -3,7 +3,7 @@ Python Fedora Module
 ====================
 
 :Author: Toshio Kuratomi
-:Date: 17 August 2015
+:Date: 18 August 2015
 :Version: 0.5.x
 
 The Fedora module provides a python API for building `Fedora Services`_ and
