@@ -33,7 +33,7 @@ import requests
 from six.moves import urllib
 from distutils.version import LooseVersion
 
-from fedora.client import OpenIdBaseClient, FedoraClientError, BaseClient
+from fedora.client import OpenIdBaseClient, FedoraClientError, BaseClient, AuthError
 import fedora.client.openidproxyclient
 
 __version__ = '2.0.0'
@@ -86,8 +86,12 @@ class Bodhi2Client(OpenIdBaseClient):
         super(Bodhi2Client, self).__init__(base_url, login_url=base_url +
                 'login', username=username, **kwargs)
 
+        # bodhi1 client compatiblity
+        self.logged_in = False
+        self.password = password
         if username and password:
             self.login(username, password)
+            self.logged_in = True
 
     def save(self, **kwargs):
         """ Save an update.
@@ -213,6 +217,12 @@ class Bodhi2Client(OpenIdBaseClient):
                       'csrf_token': self.csrf()})
 
     def csrf(self, **kwargs):
+        # bodhi1 cli compatiblity for fedpkg update
+        if not self.logged_in:
+            if not self.password:
+                raise AuthError
+            self.login(self.username, self.password)
+            self.logged_in = True
         return self.send_request('csrf', verb='GET',
                                  params=kwargs)['csrf_token']
 
@@ -230,7 +240,8 @@ class Bodhi2Client(OpenIdBaseClient):
         if not os.path.exists(input_file):
             raise ValueError("No such file or directory: %s" % input_file)
 
-        config = SafeConfigParser()
+        defaults = dict(severity='unspecified', suggest='unspecified')
+        config = SafeConfigParser(defaults=defaults)
         read = config.read(input_file)
 
         if len(read) != 1 or read[0] != input_file:
@@ -243,6 +254,7 @@ class Bodhi2Client(OpenIdBaseClient):
                 'builds': section, 'bugs': config.get(section, 'bugs'),
                 'close_bugs': config.getboolean(section, 'close_bugs'),
                 'type': config.get(section, 'type'),
+                'type_': config.get(section, 'type'),
                 'request': config.get(section, 'request'),
                 'severity': config.get(section, 'severity'),
                 'notes': config.get(section, 'notes'),
