@@ -79,7 +79,7 @@ def BodhiClient(base_url=BASE_URL, staging=False, **kwargs):
 
     if server_version >= LooseVersion('2.0'):
         log.debug('Bodhi2 detected')
-        base_url = 'https://{}/'.format(urllib.parse.urlparse(response.url).netloc)
+        base_url = 'https://{}/'.format(urlparse(response.url).netloc)
         return Bodhi2Client(base_url=base_url, staging=staging, **kwargs)
     else:
         log.debug('Bodhi1 detected')
