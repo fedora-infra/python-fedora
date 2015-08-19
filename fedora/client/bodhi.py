@@ -118,12 +118,8 @@ class Bodhi2Client(OpenIdBaseClient):
         super(Bodhi2Client, self).__init__(base_url, login_url=base_url +
                 'login', username=username, **kwargs)
 
-        # bodhi1 client compatiblity
-        self.logged_in = False
         self.password = password
-        if username and password:
-            self.login(username, password)
-            self.logged_in = True
+        self.csrf_token = None
 
     @errorhandled
     def save(self, **kwargs):
@@ -255,14 +251,14 @@ class Bodhi2Client(OpenIdBaseClient):
 
     @errorhandled
     def csrf(self, **kwargs):
-        # bodhi1 cli compatiblity for fedpkg update
-        if not self.logged_in:
+        if not self.csrf_token:
             if not self.password:
+                # bodhi1 cli compatiblity for fedpkg update
                 raise AuthError
             self.login(self.username, self.password)
-            self.logged_in = True
-        return self.send_request('csrf', verb='GET',
-                                 params=kwargs)['csrf_token']
+            self.csrf_token = self.send_request('csrf', verb='GET',
+                    params=kwargs)['csrf_token']
+        return self.csrf_token
 
     def parse_file(self, input_file):
         """ Parse an update template file.
