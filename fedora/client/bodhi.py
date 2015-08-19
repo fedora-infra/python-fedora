@@ -49,6 +49,7 @@ __version__ = '2.0.0'
 log = logging.getLogger(__name__)
 
 BASE_URL = 'https://admin.fedoraproject.org/updates/'
+BODHI2_BASE_URL = 'https://bodhi.fedoraproject.org/'
 STG_BASE_URL = 'https://admin.stg.fedoraproject.org/updates/'
 BODHI2_STG_BASE_URL = 'https://bodhi.stg.fedoraproject.org/'
 STG_OPENID_API = 'https://id.stg.fedoraproject.org/api/v1/'
@@ -109,21 +110,16 @@ def errorhandled(method):
 
 class Bodhi2Client(OpenIdBaseClient):
 
-    def __init__(self, base_url=BASE_URL, username=None, password=None,
-                 staging=False, **kwargs):
+    def __init__(self, base_url=BODHI2_BASE_URL, username=None, password=None, staging=False, **kwargs):
         if staging:
-            fedora.client.openidproxyclient.FEDORA_OPENID_API = 'https://id.stg.fedoraproject.org/api/v1/'
+            fedora.client.openidproxyclient.FEDORA_OPENID_API = STG_OPENID_API
             base_url = BODHI2_STG_BASE_URL
 
         super(Bodhi2Client, self).__init__(base_url, login_url=base_url +
                 'login', username=username, **kwargs)
 
-        # bodhi1 client compatiblity
-        self.logged_in = False
         self.password = password
-        if username and password:
-            self.login(username, password)
-            self.logged_in = True
+        self.csrf_token = None
 
     @errorhandled
     def save(self, **kwargs):
@@ -169,7 +165,6 @@ class Bodhi2Client(OpenIdBaseClient):
         kwargs['csrf_token'] = self.csrf()
         if 'type_' in kwargs:
             # backwards compat
-            warnings.warn('Parameter "type_" is deprecated. Please use "type" instead.')
             kwargs['type'] = kwargs['type_']
         return self.send_request('updates/', verb='POST', auth=True,
                                  data=kwargs)
@@ -255,14 +250,14 @@ class Bodhi2Client(OpenIdBaseClient):
 
     @errorhandled
     def csrf(self, **kwargs):
-        # bodhi1 cli compatiblity for fedpkg update
-        if not self.logged_in:
+        if not self.csrf_token:
             if not self.password:
+                # bodhi1 cli compatiblity for fedpkg update
                 raise AuthError
             self.login(self.username, self.password)
-            self.logged_in = True
-        return self.send_request('csrf', verb='GET',
-                                 params=kwargs)['csrf_token']
+            self.csrf_token = self.send_request('csrf', verb='GET',
+                    params=kwargs)['csrf_token']
+        return self.csrf_token
 
     def parse_file(self, input_file):
         """ Parse an update template file.
