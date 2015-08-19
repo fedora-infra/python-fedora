@@ -49,6 +49,7 @@ __version__ = '2.0.0'
 log = logging.getLogger(__name__)
 
 BASE_URL = 'https://admin.fedoraproject.org/updates/'
+BODHI2_BASE_URL = 'https://bodhi.fedoraproject.org/'
 STG_BASE_URL = 'https://admin.stg.fedoraproject.org/updates/'
 BODHI2_STG_BASE_URL = 'https://bodhi.stg.fedoraproject.org/'
 STG_OPENID_API = 'https://id.stg.fedoraproject.org/api/v1/'
@@ -109,8 +110,7 @@ def errorhandled(method):
 
 class Bodhi2Client(OpenIdBaseClient):
 
-    def __init__(self, base_url=BASE_URL, username=None, password=None,
-                 staging=False, **kwargs):
+    def __init__(self, base_url=BODHI2_BASE_URL, username=None, password=None, staging=False, **kwargs):
         if staging:
             fedora.client.openidproxyclient.FEDORA_OPENID_API = 'https://id.stg.fedoraproject.org/api/v1/'
             base_url = BODHI2_STG_BASE_URL
