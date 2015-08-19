@@ -112,7 +112,7 @@ class Bodhi2Client(OpenIdBaseClient):
 
     def __init__(self, base_url=BODHI2_BASE_URL, username=None, password=None, staging=False, **kwargs):
         if staging:
-            fedora.client.openidproxyclient.FEDORA_OPENID_API = 'https://id.stg.fedoraproject.org/api/v1/'
+            fedora.client.openidproxyclient.FEDORA_OPENID_API = STG_OPENID_API
             base_url = BODHI2_STG_BASE_URL
 
         super(Bodhi2Client, self).__init__(base_url, login_url=base_url +
