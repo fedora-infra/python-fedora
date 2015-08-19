@@ -59,7 +59,6 @@ def BodhiClient(base_url=BASE_URL, staging=False, **kwargs):
     if staging:
         log.info('Using bodhi2 STAGING environment')
         base_url = STG_BASE_URL
-        fedora.client.openidproxyclient.FEDORA_OPENID_API = STG_OPENID_API
 
     log.debug('Querying bodhi API version')
     api_url = base_url + 'api_version'
@@ -92,6 +91,9 @@ class Bodhi2Client(OpenIdBaseClient):
                  staging=False, **kwargs):
         super(Bodhi2Client, self).__init__(base_url, login_url=base_url +
                 'login', username=username, **kwargs)
+
+        if staging:
+            fedora.client.openidproxyclient.FEDORA_OPENID_API = 'https://id.stg.fedoraproject.org/api/v1/'
 
         # bodhi1 client compatiblity
         self.logged_in = False
