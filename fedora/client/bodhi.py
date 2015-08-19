@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright 2007-2012  Red Hat, Inc.
+# Copyright 2007-2015  Red Hat, Inc.
 # This file is part of python-fedora
 #
 # python-fedora is free software; you can redistribute it and/or
@@ -22,9 +22,11 @@ This module provides a client interface for bodhi.
 
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
+.. moduleauthor:: Ralph Bean <rbean@redhat.com>
 """
 
 import os
+import functools
 import logging
 import textwrap
 import warnings
@@ -47,7 +49,9 @@ __version__ = '2.0.0'
 log = logging.getLogger(__name__)
 
 BASE_URL = 'https://admin.fedoraproject.org/updates/'
+BODHI2_BASE_URL = 'https://bodhi.fedoraproject.org/'
 STG_BASE_URL = 'https://admin.stg.fedoraproject.org/updates/'
+BODHI2_STG_BASE_URL = 'https://bodhi.stg.fedoraproject.org/'
 STG_OPENID_API = 'https://id.stg.fedoraproject.org/api/v1/'
 
 
@@ -59,7 +63,6 @@ def BodhiClient(base_url=BASE_URL, staging=False, **kwargs):
     if staging:
         log.info('Using bodhi2 STAGING environment')
         base_url = STG_BASE_URL
-        fedora.client.openidproxyclient.FEDORA_OPENID_API = STG_OPENID_API
 
     log.debug('Querying bodhi API version')
     api_url = base_url + 'api_version'
@@ -86,20 +89,39 @@ def BodhiClient(base_url=BASE_URL, staging=False, **kwargs):
         return Bodhi1Client(base_url, **kwargs)
 
 
+def errorhandled(method):
+    """ A decorator for Bodhi2Client that raises exceptions on failure. """
+    @functools.wraps(method)
+    def wrapper(*args, **kwargs):
+        result = method(*args, **kwargs)
+
+        if 'errors' not in result:
+            return result
+
+        # Otherwise, there was a problem...
+        problems = 'An unhandled error occurred in the BodhiClient'
+        try:
+            problems = "\n".join([e['description'] for e in result['errors']])
+        except Exception:
+            pass
+        raise BodhiClientException(problems)
+    return wrapper
+
+
 class Bodhi2Client(OpenIdBaseClient):
 
-    def __init__(self, base_url=BASE_URL, username=None, password=None,
-                 staging=False, **kwargs):
+    def __init__(self, base_url=BODHI2_BASE_URL, username=None, password=None, staging=False, **kwargs):
+        if staging:
+            fedora.client.openidproxyclient.FEDORA_OPENID_API = STG_OPENID_API
+            base_url = BODHI2_STG_BASE_URL
+
         super(Bodhi2Client, self).__init__(base_url, login_url=base_url +
                 'login', username=username, **kwargs)
 
-        # bodhi1 client compatiblity
-        self.logged_in = False
         self.password = password
-        if username and password:
-            self.login(username, password)
-            self.logged_in = True
+        self.csrf_token = None
 
+    @errorhandled
     def save(self, **kwargs):
         """ Save an update.
 
@@ -143,11 +165,11 @@ class Bodhi2Client(OpenIdBaseClient):
         kwargs['csrf_token'] = self.csrf()
         if 'type_' in kwargs:
             # backwards compat
-            warnings.warn('Parameter "type_" is deprecated. Please use "type" instead.')
             kwargs['type'] = kwargs['type_']
         return self.send_request('updates/', verb='POST', auth=True,
                                  data=kwargs)
 
+    @errorhandled
     def request(self, update, request):
         """ Request an update state change.
 
@@ -160,12 +182,14 @@ class Bodhi2Client(OpenIdBaseClient):
                                  data={'update': update, 'request': request,
                                        'csrf_token': self.csrf()})
 
+    @errorhandled
     def delete(self, update):
         warnings.warn('Deleting updates has been disabled in Bodhi2. '
                       'This API call will unpush the update instead. '
                       'Please use `set_request(update, "unpush")` instead')
         self.request(update, 'unpush')
 
+    @errorhandled
     def query(self, **kwargs):
         """ Query bodhi for a list of updates.
 
@@ -209,6 +233,7 @@ class Bodhi2Client(OpenIdBaseClient):
             kwargs['user'] = self.username
         return self.send_request('updates', verb='GET', params=kwargs)
 
+    @errorhandled
     def comment(self, update, comment, karma=0, email=None):
         """ Add a comment to an update.
 
@@ -223,15 +248,16 @@ class Bodhi2Client(OpenIdBaseClient):
                       'karma': karma, 'email': email,
                       'csrf_token': self.csrf()})
 
+    @errorhandled
     def csrf(self, **kwargs):
-        # bodhi1 cli compatiblity for fedpkg update
-        if not self.logged_in:
+        if not self.csrf_token:
             if not self.password:
+                # bodhi1 cli compatiblity for fedpkg update
                 raise AuthError
             self.login(self.username, self.password)
-            self.logged_in = True
-        return self.send_request('csrf', verb='GET',
-                                 params=kwargs)['csrf_token']
+            self.csrf_token = self.send_request('csrf', verb='GET',
+                    params=kwargs)['csrf_token']
+        return self.csrf_token
 
     def parse_file(self, input_file):
         """ Parse an update template file.
@@ -275,6 +301,7 @@ class Bodhi2Client(OpenIdBaseClient):
 
         return updates
 
+    @errorhandled
     def latest_builds(self, package):
         return self.send_request('latest_builds', params={'package': package})
 
@@ -377,6 +404,7 @@ class Bodhi2Client(OpenIdBaseClient):
             val += "\n  %s\n" % ('%s%s' % (self.base_url, update['title']))
         return val
 
+    @errorhandled
     def get_releases(self, **kwargs):
         """ Return a list of bodhi releases.
 

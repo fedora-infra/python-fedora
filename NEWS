@@ -3,8 +3,15 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
-:Date: 18 Aug 2015
+:Date: 19 Aug 2015
 :Version: 0.5.x
+
+-----
+0.5.5
+-----
+
+* Consistent exception handling in the Bodhi2Client.
+* More adjustments to bodhi server version detection.
 
 -----
 0.5.4
