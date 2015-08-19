@@ -104,8 +104,6 @@ def errorhandled(method):
         except Exception:
             pass
         raise BodhiClientException(problems)
-
-        return result
     return wrapper
 
 
