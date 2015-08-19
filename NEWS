@@ -7,6 +7,13 @@ NEWS
 :Version: 0.5.x
 
 -----
+0.5.4
+-----
+
+* Adjust usage of python-six to be compatible with older versions on rhel7.
+* More updates to detection of the bodhi server version.
+
+-----
 0.5.3
 -----
 
