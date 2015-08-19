@@ -71,7 +71,7 @@ def BodhiClient(base_url=BASE_URL, staging=False, **kwargs):
             data = data()
         server_version = LooseVersion(data['version'])
     except Exception as e:
-        if 'json' in str(type(e)).lower():
+        if 'json' in str(type(e)).lower() or 'json' in str(e).lower():
             # Claim that bodhi1 is on the server
             server_version = LooseVersion('0.9')
         else:
