@@ -30,8 +30,15 @@ import textwrap
 import warnings
 import requests
 
-from six.moves import urllib
 from distutils.version import LooseVersion
+
+# We unfortunately can't use python-six for this because there's an ancient
+# version on rhel7.  https://github.com/fedora-infra/python-fedora/issues/132
+try:
+    from urlparse import urlparse
+except ImportError:
+    # Python3 support
+    from urllib.parse import urlparse
 
 from fedora.client import OpenIdBaseClient, FedoraClientError, BaseClient, AuthError
 import fedora.client.openidproxyclient
@@ -64,7 +71,7 @@ def BodhiClient(base_url=BASE_URL, staging=False, **kwargs):
             data = data()
         server_version = LooseVersion(data['version'])
     except Exception as e:
-        if 'json' in str(type(e)).lower():
+        if 'json' in str(type(e)).lower() or 'json' in str(e).lower():
             # Claim that bodhi1 is on the server
             server_version = LooseVersion('0.9')
         else:
@@ -72,7 +79,7 @@ def BodhiClient(base_url=BASE_URL, staging=False, **kwargs):
 
     if server_version >= LooseVersion('2.0'):
         log.debug('Bodhi2 detected')
-        base_url = 'https://{}/'.format(urllib.parse.urlparse(response.url).netloc)
+        base_url = 'https://{}/'.format(urlparse(response.url).netloc)
         return Bodhi2Client(base_url=base_url, staging=staging, **kwargs)
     else:
         log.debug('Bodhi1 detected')
