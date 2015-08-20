@@ -396,7 +396,7 @@ class Bodhi2Client(OpenIdBaseClient):
         :kwarg minimal: Return a minimal one-line representation of the update.
 
         """
-        if isinstance(update, basestring):
+        if isinstance(update, six.string_types):
             return update
         if minimal:
             val = ""
@@ -783,7 +783,7 @@ class Bodhi1Client(BaseClient):
         :kwarg minimal: Return a minimal one-line representation of the update.
 
         """
-        if isinstance(update, basestring):
+        if isinstance(update, six.string_types):
             return update
         if minimal:
             val = ""
