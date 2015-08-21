@@ -176,8 +176,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
             try:
                 os.makedirs(b_SESSION_DIR, mode=0o755)
             except OSError as err:
-                log.warning('Unable to create {file}: {error}').format(
-                    file=b_SESSION_DIR, error=err)
+                log.warning('Unable to create {file}: {error}'.format(
+                    file=b_SESSION_DIR, error=err))
                 return None
 
         if not os.path.exists(b_SESSION_FILE):
