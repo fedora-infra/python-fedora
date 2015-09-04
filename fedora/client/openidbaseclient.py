@@ -176,8 +176,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
             try:
                 os.makedirs(b_SESSION_DIR, mode=0o755)
             except OSError as err:
-                log.warning('Unable to create {file}: {error}').format(
-                    file=b_SESSION_DIR, error=err)
+                log.warning('Unable to create {file}: {error}'.format(
+                    file=b_SESSION_DIR, error=err))
                 return None
 
         if not os.path.exists(b_SESSION_FILE):
@@ -370,8 +370,12 @@ class OpenIdBaseClient(OpenIdProxyClient):
             # The response wasn't JSON data
             raise ServerError(
                 method, output.status_code, 'Error returned from'
-                ' json module while processing %(url)s: %(err)s' %
-                {'url': to_bytes(method), 'err': to_bytes(e)})
+                ' json module while processing %(url)s: %(err)s\n%(output)s' %
+                {
+                    'url': to_bytes(method),
+                    'err': to_bytes(e),
+                    'output': to_bytes(output.text),
+                })
 
         data = munchify(data)
 

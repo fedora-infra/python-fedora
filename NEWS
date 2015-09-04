@@ -3,8 +3,14 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
-:Date: 19 Aug 2015
+:Date: 04 Sep 2015
 :Version: 0.5.x
+
+-----
+0.5.6
+-----
+
+* Python2.6 fix for string formatting in the BodhiClient.
 
 -----
 0.5.5

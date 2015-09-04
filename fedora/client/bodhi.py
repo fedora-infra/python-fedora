@@ -26,6 +26,7 @@ This module provides a client interface for bodhi.
 """
 
 import os
+import datetime
 import functools
 import logging
 import textwrap
@@ -33,6 +34,8 @@ import warnings
 import requests
 
 from distutils.version import LooseVersion
+
+import six
 
 # We unfortunately can't use python-six for this because there's an ancient
 # version on rhel7.  https://github.com/fedora-infra/python-fedora/issues/132
@@ -82,7 +85,7 @@ def BodhiClient(base_url=BASE_URL, staging=False, **kwargs):
 
     if server_version >= LooseVersion('2.0'):
         log.debug('Bodhi2 detected')
-        base_url = 'https://{}/'.format(urlparse(response.url).netloc)
+        base_url = 'https://{0}/'.format(urlparse(response.url).netloc)
         return Bodhi2Client(base_url=base_url, staging=staging, **kwargs)
     else:
         log.debug('Bodhi1 detected')
@@ -177,7 +180,7 @@ class Bodhi2Client(OpenIdBaseClient):
         :arg request: The request (``testing``, ``stable``, ``obsolete``,
                                    ``unpush``, ``revoke``)
         """
-        return self.send_request('updates/{}/request'.format(update),
+        return self.send_request('updates/{0}/request'.format(update),
                                  verb='POST', auth=True,
                                  data={'update': update, 'request': request,
                                        'csrf_token': self.csrf()})
@@ -247,6 +250,45 @@ class Bodhi2Client(OpenIdBaseClient):
                 data={'update': update, 'text': comment,
                       'karma': karma, 'email': email,
                       'csrf_token': self.csrf()})
+
+    @errorhandled
+    def save_override(self, nvr, duration, notes):
+        """ Save a buildroot override.
+
+        This entails either creating a new buildroot override, or editing an
+        existing one.
+
+        :kwarg nvr: A nvr of a koji build.
+        :kwarg duration: Number of days from now that this override should
+            expire.
+        :kwarg notes: Notes about why this override is in place.
+
+        """
+        expiration_date = datetime.datetime.utcnow() + \
+            datetime.timedelta(days=duration)
+
+        return self.send_request(
+            'overrides/', verb='POST', auth=True, data={
+                'nvr': nvr,
+                'expiration_date': expiration_date,
+                'notes': notes,
+                'csrf_token': self.csrf(),
+            })
+
+    @errorhandled
+    def list_overrides(self, user=None):
+        """ Save a buildroot overrides.
+
+        This entails either creating a new buildroot override, or editing an
+        existing one.
+
+        :kwarg user: A username whose buildroot overrides you want returned.
+
+        """
+        params = {}
+        if user:
+            params['user'] = user
+        return self.send_request('overrides/', verb='GET', params=params)
 
     @errorhandled
     def csrf(self, **kwargs):
@@ -331,6 +373,22 @@ class Bodhi2Client(OpenIdBaseClient):
                 for update in update_list:
                     yield update
 
+    def override_str(self, override):
+        """ Return a string representation of a given override dictionary.
+
+        :arg override: An override dictionary.
+
+        """
+        if isinstance(override, six.string_types):
+            return override
+
+        # TODO -- make this fancy.
+        return "{submitter}'s {build} override (expires {expiry})".format(
+            submitter=override['submitter']['name'],
+            build=override['build']['nvr'],
+            expiry=override['expiration_date'],
+        )
+
     def update_str(self, update, minimal=False):
         """ Return a string representation of a given update dictionary.
 
@@ -338,7 +396,7 @@ class Bodhi2Client(OpenIdBaseClient):
         :kwarg minimal: Return a minimal one-line representation of the update.
 
         """
-        if isinstance(update, basestring):
+        if isinstance(update, six.string_types):
             return update
         if minimal:
             val = ""
@@ -725,7 +783,7 @@ class Bodhi1Client(BaseClient):
         :kwarg minimal: Return a minimal one-line representation of the update.
 
         """
-        if isinstance(update, basestring):
+        if isinstance(update, six.string_types):
             return update
         if minimal:
             val = ""
