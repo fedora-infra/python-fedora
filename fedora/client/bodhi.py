@@ -85,7 +85,7 @@ def BodhiClient(base_url=BASE_URL, staging=False, **kwargs):
 
     if server_version >= LooseVersion('2.0'):
         log.debug('Bodhi2 detected')
-        base_url = 'https://{}/'.format(urlparse(response.url).netloc)
+        base_url = 'https://{0}/'.format(urlparse(response.url).netloc)
         return Bodhi2Client(base_url=base_url, staging=staging, **kwargs)
     else:
         log.debug('Bodhi1 detected')
@@ -180,7 +180,7 @@ class Bodhi2Client(OpenIdBaseClient):
         :arg request: The request (``testing``, ``stable``, ``obsolete``,
                                    ``unpush``, ``revoke``)
         """
-        return self.send_request('updates/{}/request'.format(update),
+        return self.send_request('updates/{0}/request'.format(update),
                                  verb='POST', auth=True,
                                  data={'update': update, 'request': request,
                                        'csrf_token': self.csrf()})
