@@ -9,8 +9,8 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.5.5
-Release:        2%{?dist}
+Version:        0.5.6
+Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
 Group:          Development/Languages
@@ -268,6 +268,9 @@ rm -rf %{buildroot}%{python2_sitelib}/tests/
 %{python2_sitelib}/flask_fas_openid.py*
 
 %changelog
+* Fri Sep 04 2015 Ralph Bean <rbean@redhat.com> - 0.5.6-1
+- Python2.6 fix for el6.
+
 * Thu Aug 27 2015 Ralph Bean <rbean@redhat.com> - 0.5.5-2
 - Specbump for F21.  https://github.com/fedora-infra/bodhi/issues/363
 
