@@ -4,3 +4,4 @@ build
 locale
 .tox
 dist
+*rst~
