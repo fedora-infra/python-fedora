@@ -183,7 +183,7 @@ Then commit your changes to source control.
 Updating the PO Files
 =====================
 
-fedora.zanata.org will merge the strings inside the pot file with the already
+`fedora.zanata.org <https://fedora.zanata.org/>`_ will merge the strings inside the pot file with the already
 translated strings.  To merge these, we just need to pull revised versions of
 the po files::
 
@@ -198,8 +198,8 @@ Creating a new PO File
 The easiest way to create a new po file for a new language is in 's
 web UI.
 
-* Visit `this <https://fedora.zanata.org/iteration/view/python-fedora>`_:
-  
+* Visit `this <https://fedora.zanata.org/iteration/view/python-fedora>`_
+
 
 Compiling Message Catalogs
 ==========================
@@ -242,7 +242,7 @@ Release
         # If everything checks out
         git commit -m 'Merge new translations from fedora.zanata.org'
 
-4) Make sure that the NEWS file is accurate (use `git log` if needed).
+4) Make sure that the NEWS file is accurate (use ``git log`` if needed).
 
 5) Update python-fedora.spec and fedora/release.py with the new version
    information.::
