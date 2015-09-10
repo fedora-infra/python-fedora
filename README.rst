@@ -87,8 +87,8 @@ interpreter or, for instance, by running::
 Here's an example of using the ``AccountSystem``::
 
 	from fedora.accounts.fas2 import AccountSystem
-	from fedora.client import AuthError,
-x
+	from fedora.client import AuthError
+	
 	# Get an AccountSystem object.  All AccountSystem methods need to be
 	# authenticated so you might as well give username and password here.
 	fas = AccountSystem(username='foo', password='bar')
