@@ -156,7 +156,7 @@ The strings in python-fedora has mainly error messages.  These are translated
 so we should make sure that translators are able to translate them when
 necessary.  You will need babel, setuptools, and zanata-client to run these
 commands::
-  yum install babel setuptools zanata-client
+   yum install babel setuptools zanata-client
 
 Much information about using zanata for translations can be found in the
 `zanata user's guide`_.  The information in this section is largely from
@@ -193,8 +193,7 @@ Creating a new PO File
 The easiest way to create a new po file for a new language is in 's
 web UI.
 
-* Visit this link:
-  https://fedora.zanata.org/iteration/view/python-fedora
+* Visit `this <https://fedora.zanata.org/iteration/view/python-fedora>`_
 
 Compiling Message Catalogs
 ==========================
@@ -216,13 +215,13 @@ releaseutils.py --help`` for details.
 Release
 -------
 
-0) Commit all features, hotfixes, etc that you want in the release into the
+* Commit all features, hotfixes, etc that you want in the release into the
    develop branch.
 
-1) Checkout a copy of the repository and setup git flow
-    git clone https://github.com/fedora-infra/python-fedora.git
-    cd python-fedora
-    git flow init
+* Checkout a copy of the repository and setup git flow::
+   git clone https://github.com/fedora-infra/python-fedora.git
+   cd python-fedora
+   git flow init
 
 2) Create a release branch for all of our work::
     git flow release start $VERSION
