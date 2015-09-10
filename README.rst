@@ -87,8 +87,8 @@ interpreter or, for instance, by running::
 Here's an example of using the ``AccountSystem``::
 
 	from fedora.accounts.fas2 import AccountSystem
-	from fedora.client import AuthError,
-x
+	from fedora.client import AuthError
+	
 	# Get an AccountSystem object.  All AccountSystem methods need to be
 	# authenticated so you might as well give username and password here.
 	fas = AccountSystem(username='foo', password='bar')
@@ -156,14 +156,14 @@ The strings in python-fedora has mainly error messages.  These are translated
 so we should make sure that translators are able to translate them when
 necessary.  You will need babel, setuptools, and zanata-client to run these
 commands::
-  yum install babel setuptools zanata-client
+   yum install babel setuptools zanata-client
 
 Much information about using zanata for translations can be found in the
 `zanata user's guide`_.  The information in this section is largely from
 experimenting with the information in the `zanata client documentation`_
 
 .. _`zanata user's guide`: http://zanata.readthedocs.org
-.. ~`zanata client documentation`: http://zanata.readthedocs.org/en/latest/user-guide/client-configuration/
+.. _`zanata client documentation`: http://zanata-client.readthedocs.org/en/latest/
 
 Updating the POT File
 =====================
@@ -193,8 +193,7 @@ Creating a new PO File
 The easiest way to create a new po file for a new language is in 's
 web UI.
 
-* Visit this link:
-  https://fedora.zanata.org/iteration/view/python-fedora
+* Visit `this <https://fedora.zanata.org/iteration/view/python-fedora>`_
 
 Compiling Message Catalogs
 ==========================
@@ -216,36 +215,35 @@ releaseutils.py --help`` for details.
 Release
 -------
 
-0) Commit all features, hotfixes, etc that you want in the release into the
+* Commit all features, hotfixes, etc that you want in the release into the
    develop branch.
 
-1) Checkout a copy of the repository and setup git flow::
-     git clone git@github.com:fedora-infra/python-fedora.git
-     cd python-fedora
-     git flow init
+* Checkout a copy of the repository and setup git flow::
+   git clone https://github.com/fedora-infra/python-fedora.git
+   cd python-fedora
+   git flow init
 
-2) Create a release branch for all of our work
-
-     git flow release start $VERSION
+2) Create a release branch for all of our work::
+    git flow release start $VERSION
 
 3) Download new translations and verify they are valid by compiling them::
-     zanata-cli pull
-     python releaseutils.py build_catalogs
-     # If everything checks out
-     git commit -m 'Merge new translations from fedora.zanata.org'
+    zanata-cli pull
+    python releaseutils.py build_catalogs
+    # If everything checks out
+    git commit -m 'Merge new translations from fedora.zanata.org'
 
-4) Make sure that the NEWS file is accurate (use git log if needed).
+4) Make sure that the NEWS file is accurate (use `git log` if needed).
 
 5) Update python-fedora.spec and fedora/release.py with the new version
-   information.
-     # Make edits to python-fedora.spec and release.py
+   information. ::
+     #Make edits to python-fedora.spec and release.py
      git commit
 
 6) Make sure the docs are proper and publish them::
-     # Build docs and check for errors
-     python setup.py build_sphinx
-     # pypi
-     python setup.py upload_docs
+    # Build docs and check for errors
+    python setup.py build_sphinx
+    # pypi
+    python setup.py upload_docs
 
 7) Push the release branch to the server::
      # Update files
