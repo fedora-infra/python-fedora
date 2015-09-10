@@ -163,7 +163,7 @@ Much information about using zanata for translations can be found in the
 experimenting with the information in the `zanata client documentation`_
 
 .. _`zanata user's guide`: http://zanata.readthedocs.org
-.. ~`zanata client documentation`: http://zanata.readthedocs.org/en/latest/user-guide/client-configuration/
+.. _`zanata client documentation`: http://zanata-client.readthedocs.org/en/latest/
 
 Updating the POT File
 =====================
@@ -224,8 +224,7 @@ Release
      cd python-fedora
      git flow init
 
-2) Create a release branch for all of our work
-
+2) Create a release branch for all of our work::
      git flow release start $VERSION
 
 3) Download new translations and verify they are valid by compiling them::
