@@ -219,33 +219,32 @@ Release
 0) Commit all features, hotfixes, etc that you want in the release into the
    develop branch.
 
-1) Checkout a copy of the repository and setup git flow::
-     git clone git@github.com:fedora-infra/python-fedora.git
-     cd python-fedora
-     git flow init
+1) Checkout a copy of the repository and setup git flow
+    git clone https://github.com/fedora-infra/python-fedora.git
+    cd python-fedora
+    git flow init
 
-2) Create a release branch for all of our work
-
-     git flow release start $VERSION
+2) Create a release branch for all of our work::
+    git flow release start $VERSION
 
 3) Download new translations and verify they are valid by compiling them::
-     zanata-cli pull
-     python releaseutils.py build_catalogs
-     # If everything checks out
-     git commit -m 'Merge new translations from fedora.zanata.org'
+    zanata-cli pull
+    python releaseutils.py build_catalogs
+    # If everything checks out
+    git commit -m 'Merge new translations from fedora.zanata.org'
 
-4) Make sure that the NEWS file is accurate (use git log if needed).
+4) Make sure that the NEWS file is accurate (use `git log` if needed).
 
 5) Update python-fedora.spec and fedora/release.py with the new version
-   information.
-     # Make edits to python-fedora.spec and release.py
+   information. ::
+     #Make edits to python-fedora.spec and release.py
      git commit
 
 6) Make sure the docs are proper and publish them::
-     # Build docs and check for errors
-     python setup.py build_sphinx
-     # pypi
-     python setup.py upload_docs
+    # Build docs and check for errors
+    python setup.py build_sphinx
+    # pypi
+    python setup.py upload_docs
 
 7) Push the release branch to the server::
      # Update files
