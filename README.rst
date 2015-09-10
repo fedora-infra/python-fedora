@@ -163,7 +163,7 @@ Much information about using zanata for translations can be found in the
 experimenting with the information in the `zanata client documentation`_
 
 .. _`zanata user's guide`: http://zanata.readthedocs.org
-.. _`zanata client documentation`: http://zanata.readthedocs.org/en/latest/user-guide/client/client/
+.. _`zanata client documentation`: http://zanata-client.readthedocs.org/en/latest/
 
 Updating the POT File
 =====================
