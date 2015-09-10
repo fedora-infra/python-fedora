@@ -227,7 +227,7 @@ Release
 
 1) Checkout a copy of the repository and setup git flow::
 
-        git clone git@github.com:fedora-infra/python-fedora.git
+        git clone https://github.com/fedora-infra/python-fedora.git
         cd python-fedora
         git flow init
 
@@ -265,7 +265,7 @@ Release
 8) Go to a temporary directory and checkout a copy of the release::
 
         cd ..
-        git clone git@github.com:fedora-infra/python-fedora.git release
+        git clone https://github.com/fedora-infra/python-fedora.git release
         cd release
         git checkout release/$VERSION
 
