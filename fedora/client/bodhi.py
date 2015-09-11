@@ -28,6 +28,7 @@ This module provides a client interface for bodhi.
 import os
 import datetime
 import functools
+import getpass
 import logging
 import textwrap
 import warnings
@@ -45,7 +46,7 @@ except ImportError:
     # Python3 support
     from urllib.parse import urlparse
 
-from fedora.client import OpenIdBaseClient, FedoraClientError, BaseClient, AuthError
+from fedora.client import OpenIdBaseClient, FedoraClientError, BaseClient
 import fedora.client.openidproxyclient
 
 __version__ = '2.0.0'
@@ -121,8 +122,14 @@ class Bodhi2Client(OpenIdBaseClient):
         super(Bodhi2Client, self).__init__(base_url, login_url=base_url +
                 'login', username=username, **kwargs)
 
-        self.password = password
+        self._password = password
         self.csrf_token = None
+
+    @property
+    def password(self):
+        if not self._password:
+            self._password = getpass.getpass()
+        return self._password
 
     @errorhandled
     def save(self, **kwargs):
@@ -291,14 +298,12 @@ class Bodhi2Client(OpenIdBaseClient):
         return self.send_request('overrides/', verb='GET', params=params)
 
     @errorhandled
-    def csrf(self, **kwargs):
+    def csrf(self):
         if not self.csrf_token:
-            if not self.password:
-                # bodhi1 cli compatiblity for fedpkg update
-                raise AuthError
-            self.login(self.username, self.password)
-            self.csrf_token = self.send_request('csrf', verb='GET',
-                    params=kwargs)['csrf_token']
+            if not self.has_cookies():
+                self.login(self.username, self.password)
+            self.csrf_token = self.send_request(
+                'csrf', verb='GET', auth=True)['csrf_token']
         return self.csrf_token
 
     def parse_file(self, input_file):
