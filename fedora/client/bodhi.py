@@ -467,9 +467,8 @@ class Bodhi2Client(OpenIdBaseClient):
                     comments.append('\n'.join(text))
             val += '\n'.join(comments).lstrip() + '\n'
         if update['alias']:
-            val += "\n  %s\n" % ('%s%s/%s' % (self.base_url,
-                                              update['release']['name'],
-                                              update['alias']))
+            val += "\n  %s\n" % ('%supdates/%s' % (self.base_url,
+                                                   update['alias']))
         else:
             val += "\n  %s\n" % ('%s%s' % (self.base_url, update['title']))
         return val
