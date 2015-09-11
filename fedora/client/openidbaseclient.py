@@ -80,10 +80,14 @@ def requires_login(func):
     """
     def _decorator(request, *args, **kwargs):
         """ Run the function and check if it redirected to the openid form.
+        Or if we got a 403
         """
         output = func(request, *args, **kwargs)
         if output and \
                 '<title>OpenID transaction in progress</title>' in output.text:
+            raise LoginRequiredError(
+                '{0} requires a logged in user'.format(output.url))
+        elif output and output.status_code == 403:
             raise LoginRequiredError(
                 '{0} requires a logged in user'.format(output.url))
         return output
