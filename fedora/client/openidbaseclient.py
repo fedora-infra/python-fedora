@@ -271,7 +271,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
         return response
 
     @property
-    def session_id(self):
+    def session_key(self):
         return "%s:%s" % (self.base_url, self.username or '')
 
     def has_cookies(self):
@@ -285,10 +285,10 @@ class OpenIdBaseClient(OpenIdProxyClient):
             with self.cache_lock:
                 with open(b_SESSION_FILE, 'rb') as f:
                     data = json.loads(f.read())
-            for key, value in data[self.session_id]:
+            for key, value in data[self.session_key]:
                 self._session.cookies[key] = value
         except KeyError:
-            log.debug("No pre-existing session found for %s" % self.session_id)
+            log.debug("No pre-existing session for %s" % self.session_key)
         except IOError:
             # The file doesn't exist, so create it.
             log.debug("Creating %s", b_SESSION_FILE)
@@ -307,7 +307,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
                 log.warn("Failed to open cookie cache before saving.")
                 data = {}
 
-            data[self.session_id] = self._session.cookies.items()
+            data[self.session_key] = self._session.cookies.items()
             with open(b_SESSION_FILE, 'wb') as f:
                 f.write(json.dumps(data))
 
