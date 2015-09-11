@@ -236,11 +236,18 @@ class Bodhi2Client(OpenIdBaseClient):
         :kwarg page: Return a specific page of results
 
         """
-        if 'limit' in kwargs:  # bodhi1 compat
+        # bodhi1 compat
+        if 'limit' in kwargs:
             kwargs['rows_per_page'] = kwargs['limit']
             del(kwargs['limit'])
         if 'mine' in kwargs:
             kwargs['user'] = self.username
+        if 'package' in kwargs:
+            kwargs['packages'] = kwargs['package']
+            del(kwargs['package'])
+        if 'release' in kwargs:
+            kwargs['releases'] = kwargs['release']
+            del(kwargs['release'])
         return self.send_request('updates', verb='GET', params=kwargs)
 
     @errorhandled
@@ -460,9 +467,8 @@ class Bodhi2Client(OpenIdBaseClient):
                     comments.append('\n'.join(text))
             val += '\n'.join(comments).lstrip() + '\n'
         if update['alias']:
-            val += "\n  %s\n" % ('%s%s/%s' % (self.base_url,
-                                              update['release']['name'],
-                                              update['alias']))
+            val += "\n  %s\n" % ('%supdates/%s' % (self.base_url,
+                                                   update['alias']))
         else:
             val += "\n  %s\n" % ('%s%s' % (self.base_url, update['title']))
         return val
