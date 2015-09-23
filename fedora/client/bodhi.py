@@ -264,7 +264,7 @@ class Bodhi2Client(OpenIdBaseClient):
         # checks for 'if bugs is not None', not 'if not bugs'
         if 'bugs' in kwargs and kwargs['bugs'] == '':
             kwargs['bugs'] = None
-        return self.send_request('updates', verb='GET', params=kwargs)
+        return self.send_request('updates/', verb='GET', params=kwargs)
 
     @errorhandled
     def comment(self, update, comment, karma=0, email=None):
@@ -499,7 +499,7 @@ class Bodhi2Client(OpenIdBaseClient):
                 {"dist_tag": "dist-f12", "id_prefix": "FEDORA",
                  "locked": false, "name": "F12", "long_name": "Fedora 12"}]}
         """
-        return self.send_request('releases', params=kwargs)
+        return self.send_request('releases/', params=kwargs)
 
     def get_koji_session(self, login=True):
         """ Return an authenticated koji session """
@@ -905,4 +905,4 @@ class Bodhi1Client(BaseClient):
                 {"dist_tag": "dist-f12", "id_prefix": "FEDORA",
                  "locked": false, "name": "F12", "long_name": "Fedora 12"}]}
         """
-        return self.send_request('releases')
+        return self.send_request('releases/')
