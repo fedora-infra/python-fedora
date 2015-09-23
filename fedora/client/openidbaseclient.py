@@ -34,6 +34,7 @@
 
 import json
 import logging
+import time
 import os
 
 # pylint: disable-msg=F0401
@@ -182,7 +183,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
         response = self._session.get(url, params=params, data=data, **kwargs)
         return response
 
-    def send_request(self, method, auth=False, verb='POST', **kwargs):
+    def send_request(self, method, auth=False, verb='POST', retries=None,
+                     **kwargs):
         """Make an HTTP request to a server method.
 
         The given method is called with any parameters set in req_params.  If
@@ -209,6 +211,11 @@ class OpenIdBaseClient(OpenIdProxyClient):
             files to a single file field, pass the paths as a list of paths.
         :kwarg verb: HTTP verb to use.  GET and POST are currently supported.
             POST is the default.
+        :kwarg retries: if we get an unknown or possibly transient error
+            from the server, retry this many times.  Setting this to a
+            negative number makes it try forever.  Default to use the
+            :attr:`retries` value set on the instance or in :meth:`__init__`.
+
         """
         # Decide on the set of auth cookies to use
 
@@ -223,26 +230,73 @@ class OpenIdBaseClient(OpenIdProxyClient):
         except KeyError:
             raise Exception('Unknown HTTP verb')
 
-        try:
-            output = func(method, **kwargs)
-        except LoginRequiredError:
-            raise AuthError()
+        if retries is None:
+            retries = self.retries
 
-        try:
-            data = output.json
-            # Compatibility with newer python-requests
-            if callable(data):
-                data = data()
-        except ValueError as e:
-            # The response wasn't JSON data
-            raise ServerError(
-                method, output.status_code, 'Error returned from'
-                ' json module while processing %(url)s: %(err)s\n%(output)s' %
-                {
-                    'url': to_bytes(method),
-                    'err': to_bytes(e),
-                    'output': to_bytes(output.text),
-                })
+        if timeout is None:
+            timeout = self.timeout
+
+        num_tries = 0
+        while True:
+            try:
+                output = func(method, **kwargs)
+            except LoginRequiredError:
+                raise AuthError()
+
+            try:
+                data = output.json
+                # Compatibility with newer python-requests
+                if callable(data):
+                    data = data()
+            except (requests.Timeout, requests.exceptions.SSLError) as err:
+                if isinstance(err, requests.exceptions.SSLError):
+                    # And now we know how not to code a library exception
+                    # hierarchy...  We're expecting that requests is raising
+                    # the following stupidity:
+                    # requests.exceptions.SSLError(
+                    #   urllib3.exceptions.SSLError(
+                    #     ssl.SSLError('The read operation timed out')))
+                    # If we weren't interested in reraising the exception with
+                    # full traceback we could use a try: except instead of
+                    # this gross conditional.  But we need to code defensively
+                    # because we don't want to raise an unrelated exception
+                    # here and if requests/urllib3 can do this sort of
+                    # nonsense, they may change the nonsense in the future
+                    if not (err.args and isinstance(
+                                err.args[0], urllib3.exceptions.SSLError)
+                            and err.args[0].args
+                            and isinstance(err.args[0].args[0], ssl.SSLError)
+                            and err.args[0].args[0].args
+                            and 'timed out' in err.args[0].args[0].args[0]):
+                        # We're only interested in timeouts here
+                        raise
+                log.debug('Request timed out')
+                if retries < 0 or num_tries < retries:
+                    num_tries += 1
+                    log.debug('Attempt #%s failed', num_tries)
+                    time.sleep(0.5)
+                    continue
+                # Fail and raise an error
+                # Raising our own exception protects the user from the
+                # implementation detail of requests vs pycurl vs urllib
+                raise ServerError(
+                    method,
+                    -1,
+                    'Request timed out after %s seconds' % timeout)
+
+            except ValueError as e:
+                # The response wasn't JSON data
+                raise ServerError(
+                    method, output.status_code, 'Error returned from'
+                    ' json module while processing %(url)s: %(err)s\n%(output)s' %
+                    {
+                        'url': to_bytes(method),
+                        'err': to_bytes(e),
+                        'output': to_bytes(output.text),
+                    })
+
+            # Successfully returned data
+            break
 
         data = munchify(data)
 
