@@ -241,7 +241,37 @@ class OpenIdBaseClient(OpenIdProxyClient):
             try:
                 output = func(method, **kwargs)
             except LoginRequiredError:
-                raise AuthError()
+                raise AuthError('Unable to log into server.')
+
+            # When the python-requests module gets a response, it attempts
+            # to guess the encoding using chardet (or a fork)
+            # That process can take an extraordinarily long time for long
+            # response.text strings.. upwards of 30 minutes for FAS queries
+            # to /accounts/user/list JSON api!  Therefore, we cut that
+            # codepath off at the pass by assuming that the response is
+            # 'utf-8'.  We can make that assumption because we're only
+            # interfacing with servers that we run (and we know that they
+            # all return responses encoded 'utf-8').
+            response.encoding = 'utf-8'
+
+            http_status = response.status_code
+            if http_status == 401:
+                # Wrong token or username or password
+                log.debug('Authentication failed logging in')
+                raise AuthError('Unable to log into server.')
+            elif http_status >= 500:
+                if retries < 0 or num_tries < retries:
+                    # Retry the request
+                    num_tries += 1
+                    log.debug('Attempt #%s failed', num_tries)
+                    time.sleep(0.5)
+                    continue
+                # Fail and raise an error
+                try:
+                    msg = httplib.responses[http_status]
+                except (KeyError, AttributeError):
+                    msg = 'Unknown HTTP Server Response'
+                raise ServerError(url, http_status, msg)
 
             try:
                 data = output.json
