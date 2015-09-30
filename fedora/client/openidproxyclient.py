@@ -220,7 +220,8 @@ class OpenIdProxyClient(object):
 
     def __init__(self, base_url, login_url=None, useragent=None,
                  session_name='session', debug=False, insecure=False,
-                 openid_insecure=False, retries=None, timeout=None):
+                 openid_insecure=False, retries=None, timeout=None,
+                 retry_sleep=0.5):
         """Create a client configured for a particular service.
 
         :arg base_url: Base of every URL used to contact the server
@@ -248,6 +249,8 @@ class OpenIdProxyClient(object):
         :kwarg timeout: A float describing the timeout of the connection.
             The timeout only affects the connection process itself, not the
             downloading of the response body. Defaults to 120 seconds.
+        :kwarg retry_sleep: the time (in second) to wait between retries.
+            Defaults to `0.5` second.
 
         """
         self.debug = debug
@@ -272,6 +275,8 @@ class OpenIdProxyClient(object):
 
         # Have to do retries and timeout default values this way as BaseClient
         # sends None for these values if not overridden by the user.
+        self.retry_sleep = retry_sleep
+
         if retries is None:
             self.retries = 0
         else:
