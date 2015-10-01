@@ -184,7 +184,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
         return response
 
     def send_request(self, method, auth=False, verb='POST', retries=None,
-                     retry_sleep=0.5, **kwargs):
+                     retry_sleep=None, **kwargs):
         """Make an HTTP request to a server method.
 
         The given method is called with any parameters set in req_params.  If
@@ -216,7 +216,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
             negative number makes it try forever.  Default to use the
             :attr:`retries` value set on the instance or in :meth:`__init__`.
         :kwarg retry_sleep: the time (in second) to wait between retries.
-            Defaults to `0.5` second.
+            Defaults to `None` in which cases in uses the inherited `0.5`
+            second value.
 
         """
         # Decide on the set of auth cookies to use
@@ -237,6 +238,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
         if timeout is None:
             timeout = self.timeout
+
+        retry_sleep = retry_sleep or self.retry_sleep
 
         num_tries = 0
         while True:
