@@ -239,7 +239,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
         if timeout is None:
             timeout = self.timeout
 
-        retry_sleep = retry_sleep or self.retry_sleep
+        retry_sleep = retry_sleep if retry_sleep is not None else self.retry_sleep
 
         num_tries = 0
         while True:
