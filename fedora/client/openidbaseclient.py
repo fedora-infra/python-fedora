@@ -34,6 +34,8 @@
 
 import json
 import logging
+import httplib
+import time
 import os
 
 # pylint: disable-msg=F0401
@@ -49,6 +51,8 @@ except ImportError:
 
 import lockfile
 import requests
+import urllib3
+import ssl
 from functools import wraps
 from munch import munchify
 from kitchen.text.converters import to_bytes
@@ -100,7 +104,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
     def __init__(self, base_url, login_url=None, useragent=None, debug=False,
                  insecure=False, openid_insecure=False, username=None,
-                 cache_session=True, retries=None, timeout=None):
+                 cache_session=True,
+                 retries=None, retry_sleep=0.5, timeout=None):
         """Client for interacting with web services relying on fas_openid auth.
 
         :arg base_url: Base of every URL used to contact the server
@@ -126,6 +131,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
         :kwarg retries: if we get an unknown or possibly transient error from
             the server, retry this many times.  Setting this to a negative
             number makes it try forever.  Defaults to zero, no retries.
+        :kwarg retry_sleep: the time (in second) to wait between retries.
+            Defaults to `0.5` seconds.
         :kwarg timeout: A float describing the timeout of the connection. The
             timeout only affects the connection process itself, not the
             downloading of the response body. Defaults to 120 seconds.
@@ -141,6 +148,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
         self.insecure = insecure
         self.openid_insecure = openid_insecure
         self.retries = retries
+        self.retry_sleep = retry_sleep
         self.timeout = timeout
 
         # These are specific to OpenIdBaseClient
@@ -182,7 +190,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
         response = self._session.get(url, params=params, data=data, **kwargs)
         return response
 
-    def send_request(self, method, auth=False, verb='POST', **kwargs):
+    def send_request(self, method, auth=False, verb='POST',
+                     retries=None, retry_sleep=None, timeout=None, **kwargs):
         """Make an HTTP request to a server method.
 
         The given method is called with any parameters set in req_params.  If
@@ -191,16 +200,6 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
         :arg method: Method to call on the server.  It's a url fragment that
             comes after the :attr:`base_url` set in :meth:`__init__`.
-        :kwarg retries: if we get an unknown or possibly transient error from
-            the server, retry this many times.  Setting this to a negative
-            number makes it try forever.  Default to use the :attr:`retries`
-            value set on the instance or in :meth:`__init__` (which defaults
-            to zero, no retries).
-        :kwarg timeout: A float describing the timeout of the connection. The
-            timeout only affects the connection process itself, not the
-            downloading of the response body. Default to use the
-            :attr:`timeout` value set on the instance or in :meth:`__init__`
-            (which defaults to 120s).
         :kwarg auth: If True perform auth to the server, else do not.
         :kwarg req_params: Extra parameters to send to the server.
         :kwarg file_params: dict of files where the key is the name of the
@@ -209,6 +208,20 @@ class OpenIdBaseClient(OpenIdProxyClient):
             files to a single file field, pass the paths as a list of paths.
         :kwarg verb: HTTP verb to use.  GET and POST are currently supported.
             POST is the default.
+        :kwarg retries: if we get an unknown or possibly transient error
+            from the server, retry this many times.  Setting this to a
+            negative number makes it try forever.  Default to use the
+            :attr:`retries` value set on the instance or in :meth:`__init__`.
+        :kwarg retry_sleep: the time (in second) to wait between retries.
+            Defaults to `None` in which cases in uses the inherited
+            :attr:`retry_sleep` value set on the instance or in
+            :meth:`__init__`.
+        :kwarg timeout: A float describing the timeout of the connection. The
+            timeout only affects the connection process itself, not the
+            downloading of the response body. Default to use the
+            :attr:`timeout` value set on the instance or in :meth:`__init__`
+            (which defaults to 120s).
+
         """
         # Decide on the set of auth cookies to use
 
@@ -223,26 +236,103 @@ class OpenIdBaseClient(OpenIdProxyClient):
         except KeyError:
             raise Exception('Unknown HTTP verb')
 
-        try:
-            output = func(method, **kwargs)
-        except LoginRequiredError:
-            raise AuthError()
+        if retries is None:
+            retries = self.retries
 
-        try:
-            data = output.json
-            # Compatibility with newer python-requests
-            if callable(data):
-                data = data()
-        except ValueError as e:
-            # The response wasn't JSON data
-            raise ServerError(
-                method, output.status_code, 'Error returned from'
-                ' json module while processing %(url)s: %(err)s\n%(output)s' %
-                {
-                    'url': to_bytes(method),
-                    'err': to_bytes(e),
-                    'output': to_bytes(output.text),
-                })
+        if retry_sleep is None:
+            retry_sleep = self.retry_sleep
+
+        if timeout is None:
+            timeout = self.timeout
+
+        num_tries = 0
+        while True:
+            try:
+                try:
+                    output = func(method, timeout=timeout, **kwargs)
+                except LoginRequiredError:
+                    raise AuthError('Unable to log into server.')
+
+                # When the python-requests module gets a response, it attempts
+                # to guess the encoding using chardet (or a fork)
+                # That process can take an extraordinarily long time for long
+                # response.text strings.. upwards of 30 minutes for FAS queries
+                # to /accounts/user/list JSON api!  Therefore, we cut that
+                # codepath off at the pass by assuming that the response is
+                # 'utf-8'.  We can make that assumption because we're only
+                # interfacing with servers that we run (and we know that they
+                # all return responses encoded 'utf-8').
+                output.encoding = 'utf-8'
+
+                http_status = output.status_code
+                if http_status == 401:
+                    # Wrong token or username or password
+                    log.debug('Authentication failed logging in')
+                    raise AuthError('Unable to log into server.')
+                elif http_status >= 500:
+                    # Fail and raise an error
+                    try:
+                        msg = httplib.responses[http_status]
+                    except (KeyError, AttributeError):
+                        msg = 'Unknown HTTP Server Response'
+                    raise ServerError(output.url, http_status, msg)
+
+                data = output.json
+                # Compatibility with newer python-requests
+                if callable(data):
+                    data = data()
+            except (ServerError, requests.Timeout, requests.exceptions.SSLError) as err:
+                log.debug('Request timed out or failed %r' % err)
+                if retries is not None and retries < 0 or num_tries < retries:
+                    num_tries += 1
+                    log.debug('Attempt #%s failed', num_tries)
+                    time.sleep(retry_sleep)
+                    continue
+
+                if isinstance(err, requests.exceptions.SSLError):
+                    # And now we know how not to code a library exception
+                    # hierarchy...  We're expecting that requests is raising
+                    # the following stupidity:
+                    # requests.exceptions.SSLError(
+                    #   urllib3.exceptions.SSLError(
+                    #     ssl.SSLError('The read operation timed out')))
+                    # If we weren't interested in reraising the exception with
+                    # full traceback we could use a try: except instead of
+                    # this gross conditional.  But we need to code defensively
+                    # because we don't want to raise an unrelated exception
+                    # here and if requests/urllib3 can do this sort of
+                    # nonsense, they may change the nonsense in the future
+                    if not (err.args and isinstance(
+                                err.args[0], urllib3.exceptions.SSLError)
+                            and err.args[0].args
+                            and isinstance(err.args[0].args[0], ssl.SSLError)
+                            and err.args[0].args[0].args
+                            and 'timed out' in err.args[0].args[0].args[0]):
+                        # We're only interested in timeouts here
+                        raise
+
+                # Fail and raise an error
+                # Raising our own exception protects the user from the
+                # implementation detail of requests vs pycurl vs urllib
+                if isinstance(err, ServerError):
+                    raise
+                else:
+                    msg = 'Request timed out after %s seconds' % timeout
+                    raise ServerError(method, -1, msg)
+
+            except ValueError as e:
+                # The response wasn't JSON data
+                raise ServerError(
+                    method, output.status_code, 'Error returned from'
+                    ' json module while processing %(url)s: %(err)s\n%(output)s' %
+                    {
+                        'url': to_bytes(method),
+                        'err': to_bytes(e),
+                        'output': to_bytes(output.text),
+                    })
+
+            # Successfully returned data
+            break
 
         data = munchify(data)
 
