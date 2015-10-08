@@ -510,10 +510,7 @@ class ProxyClient(object):
         new_session = response.cookies.get(self.session_name, '')
 
         try:
-            data = response.json
-            # Compatibility with newer python-requests
-            if callable(data):
-                data = data()
+            data = response.json()
         except ValueError as e:
             # The response wasn't JSON data
             raise ServerError(
