@@ -218,6 +218,10 @@ class OpenIdBaseClient(OpenIdProxyClient):
                                         (False, 'GET'): self._session.get,
                                         (True, 'POST'): self._authed_post,
                                         (True, 'GET'): self._authed_get}
+
+        if 'timeout' not in kwargs:
+            kwargs['timeout'] = self.timeout
+
         try:
             func = self._authed_verb_dispatcher[(auth, verb)]
         except KeyError:
