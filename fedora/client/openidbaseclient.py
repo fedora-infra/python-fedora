@@ -49,6 +49,9 @@ except ImportError:
 
 import lockfile
 import requests
+import requests.adapters
+from urllib3.util import Retry
+
 from functools import wraps
 from munch import munchify
 from kitchen.text.converters import to_bytes
@@ -100,7 +103,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
     def __init__(self, base_url, login_url=None, useragent=None, debug=False,
                  insecure=False, openid_insecure=False, username=None,
-                 cache_session=True, retries=None, timeout=None):
+                 cache_session=True, retries=None, timeout=None,
+                 retry_backoff_factor=0):
         """Client for interacting with web services relying on fas_openid auth.
 
         :arg base_url: Base of every URL used to contact the server
@@ -129,7 +133,9 @@ class OpenIdBaseClient(OpenIdProxyClient):
         :kwarg timeout: A float describing the timeout of the connection. The
             timeout only affects the connection process itself, not the
             downloading of the response body. Defaults to 120 seconds.
-
+        :kwarg retry_backoff_factor: Backoff factor to apply between attempts.
+            Sleep for `{backoff factor}*(2 ^ ({number of total retries} - 1))`
+            Defaults to 0 (backoff disabled).
         """
 
         # These are also needed by OpenIdProxyClient
@@ -154,6 +160,20 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
         # python-requests session.  Holds onto cookies
         self._session = requests.session()
+
+        # Also hold on to retry logic.
+        # http://www.coglib.com/~icordasc/blog/2014/12/retries-in-requests.html
+        if retries is not None:
+            prefixes = ['http://', 'https://']
+            for prefix in prefixes:
+                self._session.mount(prefix, requests.adapters.HTTPAdapter(
+                    max_retries=Retry(
+                        total=retries,
+                        status_forcelist=[500],
+                        backoff_factor=retry_backoff_factor,
+                    ),
+                ))
+
         # See if we have any cookies kicking around from a previous run
         self._load_cookies()
 
@@ -191,16 +211,6 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
         :arg method: Method to call on the server.  It's a url fragment that
             comes after the :attr:`base_url` set in :meth:`__init__`.
-        :kwarg retries: if we get an unknown or possibly transient error from
-            the server, retry this many times.  Setting this to a negative
-            number makes it try forever.  Default to use the :attr:`retries`
-            value set on the instance or in :meth:`__init__` (which defaults
-            to zero, no retries).
-        :kwarg timeout: A float describing the timeout of the connection. The
-            timeout only affects the connection process itself, not the
-            downloading of the response body. Default to use the
-            :attr:`timeout` value set on the instance or in :meth:`__init__`
-            (which defaults to 120s).
         :kwarg auth: If True perform auth to the server, else do not.
         :kwarg req_params: Extra parameters to send to the server.
         :kwarg file_params: dict of files where the key is the name of the
