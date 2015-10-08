@@ -229,10 +229,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
             raise AuthError()
 
         try:
-            data = output.json
-            # Compatibility with newer python-requests
-            if callable(data):
-                data = data()
+            data = output.json()
         except ValueError as e:
             # The response wasn't JSON data
             raise ServerError(

@@ -74,9 +74,7 @@ def BodhiClient(base_url=BASE_URL, staging=False, **kwargs):
     response = requests.get(api_url)
 
     try:
-        data = response.json
-        if callable(data):
-            data = data()
+        data = response.json()
         server_version = LooseVersion(data['version'])
     except Exception as e:
         if 'json' in str(type(e)).lower() or 'json' in str(e).lower():
