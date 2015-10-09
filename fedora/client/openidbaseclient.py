@@ -49,6 +49,9 @@ except ImportError:
 
 import lockfile
 import requests
+import requests.adapters
+from urllib3.util import Retry
+
 from functools import wraps
 from munch import munchify
 from kitchen.text.converters import to_bytes
@@ -100,7 +103,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
     def __init__(self, base_url, login_url=None, useragent=None, debug=False,
                  insecure=False, openid_insecure=False, username=None,
-                 cache_session=True, retries=None, timeout=None):
+                 cache_session=True, retries=None, timeout=None,
+                 retry_backoff_factor=0):
         """Client for interacting with web services relying on fas_openid auth.
 
         :arg base_url: Base of every URL used to contact the server
@@ -126,10 +130,18 @@ class OpenIdBaseClient(OpenIdProxyClient):
         :kwarg retries: if we get an unknown or possibly transient error from
             the server, retry this many times.  Setting this to a negative
             number makes it try forever.  Defaults to zero, no retries.
+            Note that this can only be set during object initialization.
         :kwarg timeout: A float describing the timeout of the connection. The
             timeout only affects the connection process itself, not the
             downloading of the response body. Defaults to 120 seconds.
+        :kwarg retry_backoff_factor: Exponential backoff factor to apply in
+            between retry attempts.  We will sleep for:
 
+                `{retry_backoff_factor}*(2 ^ ({number of failed retries} - 1))`
+
+            ...seconds inbetween attempts.  The backoff factor scales the rate
+            at which we back off.   Defaults to 0 (backoff disabled).
+            Note that this attribute can only be set at object initialization.
         """
 
         # These are also needed by OpenIdProxyClient
@@ -154,6 +166,21 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
         # python-requests session.  Holds onto cookies
         self._session = requests.session()
+
+        # Also hold on to retry logic.
+        # http://www.coglib.com/~icordasc/blog/2014/12/retries-in-requests.html
+        server_errors = [500, 501, 502, 503, 504, 506, 507, 508, 509, 599]
+        if retries is not None:
+            prefixes = ['http://', 'https://']
+            for prefix in prefixes:
+                self._session.mount(prefix, requests.adapters.HTTPAdapter(
+                    max_retries=Retry(
+                        total=retries,
+                        status_forcelist=server_errors,
+                        backoff_factor=retry_backoff_factor,
+                    ),
+                ))
+
         # See if we have any cookies kicking around from a previous run
         self._load_cookies()
 
@@ -191,16 +218,6 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
         :arg method: Method to call on the server.  It's a url fragment that
             comes after the :attr:`base_url` set in :meth:`__init__`.
-        :kwarg retries: if we get an unknown or possibly transient error from
-            the server, retry this many times.  Setting this to a negative
-            number makes it try forever.  Default to use the :attr:`retries`
-            value set on the instance or in :meth:`__init__` (which defaults
-            to zero, no retries).
-        :kwarg timeout: A float describing the timeout of the connection. The
-            timeout only affects the connection process itself, not the
-            downloading of the response body. Default to use the
-            :attr:`timeout` value set on the instance or in :meth:`__init__`
-            (which defaults to 120s).
         :kwarg auth: If True perform auth to the server, else do not.
         :kwarg req_params: Extra parameters to send to the server.
         :kwarg file_params: dict of files where the key is the name of the
@@ -218,6 +235,10 @@ class OpenIdBaseClient(OpenIdProxyClient):
                                         (False, 'GET'): self._session.get,
                                         (True, 'POST'): self._authed_post,
                                         (True, 'GET'): self._authed_get}
+
+        if 'timeout' not in kwargs:
+            kwargs['timeout'] = self.timeout
+
         try:
             func = self._authed_verb_dispatcher[(auth, verb)]
         except KeyError:
