@@ -9,7 +9,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.5.6
+Version:        0.6.0
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -130,9 +130,7 @@ Requires: python-sqlalchemy
 %if 0%{?fedora} || 0%{?rhel} >= 7
 Requires: python-mako >= 0.3.6
 %else
-%if 0%{?rhel} <= 6
-Requires: python-mako0.4
-%endif
+Requires: python-mako0.4 >= 0.3.6
 %endif
 Requires: python-repoze-who-friendlyform
 
@@ -268,6 +266,13 @@ rm -rf %{buildroot}%{python2_sitelib}/tests/
 %{python2_sitelib}/flask_fas_openid.py*
 
 %changelog
+* Fri Oct 09 2015 Ralph Bean <rbean@redhat.com> - 0.6.0-1
+- Cache session cookies between use for clients using OpenID.
+- Retry failed requests for clients using OpenID
+- Remove Bodhi server version detection code.
+- Python3 support for the BodhiClient.
+- Drop support for python-requests-1.x
+
 * Fri Sep 04 2015 Ralph Bean <rbean@redhat.com> - 0.5.6-1
 - Python2.6 fix for el6.
 
