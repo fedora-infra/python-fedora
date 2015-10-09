@@ -130,12 +130,18 @@ class OpenIdBaseClient(OpenIdProxyClient):
         :kwarg retries: if we get an unknown or possibly transient error from
             the server, retry this many times.  Setting this to a negative
             number makes it try forever.  Defaults to zero, no retries.
+            Note that this can only be set during object initialization.
         :kwarg timeout: A float describing the timeout of the connection. The
             timeout only affects the connection process itself, not the
             downloading of the response body. Defaults to 120 seconds.
-        :kwarg retry_backoff_factor: Backoff factor to apply between attempts.
-            Sleep for `{backoff factor}*(2 ^ ({number of total retries} - 1))`
-            Defaults to 0 (backoff disabled).
+        :kwarg retry_backoff_factor: Exponential backoff factor to apply in
+            between retry attempts.  We will sleep for:
+
+                `{backoff factor}*(2 ^ ({number of failed retries} - 1))`
+
+            ...seconds inbetween attempts.  The backoff factor scales the rate
+            at which we back off.   Defaults to 0 (backoff disabled).
+            Note that this attribute can only be set at object initialization.
         """
 
         # These are also needed by OpenIdProxyClient
