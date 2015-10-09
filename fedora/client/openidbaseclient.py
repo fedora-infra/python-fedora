@@ -137,7 +137,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
         :kwarg retry_backoff_factor: Exponential backoff factor to apply in
             between retry attempts.  We will sleep for:
 
-                `{backoff factor}*(2 ^ ({number of failed retries} - 1))`
+                `{retry_backoff_factor}*(2 ^ ({number of failed retries} - 1))`
 
             ...seconds inbetween attempts.  The backoff factor scales the rate
             at which we back off.   Defaults to 0 (backoff disabled).
