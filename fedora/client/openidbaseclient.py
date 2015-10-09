@@ -302,7 +302,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
         try:
             with self.cache_lock:
                 with open(b_SESSION_FILE, 'rb') as f:
-                    data = json.loads(f.read())
+                    data = json.loads(f.read().decode('utf-8'))
             for key, value in data[self.session_key]:
                 self._session.cookies[key] = value
         except KeyError:
@@ -311,7 +311,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
             # The file doesn't exist, so create it.
             log.debug("Creating %s", b_SESSION_FILE)
             with open(b_SESSION_FILE, 'wb') as f:
-                f.write(json.dumps({}))
+                f.write(json.dumps({}).encode('utf-8'))
 
     def _save_cookies(self):
         if not self.cache_session:
@@ -320,14 +320,14 @@ class OpenIdBaseClient(OpenIdProxyClient):
         with self.cache_lock:
             try:
                 with open(b_SESSION_FILE, 'rb') as f:
-                    data = json.loads(f.read())
+                    data = json.loads(f.read().decode('utf-8'))
             except Exception:
                 log.warn("Failed to open cookie cache before saving.")
                 data = {}
 
             data[self.session_key] = self._session.cookies.items()
             with open(b_SESSION_FILE, 'wb') as f:
-                f.write(json.dumps(data))
+                f.write(json.dumps(data).encode('utf-8'))
 
 
 __all__ = ('OpenIdBaseClient', 'requires_login')
