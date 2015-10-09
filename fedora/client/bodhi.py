@@ -69,27 +69,8 @@ def BodhiClient(base_url=BASE_URL, staging=False, **kwargs):
         log.info('Using bodhi2 STAGING environment')
         base_url = STG_BASE_URL
 
-    log.debug('Querying bodhi API version')
-    api_url = base_url + 'api_version'
-    response = requests.get(api_url)
-
-    try:
-        data = response.json()
-        server_version = LooseVersion(data['version'])
-    except Exception as e:
-        if 'json' in str(type(e)).lower() or 'json' in str(e).lower():
-            # Claim that bodhi1 is on the server
-            server_version = LooseVersion('0.9')
-        else:
-            raise
-
-    if server_version >= LooseVersion('2.0'):
-        log.debug('Bodhi2 detected')
-        base_url = 'https://{0}/'.format(urlparse(response.url).netloc)
-        return Bodhi2Client(base_url=base_url, staging=staging, **kwargs)
-    else:
-        log.debug('Bodhi1 detected')
-        return Bodhi1Client(base_url, **kwargs)
+    log.debug('Using Bodhi2Client.')
+    return Bodhi2Client(base_url=base_url, staging=staging, **kwargs)
 
 
 def errorhandled(method):
