@@ -50,7 +50,7 @@ except ImportError:
 import lockfile
 import requests
 import requests.adapters
-from urllib3.util import Retry
+from requests.packages.urllib3.util import Retry
 
 from functools import wraps
 from munch import munchify
