@@ -1,7 +1,7 @@
 #!/usr/bin/env python2 -tt
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2013-2014  Red Hat, Inc.
+# Copyright (C) 2013-2015  Red Hat, Inc.
 # This file is part of python-fedora
 #
 # python-fedora is free software; you can redistribute it and/or
@@ -22,6 +22,7 @@
 
 .. moduleauthor:: Pierre-Yves Chibon <pingou@fedoraproject.org>
 .. moduleauthor:: Toshio Kuratomi <toshio@fedoraproject.org>
+.. moduleauthor:: Ralph Bean <rbean@redhat.com>
 
 .. versionadded: 0.3.35
 
@@ -31,11 +32,9 @@
 #   or py2 not both.
 # :E0611: No name $X in module: This was renamed in python3
 
+import json
 import logging
 import os
-import sqlite3
-from collections import defaultdict
-from functools import partial
 
 # pylint: disable-msg=F0401
 try:
@@ -48,7 +47,11 @@ except ImportError:
 # pylint: enable-msg=F0401,E0611
 
 
+import lockfile
 import requests
+import requests.adapters
+from requests.packages.urllib3.util import Retry
+
 from functools import wraps
 from munch import munchify
 from kitchen.text.converters import to_bytes
@@ -61,7 +64,7 @@ from fedora.client.openidproxyclient import (
 log = logging.getLogger(__name__)
 
 b_SESSION_DIR = os.path.join(os.path.expanduser('~'), '.fedora')
-b_SESSION_FILE = os.path.join(b_SESSION_DIR, 'baseclient-sessions.sqlite')
+b_SESSION_FILE = os.path.join(b_SESSION_DIR, 'openidbaseclient-sessions.cache')
 
 
 def requires_login(func):
@@ -80,10 +83,14 @@ def requires_login(func):
     """
     def _decorator(request, *args, **kwargs):
         """ Run the function and check if it redirected to the openid form.
+        Or if we got a 403
         """
         output = func(request, *args, **kwargs)
         if output and \
                 '<title>OpenID transaction in progress</title>' in output.text:
+            raise LoginRequiredError(
+                '{0} requires a logged in user'.format(output.url))
+        elif output and output.status_code == 403:
             raise LoginRequiredError(
                 '{0} requires a logged in user'.format(output.url))
         return output
@@ -96,9 +103,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
     def __init__(self, base_url, login_url=None, useragent=None, debug=False,
                  insecure=False, openid_insecure=False, username=None,
-                 session_id=None, session_name='session',
-                 openid_session_id=None, openid_session_name='FAS_OPENID',
-                 cache_session=True, retries=None, timeout=None):
+                 cache_session=True, retries=None, timeout=None,
+                 retry_backoff_factor=0):
         """Client for interacting with web services relying on fas_openid auth.
 
         :arg base_url: Base of every URL used to contact the server
@@ -119,20 +125,23 @@ class OpenIdBaseClient(OpenIdProxyClient):
             server with a self-signed certificate but it should be off in
             production.
         :kwarg username: Username for establishing authenticated connections
-        :kwarg session_id: id of the user's session
-        :kwarg session_name: name of the cookie to use with session handling
-        :kwarg openid_session_id: id of the user's openid session
-        :kwarg openid_session_name: name of the cookie to use with openid
-            session handling
         :kwarg cache_session: If set to true, cache the user's session data on
             the filesystem between runs
         :kwarg retries: if we get an unknown or possibly transient error from
             the server, retry this many times.  Setting this to a negative
             number makes it try forever.  Defaults to zero, no retries.
+            Note that this can only be set during object initialization.
         :kwarg timeout: A float describing the timeout of the connection. The
             timeout only affects the connection process itself, not the
             downloading of the response body. Defaults to 120 seconds.
+        :kwarg retry_backoff_factor: Exponential backoff factor to apply in
+            between retry attempts.  We will sleep for:
 
+                `{retry_backoff_factor}*(2 ^ ({number of failed retries} - 1))`
+
+            ...seconds inbetween attempts.  The backoff factor scales the rate
+            at which we back off.   Defaults to 0 (backoff disabled).
+            Note that this attribute can only be set at object initialization.
         """
 
         # These are also needed by OpenIdProxyClient
@@ -145,28 +154,35 @@ class OpenIdBaseClient(OpenIdProxyClient):
         self.openid_insecure = openid_insecure
         self.retries = retries
         self.timeout = timeout
-        self.session_name = session_name
-        self.openid_session_name = openid_session_name
 
         # These are specific to OpenIdBaseClient
         self.username = username
         self.cache_session = cache_session
+        self.cache_lock = lockfile.FileLock(b_SESSION_FILE)
 
         # Make sure the database for storing the session cookies exists
         if cache_session:
-            self._db = self._initialize_session_cache()
-            if not self._db:
-                self.cache_session = False
-
-        # Session cookie that identifies this user to the application
-        self._session_id_map = defaultdict(str)
-        if session_id:
-            self.session_id = session_id
-        if openid_session_id:
-            self.openid_session_id = openid_session_id
+            self._initialize_session_cache()
 
         # python-requests session.  Holds onto cookies
         self._session = requests.session()
+
+        # Also hold on to retry logic.
+        # http://www.coglib.com/~icordasc/blog/2014/12/retries-in-requests.html
+        server_errors = [500, 501, 502, 503, 504, 506, 507, 508, 509, 599]
+        if retries is not None:
+            prefixes = ['http://', 'https://']
+            for prefix in prefixes:
+                self._session.mount(prefix, requests.adapters.HTTPAdapter(
+                    max_retries=Retry(
+                        total=retries,
+                        status_forcelist=server_errors,
+                        backoff_factor=retry_backoff_factor,
+                    ),
+                ))
+
+        # See if we have any cookies kicking around from a previous run
+        self._load_cookies()
 
     def _initialize_session_cache(self):
         # Note -- fallback to returning None on any problems as this isn't
@@ -178,122 +194,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
             except OSError as err:
                 log.warning('Unable to create {file}: {error}'.format(
                     file=b_SESSION_DIR, error=err))
+                self.cache_session = False
                 return None
-
-        if not os.path.exists(b_SESSION_FILE):
-            dbcon = sqlite3.connect(b_SESSION_FILE)
-            cursor = dbcon.cursor()
-            try:
-                cursor.execute('create table sessions (username text,'
-                               ' base_url text, session_id text,'
-                               ' primary key (username, base_url))')
-            except sqlite3.DatabaseError as err:
-                # Probably not a database
-                log.warning('Unable to initialize {file}: {error}'.format(
-                    file=b_SESSION_FILE, error=err))
-                return None
-            dbcon.commit()
-        else:
-            try:
-                dbcon = sqlite3.connect(b_SESSION_FILE)
-            except sqlite3.OperationalError as err:
-                # Likely permission denied
-                log.warning('Unable to connect to {file}: {error}'.format(
-                    file=b_SESSION_FILE, error=err))
-                return None
-        return dbcon
-
-    def _get_id(self, base_url=None):
-        # base_url is only sent as a param if we're looking for the openid
-        # session
-        base_url = base_url or self.base_url
-
-        username = self.username or ''
-
-        session_id_key = '{}:{}'.format(base_url, username)
-        if self._session_id_map[session_id_key]:
-            # Cached in memory
-            return self._session_id_map[session_id_key]
-
-        if username and self.cache_session:
-            # Look for a session on disk
-            cursor = self._db.cursor()
-            cursor.execute('select * from sessions where'
-                           ' username = ? and base_url = ?',
-                           (username, base_url))
-            found_sessions = cursor.fetchall()
-            if found_sessions:
-                self._session_id_map[session_id_key] = found_sessions[0]
-
-        if not self._session_id_map[session_id_key]:
-            log.debug('No session cached for "{username}"'.format(
-                username=self.username))
-        return self._session_id_map[session_id_key]
-
-    def _set_id(self, session_id, base_url=None):
-        #if not self.username:
-        # base_url is only sent as a param if we're looking for the openid
-        # session
-        base_url = base_url or self.base_url
-
-        username = self.username or ''
-
-        # Cache in memory
-        session_id_key = '{}:{}'.format(base_url, username)
-        self._session_id_map[session_id_key] = session_id
-
-        if username and self.cache_session:
-            # Save to disk as well
-            cursor = self._db.cursor()
-            try:
-                cursor.exectue('insert into sessions'
-                               ' (session_id, username, base_url)'
-                               ' values (?, ?, ?)',
-                               (session_id, username, base_url))
-            except sqlite3.IntegrityError:
-                # Record already exists for that username and url
-                cursor.execute('update sessions set session_id = ? where'
-                               ' username = ? and base_url = ?',
-                               (session_id, username, base_url))
-            cursor.commit()
-
-    def _del_id(self, base_url=None):
-        # base_url is only sent as a param if we're looking for the openid
-        # session
-        base_url = base_url or self.base_url
-
-        username = self.username or ''
-
-        # Remove from the in-memory cache
-        session_id_key = '{}:{}'.format(base_url, username)
-        del self._session_id_map[session_id_key]
-
-        if username and self.cache_session:
-            # Remove from the disk cache as well
-            cursor = self._db.cursor()
-            cursor.execute('delete from sessions where'
-                           ' username = ? and base_url = ?',
-                           (username, base_url))
-
-    session_id = property(
-        _get_id,
-        _set_id,
-        _del_id,
-        """The session_id.
-
-        The session id is saved in a file in case it is needed in
-        consecutive runs of BaseClient.
-        """)
-
-    openid_session_id = property(
-        partial(_get_id, base_url='FAS_OPENID'),
-        partial(_set_id, base_url='FAS_OPENID'),
-        partial(_del_id, base_url='FAS_OPENID'),
-        """The openid_session_id.
-
-        The openid session id is saved in a file in case it is needed in
-        consecutive runs of BaseClient.
-        """)
 
     @requires_login
     def _authed_post(self, url, params=None, data=None, **kwargs):
@@ -316,16 +218,6 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
         :arg method: Method to call on the server.  It's a url fragment that
             comes after the :attr:`base_url` set in :meth:`__init__`.
-        :kwarg retries: if we get an unknown or possibly transient error from
-            the server, retry this many times.  Setting this to a negative
-            number makes it try forever.  Default to use the :attr:`retries`
-            value set on the instance or in :meth:`__init__` (which defaults
-            to zero, no retries).
-        :kwarg timeout: A float describing the timeout of the connection. The
-            timeout only affects the connection process itself, not the
-            downloading of the response body. Default to use the
-            :attr:`timeout` value set on the instance or in :meth:`__init__`
-            (which defaults to 120s).
         :kwarg auth: If True perform auth to the server, else do not.
         :kwarg req_params: Extra parameters to send to the server.
         :kwarg file_params: dict of files where the key is the name of the
@@ -343,29 +235,22 @@ class OpenIdBaseClient(OpenIdProxyClient):
                                         (False, 'GET'): self._session.get,
                                         (True, 'POST'): self._authed_post,
                                         (True, 'GET'): self._authed_get}
+
+        if 'timeout' not in kwargs:
+            kwargs['timeout'] = self.timeout
+
         try:
             func = self._authed_verb_dispatcher[(auth, verb)]
         except KeyError:
             raise Exception('Unknown HTTP verb')
 
-        if auth:
-            auth_params = {'session_id': self.session_id,
-                           'openid_session_id': self.openid_session_id}
-            try:
-                output = func(method, auth_params, **kwargs)
-            except LoginRequiredError:
-                raise AuthError()
-        else:
-            try:
-                output = func(method, **kwargs)
-            except LoginRequiredError:
-                raise AuthError()
+        try:
+            output = func(method, **kwargs)
+        except LoginRequiredError:
+            raise AuthError()
 
         try:
-            data = output.json
-            # Compatibility with newer python-requests
-            if callable(data):
-                data = data()
+            data = output.json()
         except ValueError as e:
             # The response wasn't JSON data
             raise ServerError(
@@ -380,7 +265,6 @@ class OpenIdBaseClient(OpenIdProxyClient):
         data = munchify(data)
 
         return data
-
 
     def login(self, username, password, otp=None):
         """ Open a session for the user.
@@ -401,6 +285,49 @@ class OpenIdBaseClient(OpenIdProxyClient):
             password=password,
             otp=otp,
             openid_insecure=self.openid_insecure)
+        self._save_cookies()
         return response
+
+    @property
+    def session_key(self):
+        return "%s:%s" % (self.base_url, self.username or '')
+
+    def has_cookies(self):
+        return bool(self._session.cookies)
+
+    def _load_cookies(self):
+        if not self.cache_session:
+            return
+
+        try:
+            with self.cache_lock:
+                with open(b_SESSION_FILE, 'rb') as f:
+                    data = json.loads(f.read().decode('utf-8'))
+            for key, value in data[self.session_key]:
+                self._session.cookies[key] = value
+        except KeyError:
+            log.debug("No pre-existing session for %s" % self.session_key)
+        except IOError:
+            # The file doesn't exist, so create it.
+            log.debug("Creating %s", b_SESSION_FILE)
+            with open(b_SESSION_FILE, 'wb') as f:
+                f.write(json.dumps({}).encode('utf-8'))
+
+    def _save_cookies(self):
+        if not self.cache_session:
+            return
+
+        with self.cache_lock:
+            try:
+                with open(b_SESSION_FILE, 'rb') as f:
+                    data = json.loads(f.read().decode('utf-8'))
+            except Exception:
+                log.warn("Failed to open cookie cache before saving.")
+                data = {}
+
+            data[self.session_key] = self._session.cookies.items()
+            with open(b_SESSION_FILE, 'wb') as f:
+                f.write(json.dumps(data).encode('utf-8'))
+
 
 __all__ = ('OpenIdBaseClient', 'requires_login')

@@ -3,8 +3,8 @@ Python Fedora Module
 ====================
 
 :Author: Toshio Kuratomi
-:Date: 19 August 2015
-:Version: 0.5.x
+:Date: 09 October 2015
+:Version: 0.6.x
 
 The Fedora module provides a python API for building `Fedora Services`_ and
 clients that connect to them.  It has functions and classes that help to build
@@ -30,7 +30,7 @@ Dependencies
 ``python-fedora`` requires the ``munch``, ``kitchen``, and ``requests`` python
 modules.  It used to use ``pycurl``, but was updated to use ``requests`` as of
 version ``0.3.32``.
-The ``flask_fas_openid`` module requires the ``python-openid`` and 
+The ``flask_fas_openid`` module requires the ``python-openid`` and
 ``python-openid-teams`` modules.
 
 ----------
@@ -38,18 +38,18 @@ Installing
 ----------
 
 ``python-fedora`` is found in rpm form in Fedora proper.  Sometimes a new
-version will be placed in the Fedora Infrastructure yum repository for testing
+version will be placed in the Fedora Infrastructure ``yum`` repository for testing
 within Infrastructure before being released to the general public.  Installing
 from the yum repository should be as easy as::
 
-	# yum install python-fedora
+	$ yum install python-fedora
 
 If you want to install from a checkout of the development branch, follow these
 procedures::
 
-    # git clone https://github.com/fedora-infra/python-fedora.git
-    # cd python-fedora
-    # ./setup.py install
+    $ git clone https://github.com/fedora-infra/python-fedora.git
+    $ cd python-fedora
+    $ ./setup.py install
 
 See the configuration notes in each section for information on configuring
 your application after install.
@@ -72,7 +72,7 @@ servre to retrieve information about users.
 Note: This API is not feature complete. If you'd like to help add methods,
 document the existing methods, or otherwise aid in development of this API
 please contact us on the infrastructure list: infrastructure@lists.fedoraproject.org
-or on IRC: lmacken, abadger1999, and ricky in #fedora-admin, irc.freenode.net.
+or on IRC: lmacken, abadger1999, and ricky in ``#fedora-admin``, ``irc.freenode.net``
 
 Using the general API requires instantiating an ``AccountSystem`` object. You
 then use methods on the ``AccountSystem`` to get and set information on the
@@ -87,8 +87,8 @@ interpreter or, for instance, by running::
 Here's an example of using the ``AccountSystem``::
 
 	from fedora.accounts.fas2 import AccountSystem
-	from fedora.client import AuthError,
-x
+	from fedora.client import AuthError
+
 	# Get an AccountSystem object.  All AccountSystem methods need to be
 	# authenticated so you might as well give username and password here.
 	fas = AccountSystem(username='foo', password='bar')
@@ -143,10 +143,12 @@ Building the docs
 -----------------
 
 You'll need to install python-sphinx for this::
-  yum install python-sphinx
+
+    yum install python-sphinx
 
 Then run this command::
-  python setup.py build_sphinx
+
+    python setup.py build_sphinx
 
 ------------
 Translations
@@ -156,14 +158,15 @@ The strings in python-fedora has mainly error messages.  These are translated
 so we should make sure that translators are able to translate them when
 necessary.  You will need babel, setuptools, and zanata-client to run these
 commands::
-  yum install babel setuptools zanata-client
+
+    yum install babel setuptools zanata-client
 
 Much information about using zanata for translations can be found in the
 `zanata user's guide`_.  The information in this section is largely from
 experimenting with the information in the `zanata client documentation`_
 
 .. _`zanata user's guide`: http://zanata.readthedocs.org
-.. ~`zanata client documentation`: http://zanata.readthedocs.org/en/latest/user-guide/client-configuration/
+.. _`zanata client documentation`: http://zanata-client.readthedocs.org/en/latest/
 
 Updating the POT File
 =====================
@@ -171,18 +174,20 @@ Updating the POT File
 When you make changes that change the translatable strings in the package, you
 should update the POT file.  Use the following distutils command (provided by
 python-babel) to do that::
-  ./setup.py extract_messages -o translations/python-fedora.pot
-  zanata-cli push
+
+    ./setup.py extract_messages -o translations/python-fedora.pot
+    zanata-cli push
 
 Then commit your changes to source control.
 
 Updating the PO Files
 =====================
 
-fedora.zanata.org will merge the strings inside the pot file with the already
+`fedora.zanata.org <https://fedora.zanata.org/>`_ will merge the strings inside the pot file with the already
 translated strings.  To merge these, we just need to pull revised versions of
 the po files::
-  zanata-cli pull
+
+    zanata-cli pull
 
 Then commit the changes to source control (look for any brand new PO files that
 zanata may have created).
@@ -193,15 +198,16 @@ Creating a new PO File
 The easiest way to create a new po file for a new language is in 's
 web UI.
 
-* Visit this link:
-  https://fedora.zanata.org/iteration/view/python-fedora
+* Visit `this <https://fedora.zanata.org/iteration/view/python-fedora>`_
+
 
 Compiling Message Catalogs
 ==========================
 
 Message catalogs can be compiled for testing and should always be compiled
 just prior to release.  Do this with the following script::
-  python releaseutils.py build_catalogs
+
+    python releaseutils.py build_catalogs
 
 Compiled message catalogs should not be committed to source control.
 
@@ -220,75 +226,89 @@ Release
    develop branch.
 
 1) Checkout a copy of the repository and setup git flow::
-     git clone git@github.com:fedora-infra/python-fedora.git
-     cd python-fedora
-     git flow init
 
-2) Create a release branch for all of our work
+        git clone https://github.com/fedora-infra/python-fedora.git
+        cd python-fedora
+        git flow init
 
-     git flow release start $VERSION
+2) Create a release branch for all of our work::
+
+        git flow release start $VERSION
 
 3) Download new translations and verify they are valid by compiling them::
-     zanata-cli pull
-     python releaseutils.py build_catalogs
-     # If everything checks out
-     git commit -m 'Merge new translations from fedora.zanata.org'
 
-4) Make sure that the NEWS file is accurate (use git log if needed).
+        zanata-cli pull
+        python releaseutils.py build_catalogs
+        # If everything checks out
+        git commit -m 'Merge new translations from fedora.zanata.org'
+
+4) Make sure that the NEWS file is accurate (use ``git log`` if needed).
 
 5) Update python-fedora.spec and fedora/release.py with the new version
-   information.
-     # Make edits to python-fedora.spec and release.py
-     git commit
+   information.::
+
+        # Make edits to python-fedora.spec and release.py
+        git commit
 
 6) Make sure the docs are proper and publish them::
-     # Build docs and check for errors
-     python setup.py build_sphinx
-     # pypi
-     python setup.py upload_docs
+
+        # Build docs and check for errors
+        python setup.py build_sphinx
+        # pypi
+        python setup.py upload_docs
 
 7) Push the release branch to the server::
-     # Update files
-     git flow release publish $VERSION
+
+        # Update files
+        git flow release publish $VERSION
 
 8) Go to a temporary directory and checkout a copy of the release::
-     cd ..
-     git clone git@github.com:fedora-infra/python-fedora.git release
-     cd release
-     git checkout release/$VERSION
+
+        cd ..
+        git clone https://github.com/fedora-infra/python-fedora.git release
+        cd release
+        git checkout release/$VERSION
 
 9) Create the tarball in this clean checkout::
-     python setup.py sdist
+
+        python setup.py sdist
 
 10) copy the dist/python-fedora-VERSION.tar.gz and python-fedora.spec files to
     where you build Fedora RPMS.  Do a test build::
-     cp dist/python-fedora-*.tar.gz python-fedora.spec /srv/git/python-fedora/
-     pushd /srv/git/python-fedora/
-     fedpkg switch-branch master
-     make mockbuild
+
+        cp dist/python-fedora-*.tar.gz python-fedora.spec /srv/git/python-fedora/
+        pushd /srv/git/python-fedora/
+        fedpkg switch-branch master
+        make mockbuild
 
 11) Make sure the build completes.  Run rpmlint on the results.  Install and
     test the new packages::
-     rpmlint *rpm
-     sudo rpm -Uvh *noarch.rpm
-     [test]
+
+        rpmlint *rpm
+        sudo rpm -Uvh *noarch.rpm
+        [test]
 
 12) When satisfied that the build works, create a fresh tarball and upload to
     pypi::
-     popd   # Back to the release directory
-     python setup.py sdist upload --sign
+
+        popd   # Back to the release directory
+        python setup.py sdist upload --sign
 
 13) copy the same tarball to fedorahosted.  The directory to upload to is
     slightly different for fedorahosted admins vs normal fedorahosted users:
     Admin::
-      scp dist/python-fedora*tar.gz* fedorahosted.org:/srv/web/releases/p/y/python-fedora/
+
+        scp dist/python-fedora*tar.gz* fedorahosted.org:/srv/web/releases/p/y/python-fedora/
+
     Normal contributor::
-      scp dist/python-fedora*tar.gz* fedorahosted.org:python-fedora
+
+        scp dist/python-fedora*tar.gz* fedorahosted.org:python-fedora
 
 14) mark the release as finished in git::
-     cd ../python-fedora
-     git flow release finish $VERSION
-     git push --all
-     git push --tags
+
+        cd ../python-fedora
+        git flow release finish $VERSION
+        git push --all
+        git push --tags
 
 15) Finish building and pushing packages for Fedora.

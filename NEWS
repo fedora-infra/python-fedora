@@ -3,8 +3,18 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
-:Date: 04 Sep 2015
-:Version: 0.5.x
+:Date: 09 Oct 2015
+:Version: 0.6.x
+
+-----
+0.6.0
+-----
+
+* Cache session cookies between use for clients using OpenID.
+* Retry failed requests for clients using OpenID
+* Remove Bodhi server version detection code.
+* Python3 support for the BodhiClient.
+* Drop support for python-requests-1.x
 
 -----
 0.5.6

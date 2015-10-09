@@ -78,6 +78,9 @@ class ServerError(FedoraServiceError):
     def __str__(self):
         return 'ServerError(%s, %s, %s)' % (self.filename, self.code, self.msg)
 
+    def __repr__(self):
+        return 'ServerError(%r, %r, %r)' % (self.filename, self.code, self.msg)
+
 
 class AuthError(FedoraServiceError):
 
@@ -103,6 +106,10 @@ class AppError(FedoraServiceError):
 
     def __str__(self):
         return 'AppError(%s, %s, extras=%s)' % (
+            self.name, self.message, self.extras)
+
+    def __repr__(self):
+        return 'AppError(%r, %r, extras=%r)' % (
             self.name, self.message, self.extras)
 
 

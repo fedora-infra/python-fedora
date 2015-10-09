@@ -28,10 +28,12 @@ This module provides a client interface for bodhi.
 import os
 import datetime
 import functools
+import getpass
 import logging
 import textwrap
 import warnings
 import requests
+import re
 
 from distutils.version import LooseVersion
 
@@ -45,7 +47,7 @@ except ImportError:
     # Python3 support
     from urllib.parse import urlparse
 
-from fedora.client import OpenIdBaseClient, FedoraClientError, BaseClient, AuthError
+from fedora.client import OpenIdBaseClient, FedoraClientError, BaseClient
 import fedora.client.openidproxyclient
 
 __version__ = '2.0.0'
@@ -67,29 +69,8 @@ def BodhiClient(base_url=BASE_URL, staging=False, **kwargs):
         log.info('Using bodhi2 STAGING environment')
         base_url = STG_BASE_URL
 
-    log.debug('Querying bodhi API version')
-    api_url = base_url + 'api_version'
-    response = requests.get(api_url)
-
-    try:
-        data = response.json
-        if callable(data):
-            data = data()
-        server_version = LooseVersion(data['version'])
-    except Exception as e:
-        if 'json' in str(type(e)).lower() or 'json' in str(e).lower():
-            # Claim that bodhi1 is on the server
-            server_version = LooseVersion('0.9')
-        else:
-            raise
-
-    if server_version >= LooseVersion('2.0'):
-        log.debug('Bodhi2 detected')
-        base_url = 'https://{0}/'.format(urlparse(response.url).netloc)
-        return Bodhi2Client(base_url=base_url, staging=staging, **kwargs)
-    else:
-        log.debug('Bodhi1 detected')
-        return Bodhi1Client(base_url, **kwargs)
+    log.debug('Using Bodhi2Client.')
+    return Bodhi2Client(base_url=base_url, staging=staging, **kwargs)
 
 
 def errorhandled(method):
@@ -121,8 +102,14 @@ class Bodhi2Client(OpenIdBaseClient):
         super(Bodhi2Client, self).__init__(base_url, login_url=base_url +
                 'login', username=username, **kwargs)
 
-        self.password = password
+        self._password = password
         self.csrf_token = None
+
+    @property
+    def password(self):
+        if not self._password:
+            self._password = getpass.getpass()
+        return self._password
 
     @errorhandled
     def save(self, **kwargs):
@@ -229,12 +216,34 @@ class Bodhi2Client(OpenIdBaseClient):
         :kwarg page: Return a specific page of results
 
         """
-        if 'limit' in kwargs:  # bodhi1 compat
+        # bodhi1 compat
+        if 'limit' in kwargs:
             kwargs['rows_per_page'] = kwargs['limit']
             del(kwargs['limit'])
-        if 'mine' in kwargs:
+        # 'mine' may be in kwargs, but set False
+        if kwargs.get('mine'):
             kwargs['user'] = self.username
-        return self.send_request('updates', verb='GET', params=kwargs)
+        if 'package' in kwargs:
+            # for Bodhi 1, 'package' could be a package name, build, or
+            # update ID, so try and figure it out
+            if re.search(r'(\.el|\.fc)\d\d?', kwargs['package']):
+                kwargs['builds'] = kwargs['package']
+            elif re.search(r'FEDORA-(EPEL)?-\d{4,4}', kwargs['package']):
+                kwargs['updateid'] = kwargs['package']
+            else:
+                kwargs['packages'] = kwargs['package']
+            del(kwargs['package'])
+        if 'release' in kwargs:
+            kwargs['releases'] = kwargs['release']
+            del(kwargs['release'])
+        if 'type_' in kwargs:
+            kwargs['type'] = kwargs['type_']
+            del(kwargs['type_'])
+        # Old Bodhi CLI set bugs default to "", but new Bodhi API
+        # checks for 'if bugs is not None', not 'if not bugs'
+        if 'bugs' in kwargs and kwargs['bugs'] == '':
+            kwargs['bugs'] = None
+        return self.send_request('updates/', verb='GET', params=kwargs)
 
     @errorhandled
     def comment(self, update, comment, karma=0, email=None):
@@ -291,14 +300,12 @@ class Bodhi2Client(OpenIdBaseClient):
         return self.send_request('overrides/', verb='GET', params=params)
 
     @errorhandled
-    def csrf(self, **kwargs):
+    def csrf(self):
         if not self.csrf_token:
-            if not self.password:
-                # bodhi1 cli compatiblity for fedpkg update
-                raise AuthError
-            self.login(self.username, self.password)
-            self.csrf_token = self.send_request('csrf', verb='GET',
-                    params=kwargs)['csrf_token']
+            if not self.has_cookies():
+                self.login(self.username, self.password)
+            self.csrf_token = self.send_request(
+                'csrf', verb='GET', auth=True)['csrf_token']
         return self.csrf_token
 
     def parse_file(self, input_file):
@@ -455,9 +462,8 @@ class Bodhi2Client(OpenIdBaseClient):
                     comments.append('\n'.join(text))
             val += '\n'.join(comments).lstrip() + '\n'
         if update['alias']:
-            val += "\n  %s\n" % ('%s%s/%s' % (self.base_url,
-                                              update['release']['name'],
-                                              update['alias']))
+            val += "\n  %s\n" % ('%supdates/%s' % (self.base_url,
+                                                   update['alias']))
         else:
             val += "\n  %s\n" % ('%s%s' % (self.base_url, update['title']))
         return val
@@ -472,7 +478,7 @@ class Bodhi2Client(OpenIdBaseClient):
                 {"dist_tag": "dist-f12", "id_prefix": "FEDORA",
                  "locked": false, "name": "F12", "long_name": "Fedora 12"}]}
         """
-        return self.send_request('releases', params=kwargs)
+        return self.send_request('releases/', params=kwargs)
 
     def get_koji_session(self, login=True):
         """ Return an authenticated koji session """
@@ -878,4 +884,4 @@ class Bodhi1Client(BaseClient):
                 {"dist_tag": "dist-f12", "id_prefix": "FEDORA",
                  "locked": false, "name": "F12", "long_name": "Fedora 12"}]}
         """
-        return self.send_request('releases')
+        return self.send_request('releases/')
