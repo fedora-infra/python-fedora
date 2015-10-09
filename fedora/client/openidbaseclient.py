@@ -163,13 +163,14 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
         # Also hold on to retry logic.
         # http://www.coglib.com/~icordasc/blog/2014/12/retries-in-requests.html
+        server_errors = [500, 501, 502, 503, 504, 506, 507, 508, 509, 599]
         if retries is not None:
             prefixes = ['http://', 'https://']
             for prefix in prefixes:
                 self._session.mount(prefix, requests.adapters.HTTPAdapter(
                     max_retries=Retry(
                         total=retries,
-                        status_forcelist=[500],
+                        status_forcelist=server_errors,
                         backoff_factor=retry_backoff_factor,
                     ),
                 ))
