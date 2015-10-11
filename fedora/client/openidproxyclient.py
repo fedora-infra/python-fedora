@@ -139,6 +139,11 @@ def openid_login(session, login_url, username, password, otp=None,
         data['openid.mode'] = 'checkid_setup'
     response = session.post(
         FEDORA_OPENID_API, data, verify=not openid_insecure)
+
+    if not bool(response):
+        raise ServerError(FEDORA_OPENID_API, response.status_code,
+                          'Error returned from our POST to ipsilon.')
+
     output = response.json()
 
     if not output['success']:
