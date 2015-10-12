@@ -3,8 +3,17 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
-:Date: 09 Oct 2015
+:Date: 12 Oct 2015
 :Version: 0.6.x
+
+-----
+0.6.1
+-----
+
+* Fix a bug in the BodhiClient where the Bodhi2Client would try to use the old
+  Bodhi1 base url.
+* Raise an AuthError if no username or password is provided to the openid login
+  function.
 
 -----
 0.6.0
