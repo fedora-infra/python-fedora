@@ -53,11 +53,15 @@ import fedora.client.openidproxyclient
 __version__ = '2.0.0'
 log = logging.getLogger(__name__)
 
-BASE_URL = 'https://admin.fedoraproject.org/updates/'
+BODHI1_BASE_URL = 'https://admin.fedoraproject.org/updates/'
 BODHI2_BASE_URL = 'https://bodhi.fedoraproject.org/'
-STG_BASE_URL = 'https://admin.stg.fedoraproject.org/updates/'
+BODHI1_STG_BASE_URL = 'https://admin.stg.fedoraproject.org/updates/'
 BODHI2_STG_BASE_URL = 'https://bodhi.stg.fedoraproject.org/'
 STG_OPENID_API = 'https://id.stg.fedoraproject.org/api/v1/'
+
+# We default to Bodhi2 now
+BASE_URL = BODHI2_BASE_URL
+STG_BASE_URL = BODHI2_STG_BASE_URL
 
 
 class BodhiClientException(FedoraClientError):
