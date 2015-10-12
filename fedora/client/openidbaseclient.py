@@ -278,6 +278,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
             API that the API can use.
 
         """
+        if not username:
+            raise AuthError("Username may not be %r at login." % username)
         response = openid_login(
             session=self._session,
             login_url=self.login_url,
