@@ -280,6 +280,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
         """
         if not username:
             raise AuthError("Username may not be %r at login." % username)
+        if not password:
+            raise AuthError("Password required for login.")
         response = openid_login(
             session=self._session,
             login_url=self.login_url,
