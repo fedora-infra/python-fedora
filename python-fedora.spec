@@ -9,7 +9,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.6.0
+Version:        0.6.1
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -266,6 +266,12 @@ rm -rf %{buildroot}%{python2_sitelib}/tests/
 %{python2_sitelib}/flask_fas_openid.py*
 
 %changelog
+* Mon Oct 12 2015 Ralph Bean <rbean@redhat.com> - 0.6.1-1
+- Fix a bug in the BodhiClient where the Bodhi2Client would try to use the old
+  Bodhi1 base url.
+- Raise an AuthError if no username or password is provided to the openid login
+  function.
+
 * Fri Oct 09 2015 Ralph Bean <rbean@redhat.com> - 0.6.0-1
 - Cache session cookies between use for clients using OpenID.
 - Retry failed requests for clients using OpenID
