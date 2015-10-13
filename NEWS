@@ -3,8 +3,14 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
-:Date: 12 Oct 2015
+:Date: 13 Oct 2015
 :Version: 0.6.x
+
+-----
+0.6.2
+-----
+
+* Force the Bodhi2 url in the BodhiClient shim (for /usr/bin/bodhi).
 
 -----
 0.6.1
