@@ -69,6 +69,15 @@ class BodhiClientException(FedoraClientError):
 
 
 def BodhiClient(base_url=BASE_URL, staging=False, **kwargs):
+    # XXX - This is a temporary compat shim to get the bodhi1 /usr/bin/bodhi
+    # tool to play nicely with us.  It still hands us the base_url for Bodhi1,
+    # which breaks us.
+    if base_url == BODHI1_BASE_URL:
+        log.warn('Overriding %r with bodhi2, %r.  If you want to use Bodhi1, '
+                 'use fedora.client.bodhi:Bodhi1Client explicitly.' % (
+                     base_url, BODHI2_BASE_URL))
+        base_url = BODHI2_BASE_URL
+
     if staging:
         log.info('Using bodhi2 STAGING environment')
         base_url = STG_BASE_URL
