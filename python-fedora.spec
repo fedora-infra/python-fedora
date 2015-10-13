@@ -9,7 +9,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.6.1
+Version:        0.6.2
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -268,6 +268,9 @@ rm -rf %{buildroot}%{python2_sitelib}/tests/
 %{python2_sitelib}/flask_fas_openid.py*
 
 %changelog
+* Tue Oct 13 2015 Ralph Bean <rbean@redhat.com> - 0.6.2-1
+- Force the Bodhi2 url in the BodhiClient shim (for /usr/bin/bodhi).
+
 * Mon Oct 12 2015 Ralph Bean <rbean@redhat.com> - 0.6.1-1
 - Fix a bug in the BodhiClient where the Bodhi2Client would try to use the old
   Bodhi1 base url.
