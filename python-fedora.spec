@@ -9,7 +9,7 @@
 #%%global prerel c2
 
 Name:           python-fedora
-Version:        0.6.1
+Version:        0.6.2
 Release:        1%{?dist}
 Summary:        Python modules for talking to Fedora Infrastructure Services
 
@@ -51,6 +51,7 @@ BuildRequires: python-openid
 BuildRequires: python-openid-teams
 BuildRequires: python-openid-cla
 BuildRequires: python-six
+BuildRequires: python-lockfile
 
 Requires:       python-simplejson
 Requires:       python-munch
@@ -58,6 +59,7 @@ Requires:       python-kitchen
 Requires:       python-requests
 Requires:       python-beautifulsoup4
 Requires:       python-six
+Requires:       python-lockfile
 # These are now optional dependencies.  Some bodhi methods will not work if
 # they aren't installed but they aren't needed for most functionality of the
 # module.
@@ -224,7 +226,7 @@ rm -rf %{buildroot}%{python2_sitelib}/tests/
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
-%doc NEWS README COPYING AUTHORS doc
+%doc NEWS README.rst COPYING AUTHORS doc
 %{python2_sitelib}/fedora/
 %{python2_sitelib}/python_fedora*egg-info
 %exclude %{python2_sitelib}/fedora/tg/
@@ -237,7 +239,7 @@ rm -rf %{buildroot}%{python2_sitelib}/tests/
 %if 0%{?with_python3}
 %files -f %{name}.lang -n python3-fedora
 %defattr(-,root,root,-)
-%doc NEWS README COPYING AUTHORS doc
+%doc NEWS README.rst COPYING AUTHORS doc
 %{python3_sitelib}/fedora/
 %{python3_sitelib}/python_fedora*egg-info
 %{python3_sitelib}/__pycache__/flask_fas*
@@ -266,6 +268,9 @@ rm -rf %{buildroot}%{python2_sitelib}/tests/
 %{python2_sitelib}/flask_fas_openid.py*
 
 %changelog
+* Tue Oct 13 2015 Ralph Bean <rbean@redhat.com> - 0.6.2-1
+- Force the Bodhi2 url in the BodhiClient shim (for /usr/bin/bodhi).
+
 * Mon Oct 12 2015 Ralph Bean <rbean@redhat.com> - 0.6.1-1
 - Fix a bug in the BodhiClient where the Bodhi2Client would try to use the old
   Bodhi1 base url.
@@ -278,6 +283,7 @@ rm -rf %{buildroot}%{python2_sitelib}/tests/
 - Remove Bodhi server version detection code.
 - Python3 support for the BodhiClient.
 - Drop support for python-requests-1.x
+- Add dep on python-lockfile.
 
 * Fri Sep 04 2015 Ralph Bean <rbean@redhat.com> - 0.5.6-1
 - Python2.6 fix for el6.
