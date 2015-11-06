@@ -14,7 +14,6 @@ setup(
     license=LICENSE,
     keywords='Fedora Python Webservices',
     url=URL,
-    download_url=DOWNLOAD_URL,
     packages=find_packages(),
     py_modules=['flask_fas', 'flask_fas_openid'],
     include_package_data=True,
