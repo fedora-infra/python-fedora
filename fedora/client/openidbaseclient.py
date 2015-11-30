@@ -170,6 +170,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
         # Also hold on to retry logic.
         # http://www.coglib.com/~icordasc/blog/2014/12/retries-in-requests.html
         server_errors = [500, 501, 502, 503, 504, 506, 507, 508, 509, 599]
+        method_whitelist = Retry.DEFAULT_METHOD_WHITELIST.union(set(['POST']))
         if retries is not None:
             prefixes = ['http://', 'https://']
             for prefix in prefixes:
@@ -178,6 +179,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
                         total=retries,
                         status_forcelist=server_errors,
                         backoff_factor=retry_backoff_factor,
+                        method_whitelist=method_whitelist,
                     ),
                 ))
 
