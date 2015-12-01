@@ -207,18 +207,25 @@ class Bodhi2Client(OpenIdBaseClient):
         :kwarg mine: If True, only query the users updates.  Default: False.
         :kwarg packages: A space or comma delimited list of package names
         :kwarg limit: A deprecated argument, sets ``rows_per_page``. See its docstring for more info.
+        :kwarg approved_before: A datetime string
         :kwarg approved_since: A datetime string
         :kwarg builds: A space or comma delimited string of build nvrs
         :kwarg critpath: A boolean to query only critical path updates
         :kwarg cves: Filter by CVE IDs
         :kwarg locked: A boolean to filter only locked updates
+        :kwarg modified_before: A datetime string to query updates that have
+            been modified before a certain time.
         :kwarg modified_since: A datetime string to query updates that have
             been modified since a certain time.
         :kwarg pushed: A boolean to filter only pushed updates
+        :kwarg pushed_before: A datetime string to filter updates pushed before a
+            certain time.
         :kwarg pushed_since: A datetime string to filter updates pushed since a
             certain time.
         :kwarg severity: A severity type to filter by (``unspecified``,
             ``urgent``, ``high``, ``medium``, ``low``)
+        :kwarg submitted_before: A datetime string to filter updates submitted
+            before a certain time.
         :kwarg submitted_since: A datetime string to filter updates submitted
             after a certain time.
         :kwarg suggest: Query for updates that suggest a user restart
