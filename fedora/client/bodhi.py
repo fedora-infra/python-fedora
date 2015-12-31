@@ -330,13 +330,16 @@ class Bodhi2Client(OpenIdBaseClient):
         can be directly passed to the ``save`` method.
 
         """
-        from ConfigParser import SafeConfigParser
+        try:
+            import configparser
+        except ImportError:
+            import ConfigParser as configparser
 
         if not os.path.exists(input_file):
             raise ValueError("No such file or directory: %s" % input_file)
 
         defaults = dict(severity='unspecified', suggest='unspecified')
-        config = SafeConfigParser(defaults=defaults)
+        config = configparser.SafeConfigParser(defaults=defaults)
         read = config.read(input_file)
 
         if len(read) != 1 or read[0] != input_file:
