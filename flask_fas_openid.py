@@ -43,7 +43,7 @@ from openid_cla import cla
 from openid_teams import teams
 
 from fedora import __version__
-
+import six
 
 # http://flask.pocoo.org/snippets/45/
 def request_wants_json():
@@ -232,7 +232,7 @@ class FAS(object):
             # endpoint is no OpenID endpoint
             return 'no-request'
 
-        if isinstance(groups, basestring):
+        if isinstance(groups, six.string_types):
             groups = [groups]
 
         request.addExtension(sreg.SRegRequest(
