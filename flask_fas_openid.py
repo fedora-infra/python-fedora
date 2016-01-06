@@ -28,6 +28,8 @@ FAS-OpenID authentication plugin for the flask web framework
 '''
 from functools import wraps
 
+import logging
+import time
 from munch import Munch
 import flask
 try:
@@ -35,15 +37,15 @@ try:
 except ImportError:
     from flask import _request_ctx_stack as stack
 
-import openid
 from openid.consumer import consumer
 from openid.fetchers import setDefaultFetcher, Urllib2Fetcher
-from openid.extensions import pape, sreg
+from openid.extensions import pape, sreg, ax
 from openid_cla import cla
 from openid_teams import teams
 
-from fedora import __version__
 import six
+log = logging.getLogger(__name__)
+
 
 # http://flask.pocoo.org/snippets/45/
 def request_wants_json():
@@ -81,6 +83,7 @@ class FASJSONEncoder(flask.json.JSONEncoder):
 
 
 class FAS(object):
+    """ The Flask plugin. """
 
     def __init__(self, app=None):
         self.postlogin_func = None
@@ -101,6 +104,7 @@ class FAS(object):
             self.app.json_encoder = FASJSONEncoder
 
     def _init_app(self, app):
+        """ Constructor for the Flask application. """
         app.config.setdefault('FAS_OPENID_ENDPOINT',
                               'https://id.fedoraproject.org/openid/')
         app.config.setdefault('FAS_OPENID_CHECK_CERT', True)
@@ -110,6 +114,7 @@ class FAS(object):
 
         @app.route('/_flask_fas_openid_handler/', methods=['GET', 'POST'])
         def flask_fas_openid_handler():
+            """ Endpoint for OpenID results. """
             return self._handle_openid_request()
 
         app.before_request(self._check_session)
@@ -137,9 +142,9 @@ class FAS(object):
             return 'OpenID request was cancelled'
         elif info.status == consumer.SUCCESS:
             sreg_resp = sreg.SRegResponse.fromSuccessResponse(info)
-            pape_resp = pape.Response.fromSuccessResponse(info)
             teams_resp = teams.TeamsResponse.fromSuccessResponse(info)
             cla_resp = cla.CLAResponse.fromSuccessResponse(info)
+            ax_resp = ax.FetchResponse.fromSuccessResponse(info)
             user = {'fullname': '', 'username': '', 'email': '',
                     'timezone': '', 'cla_done': False, 'groups': []}
             if not sreg_resp:
@@ -149,11 +154,25 @@ class FAS(object):
             user['fullname'] = sreg_resp.get('fullname')
             user['email'] = sreg_resp.get('email')
             user['timezone'] = sreg_resp.get('timezone')
+            user['login_time'] = time.time()
             if cla_resp:
                 user['cla_done'] = cla.CLA_URI_FEDORA_DONE in cla_resp.clas
             if teams_resp:
                 # The groups do not contain the cla_ groups
                 user['groups'] = frozenset(teams_resp.teams)
+            if ax_resp:
+                ssh_keys = ax_resp.get(
+                    'http://fedoauth.org/openid/schema/SSH/key')
+                if isinstance(ssh_keys, (list, tuple)):
+                    ssh_keys = '\n'.join(
+                        ssh_key
+                        for ssh_key in ssh_keys
+                        if ssh_key.strip()
+                    )
+                    if ssh_keys:
+                        user['ssh_key'] = ssh_keys
+                user['gpg_keyid'] = ax_resp.get(
+                    'http://fedoauth.org/openid/schema/GPG/keyid')
             flask.session['FLASK_FAS_OPENID_USER'] = user
             flask.session.modified = True
             if self.postlogin_func is not None:
@@ -165,7 +184,7 @@ class FAS(object):
             return 'Strange state: %s' % info.status
 
     def _check_session(self):
-        if not 'FLASK_FAS_OPENID_USER' in flask.session \
+        if 'FLASK_FAS_OPENID_USER' not in flask.session \
                 or flask.session['FLASK_FAS_OPENID_USER'] is None:
             flask.g.fas_user = None
         else:
@@ -212,13 +231,11 @@ class FAS(object):
                 return_url = flask.request.args.values['next']
             else:
                 return_url = flask.request.url_root
-        return_url = (
-                        # This makes sure that we only allow stuff where
-                        # ?next= value is in a safe root (the application
-                        # root)
-                        self._check_safe_root(return_url) or
-                        flask.request.url_root
-                     )
+        # This makes sure that we only allow stuff where
+        # ?next= value is in a safe root (the application
+        # root)
+        return_url = (self._check_safe_root(return_url) or
+                      flask.request.url_root)
         session = {}
         oidconsumer = consumer.Consumer(session, None)
         try:
@@ -226,6 +243,7 @@ class FAS(object):
         except consumer.DiscoveryFailure as exc:
             # VERY strange, as this means it could not discover an OpenID
             # endpoint at FAS_OPENID_ENDPOINT
+            log.warn(exc)
             return 'discoveryfailure'
         if request is None:
             # Also very strange, as this means the discovered OpenID
@@ -241,6 +259,14 @@ class FAS(object):
         request.addExtension(teams.TeamsRequest(requested=groups))
         request.addExtension(cla.CLARequest(
             requested=[cla.CLA_URI_FEDORA_DONE]))
+
+        ax_req = ax.FetchRequest()
+        ax_req.add(ax.AttrInfo(
+            type_uri='http://fedoauth.org/openid/schema/GPG/keyid'))
+        ax_req.add(ax.AttrInfo(
+            type_uri='http://fedoauth.org/openid/schema/SSH/key',
+            count='unlimited'))
+        request.addExtension(ax_req)
 
         trust_root = self.normalize_url(flask.request.url_root)
         return_to = trust_root + '_flask_fas_openid_handler/'
