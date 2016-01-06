@@ -15,7 +15,7 @@ Client
 .. automodule:: fedora.client
     :members: FedoraServiceError, ServerError, AuthError, AppError,
         FedoraClientError, FASError, CLAError, BodhiClientException,
-        PackageDBError, DictContainer
+        DictContainer
 
 Generic Clients
 ===============

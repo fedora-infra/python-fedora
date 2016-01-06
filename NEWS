@@ -3,8 +3,21 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
-:Date: 13 Oct 2015
+:Date: 01 Dec 2015
 :Version: 0.6.x
+
+-----
+0.6.4
+-----
+
+* Bodhi2Client query: document new _before query params
+* Also perform request retries for failed POST requests.
+
+-----
+0.6.3
+-----
+
+* Adjust download URL for pypi.
 
 -----
 0.6.2
