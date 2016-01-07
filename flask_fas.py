@@ -27,6 +27,6 @@ FAS authentication plugin for the flask web framework
 ..versionadded:: 0.3.30
 '''
 
-print 'WARNING: flask_fas has been deprecated'
-print 'The flask_fas module will disappear in the next version, please port!'
+print('WARNING: flask_fas has been deprecated')
+print('The flask_fas module will disappear in the next version, please port!')
 from flask_fas_openid import FAS, fas_login_required, cla_plus_one_required
