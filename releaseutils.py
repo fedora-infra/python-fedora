@@ -5,11 +5,6 @@
 
 from __future__ import print_function
 
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
-
 import glob
 import os
 import shutil
@@ -23,7 +18,7 @@ from kitchen.pycompat27 import subprocess
 import pkg_resources
 
 import fedora.release
-from six.moves import map
+from six.moves import configparser, map
 
 
 #

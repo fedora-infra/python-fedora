@@ -1,0 +1,188 @@
+# Translations template for python-fedora.
+# Copyright (C) 2014 ORGANIZATION
+# This file is distributed under the same license as the python-fedora
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: python-fedora 0.3.35\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2014-08-07 08:36-0700\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: Iloko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ilo\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"X-Generator: Zanata 3.7.3\n"
+
+#: fedora/client/wiki.py:93
+#, python-format
+msgid "From %(then)s to %(now)s"
+msgstr ""
+
+#: fedora/client/wiki.py:96
+#, python-format
+msgid "%d wiki changes in the past week"
+msgstr ""
+
+#: fedora/client/wiki.py:98
+msgid ""
+"Warning: Number of changes reaches the API return limit.\n"
+"You will not get the complete list of changes unless\n"
+"you run this script using a 'bot' account."
+msgstr ""
+
+#: fedora/client/wiki.py:109
+msgid ""
+"\n"
+"== Most active wiki users =="
+msgstr ""
+
+#: fedora/client/wiki.py:116
+msgid ""
+"\n"
+"== Most edited pages =="
+msgstr ""
+
+#: fedora/django/auth/models.py:52
+msgid "Loading FAS groups..."
+msgstr ""
+
+#: fedora/django/auth/models.py:58
+msgid "Unable to load FAS groups. Did you set FAS_USERNAME and FAS_PASSWORD?"
+msgstr ""
+
+#: fedora/django/auth/models.py:65
+msgid ""
+"FAS groups loaded. Don't forget to set FAS_USERNAME and FAS_PASSWORD to a "
+"low-privilege account."
+msgstr ""
+
+#: fedora/tg/controllers.py:73
+#, python-format
+msgid "Welcome, %s"
+msgstr ""
+
+#: fedora/tg/controllers.py:82
+msgid ""
+"The credentials you supplied were not correct or did not grant access to "
+"this resource."
+msgstr ""
+
+#: fedora/tg/controllers.py:85
+msgid "You must provide your credentials before accessing this resource."
+msgstr ""
+
+#: fedora/tg/controllers.py:88
+msgid "Please log in."
+msgstr ""
+
+#: fedora/tg/controllers.py:116
+msgid "You have successfully logged out."
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:14
+#: fedora/tg2/templates/genshi/login.html:9
+#: fedora/tg2/templates/mako/login.mak:3
+msgid "Log In"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:18
+msgid "User Name:"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:21
+#: fedora/tg2/templates/genshi/login.html:31
+#: fedora/tg2/templates/mako/login.mak:25
+msgid "Password:"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:25
+#: fedora/tg/templates/genshi/login.html:88
+#: fedora/tg2/templates/genshi/login.html:33
+#: fedora/tg2/templates/genshi/login.html:66
+#: fedora/tg2/templates/mako/login.mak:27
+#: fedora/tg2/templates/mako/login.mak:63
+msgid "Login"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:32
+#: fedora/tg2/templates/genshi/login.html:14
+#: fedora/tg2/templates/mako/login.mak:9
+msgid "CSRF attacks"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:33
+#: fedora/tg2/templates/genshi/login.html:15
+#: fedora/tg2/templates/mako/login.mak:10
+msgid ""
+" are a means for a malicious website to make a request of another\n"
+"        web server as the user who contacted the malicious web site.  The\n"
+"        purpose of this page is to help protect your account and this server\n"
+"        from attacks from such malicious web sites.  By clicking below, you are\n"
+"        proving that you are a person rather than just the web browser\n"
+"        forwarding your authentication cookies on behalf of a malicious\n"
+"        website."
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:40
+#: fedora/tg2/templates/genshi/login.html:23
+#: fedora/tg2/templates/mako/login.mak:18
+msgid "I am a human"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:45
+#: fedora/tg2/templates/genshi/login.html:37
+#: fedora/tg2/templates/mako/login.mak:31
+msgid "Forgot Password?"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:46
+#: fedora/tg2/templates/genshi/login.html:38
+#: fedora/tg2/templates/mako/login.mak:32
+msgid "Sign Up"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:64
+#: fedora/tg2/templates/genshi/login.html:47
+#: fedora/tg2/templates/mako/login.mak:40
+msgid "Welcome"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:86
+#: fedora/tg2/templates/genshi/login.html:64
+#: fedora/tg2/templates/mako/login.mak:61
+msgid "You are not logged in"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:93
+#: fedora/tg2/templates/genshi/login.html:70
+#: fedora/tg2/templates/mako/login.mak:69
+msgid "CSRF protected"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:95
+#: fedora/tg2/templates/genshi/login.html:72
+#: fedora/tg2/templates/mako/login.mak:72
+msgid "Verify Login"
+msgstr ""
+
+#: fedora/tg/templates/genshi/login.html:101
+#: fedora/tg2/templates/genshi/login.html:78
+#: fedora/tg2/templates/mako/login.mak:79
+msgid "Logout"
+msgstr ""
+
+#: fedora/tg/visit/jsonfasvisit1.py:109
+#, python-format
+msgid "updating visit (%s)"
+msgstr ""
+
+#: fedora/tg2/templates/genshi/login.html:28
+#: fedora/tg2/templates/mako/login.mak:22
+msgid "Username:"
+msgstr ""

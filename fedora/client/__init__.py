@@ -131,14 +131,13 @@ from fedora.client.baseclient import BaseClient
 from fedora.client.openidproxyclient import OpenIdProxyClient
 from fedora.client.openidbaseclient import OpenIdBaseClient
 from fedora.client.fas2 import AccountSystem, FASError, CLAError
-from fedora.client.pkgdb import PackageDB, PackageDBError
 from fedora.client.bodhi import BodhiClient, BodhiClientException
 from fedora.client.wiki import Wiki
 # pylint: enable-msg=W0611
 
 __all__ = ('FedoraServiceError', 'ServerError', 'AuthError', 'AppError',
            'FedoraClientError', 'LoginRequiredError', 'DictContainer',
-           'FASError', 'CLAError', 'BodhiClientException', 'PackageDBError',
+           'FASError', 'CLAError', 'BodhiClientException',
            'ProxyClient', 'FasProxyClient', 'BaseClient', 'OpenIdProxyClient',
-           'OpenIdBaseClient', 'AccountSystem', 'PackageDB', 'BodhiClient',
+           'OpenIdBaseClient', 'AccountSystem', 'BodhiClient',
            'Wiki')

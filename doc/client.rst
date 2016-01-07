@@ -45,13 +45,13 @@ method on the server.  Here's some code that illustrates the process::
     client = BaseClient('https://admin.fedoraproject.org/pkgdb')
     try:
         collectionData = client.send_request('/collections', auth=False)
-    except ServerError, e:
-        print '%s' % e
-    except AppError, e:
-        print '%s: %s' % (e.name, e.message)
+    except ServerError as e:
+        print('%s' % e)
+    except AppError as e:
+        print('%s: %s' % (e.name, e.message))
 
     for collection in collectionData['collections']:
-        print collection['name'], collection['version']
+        print('%s %s' % (collection['name'], collection['version'])
 
 BaseClient Constructor
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -78,7 +78,7 @@ can catch in order to prompt for a new username and password::
     while (count < MAX_RETRIES):
         try:
             collectionData = client.send_request('/collections', auth=True)
-        except AuthError, e:
+        except AuthError as e:
             client.password = getpass.getpass('Retype password for %s: ' % username)
         else:
             # data retrieved or we had an error unrelated to username/password
@@ -273,19 +273,20 @@ Here's an example of the exceptions in action::
     for retry in range(0, MAXRETRIES):
         try:
             collectionData = client.send_request('/collections', auth=True)
-        except AuthError, e:
-            client.username = raw_input('Username: ').strip()
+        except AuthError as e:
+            from six.moves import input
+            client.username = input('Username: ').strip()
             client.password = getpass.getpass('Password: ')
             continue
-        except ServerError, e:
-            print 'Error talking to the server: %s' % e
+        except ServerError as e:
+            print('Error talking to the server: %s' % e)
             break
-        except AppError, e:
-            print 'The server issued the following exception: %s: %s' % (
-                    e.name, e.message)
+        except AppError as e:
+            print('The server issued the following exception: %s: %s' % (
+                  e.name, e.message))
 
         for collection in collectionData['collections']:
-            print collection[0]['name'], collection[0]['version']
+            print('%s %s' % (collection[0]['name'], collection[0]['version']))
 
 ----------------
 OpenIdBaseClient

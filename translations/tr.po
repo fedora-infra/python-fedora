@@ -7,12 +7,13 @@
 # doganaydin <dogan1aydin@gmail.com>, 2011
 # Hasan Alp İNAN <hasanalpinan@gmail.com>, 2011
 # Talha Okur <oscarpenn18@gmail.com>, 2013
+# Ralph Bean <ralph@fedoraproject.org>, 2015. #zanata
 msgid ""
 msgstr ""
-"Project-Id-Version: python-fedora\n"
+"Project-Id-Version: python-fedora 0.3.35\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2014-08-07 08:36-0700\n"
-"PO-Revision-Date: 2014-08-07 15:51+0000\n"
+"PO-Revision-Date: 2014-08-07 11:51-0400\n"
 "Last-Translator: Toshio Kuratomi <a.badger@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/projects/p/python-fedora/language/tr/)\n"
 "MIME-Version: 1.0\n"
@@ -21,6 +22,7 @@ msgstr ""
 "Generated-By: Babel 1.3\n"
 "Language: tr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Zanata 3.7.3\n"
 
 #: fedora/client/wiki.py:93
 #, python-format
@@ -43,13 +45,17 @@ msgstr ""
 msgid ""
 "\n"
 "== Most active wiki users =="
-msgstr "\n== En aktif wiki kullanıcıları =="
+msgstr ""
+"\n"
+"== En aktif wiki kullanıcıları =="
 
 #: fedora/client/wiki.py:116
 msgid ""
 "\n"
 "== Most edited pages =="
-msgstr "\n==En çok düzenlenen sayfalar =="
+msgstr ""
+"\n"
+"==En çok düzenlenen sayfalar =="
 
 #: fedora/django/auth/models.py:52
 msgid "Loading FAS groups..."
@@ -57,7 +63,9 @@ msgstr "FAS grupları yükleniyor..."
 
 #: fedora/django/auth/models.py:58
 msgid "Unable to load FAS groups. Did you set FAS_USERNAME and FAS_PASSWORD?"
-msgstr "FAS grupları yüklenemiyor. FAS_USERNAME ve FAS_PASSWORD değişkenlerini atadınız mı?"
+msgstr ""
+"FAS grupları yüklenemiyor. FAS_USERNAME ve FAS_PASSWORD değişkenlerini "
+"atadınız mı?"
 
 #: fedora/django/auth/models.py:65
 msgid ""

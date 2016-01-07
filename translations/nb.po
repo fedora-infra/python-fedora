@@ -2,23 +2,22 @@
 # Copyright (C) 2014 ORGANIZATION
 # This file is distributed under the same license as the python-fedora
 # project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
 # 
-# Translators:
-# Kjartan Maraas <kmaraas@gnome.org>, 2011
 msgid ""
 msgstr ""
-"Project-Id-Version: python-fedora\n"
+"Project-Id-Version: python-fedora 0.3.35\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2014-08-07 08:36-0700\n"
-"PO-Revision-Date: 2014-08-07 15:51+0000\n"
-"Last-Translator: Toshio Kuratomi <a.badger@gmail.com>\n"
-"Language-Team: Norwegian Bokmål (http://www.transifex.com/projects/p/python-fedora/language/nb/)\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: Norwegian Bokmål\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 1.3\n"
 "Language: nb\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Generator: Zanata 3.7.3\n"
 
 #: fedora/client/wiki.py:93
 #, python-format

@@ -43,26 +43,6 @@ fas from a multithreaded webserver.
     :members:
     :undoc-members:
 
-.. _`Package-Database`:
-.. _`Pkgdb`:
-
-----------------
-Package Database
-----------------
-
-The Package Database holds information about packages in Fedora.  It currently
-has a developer-centric view of packages that concentrates on who the owner is
-of a particular package.
-
-Plans to add an end-user view to packages is ongoing.
-
-.. toctree::
-    :maxdepth: 2
-
-.. autoclass:: fedora.client.PackageDB
-    :members:
-    :undoc-members:
-
 .. _`Bodhi`:
 
 ------------------------

@@ -29,21 +29,9 @@ from os import path
 import logging
 import warnings
 
-
-try:
-    import cPickle as pickle
-except:
-    # Python3 support
-    import pickle
-
-try:
-    import Cookie
-except ImportError:
-    # Python3 support
-    import http.cookies as Cookie
-
-
 from kitchen.text.converters import to_bytes
+from six.moves import cPickle as pickle
+from six.moves import http_cookies as Cookie
 
 from fedora import __version__
 

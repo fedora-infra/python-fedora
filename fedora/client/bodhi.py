@@ -39,14 +39,6 @@ from distutils.version import LooseVersion
 
 import six
 
-# We unfortunately can't use python-six for this because there's an ancient
-# version on rhel7.  https://github.com/fedora-infra/python-fedora/issues/132
-try:
-    from urlparse import urlparse
-except ImportError:
-    # Python3 support
-    from urllib.parse import urlparse
-
 from fedora.client import OpenIdBaseClient, FedoraClientError, BaseClient
 import fedora.client.openidproxyclient
 
@@ -337,13 +329,13 @@ class Bodhi2Client(OpenIdBaseClient):
         can be directly passed to the ``save`` method.
 
         """
-        from ConfigParser import SafeConfigParser
+        from six.moves import configparser
 
         if not os.path.exists(input_file):
             raise ValueError("No such file or directory: %s" % input_file)
 
         defaults = dict(severity='unspecified', suggest='unspecified')
-        config = SafeConfigParser(defaults=defaults)
+        config = configparser.SafeConfigParser(defaults=defaults)
         read = config.read(input_file)
 
         if len(read) != 1 or read[0] != input_file:
@@ -353,17 +345,20 @@ class Bodhi2Client(OpenIdBaseClient):
 
         for section in config.sections():
             update = {
-                'builds': section, 'bugs': config.get(section, 'bugs'),
-                'close_bugs': config.getboolean(section, 'close_bugs'),
-                'type': config.get(section, 'type'),
-                'type_': config.get(section, 'type'),
-                'request': config.get(section, 'request'),
-                'severity': config.get(section, 'severity'),
-                'notes': config.get(section, 'notes'),
-                'autokarma': config.get(section, 'autokarma'),
-                'stable_karma': config.get(section, 'stable_karma'),
-                'unstable_karma': config.get(section, 'unstable_karma'),
-                'suggest': config.get(section, 'suggest'),
+                'builds': section,
+                'bugs': config.get(section, 'bugs', raw=True),
+                'close_bugs': config.getboolean(
+                    section, 'close_bugs', raw=True),
+                'type': config.get(section, 'type', raw=True),
+                'type_': config.get(section, 'type', raw=True),
+                'request': config.get(section, 'request', raw=True),
+                'severity': config.get(section, 'severity', raw=True),
+                'notes': config.get(section, 'notes', raw=True),
+                'autokarma': config.get(section, 'autokarma', raw=True),
+                'stable_karma': config.get(section, 'stable_karma', raw=True),
+                'unstable_karma': config.get(
+                    section, 'unstable_karma', raw=True),
+                'suggest': config.get(section, 'suggest', raw=True),
                 }
 
             updates.append(update)
@@ -788,17 +783,20 @@ class Bodhi1Client(BaseClient):
             for section in config.sections():
                 update = {}
                 update['builds'] = section
-                update['type_'] = config.get(section, 'type')
-                update['request'] = config.get(section, 'request')
-                update['bugs'] = config.get(section, 'bugs')
-                update['close_bugs'] = config.getboolean(section, 'close_bugs')
-                update['notes'] = config.get(section, 'notes')
-                update['autokarma'] = config.getboolean(section, 'autokarma')
-                update['stable_karma'] = config.getint(section, 'stable_karma')
-                update['unstable_karma'] = config.getint(section,
-                                                         'unstable_karma')
-                update['suggest_reboot'] = config.getboolean(section,
-                                                             'suggest_reboot')
+                update['type_'] = config.get(section, 'type', raw=True)
+                update['request'] = config.get(section, 'request', raw=True)
+                update['bugs'] = config.get(section, 'bugs', raw=True)
+                update['close_bugs'] = config.getboolean(
+                    section, 'close_bugs', raw=True)
+                update['notes'] = config.get(section, 'notes', raw=True)
+                update['autokarma'] = config.getboolean(
+                    section, 'autokarma', raw=True)
+                update['stable_karma'] = config.getint(
+                    section, 'stable_karma', raw=True)
+                update['unstable_karma'] = config.getint(
+                    section, 'unstable_karma', raw=True)
+                update['suggest_reboot'] = config.getboolean(
+                    section, 'suggest_reboot', raw=True)
                 updates.append(update)
         return updates
 
