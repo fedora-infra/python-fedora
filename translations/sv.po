@@ -6,13 +6,15 @@
 # Translators:
 # Göran Uddeborg <goeran@uddeborg.se>, 2011
 # Ulrika <aurorauddeborg@gmail.com>, 2012
+# Göran Uddeborg <goeran@uddeborg.se>, 2015. #zanata
+# Ralph Bean <ralph@fedoraproject.org>, 2015. #zanata
 msgid ""
 msgstr ""
-"Project-Id-Version: python-fedora\n"
+"Project-Id-Version: python-fedora 0.3.35\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2014-08-07 08:36-0700\n"
-"PO-Revision-Date: 2014-08-07 15:51+0000\n"
-"Last-Translator: Toshio Kuratomi <a.badger@gmail.com>\n"
+"PO-Revision-Date: 2015-08-31 01:43-0400\n"
+"Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish (http://www.transifex.com/projects/p/python-fedora/language/sv/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,6 +22,7 @@ msgstr ""
 "Generated-By: Babel 1.3\n"
 "Language: sv\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Zanata 3.7.3\n"
 
 #: fedora/client/wiki.py:93
 #, python-format
@@ -36,19 +39,26 @@ msgid ""
 "Warning: Number of changes reaches the API return limit.\n"
 "You will not get the complete list of changes unless\n"
 "you run this script using a 'bot' account."
-msgstr "Varning: Antalet förändringar når API:ets gräns för returer.\nDu kommer inte få den kompletta listan över förändringar om du\ninte kör detta skript med ett ”bot”-konto."
+msgstr ""
+"Varning: Antalet förändringar når API:ets gräns för returer.\n"
+"Du kommer inte få den kompletta listan över förändringar om du\n"
+"inte kör detta skript med ett ”bot”-konto."
 
 #: fedora/client/wiki.py:109
 msgid ""
 "\n"
 "== Most active wiki users =="
-msgstr "\n== Mest aktiva wiki-användare =="
+msgstr ""
+"\n"
+"== Mest aktiva wiki-användare =="
 
 #: fedora/client/wiki.py:116
 msgid ""
 "\n"
 "== Most edited pages =="
-msgstr "\n== Mest redigerade sidor =="
+msgstr ""
+"\n"
+"== Mest redigerade sidor =="
 
 #: fedora/django/auth/models.py:52
 msgid "Loading FAS groups..."
@@ -56,13 +66,17 @@ msgstr "Läser in FAS-grupper …"
 
 #: fedora/django/auth/models.py:58
 msgid "Unable to load FAS groups. Did you set FAS_USERNAME and FAS_PASSWORD?"
-msgstr "Kan inte läsa in FAS-grupper.  Har du ställt in FAS_USERNAME och FAS_PASSWORD?"
+msgstr ""
+"Kan inte läsa in FAS-grupper.  Har du ställt in FAS_USERNAME och "
+"FAS_PASSWORD?"
 
 #: fedora/django/auth/models.py:65
 msgid ""
 "FAS groups loaded. Don't forget to set FAS_USERNAME and FAS_PASSWORD to a "
 "low-privilege account."
-msgstr "FAS-grupper inlästa.  Glöm inte att ställa in FAS_USERNAME och FAS_PASSWORD till ett lågprivilegierat konto."
+msgstr ""
+"FAS-grupper inlästa.  Glöm inte att ställa in FAS_USERNAME och FAS_PASSWORD "
+"till ett lågprivilegierat konto."
 
 #: fedora/tg/controllers.py:73
 #, python-format
@@ -73,7 +87,9 @@ msgstr "Välkommen, %s"
 msgid ""
 "The credentials you supplied were not correct or did not grant access to "
 "this resource."
-msgstr "Kreditiven du angav var inte korrekta eller gav inte tillgång till denna resurs."
+msgstr ""
+"Kreditiven du angav var inte korrekta eller gav inte tillgång till denna "
+"resurs."
 
 #: fedora/tg/controllers.py:85
 msgid "You must provide your credentials before accessing this resource."
@@ -95,7 +111,7 @@ msgstr "Logga in"
 
 #: fedora/tg/templates/genshi/login.html:18
 msgid "User Name:"
-msgstr ""
+msgstr "Användarnamn:"
 
 #: fedora/tg/templates/genshi/login.html:21
 #: fedora/tg2/templates/genshi/login.html:31
@@ -129,7 +145,14 @@ msgid ""
 "        proving that you are a person rather than just the web browser\n"
 "        forwarding your authentication cookies on behalf of a malicious\n"
 "        website."
-msgstr "är ett sätt för en skadlig webbplats att skicka en begäran till en annan\n        webbserver som den användare som kontaktade den skadliga webbplatsen.\n        Syftet med denna sida är att hjälpa till att skydda ditt konto och\n        denna server från attacker från sådana skadliga webbplatser.  Genom\n        att klicka nedan, bevisar du att du är en person snarare än bara\n        webbläsaren som vidarebefordrar dina autentiseringskakor på uppdrag\n        av en skadlig webbplats."
+msgstr ""
+"är ett sätt för en skadlig webbplats att skicka en begäran till en annan\n"
+"        webbserver som den användare som kontaktade den skadliga webbplatsen.\n"
+"        Syftet med denna sida är att hjälpa till att skydda ditt konto och\n"
+"        denna server från attacker från sådana skadliga webbplatser.  Genom\n"
+"        att klicka nedan, bevisar du att du är en person snarare än bara\n"
+"        webbläsaren som vidarebefordrar dina autentiseringskakor på uppdrag\n"
+"        av en skadlig webbplats."
 
 #: fedora/tg/templates/genshi/login.html:40
 #: fedora/tg2/templates/genshi/login.html:23

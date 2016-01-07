@@ -5,12 +5,13 @@
 # 
 # Translators:
 # Yuri Chornoivan <yurchor@ukr.net>, 2011-2013
+# Ralph Bean <ralph@fedoraproject.org>, 2015. #zanata
 msgid ""
 msgstr ""
-"Project-Id-Version: python-fedora\n"
+"Project-Id-Version: python-fedora 0.3.35\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2014-08-07 08:36-0700\n"
-"PO-Revision-Date: 2014-08-07 15:51+0000\n"
+"PO-Revision-Date: 2014-08-07 11:51-0400\n"
 "Last-Translator: Toshio Kuratomi <a.badger@gmail.com>\n"
 "Language-Team: Ukrainian (http://www.transifex.com/projects/p/python-fedora/language/uk/)\n"
 "MIME-Version: 1.0\n"
@@ -19,6 +20,7 @@ msgstr ""
 "Generated-By: Babel 1.3\n"
 "Language: uk\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Zanata 3.7.3\n"
 
 #: fedora/client/wiki.py:93
 #, python-format
@@ -35,19 +37,26 @@ msgid ""
 "Warning: Number of changes reaches the API return limit.\n"
 "You will not get the complete list of changes unless\n"
 "you run this script using a 'bot' account."
-msgstr "Попередження: кількість змін досягла обмеження, яке накладено програмним інтерфейсом.\nВам не буде повернуто повний список змін, якщо ви не запустите цей скрипт\nвід імені облікового запису «bot»."
+msgstr ""
+"Попередження: кількість змін досягла обмеження, яке накладено програмним інтерфейсом.\n"
+"Вам не буде повернуто повний список змін, якщо ви не запустите цей скрипт\n"
+"від імені облікового запису «bot»."
 
 #: fedora/client/wiki.py:109
 msgid ""
 "\n"
 "== Most active wiki users =="
-msgstr "\n== Найактивніші користувачі вікі =="
+msgstr ""
+"\n"
+"== Найактивніші користувачі вікі =="
 
 #: fedora/client/wiki.py:116
 msgid ""
 "\n"
 "== Most edited pages =="
-msgstr "\n== Найчастіше редаговані сторінки =="
+msgstr ""
+"\n"
+"== Найчастіше редаговані сторінки =="
 
 #: fedora/django/auth/models.py:52
 msgid "Loading FAS groups..."
@@ -55,13 +64,17 @@ msgstr "Завантаження груп FAS…"
 
 #: fedora/django/auth/models.py:58
 msgid "Unable to load FAS groups. Did you set FAS_USERNAME and FAS_PASSWORD?"
-msgstr "Не вдалося завантажити групи FAS. Чи встановили ви значення FAS_USERNAME і FAS_PASSWORD?"
+msgstr ""
+"Не вдалося завантажити групи FAS. Чи встановили ви значення FAS_USERNAME і "
+"FAS_PASSWORD?"
 
 #: fedora/django/auth/models.py:65
 msgid ""
 "FAS groups loaded. Don't forget to set FAS_USERNAME and FAS_PASSWORD to a "
 "low-privilege account."
-msgstr "Групи FAS завантажено. Не забудьте встановити FAS_USERNAME і FAS_PASSWORD на значення облікового запису зі зниженими правами доступу."
+msgstr ""
+"Групи FAS завантажено. Не забудьте встановити FAS_USERNAME і FAS_PASSWORD на"
+" значення облікового запису зі зниженими правами доступу."
 
 #: fedora/tg/controllers.py:73
 #, python-format
@@ -72,11 +85,15 @@ msgstr "Вітаємо, %s"
 msgid ""
 "The credentials you supplied were not correct or did not grant access to "
 "this resource."
-msgstr "Вами було вказано реєстраційні дані, які не є коректними або не надають доступу до цього ресурсу."
+msgstr ""
+"Вами було вказано реєстраційні дані, які не є коректними або не надають "
+"доступу до цього ресурсу."
 
 #: fedora/tg/controllers.py:85
 msgid "You must provide your credentials before accessing this resource."
-msgstr "До отримання доступу до цього ресурсу вам слід вказати ваші реєстраційні дані."
+msgstr ""
+"До отримання доступу до цього ресурсу вам слід вказати ваші реєстраційні "
+"дані."
 
 #: fedora/tg/controllers.py:88
 msgid "Please log in."
@@ -128,7 +145,13 @@ msgid ""
 "        proving that you are a person rather than just the web browser\n"
 "        forwarding your authentication cookies on behalf of a malicious\n"
 "        website."
-msgstr " — це можливість для зловмисників, що володіють певним веб-сайтом, виконати запит\n        до іншого веб-сервера від імені користувача, який встановив з’єднання з веб-сайтом\n        зловмисників. Метою цієї сторінки є захист вашого облікового запису і цього сервера\n        від нападів з таких веб-сайтів. Натисканням відповідної кнопки, розташованої нижче,\n        ви підтверджуєте, що ви людина, а на просто програма, яка переспрямовує\n        ваші куки розпізнавання з веб-сайта зловмисників."
+msgstr ""
+" — це можливість для зловмисників, що володіють певним веб-сайтом, виконати запит\n"
+"        до іншого веб-сервера від імені користувача, який встановив з’єднання з веб-сайтом\n"
+"        зловмисників. Метою цієї сторінки є захист вашого облікового запису і цього сервера\n"
+"        від нападів з таких веб-сайтів. Натисканням відповідної кнопки, розташованої нижче,\n"
+"        ви підтверджуєте, що ви людина, а на просто програма, яка переспрямовує\n"
+"        ваші куки розпізнавання з веб-сайта зловмисників."
 
 #: fedora/tg/templates/genshi/login.html:40
 #: fedora/tg2/templates/genshi/login.html:23

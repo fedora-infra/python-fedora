@@ -4,7 +4,7 @@ Information about this python-fedora release
 
 
 NAME = 'python-fedora'
-VERSION = '0.6.4'
+VERSION = '0.7.0'
 DESCRIPTION = 'Python modules for interacting with Fedora Services'
 LONG_DESCRIPTION = '''
 The Fedora Project runs many different services.  These services help us to
@@ -13,7 +13,7 @@ This package contains software that helps us do that.
 '''
 AUTHOR = 'Toshio Kuratomi, Luke Macken, Ricky Elrod, Ralph Bean'
 EMAIL = 'admin@fedoraproject.org'
-COPYRIGHT = '2007-2015 Red Hat, Inc.'
+COPYRIGHT = '2007-2016 Red Hat, Inc.'
 URL = 'https://fedorahosted.org/python-fedora'
 DOWNLOAD_URL = 'https://pypi.python.org/pypi/python-fedora'
 LICENSE = 'LGPLv2+'

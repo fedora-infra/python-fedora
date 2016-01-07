@@ -3,8 +3,17 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
-:Date: 01 Dec 2015
-:Version: 0.6.x
+:Date: 07 Jan 2016
+:Version: 0.7.x
+
+-----
+0.7.0
+-----
+
+* Removed the pkgdb1 client.  The server has been gone for over a year now.
+* Removed the flask_fas server component in favor of flask_fas_openid.
+* Updated flask_fas_openid to forward along ssh and gpg public key information.
+* Python3 compat enhancements from Craig Rodrigues and Ville Skyttä.
 
 -----
 0.6.4
