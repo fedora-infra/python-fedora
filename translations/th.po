@@ -6,12 +6,13 @@
 # Translators:
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2009
 # Manatsawin Hanmongkolchai <whs@whsgroup.ath.cx>, 2010
+# Ralph Bean <ralph@fedoraproject.org>, 2015. #zanata
 msgid ""
 msgstr ""
-"Project-Id-Version: python-fedora\n"
+"Project-Id-Version: python-fedora 0.3.35\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2014-08-07 08:36-0700\n"
-"PO-Revision-Date: 2014-08-07 15:51+0000\n"
+"PO-Revision-Date: 2014-08-07 11:51-0400\n"
 "Last-Translator: Toshio Kuratomi <a.badger@gmail.com>\n"
 "Language-Team: Thai (http://www.transifex.com/projects/p/python-fedora/language/th/)\n"
 "MIME-Version: 1.0\n"
@@ -20,6 +21,7 @@ msgstr ""
 "Generated-By: Babel 1.3\n"
 "Language: th\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Zanata 3.7.3\n"
 
 #: fedora/client/wiki.py:93
 #, python-format
@@ -36,19 +38,26 @@ msgid ""
 "Warning: Number of changes reaches the API return limit.\n"
 "You will not get the complete list of changes unless\n"
 "you run this script using a 'bot' account."
-msgstr "คำเตือน: จำนวนการเปลี่ยนแปลงครบการจำกัดจำนวนการคืนค่าของ\nAPI คุณจะไม่ได้รับรายการการเปลี่ยนแปลงทั้งหมดเว้นเสียแต่ว่าคุณรัน\nสคริปต์นี้ด้วยบัญชี 'bot'"
+msgstr ""
+"คำเตือน: จำนวนการเปลี่ยนแปลงครบการจำกัดจำนวนการคืนค่าของ\n"
+"API คุณจะไม่ได้รับรายการการเปลี่ยนแปลงทั้งหมดเว้นเสียแต่ว่าคุณรัน\n"
+"สคริปต์นี้ด้วยบัญชี 'bot'"
 
 #: fedora/client/wiki.py:109
 msgid ""
 "\n"
 "== Most active wiki users =="
-msgstr "\n== ผู้ใช้วิกิที่ขยันที่สุด =="
+msgstr ""
+"\n"
+"== ผู้ใช้วิกิที่ขยันที่สุด =="
 
 #: fedora/client/wiki.py:116
 msgid ""
 "\n"
 "== Most edited pages =="
-msgstr "\n== หน้าที่แก้ไขมากที่สุด =="
+msgstr ""
+"\n"
+"== หน้าที่แก้ไขมากที่สุด =="
 
 #: fedora/django/auth/models.py:52
 msgid "Loading FAS groups..."
@@ -56,7 +65,8 @@ msgstr "กำลังโหลดกลุ่มใน FAS..."
 
 #: fedora/django/auth/models.py:58
 msgid "Unable to load FAS groups. Did you set FAS_USERNAME and FAS_PASSWORD?"
-msgstr "ไม่สามารถโหลดกลุ่มใน FAS คุณกำหนด FAS_USERNAME และ FAS_PASSWORD หรือยัง?"
+msgstr ""
+"ไม่สามารถโหลดกลุ่มใน FAS คุณกำหนด FAS_USERNAME และ FAS_PASSWORD หรือยัง?"
 
 #: fedora/django/auth/models.py:65
 msgid ""
@@ -129,7 +139,12 @@ msgid ""
 "        proving that you are a person rather than just the web browser\n"
 "        forwarding your authentication cookies on behalf of a malicious\n"
 "        website."
-msgstr " เป็นวิธีที่เว็บไซต์ประสงค์ร้ายสร้างคำขอร้องไปยังเว็บเซิร์ฟเวอร์อื่นโดยใช้ผู้ใช้ของ\n        ผู้ที่เข้าสู่เว็บไซต์นั้น วัตถุประสงค์ของหน้านี้คือช่วยคุณป้องกันบัญชีของคุณ\n        และเซิร์ฟเวอร์นี้จากการโจมตีจากเว็บไซต์เหล่านั้น การคลิกด้านล่างนี้คุณจะ\n        แสดงว่าคุณเป็นมนุษย์ ไม่ใช่เว็บเบราว์เซอร์ที่ส่งคุ๊กกี้ยึนยันตนของคุณจาก\n        เว็บไซต์ประสงค์ร้าย"
+msgstr ""
+" เป็นวิธีที่เว็บไซต์ประสงค์ร้ายสร้างคำขอร้องไปยังเว็บเซิร์ฟเวอร์อื่นโดยใช้ผู้ใช้ของ\n"
+"        ผู้ที่เข้าสู่เว็บไซต์นั้น วัตถุประสงค์ของหน้านี้คือช่วยคุณป้องกันบัญชีของคุณ\n"
+"        และเซิร์ฟเวอร์นี้จากการโจมตีจากเว็บไซต์เหล่านั้น การคลิกด้านล่างนี้คุณจะ\n"
+"        แสดงว่าคุณเป็นมนุษย์ ไม่ใช่เว็บเบราว์เซอร์ที่ส่งคุ๊กกี้ยึนยันตนของคุณจาก\n"
+"        เว็บไซต์ประสงค์ร้าย"
 
 #: fedora/tg/templates/genshi/login.html:40
 #: fedora/tg2/templates/genshi/login.html:23
