@@ -26,22 +26,8 @@ Functions to manipulate urls.
 '''
 
 
-try:
-    from urlparse import urlparse, urlunparse
-    from urllib import urlencode
-except ImportError:
-    # Python3 support
-    from urllib.parse import urlparse, urlunparse, urlencode
-
 from kitchen.iterutils import isiterable
-
-try:
-    from urllib.parse import parse_qs
-except ImportError:
-    try:
-        from urlparse import parse_qs
-    except ImportError:
-        from cgi import parse_qs
+from six.moves.urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
 
 def update_qs(uri, new_params, overwrite=True):

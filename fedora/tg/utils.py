@@ -33,10 +33,8 @@ Miscellaneous functions of use on a TurboGears Server
 .. moduleauthor:: Ricky Zhou <ricky@fedoraproject.org>
 '''
 from itertools import chain
-import urlparse
 import cgi
 import os
-import urllib
 
 import cherrypy
 from cherrypy import request
@@ -48,6 +46,7 @@ import turbogears.util as tg_util
 from turbogears.controllers import check_app_root
 from turbogears.identity.exceptions import RequestRequiredException
 import six
+from six.moves.urllib.parse import urlencode, urlparse, urlunparse
 
 
 # Save this for people who need the original url() function
@@ -80,7 +79,7 @@ def url(tgpath, tgparams=None, **kwargs):
     .. versionadded:: 0.3.10
        Modified from turbogears.controllers.url for :ref:`CSRF-Protection`
     '''
-    if not isinstance(tgpath, basestring):
+    if not isinstance(tgpath, six.string_types):
         tgpath = '/'.join(list(tgpath))
     if tgpath.startswith('/'):
         webpath = (config.get('server.webpath') or '').rstrip('/')
@@ -115,7 +114,7 @@ def url(tgpath, tgparams=None, **kwargs):
 
     # Check for query params in the current url
     query_params = six.iteritems(tgparams)
-    scheme, netloc, path, params, query_s, fragment = urlparse.urlparse(tgpath)
+    scheme, netloc, path, params, query_s, fragment = urlparse(tgpath)
     if query_s:
         query_params = chain((p for p in cgi.parse_qsl(query_s) if p[0] !=
                               '_csrf_token'), query_params)
@@ -133,9 +132,8 @@ def url(tgpath, tgparams=None, **kwargs):
             if isinstance(value, unicode):
                 value = value.encode('utf8')
             args.append((key, str(value)))
-    query_string = urllib.urlencode(args, True)
-    tgpath = urlparse.urlunparse((scheme, netloc, path, params, query_string,
-                                  fragment))
+    query_string = urlencode(args, True)
+    tgpath = urlunparse((scheme, netloc, path, params, query_string, fragment))
     return tgpath
 
 

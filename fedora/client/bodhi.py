@@ -39,14 +39,6 @@ from distutils.version import LooseVersion
 
 import six
 
-# We unfortunately can't use python-six for this because there's an ancient
-# version on rhel7.  https://github.com/fedora-infra/python-fedora/issues/132
-try:
-    from urlparse import urlparse
-except ImportError:
-    # Python3 support
-    from urllib.parse import urlparse
-
 from fedora.client import OpenIdBaseClient, FedoraClientError, BaseClient
 import fedora.client.openidproxyclient
 

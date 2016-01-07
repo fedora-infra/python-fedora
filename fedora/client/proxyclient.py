@@ -30,33 +30,6 @@ import ssl
 import time
 import warnings
 
-
-try:
-    from urllib import quote
-except ImportError:
-    # Python3 support
-    from urllib.parse import quote
-
-try:
-    import httplib
-except ImportError:
-    # Python3 support
-    import http.client as httplib
-
-try:
-    import Cookie
-except ImportError:
-    # Python3 support
-    import http.cookies as Cookie
-
-try:
-    from urlparse import urljoin
-    from urlparse import urlparse
-except ImportError:
-    # Python3 support
-    from urllib.parse import urljoin
-    from urllib.parse import urlparse
-
 try:
     from hashlib import sha1 as sha_constructor
 except ImportError:
@@ -65,6 +38,9 @@ except ImportError:
 from munch import munchify
 from kitchen.text.converters import to_bytes
 import requests
+from six.moves import http_client as httplib
+from six.moves import http_cookies as Cookie
+from six.moves.urllib.parse import quote, urljoin, urlparse
 
 from fedora import __version__
 from fedora.client import AppError, AuthError, ServerError

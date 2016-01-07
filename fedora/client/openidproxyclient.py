@@ -32,20 +32,9 @@ import re
 # For handling an exception that's coming from requests:
 import ssl
 import time
-import urllib
 
-try:
-    import httplib
-except ImportError:
-    # Python3 support
-    import http.client as httplib
-
-try:
-    # Python2
-    from urlparse import urljoin, urlparse, parse_qs
-except ImportError:
-    # Python3 support
-    from urllib.parse import urljoin, urlparse, parse_qs
+from six.moves import http_client as httplib
+from six.moves.urllib.parse import quote, parse_qs, urljoin, urlparse
 
 # Hack, hack, hack around
 # the horror that is logging!
@@ -421,7 +410,7 @@ class OpenIdProxyClient(object):
         # method will work with it.
         method = method.lstrip('/')
         # And join to make our url.
-        url = urljoin(self.base_url, urllib.quote(method))
+        url = urljoin(self.base_url, quote(method))
 
         # Set standard headers
         if headers:
