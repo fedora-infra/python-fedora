@@ -337,10 +337,7 @@ class Bodhi2Client(OpenIdBaseClient):
         can be directly passed to the ``save`` method.
 
         """
-        try:
-            import configparser
-        except ImportError:
-            import ConfigParser as configparser
+        from six.moves import configparser
 
         if not os.path.exists(input_file):
             raise ValueError("No such file or directory: %s" % input_file)
