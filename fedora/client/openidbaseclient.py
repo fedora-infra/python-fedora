@@ -36,21 +36,11 @@ import json
 import logging
 import os
 
-# pylint: disable-msg=F0401
-try:
-    # pylint: disable-msg=E0611
-    # Python 3
-    from urllib.parse import urljoin
-except ImportError:
-    # Python 2
-    from urlparse import urljoin
-# pylint: enable-msg=F0401,E0611
-
-
 import lockfile
 import requests
 import requests.adapters
 from requests.packages.urllib3.util import Retry
+from six.moves.urllib.parse import urljoin
 
 from functools import wraps
 from munch import munchify

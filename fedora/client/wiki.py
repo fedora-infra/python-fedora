@@ -224,7 +224,8 @@ you run this script using a 'bot' account."""))
 
 if __name__ == '__main__':
     #from getpass import getpass
-    #username = raw_input('Username: ')
+    #from six.moves import input
+    #username = input('Username: ')
     #password = getpass()
     wiki = Wiki()
     #cookie = wiki.login(username=username, password=password)

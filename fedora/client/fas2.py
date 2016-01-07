@@ -25,17 +25,11 @@ Provide a client module for talking to the Fedora Account System.
 .. moduleauthor:: Ralph Bean <rbean@redhat.com>
 '''
 import itertools
-import urllib
 import warnings
 
 from munch import Munch
 from kitchen.text.converters import to_bytes
-
-try:
-    from urllib import urlencode, quote
-except ImportError:
-    # Python3 support
-    from urllib.parse import urlencode, quote
+from six.moves.urllib.parse import quote, urlencode
 
 try:
     import libravatar

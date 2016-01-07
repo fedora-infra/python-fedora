@@ -31,7 +31,6 @@ repoze.who plugin to authenticate against hte Fedora Account System
 '''
 import os
 import sys
-from urllib import quote_plus
 import logging
 
 import pkg_resources
@@ -47,6 +46,7 @@ from repoze.who.interfaces import IChallenger, IIdentifier
 from repoze.who.plugins.basicauth import BasicAuthPlugin
 from repoze.who.plugins.friendlyform import FriendlyFormPlugin
 from paste.request import parse_dict_querystring, parse_formvars
+from six.moves.urllib.parse import quote_plus
 import webob
 
 from fedora.client import AuthError

@@ -33,6 +33,7 @@ try:
 except ImportError:
     from sha import new as hash_constructor
 
+import six
 from turbogears import config, identity
 from turbogears.identity import set_login_attempted
 import cherrypy
@@ -156,7 +157,7 @@ class JsonFasIdentity(BaseClient):
         # session_id: we tried with a previous session_id; try again with the
         # new one.
         if self._retrieved_user:
-            if isinstance(self._retrieved_user, basestring):
+            if isinstance(self._retrieved_user, six.string_types):
                 if self._retrieved_user == self.session_id:
                     return None
                 else:
