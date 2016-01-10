@@ -24,16 +24,12 @@
 '''
 
 import copy
+from hashlib import sha1
 import logging
 # For handling an exception that's coming from requests:
 import ssl
 import time
 import warnings
-
-try:
-    from hashlib import sha1 as sha_constructor
-except ImportError:
-    from sha import new as sha_constructor
 
 from munch import munchify
 from kitchen.text.converters import to_bytes
@@ -340,7 +336,7 @@ class ProxyClient(object):
         complete_params = req_params or {}
         if session_id:
             # Add the csrf protection token
-            token = sha_constructor(to_bytes(session_id))
+            token = sha1(to_bytes(session_id))
             complete_params.update({'_csrf_token': token.hexdigest()})
 
         auth = None

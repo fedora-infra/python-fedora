@@ -28,10 +28,7 @@ System using JSON calls.
 '''
 
 import crypt
-try:
-    from hashlib import sha1 as hash_constructor
-except ImportError:
-    from sha import new as hash_constructor
+from hashlib import sha1
 
 import six
 from turbogears import config, identity
@@ -212,7 +209,7 @@ class JsonFasIdentity(BaseClient):
                 # this request, a CSRF token is required
                 if (not '_csrf_token' in cherrypy.request.params or
                         cherrypy.request.params['_csrf_token'] !=
-                        hash_constructor(self.visit_key).hexdigest()):
+                        sha1(self.visit_key).hexdigest()):
                     self.log.info("Bad _csrf_token")
                     if '_csrf_token' in cherrypy.request.params:
                         self.log.info("visit: %s token: %s" % (
@@ -246,7 +243,7 @@ class JsonFasIdentity(BaseClient):
     def _get_token(self):
         '''Get the csrf token for this identity'''
         if self.visit_key:
-            return hash_constructor(self.visit_key).hexdigest()
+            return sha1(self.visit_key).hexdigest()
         else:
             return ''
     csrf_token = property(_get_token)

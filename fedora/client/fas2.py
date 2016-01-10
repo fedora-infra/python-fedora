@@ -24,6 +24,7 @@ Provide a client module for talking to the Fedora Account System.
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 .. moduleauthor:: Ralph Bean <rbean@redhat.com>
 '''
+from hashlib import md5
 import itertools
 import warnings
 
@@ -35,11 +36,6 @@ try:
     import libravatar
 except ImportError:
     libravatar = None
-
-try:
-    from hashlib import md5
-except ImportError:
-    from md5 import new as md5
 
 from fedora.client import (
     AppError, BaseClient, FasProxyClient,
