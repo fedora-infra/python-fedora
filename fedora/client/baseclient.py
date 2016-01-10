@@ -359,7 +359,7 @@ class BaseClient(ProxyClient):
         # Remove empty params
         # pylint: disable-msg=W0104
         [auth_params.__delitem__(key)
-            for key, value in auth_params.items() if not value]
+            for key, value in list(auth_params.items()) if not value]
         # pylint: enable-msg=W0104
 
         session_id, data = super(BaseClient, self).send_request(

@@ -117,14 +117,14 @@ you run this script using a 'bot' account."""))
 
         print(_(u'\n== Most active wiki users =='))
         for user, changes in sorted(users.items(),
-                                    cmp=lambda x, y: cmp(len(x[1]), len(y[1])),
+                                    key=lambda x: len(x[1]),
                                     reverse=True)[:show]:
             print(u' %-50s %d' % (('%s' % user).ljust(50, '.'),
                                   len(changes)))
 
         print(_(u'\n== Most edited pages =='))
         for page, num in sorted(pages.items(),
-                                cmp=lambda x, y: cmp(x[1], y[1]),
+                                key=lambda x: x[1],
                                 reverse=True)[:show]:
             print(u' %-50s %d' % (('%s' % page).ljust(50, '.'), num))
 

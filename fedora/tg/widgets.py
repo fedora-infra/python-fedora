@@ -23,7 +23,6 @@ Proof-of-concept Fedora TurboGears widgets
 '''
 
 import re
-import urllib2
 import feedparser
 try:
     import simplejson as json
@@ -31,6 +30,7 @@ except ImportError:
     from . import json as json
 
 from bugzilla import Bugzilla
+from six.moves.urllib.request import urlopen
 from turbogears.widgets import Widget
 
 
@@ -67,7 +67,7 @@ class FedoraPeopleWidget(Widget):
 class FedoraMaintainerWidget(Widget):
     '''Widget to show the packages a maintainer owns.
     '''
-    url = "https://admin.fedoraproject.org/pkgdb/packages/name/${pkg['name']}"
+    url = "https://admin.fedoraproject.org/pkgdb/package/rpms/${pkg['name']}/"
     template = """
        <table xmlns:py="http://purl.org/kid/ns#"
          class="widget FedoraMaintainerWidget" py:attrs="{'id': widget_id}">
@@ -80,11 +80,12 @@ class FedoraMaintainerWidget(Widget):
 
     def __init__(self, username, widget_id=None):
         self.widget_id = widget_id
-        page = urllib2.urlopen(
+        page = urlopen(
             'https://admin.fedoraproject.org/pkgdb/'
-            'users/packages/%s/?tg_format=json' % username
+            'api/packager/package/%s/' % username
         )
-        self.packages = json.load(page)['pkgs']
+        page = json.load(page)
+        self.packages = page['point of contact'] + page['co-maintained']
 
     def __json__(self):
         return {'id': self.widget_id, 'packages': self.packages}

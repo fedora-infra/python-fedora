@@ -550,7 +550,7 @@ class AccountSystem(BaseClient):
                 'd': default,
             })
 
-            hash = md5(email).hexdigest()
+            hash = md5(email.encode("utf-8")).hexdigest()
 
             return "http://www.gravatar.com/avatar/%s?%s" % (
                 hash, query_string)
