@@ -3,8 +3,14 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
-:Date: 07 Jan 2016
+:Date: 11 Jan 2016
 :Version: 0.7.x
+
+-----
+0.7.1
+-----
+
+* Fix a regression in BodhiClient config parsing introduced in 0.7.0.
 
 -----
 0.7.0
