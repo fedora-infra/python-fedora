@@ -347,8 +347,7 @@ class Bodhi2Client(OpenIdBaseClient):
             update = {
                 'builds': section,
                 'bugs': config.get(section, 'bugs', raw=True),
-                'close_bugs': config.getboolean(
-                    section, 'close_bugs', raw=True),
+                'close_bugs': config.getboolean(section, 'close_bugs'),
                 'type': config.get(section, 'type', raw=True),
                 'type_': config.get(section, 'type', raw=True),
                 'request': config.get(section, 'request', raw=True),
@@ -786,17 +785,14 @@ class Bodhi1Client(BaseClient):
                 update['type_'] = config.get(section, 'type', raw=True)
                 update['request'] = config.get(section, 'request', raw=True)
                 update['bugs'] = config.get(section, 'bugs', raw=True)
-                update['close_bugs'] = config.getboolean(
-                    section, 'close_bugs', raw=True)
+                update['close_bugs'] = config.getboolean(section, 'close_bugs')
                 update['notes'] = config.get(section, 'notes', raw=True)
-                update['autokarma'] = config.getboolean(
-                    section, 'autokarma', raw=True)
-                update['stable_karma'] = config.getint(
-                    section, 'stable_karma', raw=True)
+                update['autokarma'] = config.getboolean(section, 'autokarma')
+                update['stable_karma'] = config.getint(section, 'stable_karma')
                 update['unstable_karma'] = config.getint(
-                    section, 'unstable_karma', raw=True)
+                    section, 'unstable_karma')
                 update['suggest_reboot'] = config.getboolean(
-                    section, 'suggest_reboot', raw=True)
+                    section, 'suggest_reboot')
                 updates.append(update)
         return updates
 
