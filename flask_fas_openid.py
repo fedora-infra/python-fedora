@@ -141,6 +141,12 @@ class FAS(object):
                 return flask.redirect(cancel_url)
             return 'OpenID request was cancelled'
         elif info.status == consumer.SUCCESS:
+            if info.endpoint.server_url != \
+                    self.app.config['FAS_OPENID_ENDPOINT']:
+                log.warn('Claim received from invalid issuer: %s',
+                         info.endpoint.server_url)
+                return 'Invalid provider issued claim!'
+
             sreg_resp = sreg.SRegResponse.fromSuccessResponse(info)
             teams_resp = teams.TeamsResponse.fromSuccessResponse(info)
             cla_resp = cla.CLAResponse.fromSuccessResponse(info)
