@@ -28,13 +28,9 @@ Miscellaneous functions of use on a TurboGears 2 Server
 '''
 
 from copy import copy
+from hashlib import sha1
 import logging
 import os
-
-try:
-    from hashlib import sha1 as sha_constructor
-except ImportError:
-    from sha import new as sha_constructor
 
 from munch import Munch
 from kitchen.text.converters import to_unicode
@@ -78,7 +74,7 @@ def url(*args, **kwargs):
     else:
         session_id = tg.request.environ.get('CSRF_AUTH_SESSION_ID')
         if session_id:
-            csrf_token = sha_constructor(session_id).hexdigest()
+            csrf_token = sha1(session_id).hexdigest()
     if csrf_token:
         new_url = update_qs(new_url, {'_csrf_token': csrf_token},
                             overwrite=True)
