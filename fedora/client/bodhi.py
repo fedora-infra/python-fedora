@@ -32,10 +32,7 @@ import getpass
 import logging
 import textwrap
 import warnings
-import requests
 import re
-
-from distutils.version import LooseVersion
 
 import six
 

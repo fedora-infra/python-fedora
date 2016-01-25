@@ -20,8 +20,6 @@
 .. moduleauthor:: Ignacio Vazquez-Abrams <ivazquez@fedoraproject.org>
 .. moduleauthor:: Toshio Kuratomi <toshio@fedoraproject.org>
 '''
-import threading
-
 from fedora.client import FasProxyClient
 
 from django.conf import settings
