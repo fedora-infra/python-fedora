@@ -589,7 +589,7 @@ class AccountSystem(BaseClient):
         For example:
 
             >>> ret_val = FASCLIENT.people_by_key(
-            ...     key='email', search='toshio*', fields='id')
+            ...     key='email', search='toshio*', fields=['id'])
             >>> ret_val.keys()
             a.badger@[...].com
             a.badger+test1@[...].com
