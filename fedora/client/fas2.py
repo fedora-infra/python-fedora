@@ -189,8 +189,6 @@ class AccountSystem(BaseClient):
             109464: 'cassmodiah@fedoraproject.org',
             # Robert M. Albrecht: romal@gmx.de
             101475: 'mail@romal.de',
-            # Mathieu Bridon: mathieu.bridon@gmail.com
-            100753: 'bochecha@fedoraproject.org',
             # Davide Cescato: davide.cescato@iaeste.ch
             123204: 'ceski@fedoraproject.org',
             # Nick Bebout: nick@bebout.net
