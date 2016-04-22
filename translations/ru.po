@@ -10,60 +10,59 @@
 # Ralph Bean <ralph@fedoraproject.org>, 2015. #zanata
 msgid ""
 msgstr ""
-"Project-Id-Version: python-fedora 0.3.35\n"
+"Project-Id-Version: python-fedora 0.8.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-08-07 08:36-0700\n"
-"PO-Revision-Date: 2014-08-07 11:51-0400\n"
-"Last-Translator: Toshio Kuratomi <a.badger@gmail.com>\n"
-"Language-Team: Russian (http://www.transifex.com/projects/p/python-fedora/language/ru/)\n"
+"POT-Creation-Date: 2016-04-21 16:57+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2014-08-07 11:51-0400\n"
+"Last-Translator: Toshio Kuratomi <a.badger@gmail.com>\n"
+"Language-Team: Russian (http://www.transifex.com/projects/p/python-fedora/"
+"language/ru/)\n"
 "Generated-By: Babel 1.3\n"
 "Language: ru\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Zanata 3.7.3\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Zanata 3.8.3\n"
 
-#: fedora/client/wiki.py:93
+#: fedora/client/wiki.py:102
 #, python-format
 msgid "From %(then)s to %(now)s"
 msgstr "Из %(then)s в %(now)s"
 
-#: fedora/client/wiki.py:96
+#: fedora/client/wiki.py:105
 #, python-format
 msgid "%d wiki changes in the past week"
 msgstr ""
 
-#: fedora/client/wiki.py:98
+#: fedora/client/wiki.py:107
 msgid ""
 "Warning: Number of changes reaches the API return limit.\n"
 "You will not get the complete list of changes unless\n"
 "you run this script using a 'bot' account."
 msgstr ""
 
-#: fedora/client/wiki.py:109
-msgid ""
-"\n"
+#: fedora/client/wiki.py:118
+msgid "\n"
 "== Most active wiki users =="
-msgstr ""
-"\n"
+msgstr "\n"
 "== Самые активные пользователи Wiki =="
 
-#: fedora/client/wiki.py:116
-msgid ""
-"\n"
+#: fedora/client/wiki.py:125
+msgid "\n"
 "== Most edited pages =="
 msgstr ""
 
-#: fedora/django/auth/models.py:52
+#: fedora/django/auth/models.py:54
 msgid "Loading FAS groups..."
 msgstr ""
 
-#: fedora/django/auth/models.py:58
+#: fedora/django/auth/models.py:60
 msgid "Unable to load FAS groups. Did you set FAS_USERNAME and FAS_PASSWORD?"
 msgstr ""
 
-#: fedora/django/auth/models.py:65
+#: fedora/django/auth/models.py:67
 msgid ""
 "FAS groups loaded. Don't forget to set FAS_USERNAME and FAS_PASSWORD to a "
 "low-privilege account."
@@ -130,7 +129,8 @@ msgid ""
 " are a means for a malicious website to make a request of another\n"
 "        web server as the user who contacted the malicious web site.  The\n"
 "        purpose of this page is to help protect your account and this server\n"
-"        from attacks from such malicious web sites.  By clicking below, you are\n"
+"        from attacks from such malicious web sites.  By clicking below, you "
+"are\n"
 "        proving that you are a person rather than just the web browser\n"
 "        forwarding your authentication cookies on behalf of a malicious\n"
 "        website."
