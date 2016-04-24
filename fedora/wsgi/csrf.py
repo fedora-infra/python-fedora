@@ -29,6 +29,7 @@ http://en.wikipedia.org/wiki/Cross-site_request_forgery
 .. versionadded:: 0.3.17
 '''
 
+from hashlib import sha1
 import logging
 
 from munch import Munch
@@ -44,11 +45,6 @@ from paste.httpexceptions import HTTPFound
 from paste.response import replace_header
 from repoze.who.interfaces import IMetadataProvider
 from zope.interface import implements
-
-try:
-    from hashlib import sha1
-except ImportError:
-    from sha import sha as sha1
 
 from fedora.urlutils import update_qs
 

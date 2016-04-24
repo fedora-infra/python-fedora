@@ -24,6 +24,7 @@ Provide a client module for talking to the Fedora Account System.
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 .. moduleauthor:: Ralph Bean <rbean@redhat.com>
 '''
+from hashlib import md5
 import itertools
 import warnings
 
@@ -35,11 +36,6 @@ try:
     import libravatar
 except ImportError:
     libravatar = None
-
-try:
-    from hashlib import md5
-except ImportError:
-    from md5 import new as md5
 
 from fedora.client import (
     AppError, BaseClient, FasProxyClient,
@@ -193,8 +189,6 @@ class AccountSystem(BaseClient):
             109464: 'cassmodiah@fedoraproject.org',
             # Robert M. Albrecht: romal@gmx.de
             101475: 'mail@romal.de',
-            # Mathieu Bridon: mathieu.bridon@gmail.com
-            100753: 'bochecha@fedoraproject.org',
             # Davide Cescato: davide.cescato@iaeste.ch
             123204: 'ceski@fedoraproject.org',
             # Nick Bebout: nick@bebout.net
@@ -550,7 +544,7 @@ class AccountSystem(BaseClient):
                 'd': default,
             })
 
-            hash = md5(email).hexdigest()
+            hash = md5(email.encode("utf-8")).hexdigest()
 
             return "http://www.gravatar.com/avatar/%s?%s" % (
                 hash, query_string)
@@ -593,7 +587,7 @@ class AccountSystem(BaseClient):
         For example:
 
             >>> ret_val = FASCLIENT.people_by_key(
-            ...     key='email', search='toshio*', fields='id')
+            ...     key='email', search='toshio*', fields=['id'])
             >>> ret_val.keys()
             a.badger@[...].com
             a.badger+test1@[...].com

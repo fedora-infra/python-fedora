@@ -274,6 +274,12 @@ class OpenIdBaseClient(OpenIdProxyClient):
             raise AuthError("Username may not be %r at login." % username)
         if not password:
             raise AuthError("Password required for login.")
+        # It looks like we're really doing this. Let's make sure that we don't
+        # collide various cookies, and clear every cookie we had up until now
+        # for this service.
+        self._session.cookies.clear()
+        self._save_cookies()
+
         response = openid_login(
             session=self._session,
             login_url=self.login_url,

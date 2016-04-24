@@ -4,14 +4,14 @@ Information about this python-fedora release
 
 
 NAME = 'python-fedora'
-VERSION = '0.7.1'
+VERSION = '0.8.0'
 DESCRIPTION = 'Python modules for interacting with Fedora Services'
 LONG_DESCRIPTION = '''
 The Fedora Project runs many different services.  These services help us to
 package software, develop new programs, and generally put together the distro.
 This package contains software that helps us do that.
 '''
-AUTHOR = 'Toshio Kuratomi, Luke Macken, Ricky Elrod, Ralph Bean'
+AUTHOR = 'Toshio Kuratomi, Luke Macken, Ricky Elrod, Ralph Bean, Patrick Uiterwijk'
 EMAIL = 'admin@fedoraproject.org'
 COPYRIGHT = '2007-2016 Red Hat, Inc.'
 URL = 'https://fedorahosted.org/python-fedora'

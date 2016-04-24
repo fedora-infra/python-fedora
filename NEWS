@@ -3,8 +3,20 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
-:Date: 11 Jan 2016
-:Version: 0.7.x
+:Date: 21 Apr 2016
+:Version: 0.8.x
+
+
+-----
+0.8.0
+-----
+
+* Removed python 2.5 compatibility code
+* Various python 3 fixes
+* Documentation fixes
+* OpenID endpoint check
+* Cookie clearing on login in openidbaseclient
+* Removed flask_fas backwards compatibility module
 
 -----
 0.7.1
