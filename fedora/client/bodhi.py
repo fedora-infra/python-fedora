@@ -113,6 +113,10 @@ class Bodhi2Client(OpenIdBaseClient):
             self._password = getpass.getpass()
         return self._password
 
+    @property.setter
+    def password(self, value):
+        self._password = value
+
     @errorhandled
     def save(self, **kwargs):
         """ Save an update.
