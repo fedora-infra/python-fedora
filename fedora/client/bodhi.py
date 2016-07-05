@@ -113,7 +113,7 @@ class Bodhi2Client(OpenIdBaseClient):
             self._password = getpass.getpass()
         return self._password
 
-    @property.setter
+    @password.setter
     def password(self, value):
         self._password = value
 
