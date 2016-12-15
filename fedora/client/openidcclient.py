@@ -68,7 +68,7 @@ class OpenIDCBaseClient(object):
     #   scopes: A list of scopes that we had requested with the token
     def __init__(self, base_url, app_identifier, use_post=False,
                  id_provider=None, client_id=None, client_secret=None,
-                 useragent=None, cachedir=None):
+                 useragent=None, cachedir=None, socket_addr='127.0.0.1'):
         """Client for interacting with web services relying on OpenID Connect.
 
         :arg base_url: Base of every URL used to contact the server
@@ -97,6 +97,7 @@ class OpenIDCBaseClient(object):
         self.client_secret = client_secret or 'notsecret'
         self.useragent = useragent or 'Fedora OpenIDCClient/%s' % __version__
         self.cachedir = os.path.expanduser(cachedir or '~/.fedora')
+        self.socket_addr = socket_addr
         # TODO: Make cache_lock a filesystem lock so we also lock across
         # multiple invocations
         self._cache_lock = Lock()
@@ -232,11 +233,13 @@ class OpenIDCBaseClient(object):
         """This function returns a SimpleServer with an available WEB_PORT."""
         for port in WEB_PORTS:
             try:
-                server = simple_server.make_server('127.0.0.1', port, app)
+                server = simple_server.make_server(self.socket_addr, port, app)
                 return server
             except socket.error:
                 # This port did not work. Switch to next one
                 continue
+        # Re-raise the last socket.error if we couldn't find a port.
+        raise
 
     def _get_new_token(self, scopes):
         """This function kicks off some magic.
