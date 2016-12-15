@@ -118,7 +118,7 @@ class OpenIDCBaseClient(object):
         if not os.path.exists(self.cachefile):
             self.debug('Creating file')
             with open(self.cachefile, 'w') as f:
-                f.write(json.dumps([]))
+                f.write(json.dumps({}))
         with open(self.cachefile, 'r') as f:
             self._cache = json.loads(f.read())
         self.debug('Loaded %i tokens' % len(self._cache))
@@ -130,12 +130,11 @@ class OpenIDCBaseClient(object):
     def __write_cache(self):
         assert self._cache_lock.locked()
         self.debug('Writing cache with %i tokens' % len(self._cache))
-        self._refresh_cache()
         with open(self.cachefile, 'w') as f:
             f.write(json.dumps(self._cache))
 
     def _add_token(self, token):
-        uuid = uuigen().get_hex()
+        uuid = uuidgen().get_hex()
         self.debug('Adding token %s to cache' % uuid)
         with self._cache_lock:
             self.__refresh_cache()
@@ -350,7 +349,7 @@ class OpenIDCBaseClient(object):
         # We did not have a valid token, now comes the hard part...
         uuid = self._get_new_token(scopes)
         if uuid:
-            return self._cache[uuid]['access_Token']
+            return self._cache[uuid]['access_token']
 
     def send_request(self, method, scopes=None, verb='POST', new_token=True,
                      **kwargs):
