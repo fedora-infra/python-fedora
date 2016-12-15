@@ -238,6 +238,8 @@ class OpenIDCBaseClient(object):
             except socket.error:
                 # This port did not work. Switch to next one
                 continue
+        # Re-raise the last socket.error if we couldn't find a port.
+        raise
 
     def _get_new_token(self, scopes):
         """This function kicks off some magic.
