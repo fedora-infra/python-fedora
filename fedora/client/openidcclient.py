@@ -51,6 +51,7 @@ from fedora import __version__
 
 PROD_IDP = 'https://id.fedoraproject.org/openidc/'
 STG_IDP = 'https://id.stg.fedoraproject.org/openidc/'
+DEV_IDP = 'https://iddev.fedorainfracloud.org/openidc/'
 # The ports that we will try to use for our webserver
 WEB_PORTS = [12345, 23456]
 
@@ -164,10 +165,9 @@ class OpenIDCBaseClient(object):
             if token['idp'] != self.idp:
                 self.debug('Incorrect idp')
                 continue
-            for scope in scopes:
-                if not scope in token['scopes']:
-                    self.debug('Missing scope %s' % scope)
-                    continue
+            if not set(scopes).issubset(set(token['scopes'])):
+                self.debug('Missing scope')
+                continue
             if token['expires_at'] < time.time():
                 # This is a token that's supposed to still be valid, prefer it
                 # over any others we have
@@ -228,7 +228,7 @@ class OpenIDCBaseClient(object):
                     # This token was invalid and could not be refreshed
                     self._delete_token(uuid)
                     continue
-            # We either refreshed it, 
+            # We either refreshed it,
             self._valid_cache.append(uuid)
             return token
 
@@ -289,7 +289,6 @@ class OpenIDCBaseClient(object):
         query['response_type'] = 'code'
         query['client_id'] = self.client_id
         query['redirect_uri'] = return_uri
-        query['state'] = 'ignored'
         query['response_mode'] = 'query'
         query = urlencode(query)
         authz_url = '%s?%s' % (self._idp_url('Authorization'), query)
@@ -331,7 +330,7 @@ class OpenIDCBaseClient(object):
 
     def get_token(self, scopes, new_token=True):
         """Function to retrieve tokens with specific scopes.
-        
+
         This function will block until a token is retrieved.
         It is always safe to call this though, since if we already have a token
         with the current app_identifier that has the required scopes that is
@@ -349,6 +348,8 @@ class OpenIDCBaseClient(object):
         if token:
             # If we had a valid token, use that
             return token['access_token']
+        elif not new_token:
+            return None
 
         # We did not have a valid token, now comes the hard part...
         uuid = self._get_new_token(scopes)
