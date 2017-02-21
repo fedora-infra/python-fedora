@@ -6,6 +6,12 @@ NEWS
 :Date: 21 Apr 2016
 :Version: 0.8.x
 
+------------
+Next version
+------------
+
+* Deprecated fedora.client.bodhi in favor of bodhi.client.bindings.
+
 
 -----
 0.8.0

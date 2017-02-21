@@ -17,6 +17,10 @@
 # License along with python-fedora; if not, see <http://www.gnu.org/licenses/>
 #
 """
+DEPRECATED: This module is deprecated and has moved to bodhi.client.bindings.
+As the bodhi-0.9 client still uses it, it will remain here until Fedora 25 is
+EOL.
+
 This module provides a client interface for bodhi.
 
 
@@ -38,6 +42,11 @@ import six
 
 from fedora.client import OpenIdBaseClient, FedoraClientError, BaseClient
 import fedora.client.openidproxyclient
+
+
+warnings.warn('fedora.client.bodhi has been deprecated. Please use bodhi.client.bindings instead.',
+              DeprecationWarning)
+
 
 __version__ = '2.0.0'
 log = logging.getLogger(__name__)
