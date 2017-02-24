@@ -172,13 +172,13 @@ class OpenIDCBaseClient(object):
                 # This is a token that's supposed to still be valid, prefer it
                 # over any others we have
                 self.debug('Not yet expired, returning')
-                yield uuid, token
+                return uuid, token
             # This is a token that may or may not still be valid
             self.debug('Possible')
             possible_token = (uuid, token)
         if possible_token:
             self.debug('Returning possible token')
-            yield possible_token
+            return possible_token
 
     def _idp_url(self, endpoint):
         return self.idp + endpoint
@@ -214,7 +214,8 @@ class OpenIDCBaseClient(object):
         return True
 
     def _get_valid_token_with_scopes(self, scopes):
-        for token in self._get_token_with_scopes(scopes):
+        while True:
+            token = self._get_token_with_scopes(scopes)
             if not token:
                 break
             uuid, token = token
