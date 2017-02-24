@@ -151,10 +151,10 @@ class OpenIDCBaseClient(object):
     def _delete_token(self, uuid):
         self.debug('Removing token %s from cache' % uuid)
         with self._cache_lock:
-            self._refresh_cache()
+            self.__refresh_cache()
             if uuid in self._cache:
                 del self._cache[uuid]
-                self._write_cache()
+                self.__write_cache()
 
     def _get_token_with_scopes(self, scopes):
         possible_token = None
