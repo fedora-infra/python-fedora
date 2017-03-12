@@ -115,6 +115,123 @@ class OpenIDCBaseClient(object):
             self.__refresh_cache()
         self._valid_cache = []
 
+    def get_token(self, scopes, new_token=True):
+        """Function to retrieve tokens with specific scopes.
+
+        This function will block until a token is retrieved if requested.
+        It is always safe to call this though, since if we already have a token
+        with the current app_identifier that has the required scopes, we weill
+        return it.
+
+        This function will return a bearer token or None.
+        Note that the bearer token might have been revoked by the user or
+        expired.
+        In that case, you will want to call report_token_issue() to try to
+        renew the token or delete the token.
+
+        :kwarg scopes: A list of scopes required for the current client.
+        :kwarg new_token: If True, we will actively request the user to get a
+            new token with the current scopeset if we do not already have on.
+        """
+        if not isinstance(scopes, list):
+            raise Exception('Scopes must be a list')
+        token = self._get_token_with_scopes(scopes)
+        if token:
+            # If we had a valid token, use that
+            self.last_returned_uuid = token[0]
+            self.problem_reported = False
+            return token[1]['access_token']
+        elif not new_token:
+            return None
+
+        # We did not have a valid token, now comes the hard part...
+        uuid = self._get_new_token(scopes)
+        if uuid:
+            self.last_returned_uuid = uuid
+            self.problem_reported = False
+            return self._cache[uuid]['access_token']
+
+    def report_token_issue(self):
+        """Report an error with the last token that was returned.
+
+        This will attempt to renew the token that was last returned.
+        If that worked, we will return the new access token.
+        If it did not work, we will return None and remove this token from the
+        cache.
+
+        If you get an indication from your application that the token you sent
+        was invalid, you should call it.
+        You should explicitly NOT call this function if the token was valid but
+        your request failed due to a server error or because the account or
+        token was lacking specific permissions.
+        """
+        if not self.last_returned_uuid:
+            raise Exception('Cannot report issue before requesting token')
+        if self.problem_reported:
+            # We were reported an issue before. Let's just remove this token.
+            self._delete_token(self.last_returned_uuid)
+            return None
+        refresh_result = self._refresh_token(self.last_returned_uuid)
+        if not refresh_result:
+            self._delete_token(self.last_returned_uuid)
+            return None
+        else:
+            self.problem_reported = True
+            return self._cache[self.last_returned_uuid]['access_token']
+
+    def send_request(self, method, scopes, verb='POST', new_token=True,
+                     **kwargs):
+        """Make an HTTP request to a server method.
+
+        The given method is called with any parameters set in kwargs. If auth
+        is True, then the request is made with an authenticated token.
+
+        :arg method: Method to call on the server. It's a URL fragment that is
+            appended to the :attr:`base_url` set in :meth:`__init__`.
+        :kwarg scopes: Scopes required for this call. If a token is not present
+            with this token, a new one will be requested unless nonblocking is
+            True.
+        :kwarg verb: The HTTP verb to use for this request.
+        :kwarg new_token: If True, we will actively request the user to get a
+            new token with the current scopeset if we do not already have on.
+        :kwarg kwargs: Extra parameters to send to the server.
+        """
+        is_retry = False
+        if self.token_to_try:
+            is_retry = True
+            token = self.token_to_try
+            self.token_to_try = None
+        else:
+            token = self.get_token(scopes, new_token=new_token)
+            if not token:
+                return None
+
+        headers = {}
+        data = kwargs
+
+        if self.use_post:
+            data['access_token'] = token
+        else:
+            headers['Authorization'] = 'Bearer %s' % token
+        resp = requests.request(verb,
+                                self.base_url + method,
+                                headers=headers,
+                                data=data)
+        if resp.status_code == 401 and not is_retry:
+            self.token_to_try = self.report_token_issue()
+            if not self.token_to_try:
+                return resp
+            return self.send_request(method=method,
+                                     scopes=scopes,
+                                     verb=verb,
+                                     new_token=new_token,
+                                     **kwargs)
+        elif resp.status_code == 401:
+            # We got a 401 and this is a retry. Report error
+            self.report_token_issue()
+        else:
+            return resp
+
     @property
     def _cachefile(self):
         assert self._cache_lock.locked()
@@ -307,120 +424,3 @@ class OpenIDCBaseClient(object):
                  'scopes': scopes}
         # AND WE ARE DONE! \o/
         return self._add_token(token)
-
-    def get_token(self, scopes, new_token=True):
-        """Function to retrieve tokens with specific scopes.
-
-        This function will block until a token is retrieved if requested.
-        It is always safe to call this though, since if we already have a token
-        with the current app_identifier that has the required scopes, we weill
-        return it.
-
-        This function will return a bearer token or None.
-        Note that the bearer token might have been revoked by the user or
-        expired.
-        In that case, you will want to call report_token_issue() to try to
-        renew the token or delete the token.
-
-        :kwarg scopes: A list of scopes required for the current client.
-        :kwarg new_token: If True, we will actively request the user to get a
-            new token with the current scopeset if we do not already have on.
-        """
-        if not isinstance(scopes, list):
-            raise Exception('Scopes must be a list')
-        token = self._get_token_with_scopes(scopes)
-        if token:
-            # If we had a valid token, use that
-            self.last_returned_uuid = token[0]
-            self.problem_reported = False
-            return token[1]['access_token']
-        elif not new_token:
-            return None
-
-        # We did not have a valid token, now comes the hard part...
-        uuid = self._get_new_token(scopes)
-        if uuid:
-            self.last_returned_uuid = uuid
-            self.problem_reported = False
-            return self._cache[uuid]['access_token']
-
-    def report_token_issue(self):
-        """Report an error with the last token that was returned.
-
-        This will attempt to renew the token that was last returned.
-        If that worked, we will return the new access token.
-        If it did not work, we will return None and remove this token from the
-        cache.
-
-        If you get an indication from your application that the token you sent
-        was invalid, you should call it.
-        You should explicitly NOT call this function if the token was valid but
-        your request failed due to a server error or because the account or
-        token was lacking specific permissions.
-        """
-        if not self.last_returned_uuid:
-            raise Exception('Cannot report issue before requesting token')
-        if self.problem_reported:
-            # We were reported an issue before. Let's just remove this token.
-            self._delete_token(self.last_returned_uuid)
-            return None
-        refresh_result = self._refresh_token(self.last_returned_uuid)
-        if not refresh_result:
-            self._delete_token(self.last_returned_uuid)
-            return None
-        else:
-            self.problem_reported = True
-            return self._cache[self.last_returned_uuid]['access_token']
-
-    def send_request(self, method, scopes, verb='POST', new_token=True,
-                     **kwargs):
-        """Make an HTTP request to a server method.
-
-        The given method is called with any parameters set in kwargs. If auth
-        is True, then the request is made with an authenticated token.
-
-        :arg method: Method to call on the server. It's a URL fragment that is
-            appended to the :attr:`base_url` set in :meth:`__init__`.
-        :kwarg scopes: Scopes required for this call. If a token is not present
-            with this token, a new one will be requested unless nonblocking is
-            True.
-        :kwarg verb: The HTTP verb to use for this request.
-        :kwarg new_token: If True, we will actively request the user to get a
-            new token with the current scopeset if we do not already have on.
-        :kwarg kwargs: Extra parameters to send to the server.
-        """
-        is_retry = False
-        if self.token_to_try:
-            is_retry = True
-            token = self.token_to_try
-            self.token_to_try = None
-        else:
-            token = self.get_token(scopes, new_token=new_token)
-            if not token:
-                return None
-
-        headers = {}
-        data = kwargs
-
-        if self.use_post:
-            data['access_token'] = token
-        else:
-            headers['Authorization'] = 'Bearer %s' % token
-        resp = requests.request(verb,
-                                self.base_url + method,
-                                headers=headers,
-                                data=data)
-        if resp.status_code == 401 and not is_retry:
-            self.token_to_try = self.report_token_issue()
-            if not self.token_to_try:
-                return resp
-            return self.send_request(method=method,
-                                     scopes=scopes,
-                                     verb=verb,
-                                     new_token=new_token,
-                                     **kwargs)
-        elif resp.status_code == 401:
-            # We got a 401 and this is a retry. Report error
-            self.report_token_issue()
-        else:
-            return resp
