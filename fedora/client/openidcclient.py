@@ -194,7 +194,7 @@ class OpenIDCBaseClient(object):
         :kwarg verb: The HTTP verb to use for this request.
         :kwarg new_token: If True, we will actively request the user to get a
             new token with the current scopeset if we do not already have on.
-        :kwarg kwargs: Extra parameters to send to the server.
+        :kwarg kwargs: Extra parameters to python-requests.
         """
         is_retry = False
         if self.token_to_try:
@@ -206,17 +206,21 @@ class OpenIDCBaseClient(object):
             if not token:
                 return None
 
-        headers = {}
-        data = kwargs
-
         if self.use_post:
-            data['access_token'] = token
+            if 'json' in kwargs:
+                raise ValueError('Cannot provide json in a post call')
+
+            if 'data' not in kwargs:
+                kwargs['data'] = {}
+            kwargs['data']['access_token'] = token
         else:
-            headers['Authorization'] = 'Bearer %s' % token
+            if 'headers' not in kwargs:
+                kwargs['headers'] = {}
+            kwargs['headers']['Authorization'] = 'Bearer %s' % token
+
         resp = requests.request(verb,
                                 self.base_url + method,
-                                headers=headers,
-                                data=data)
+                                **kwargs)
         if resp.status_code == 401 and not is_retry:
             self.token_to_try = self.report_token_issue()
             if not self.token_to_try:

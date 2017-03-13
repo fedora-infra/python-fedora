@@ -298,7 +298,6 @@ class OpenIdBaseClientTest(unittest.TestCase):
                 postmock.assert_called_with(
                     'POST',
                     'http://app/test',
-                    data={},
                     headers={'Authorization': 'Bearer testtoken'})
 
     def test_send_request_not_valid_token_500(self):
@@ -325,7 +324,6 @@ class OpenIdBaseClientTest(unittest.TestCase):
                 postmock.assert_called_with(
                     'POST',
                     'http://app/test',
-                    data={},
                     headers={'Authorization': 'Bearer testtoken'})
 
     def test_send_request_not_valid_token_403(self):
@@ -352,7 +350,6 @@ class OpenIdBaseClientTest(unittest.TestCase):
                 postmock.assert_called_with(
                     'POST',
                     'http://app/test',
-                    data={},
                     headers={'Authorization': 'Bearer testtoken'})
 
     def test_send_request_not_valid_token_401_refreshable(self):
@@ -378,13 +375,14 @@ class OpenIdBaseClientTest(unittest.TestCase):
                 result = self.client.send_request(
                     'test',
                     scopes=['test_send_request_not_valid_token_401_' +
-                            'refreshable'])
+                            'refreshable'],
+                    json={'foo': 'bar'})
                 gsm.assert_called_once()
                 self.assertEqual(result.json(), {})
                 postmock.assert_called_with(
                     'POST',
                     'http://app/test',
-                    data={},
+                    json={'foo': 'bar'},
                     headers={'Authorization': 'Bearer refreshedtoken'})
 
     def test_send_request_not_valid_token_401_not_refreshable(self):
