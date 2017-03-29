@@ -28,6 +28,7 @@ setup(
         'urllib3',
         'six >= 1.4.0',
         'lockfile',
+        'openidc-client',
     ],
     extras_require={
         'tg': ['TurboGears >= 1.0.4', 'SQLAlchemy', 'decorator'],

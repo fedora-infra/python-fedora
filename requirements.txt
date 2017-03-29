@@ -2,5 +2,6 @@ munch
 kitchen
 requests
 beautifulsoup4
+openidc-client
 urllib3
 six
