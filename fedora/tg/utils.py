@@ -81,6 +81,11 @@ def url(tgpath, tgparams=None, **kwargs):
     '''
     if not isinstance(tgpath, six.string_types):
         tgpath = '/'.join(list(tgpath))
+    if not tgpath.startswith('/'):
+        # Do not allow the url() function to be used for external urls.
+        # This function is primarily used in redirect() calls, so this prevents
+        # covert redirects and thus CSRF leaking.
+        tgpath = '/'
     if tgpath.startswith('/'):
         webpath = (config.get('server.webpath') or '').rstrip('/')
         if tg_util.request_available():
