@@ -1,4 +1,3 @@
-#!/usr/bin/env python2 -tt
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2013-2014  Red Hat, Inc.
