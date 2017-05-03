@@ -80,7 +80,7 @@ def requires_login(func):
                 '<title>OpenID transaction in progress</title>' in output.text:
             raise LoginRequiredError(
                 '{0} requires a logged in user'.format(output.url))
-        elif output and output.status_code == 403:
+        elif output.status_code == 403:
             raise LoginRequiredError(
                 '{0} requires a logged in user'.format(output.url))
         return output
