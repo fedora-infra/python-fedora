@@ -28,6 +28,8 @@ fedora.client is used to interact with Fedora Services.
 .. moduleauthor:: Luke Macken <lmacken@redhat.com>
 .. moduleauthor:: Toshio Kuratomi <tkuratom@redhat.com>
 '''
+import errno
+import os
 import warnings
 
 from munch import Munch
@@ -113,6 +115,16 @@ class AppError(FedoraServiceError):
             self.name, self.message, self.extras)
 
 
+class UnsafeFileError(Exception):
+    def __init__(self, filename, message):
+        super(UnsafeFileError, self).__init__(message)
+        self.message = message
+        self.filename = filename
+
+    def __str__(self):
+        return 'Unsafe file permissions! {}: {}'.format(self.filename,
+                                                        self.message)
+
 
 # Backwards compatibility
 class DictContainer(Munch):
@@ -121,6 +133,23 @@ class DictContainer(Munch):
             'DictContainer is deprecated.  Use the Munch class'
             ' from python-bunch instead.', DeprecationWarning, stacklevel=2)
         Munch.__init__(self, *args, **kwargs)
+
+
+def check_file_permissions(filename, allow_notexists=False):
+    if os.path.islink(filename):
+        raise UnsafeFileError(filename, 'File is a symlink')
+    try:
+        stat = os.stat(filename)
+    except OSError as e:
+        if e.errno == errno.ENOENT and allow_notexists:
+            return
+        raise
+    if stat.st_uid != os.getuid():
+        raise UnsafeFileError(filename, 'File not owned by current user')
+    if stat.st_gid != os.getgid():
+        raise UnsafeFileError(filename, 'File not owner by primary group')
+    if stat.st_mode & 0o007:
+        raise UnsafeFileError(filename, 'File is world-readable')
 
 
 # We want people to be able to import fedora.client.*Client directly

@@ -47,7 +47,11 @@ from munch import munchify
 from kitchen.text.converters import to_bytes
 
 from fedora import __version__
-from fedora.client import AuthError, LoginRequiredError, ServerError
+from fedora.client import (AuthError,
+                           LoginRequiredError,
+                           ServerError,
+                           UnsafeFileError,
+                           check_file_permissions)
 from fedora.client.openidproxyclient import (
     OpenIdProxyClient, absolute_url, openid_login)
 
@@ -182,7 +186,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
         # for their password over and over.
         if not os.path.isdir(b_SESSION_DIR):
             try:
-                os.makedirs(b_SESSION_DIR, mode=0o755)
+                os.makedirs(b_SESSION_DIR, mode=0o750)
             except OSError as err:
                 log.warning('Unable to create {file}: {error}'.format(
                     file=b_SESSION_DIR, error=err))
@@ -302,6 +306,12 @@ class OpenIdBaseClient(OpenIdProxyClient):
             return
 
         try:
+            check_file_permissions(b_SESSION_FILE, True)
+        except UnsafeFileError as e:
+            log.debug('Current sessions ignored: {}'.format(str(e)))
+            return
+
+        try:
             with self.cache_lock:
                 with open(b_SESSION_FILE, 'rb') as f:
                     data = json.loads(f.read().decode('utf-8'))
@@ -312,8 +322,10 @@ class OpenIdBaseClient(OpenIdProxyClient):
         except IOError:
             # The file doesn't exist, so create it.
             log.debug("Creating %s", b_SESSION_FILE)
+            oldmask = os.umask(0o027)
             with open(b_SESSION_FILE, 'wb') as f:
                 f.write(json.dumps({}).encode('utf-8'))
+            os.umask(oldmask)
 
     def _save_cookies(self):
         if not self.cache_session:
@@ -321,15 +333,22 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
         with self.cache_lock:
             try:
+                check_file_permissions(b_SESSION_FILE, True)
                 with open(b_SESSION_FILE, 'rb') as f:
                     data = json.loads(f.read().decode('utf-8'))
+            except UnsafeFileError as e:
+                log.debug('Clearing sessions: {}'.format(str(e)))
+                os.unlink(b_SESSION_FILE)
+                data = {}
             except Exception:
                 log.warn("Failed to open cookie cache before saving.")
                 data = {}
 
+            oldmask = os.umask(0o027)
             data[self.session_key] = self._session.cookies.items()
             with open(b_SESSION_FILE, 'wb') as f:
                 f.write(json.dumps(data).encode('utf-8'))
+            os.umask(oldmask)
 
 
 __all__ = ('OpenIdBaseClient', 'requires_login')
