@@ -3,14 +3,16 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
-:Date: 21 Apr 2016
-:Version: 0.8.x
+:Date: 5 May 2017
+:Version: 0.9.x
 
-------------
-Next version
-------------
+-----
+0.9.0
+-----
 
 * Deprecated fedora.client.bodhi in favor of bodhi.client.bindings.
+* Added OpenID Connect client
+* Added file permission checks on openidbaseclient cookies
 
 
 -----
