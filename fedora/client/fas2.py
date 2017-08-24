@@ -251,6 +251,22 @@ class AccountSystem(BaseClient):
             137561: 'mholec@redhat.com',
             # John Dulaney: j_dulaney@live.com
             149140: 'jdulaney@fedoraproject.org',
+            # Niels de Vos: niels@nixpanic.net
+            102792: 'ndevos@redhat.com',
+            # Shawn Wells: shawn@redhat.com
+            156515: 'swells@redhat.com',
+            # Christopher Tubbs: ctubbsii+fedora@gmail.com
+            160404: 'ctubbsii@fedoraproject.org',
+            # Björn Esser: bjoern.esser@gmail.com
+            163460: 'besser82@fedoraproject.org',
+            # Amit Shah: amit@amitshah.net
+            115389: 'amitshah@fedoraproject.org',
+            # Mark Wielard: fedora@wildebeest.org
+            102697: 'mjw@fedoraproject.org',
+            # Benjamin Lefoul: benjamin.lefoul@nwise.se
+            189661: 'lef@fedoraproject.org',
+            # Mike Ruckman: roshi@mykolab.com
+            172063: 'roshi@fedoraproject.org',
         }
         # A few people have an email account that is used in owners.list but
         # have setup a bugzilla account for their primary account system email
