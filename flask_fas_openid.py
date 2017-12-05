@@ -89,7 +89,18 @@ class FAS(object):
         self.postlogin_func = None
         self.app = app
         if self.app is not None:
-            self._init_app(app)
+            self.init_app(app)
+
+    def init_app(self, app):
+        """ Constructor for the Flask application. """
+        self.app = app
+        app.config.setdefault('FAS_OPENID_ENDPOINT',
+                              'https://id.fedoraproject.org/openid/')
+        app.config.setdefault('FAS_OPENID_CHECK_CERT', True)
+
+        if not self.app.config['FAS_OPENID_CHECK_CERT']:
+            setDefaultFetcher(Urllib2Fetcher())
+
         # json_encoder is only available from flask 0.10
         version = flask.__version__.split('.')
         assume_recent = False
@@ -100,17 +111,9 @@ class FAS(object):
             # We'll assume we're using a recent enough flask as the packages
             # of old versions used sane version numbers.
             assume_recent = True
+
         if assume_recent or (major >= 0 and minor >= 10):
             self.app.json_encoder = FASJSONEncoder
-
-    def _init_app(self, app):
-        """ Constructor for the Flask application. """
-        app.config.setdefault('FAS_OPENID_ENDPOINT',
-                              'https://id.fedoraproject.org/openid/')
-        app.config.setdefault('FAS_OPENID_CHECK_CERT', True)
-
-        if not self.app.config['FAS_OPENID_CHECK_CERT']:
-            setDefaultFetcher(Urllib2Fetcher())
 
         @app.route('/_flask_fas_openid_handler/', methods=['GET', 'POST'])
         def flask_fas_openid_handler():
