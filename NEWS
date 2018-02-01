@@ -4,7 +4,15 @@ NEWS
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
 :Date: 5 May 2017
-:Version: 0.9.x
+:Version: 0.10.x
+
+------
+0.10.0
+------
+
+* Seperate init_app in flask_fas_openid
+* Some py3 compatibility
+* Harden url() function
 
 -----
 0.9.0
