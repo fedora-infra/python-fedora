@@ -3,8 +3,16 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
-:Date: 5 May 2017
-:Version: 0.10.x
+:Date: TBD
+:Version: 0.11.x
+
+------
+0.11.x
+------
+
+* Drop support for Django
+* Drop support for TurboGears1
+* Drop support for TurboGears2
 
 ------------
 Next release
