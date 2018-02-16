@@ -14,6 +14,6 @@ This package contains software that helps us do that.
 AUTHOR = 'Toshio Kuratomi, Luke Macken, Ricky Elrod, Ralph Bean, Patrick Uiterwijk'
 EMAIL = 'admin@fedoraproject.org'
 COPYRIGHT = '2007-2018 Red Hat, Inc.'
-URL = 'https://fedorahosted.org/python-fedora'
+URL = 'https://github.com/fedora-infra/python-fedora'
 DOWNLOAD_URL = 'https://pypi.python.org/pypi/python-fedora'
 LICENSE = 'LGPLv2+'
