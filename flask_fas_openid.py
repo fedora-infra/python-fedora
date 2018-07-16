@@ -112,7 +112,7 @@ class FAS(object):
             # of old versions used sane version numbers.
             assume_recent = True
 
-        if assume_recent or (major >= 0 and minor >= 10):
+        if assume_recent or (major > 0 or minor >= 10):
             self.app.json_encoder = FASJSONEncoder
 
         @app.route('/_flask_fas_openid_handler/', methods=['GET', 'POST'])
