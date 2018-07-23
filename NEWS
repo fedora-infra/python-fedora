@@ -6,6 +6,15 @@ NEWS
 :Date: 5 May 2017
 :Version: 0.10.x
 
+------------
+Next release
+------------
+
+Backwards incompatible:
+
+* Removed fedora.client.bodhi.
+
+
 ------
 0.10.0
 ------
