@@ -54,6 +54,25 @@ procedures::
 See the configuration notes in each section for information on configuring
 your application after install.
 
+-----------------------
+Development Environment
+-----------------------
+
+1) Create and Activate a virtual environment::
+
+        python3 -m venv .venv
+        source .venv/bin/activate
+
+2) Upgrade pip and install Dependencies::
+
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r test_requirements.txt
+
+3) Run the unit tests::
+
+        tox test
+
 ---------------------------
 Fedora Accounts Integration
 ---------------------------
