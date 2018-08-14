@@ -205,6 +205,18 @@ class OpenIdBaseClient(OpenIdProxyClient):
         response = self._session.get(url, params=params, data=data, **kwargs)
         return response
 
+    @requires_login
+    def _authed_put(self, url, params=None, data=None, **kwargs):
+        """ Return the request object of a put query."""
+        response = self._session.put(url, params=params, data=data, **kwargs)
+        return response
+
+    @requires_login
+    def _authed_delete(self, url, params=None, data=None, **kwargs):
+        """ Return the request object of a delete query."""
+        response = self._session.delete(url, params=params, data=data, **kwargs)
+        return response
+
     def send_request(self, method, auth=False, verb='POST', **kwargs):
         """Make an HTTP request to a server method.
 
@@ -229,8 +241,12 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
         self._authed_verb_dispatcher = {(False, 'POST'): self._session.post,
                                         (False, 'GET'): self._session.get,
+                                        (False, 'PUT'): self._session.put,
+                                        (False, 'DELETE'): self._session.delete,
                                         (True, 'POST'): self._authed_post,
-                                        (True, 'GET'): self._authed_get}
+                                        (True, 'GET'): self._authed_get,
+                                        (True, 'PUT'): self._authed_put,
+                                        (True, 'DELETE'): self._authed_delete}
 
         if 'timeout' not in kwargs:
             kwargs['timeout'] = self.timeout
