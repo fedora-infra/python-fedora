@@ -225,7 +225,7 @@ A few things to note:
    bandwidth downloading the data to get information that more closely matches
    what you need.
 
-See ``pydoc fedora.accounts.fas2`` for a module that implements a standard
+See ``pydoc fedora.client.fas2`` for a module that implements a standard
 client API for the `Fedora Account System`_
 
 .. _`Fedora Package Database`: https://fedorahosted.org/packagedb

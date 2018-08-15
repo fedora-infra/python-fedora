@@ -84,7 +84,7 @@ System`_ easier.
 
 General Purpose API
 ===================
-The ``fedora.accounts.fas2`` module allows code to integrate with the `Fedora
+The ``fedora.client.fas2`` module allows code to integrate with the `Fedora
 Account System`_. It uses the JSON interface provided by the Account System
 servre to retrieve information about users.
 
@@ -101,11 +101,11 @@ At the moment, there are only a few methods implemented. Full documentation on
 these methods is available from the ``AccountSystem``'s docstrings from the
 interpreter or, for instance, by running::
 
-    $ pydoc fedora.accounts.fas2.AccountSystem
+    $ pydoc fedora.client.fas2.AccountSystem
 
 Here's an example of using the ``AccountSystem``::
 
-	from fedora.accounts.fas2 import AccountSystem
+	from fedora.client.fas2 import AccountSystem
 	from fedora.client import AuthError
 
 	# Get an AccountSystem object.  All AccountSystem methods need to be
