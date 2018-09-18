@@ -39,8 +39,8 @@ class FedoraClientError(Exception):
 
     '''Base Exception for problems which originate within the Clients.
 
-    This should be the base class for any exceptions that the Client generates
-    generate.  For instance, if the client performs validation before passing
+    This should be the base class for any exceptions that the Client
+    generates.  For instance, if the client performs validation before passing
     the data on to the Fedora Service.
 
     Problems returned while talking to the Services should be returned via a
