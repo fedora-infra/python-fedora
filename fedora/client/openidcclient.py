@@ -38,13 +38,14 @@ DEV_IDP = 'https://iddev.fedorainfracloud.org/openidc/'
 
 
 class OpenIDCBaseClient(OpenIDCClient):
-    def __init__(self, app_identifier, id_provider, client_id, use_post=False,
-                 cachedir=None):
+    def __init__(self, app_identifier, id_provider, client_id,
+                 client_secret=None, use_post=False, cachedir=None):
         """Client for interacting with web services relying on OpenID Connect.
 
         :arg app_identifier: Identifier for storage of retrieved tokens
         :kwarg id_provider: URL of the identity provider to get tokens from
         :kwarg client_id: The Client Identifier used to request credentials
+        :kwarg client_secret: The secret associated with the Client Identifier.
         :kwarg use_post: Whether to use POST submission of client secrets
             rather than Authorization header
         :kwarg cachedir: The directory in which to store the token caches. Will
@@ -59,6 +60,7 @@ class OpenIDCBaseClient(OpenIDCClient):
             id_provider_mapping={'Token': 'Token',
                                  'Authorization': 'Authorization'},
             client_id=client_id,
+            client_secret=client_secret,
             use_post=use_post,
             useragent='Python-Fedora/%s' % __version__,
             cachedir=cachedir)
