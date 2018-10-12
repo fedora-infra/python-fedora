@@ -54,7 +54,6 @@ class OpenIDCBaseClient(OpenIDCClient):
         if cachedir is None:
             cachedir = '~/.fedora/'
         super(OpenIDCBaseClient, self).__init__(
-            self,
             app_identifier=app_identifier,
             id_provider=id_provider,
             id_provider_mapping={'Token': 'Token',
