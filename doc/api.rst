@@ -8,48 +8,6 @@ docs into the hand created docs as we have time to integrate them.
 .. toctree::
    :maxdepth: 2
 
-------
-Client
-------
-
-.. automodule:: fedora.client
-    :members: FedoraServiceError, ServerError, AuthError, AppError,
-        FedoraClientError, FASError, CLAError, BodhiClientException,
-        DictContainer
-
-Generic Clients
-===============
-
-BaseClient
-----------
-
-.. autoclass:: fedora.client.BaseClient
-    :members:
-    :undoc-members:
-
-ProxyClient
------------
-
-.. autoclass:: fedora.client.ProxyClient
-    :members:
-    :undoc-members:
-
-
-OpenIdBaseClient
-----------------
-
-.. autoclass:: fedora.client.OpenIdBaseClient
-    :members:
-    :undoc-members:
-
-.. autofunction:: fedora.client.openidbaseclient.requires_login
-
-OpenIdProxyClient
------------------
-
-.. autoclass:: fedora.client.OpenIdProxyClient
-    :members:
-    :undoc-members:
 
 Clients for Specific Services
 =============================
