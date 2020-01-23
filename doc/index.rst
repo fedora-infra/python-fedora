@@ -10,9 +10,6 @@ Lesser General Public License version 2 or later.
    :maxdepth: 2
 
    client
-   existing
-   service
-   auth
    javascript
    api
 
