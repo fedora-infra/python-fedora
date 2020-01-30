@@ -3,24 +3,28 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
-:Date: TBD
-:Version: 0.11.x
+:Version: 1.0.0
 
 ------
-0.11.x
+1.0.0
 ------
-
-* Drop support for Django
-* Drop support for TurboGears1
-* Drop support for TurboGears2
-
-------------
-Next release
-------------
-
 Backwards incompatible:
 
 * Removed fedora.client.bodhi.
+* Drop support for Django
+* Drop support for TurboGears1
+* Drop support for TurboGears2
+* Drop support for flask_fas
+
+New features:
+
+* OpenIDCBaseClient now supports a client_secret argument
+* Add support for PUT and DELETE requests to OpenIdBaseClient 'send_request' method.
+* Make flask_fas_openid compatible with flask >= 1.0
+
+Bugfixes
+
+* OpenIdBaseClient The encoding arg of json.loads() is ignored and deprecated
 
 
 ------
