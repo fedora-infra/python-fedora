@@ -351,7 +351,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
             try:
                 check_file_permissions(b_SESSION_FILE, True)
                 with open(b_SESSION_FILE, 'rb') as f:
-                    data = json.loads(f.read(), encoding='utf-8')
+                    data = json.loads(f.read().decode('utf-8'))
             except UnsafeFileError as e:
                 log.debug('Clearing sessions: {}'.format(str(e)))
                 os.unlink(b_SESSION_FILE)
