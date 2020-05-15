@@ -29,6 +29,7 @@ setup(
         'six >= 1.4.0',
         'lockfile',
         'openidc-client',
+        'fasjson-client',
     ],
     extras_require={
         'wsgi': ['repoze.who', 'Beaker', 'Paste'],

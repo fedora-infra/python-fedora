@@ -157,6 +157,7 @@ def check_file_permissions(filename, allow_notexists=False):
 from fedora.client.proxyclient import ProxyClient
 from fedora.client.fasproxy import FasProxyClient
 from fedora.client.baseclient import BaseClient
+from fedora.client.fasjsonclient import NewAccountSystem
 from fedora.client.openidproxyclient import OpenIdProxyClient
 from fedora.client.openidbaseclient import OpenIdBaseClient
 from fedora.client.fas2 import AccountSystem, FASError, CLAError
@@ -166,6 +167,6 @@ from fedora.client.wiki import Wiki
 __all__ = ('FedoraServiceError', 'ServerError', 'AuthError', 'AppError',
            'FedoraClientError', 'LoginRequiredError', 'DictContainer',
            'FASError', 'CLAError', 'BodhiClientException',
-           'ProxyClient', 'FasProxyClient', 'BaseClient', 'OpenIdProxyClient',
+           'ProxyClient', 'FasProxyClient', 'BaseClient', 'NewAccountSystem', 'OpenIdProxyClient',
            'OpenIdBaseClient', 'AccountSystem', 'BodhiClient',
            'Wiki')

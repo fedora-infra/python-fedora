@@ -39,7 +39,7 @@ except ImportError:
 
 from fedora.client import (
     AppError, BaseClient, FasProxyClient,
-    FedoraClientError, FedoraServiceError
+    FedoraClientError, FedoraServiceError, NewAccountSystem
 )
 
 from fedora import __version__
@@ -108,7 +108,7 @@ class AccountSystem(BaseClient):
     # URLs for remote avatar providers.
     _valid_avatar_services = ['libravatar', 'gravatar']
 
-    def __init__(self, base_url='https://admin.fedoraproject.org/accounts/',
+    def __init__(self, base_url='https://admin.fedoraproject.org/accounts/', newAPI=None,
                  *args, **kwargs):
         '''Create the AccountSystem client object.
 
@@ -137,6 +137,9 @@ class AccountSystem(BaseClient):
                                         session_as_cookie=False,
                                         debug=self.debug,
                                         insecure=self.insecure)
+        self.newAPI = newAPI
+        if self.newAPI:
+            self.new_client = NewAccountSystem(base_url=base_url, api_version=1)
 
         # Preseed a list of FAS accounts with bugzilla addresses
         # This allows us to specify a different email for bugzilla than is
@@ -371,6 +374,8 @@ class AccountSystem(BaseClient):
 
     def group_by_name(self, groupname):
         '''Returns a group object based on its name'''
+        if self.newAPI:
+            return Munch(self.new_client.group_by_name(groupname=groupname)['result'])
         params = {'groupname': groupname}
         request = self.send_request(
             'json/group_by_name',
@@ -401,6 +406,9 @@ class AccountSystem(BaseClient):
         .. versionchanged:: 0.3.21
             Return a Bunch instead of a DictContainer
         '''
+        if self.newAPI:
+            members = self.new_client.group_members(groupname)['result']
+            return [Munch(member) for member in members]
         request = self.send_request('/group/dump/%s' %
                                     quote(groupname), auth=True)
 
@@ -438,6 +446,8 @@ class AccountSystem(BaseClient):
 
     def person_by_username(self, username):
         '''Returns a person object based on its username'''
+        if self.newAPI:
+            return Munch(self.new_client.person_by_username(username)['result'])
         params = {'username': username}
         request = self.send_request(
             'json/person_by_username',
@@ -551,7 +561,13 @@ class AccountSystem(BaseClient):
         else:
             if lookup_email:
                 person = self.person_by_username(username)
-                email = person.get('email', 'no_email')
+                if self.newAPI:
+                    # need to do this because FreeIPA has the ability to store multiple emails
+                    # we keep this intact in the API but don't make use of it through noggin
+                    emails = person.get('emails', 'no_email')
+                    email = emails[0]
+                else:
+                    email = person.get('email', 'no_email')
             else:
                 email = "%s@fedoraproject.org" % username
 
@@ -772,6 +788,9 @@ class AccountSystem(BaseClient):
         :returns: A list of person objects from the group.  If the group
             contains no entries, then an empty list is returned.
         '''
+        if self.newAPI:
+            users = self.new_client.group_members(groupname)['result']
+            return [Munch(user) for user in users]
         people = self.people_by_id()
         group = dict(self.group_by_name(groupname))
         userids = [user[u'person_id'] for user in
@@ -919,6 +938,9 @@ class AccountSystem(BaseClient):
 
         .. versionadded:: 0.3.8
         '''
+        if self.newAPI:
+            groups = self.new_client.groups()['result']
+            return [Munch(group) for group in groups]
         params = {}
         if force_refresh:
             params['force_refresh'] = True
@@ -948,6 +970,10 @@ class AccountSystem(BaseClient):
 
         .. versionadded:: 0.3.8
         '''
+        if self.newAPI:
+            users = self.new_client.user_data()['result']
+            return [Munch(user) for user in users]
+
         try:
             request = self.send_request('json/fas_client/user_data', auth=True)
             if request['success']:
@@ -958,3 +984,11 @@ class AccountSystem(BaseClient):
                     ' information', name='FASError')
         except FedoraServiceError:
             raise
+
+    def whoami(self):
+        '''Return information about the requesting user/service
+        '''
+        if self.newAPI:
+            return Munch(self.new_client.user_data()['result'])
+        else:
+            raise FedoraServiceError("This endpoint is only available when using the new API.")
