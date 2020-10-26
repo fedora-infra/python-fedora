@@ -169,6 +169,10 @@ class FAS(object):
             if teams_resp:
                 # The groups do not contain the cla_ groups
                 user['groups'] = frozenset(teams_resp.teams)
+            # In the new AAA system, signing an agreement adds the user to a
+            # specific group. The FPCA has replaced the CLA.
+            if "signed_fpca" in user["groups"]:
+                user["cla_done"] = True
             if ax_resp:
                 ssh_keys = ax_resp.get(
                     'http://fedoauth.org/openid/schema/SSH/key')

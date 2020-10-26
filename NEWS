@@ -3,7 +3,18 @@ NEWS
 ====
 
 :Authors: Toshio Kuratomi, Luke Macken, Ricky Elrod, Patrick Uiterwijk, Ralph Bean
-:Version: 1.0.0
+:Version: 1.1.0
+
+------
+1.1.0
+------
+
+New features:
+
+* Support for the new AAA system, which adds users who have signed agreement
+  "foobar" to the ``signed_foobar`` group. Make use of this to set the
+  ``cla_done`` key.
+
 
 ------
 1.0.0
