@@ -4,7 +4,7 @@ Information about this python-fedora release
 
 
 NAME = 'python-fedora'
-VERSION = '1.0.0'
+VERSION = '1.1.0'
 DESCRIPTION = 'Python modules for interacting with Fedora Services'
 LONG_DESCRIPTION = '''
 The Fedora Project runs many different services.  These services help us to
