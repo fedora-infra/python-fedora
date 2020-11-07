@@ -754,7 +754,7 @@ Incompatibilities
 =================
 * Removal of camelCase.  Rename keyword arguments and public instance variables:
   * client.BaseClient
-    *Note* that changes to this class propogate out to the same variable in
+    *Note* that changes to this class propagate out to the same variable in
     derived classes like fas2.AccountSystem and the BaseClient used in
     JsonFasIdentity.
     * __init__(): baseURL => base_url
