@@ -80,7 +80,7 @@ authentication::
     fas = FAS(app)
 
     # Application configuration
-    # SECRET_KEY is necessary for the Flask session system.  It nees to be secret to
+    # SECRET_KEY is necessary for the Flask session system.  It needs to be secret to
     # make the sessions secret but if you have multiple servers behind
     # a load balancer, the key needs to be the same on each.
     app.config['SECRET_KEY'] = 'change me!'
