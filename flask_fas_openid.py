@@ -265,6 +265,11 @@ class FAS(object):
 
         if isinstance(groups, six.string_types):
             groups = [groups]
+        # In the new AAA system, we know a user has signed the FPCA by looking
+        # a group membership. We must therefore always request the
+        # corresponding group.
+        if "_FAS_ALL_GROUPS_" not in groups:
+            groups.append("signed_fpca")
 
         request.addExtension(sreg.SRegRequest(
             required=['nickname', 'fullname', 'email', 'timezone']))

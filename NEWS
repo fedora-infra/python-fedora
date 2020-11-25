@@ -6,6 +6,15 @@ NEWS
 :Version: 1.1.0
 
 ------
+1.1.1
+------
+
+Bugfixes:
+
+* Membership of the "signed_fpca" group was not always requested.
+
+
+------
 1.1.0
 ------
 
