@@ -265,6 +265,10 @@ class FAS(object):
 
         if isinstance(groups, six.string_types):
             groups = [groups]
+        # Some applications pass the group list as a set. Convert to a list in
+        # case we need to append to it (see below).
+        if isinstance(groups, set):
+            groups = list(groups)
         # In the new AAA system, we know a user has signed the FPCA by looking
         # a group membership. We must therefore always request the
         # corresponding group.

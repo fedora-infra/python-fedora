@@ -12,6 +12,7 @@ NEWS
 Bugfixes:
 
 * Membership of the "signed_fpca" group was not always requested.
+* Handle the requested group list being passed as a set (wink wink Pagure).
 
 
 ------
