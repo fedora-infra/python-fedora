@@ -278,7 +278,7 @@ class OpenIdBaseClient(OpenIdProxyClient):
 
         return data
 
-    def login(self, username, password, otp=None):
+    def login(self, username, password, otp=None, openid_api=None, openid_re=None):
         """ Open a session for the user.
 
         Log in the user with the specified username and password
@@ -306,7 +306,8 @@ class OpenIdBaseClient(OpenIdProxyClient):
             username=username,
             password=password,
             otp=otp,
-            openid_insecure=self.openid_insecure)
+            openid_insecure=self.openid_insecure,
+            openid_api=openid_api, openid_re=openid_re)
         self._save_cookies()
         return response
 
