@@ -67,11 +67,11 @@ FEDORA_OPENID_API = 'https://id.fedoraproject.org/api/v1/'
 FEDORA_OPENID_RE = re.compile(r'^http(s)?:\/\/id\.(|stg.|dev.)?fedoraproject\.org(/)?')
 
 
-def _parse_response_history(response):
+def _parse_response_history(response, openid_re):
     """ Retrieve the attributes from the response history. """
     data = {}
     for r in response.history:
-        if FEDORA_OPENID_RE.match(r.url):
+        if openid_re.match(r.url):
             parsed = parse_qs(urlparse(r.url).query)
             for key, value in parsed.items():
                 data[key] = value[0]
@@ -80,7 +80,7 @@ def _parse_response_history(response):
 
 
 def openid_login(session, login_url, username, password, otp=None,
-                 openid_insecure=False):
+                 openid_insecure=False, openid_api=None , openid_re=None):
     """ Open a session for the user.
 
     Log in the user with the specified username and password
@@ -100,6 +100,12 @@ def openid_login(session, login_url, username, password, otp=None,
         self-signed certificate but it should be off in production.
 
     """
+
+    if openid_api is None:
+        openid_api = FEDORA_OPENID_API
+    if openid_re is None:
+        openid_re = FEDORA_OPENID_RE
+
     # Log into the service
     response = session.get(
         login_url, headers={'Accept': 'application/json'})
@@ -107,16 +113,16 @@ def openid_login(session, login_url, username, password, otp=None,
     try:
         data = response.json()
         openid_url = data.get('server_url', None)
-        if not FEDORA_OPENID_RE.match(openid_url):
+        if not openid_re.match(openid_url):
             raise FedoraServiceError(
                 'Un-expected openid provider asked: %s' % openid_url)
     except:
         # Some consumers (like pyramid_openid) return redirects with the
         # openid attributes encoded in the url
-        if not FEDORA_OPENID_RE.match(response.url):
+        if not openid_re.match(response.url):
             raise FedoraServiceError(
                 'Un-expected openid provider asked: %s' % response.url)
-        data = _parse_response_history(response)
+        data = _parse_response_history(response, openid_re)
 
     # Contact openid provider
     data['username'] = username
@@ -127,9 +133,9 @@ def openid_login(session, login_url, username, password, otp=None,
     if not 'openid.mode' in data:
         data['openid.mode'] = 'checkid_setup'
     response = session.post(
-        FEDORA_OPENID_API, data=data, verify=not openid_insecure)
+        openid_api, data=data, verify=not openid_insecure)
     if not bool(response):
-        raise ServerError(FEDORA_OPENID_API, response.status_code,
+        raise ServerError(openid_api, response.status_code,
                           'Error returned from our POST to ipsilon.')
 
     output = response.json()
