@@ -66,7 +66,7 @@ def setup_message_compiler():
 def build_catalogs():
     # Get the directory with message catalogs
     # Reuse transifex's config file first as it will know this
-    cfg = configparser.SafeConfigParser()
+    cfg = configparser.ConfigParser()
     cfg.read('.tx/config')
     cmd, args = setup_message_compiler()
 
